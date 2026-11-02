@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
 import type { Booking, BookingCategory, BookingItem, BookingsTab, PersonLite } from './types'
+import { scopeForCategory, type BookingScope } from './lib/inventory'
 import {
-  CATEGORIES, CATEGORY_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canManageItem,
+  CATEGORY_META, SCOPE_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canManageItem,
   fmtBookingRange, isHolding, personName,
 } from './lib/inventory'
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
@@ -13,8 +14,9 @@ import { ItemModal } from './ItemModal'
 import { ItemFormModal, type ItemPayload } from './ItemFormModal'
 
 export default function BookingsClient({
-  initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId,
+  scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId,
 }: {
+  scope: BookingScope
   initialItems: BookingItem[]
   initialBookings: Booking[]
   userId: string | null
@@ -27,6 +29,8 @@ export default function BookingsClient({
 }) {
   const supabase = createClient()
   const [items, setItems] = useState(initialItems)
+  const scopeMeta = SCOPE_META[scope]
+  const CATEGORIES = scopeMeta.categories
   const [bookings, setBookings] = useState(initialBookings)
   const isManager = canAddItems(role)
   const [tab, setTab] = useState<BookingsTab>(initialTab === 'manage' && !isManager ? 'browse' : initialTab)
@@ -47,8 +51,8 @@ export default function BookingsClient({
     if (category) params.set('category', category)
     if (openId) params.set('item', openId)
     const qs = params.toString()
-    window.history.replaceState(null, '', `/bookings${qs ? `?${qs}` : ''}`)
-  }, [tab, category, openId])
+    window.history.replaceState(null, '', `${scopeMeta.path}${qs ? `?${qs}` : ''}`)
+  }, [tab, category, openId, scopeMeta.path])
 
   useEffect(() => {
     if (!toast) return
@@ -56,9 +60,12 @@ export default function BookingsClient({
     return () => clearTimeout(t)
   }, [toast])
 
-  const activeItems = items.filter(i => i.is_active)
+  // This page only shows its own categories (accommodation vs tools + spaces)
+  const scopeItems = items.filter(i => CATEGORIES.includes(i.category))
+  const activeItems = scopeItems.filter(i => i.is_active)
   const itemById = useMemo(() => new Map(items.map(i => [i.id, i])), [items])
-  const knownTags = useMemo(() => [...new Set(items.flatMap(i => i.tags))].sort(), [items])
+  const knownTags = [...new Set(scopeItems.flatMap(i => i.tags))].sort()
+  const inScope = (b: Booking) => { const it = itemById.get(b.item_id); return !!it && CATEGORIES.includes(it.category) }
 
   const inCategory = activeItems.filter(i => !category || i.category === category)
   const tagsHere = [...new Set(inCategory.flatMap(i => i.tags))].sort()
@@ -68,11 +75,11 @@ export default function BookingsClient({
     .filter(i => !q || [i.name, i.description ?? '', i.location ?? '', ...i.tags].some(s => s.toLowerCase().includes(q)))
     .sort((a, b) => a.name.localeCompare(b.name))
 
-  const myBookings = userId ? bookings.filter(b => b.user_id === userId) : []
+  const myBookings = userId ? bookings.filter(b => b.user_id === userId && inScope(b)) : []
   const myUpcoming = now ? myBookings.filter(b => isHolding(b) && new Date(b.ends_at) > now).sort((a, b) => a.starts_at.localeCompare(b.starts_at)) : []
   const myPast = now ? myBookings.filter(b => !myUpcoming.includes(b)).sort((a, b) => b.starts_at.localeCompare(a.starts_at)).slice(0, 20) : []
   const pending = bookings
-    .filter(b => b.status === 'pending' && (() => { const it = itemById.get(b.item_id); return it && canManageItem(it, userId, role, leadCircles) })())
+    .filter(b => b.status === 'pending' && inScope(b) && (() => { const it = itemById.get(b.item_id); return it && canManageItem(it, userId, role, leadCircles) })())
     .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
 
   const openItem = openId ? itemById.get(openId) ?? null : null
@@ -131,6 +138,11 @@ export default function BookingsClient({
         : bookingErrorMessage(error)
     }
     const saved = toItem(data)
+    if (!CATEGORIES.includes(saved.category)) {
+      // Added from the other page's category — send them where it lives
+      window.location.href = `${SCOPE_META[scopeForCategory(saved.category)].path}?item=${saved.id}`
+      return null
+    }
     setItems(list => [...list, saved])
     setForm(null)
     setTab('browse')
@@ -153,17 +165,17 @@ export default function BookingsClient({
   const tabStyle = (active: boolean): React.CSSProperties => ({
     fontSize: 13, fontWeight: active ? 600 : 400, color: active ? 'var(--ink)' : 'var(--ink-3)',
     padding: '8px 14px', background: 'none', border: 'none',
-    borderBottom: active ? '2px solid var(--m15)' : '2px solid transparent',
+    borderBottom: active ? '2px solid var(--bk-accent)' : '2px solid transparent',
     cursor: 'pointer', marginBottom: -1, outline: 'none', whiteSpace: 'nowrap',
   })
-  const pill = (active: boolean, color = 'var(--m15)'): React.CSSProperties => ({
+  const pill = (active: boolean, color = 'var(--bk-accent)'): React.CSSProperties => ({
     fontSize: 12.5, fontWeight: 600, borderRadius: 20, padding: '5px 12px', cursor: 'pointer', whiteSpace: 'nowrap',
     border: `1px solid ${active ? color : 'var(--rule)'}`, background: active ? color : 'var(--surface)', color: active ? '#fff' : 'var(--ink-2)',
   })
   const smallBtn = (primary: boolean, danger = false): React.CSSProperties => ({
     fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 'var(--radius)', cursor: 'pointer',
     border: primary ? 'none' : '1px solid var(--rule)',
-    background: primary ? 'var(--m15)' : 'var(--surface)', color: primary ? '#fff' : danger ? '#dc2626' : 'var(--ink-2)',
+    background: primary ? 'var(--bk-accent)' : 'var(--surface)', color: primary ? '#fff' : danger ? '#dc2626' : 'var(--ink-2)',
   })
 
   function BookingRow({ b, actions }: { b: Booking; actions?: React.ReactNode }) {
@@ -189,22 +201,22 @@ export default function BookingsClient({
   }
 
   return (
-    <div className="ev-page" style={{ padding: '26px 32px 60px' }}>
+    <div className="ev-page" style={{ padding: '26px 32px 60px', ['--bk-accent' as string]: scopeMeta.accent }}>
       {/* ── Page head ─────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m15) 10%, var(--surface))', color: 'var(--m15)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            Module 15 · Bookings
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--bk-accent) 10%, var(--surface))', color: 'var(--bk-accent)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
+            Module {scopeMeta.num} · {scopeMeta.label}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
-            Community commons
+            {scopeMeta.heading}
           </h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
             {CATEGORIES.map(c => `${activeItems.filter(i => i.category === c).length} ${CATEGORY_META[c].label.toLowerCase()}`).join(' · ')}
           </p>
         </div>
         {isManager && (
-          <button onClick={() => setForm({ existing: null })} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--m15)', border: 'none', borderRadius: 8, padding: '8px 16px', cursor: 'pointer' }}>
+          <button onClick={() => setForm({ existing: null })} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--bk-accent)', border: 'none', borderRadius: 8, padding: '8px 16px', cursor: 'pointer' }}>
             + Add item
           </button>
         )}
@@ -212,11 +224,11 @@ export default function BookingsClient({
 
       {!userId ? (
         <div style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-          Browse what the community shares. <Link href="/auth/login" style={{ color: 'var(--m15)', fontWeight: 600 }}>Sign in</Link> to book.
+          Browse what the community shares. <Link href="/auth/login" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Sign in</Link> to book.
         </div>
       ) : !canBook(role) && (
         <div style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-          🔒 Joining members and above can book shared items. <Link href="/join" style={{ color: 'var(--m15)', fontWeight: 600 }}>Start joining →</Link>
+          🔒 Joining members and above can book shared items. <Link href="/join" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Start joining →</Link>
         </div>
       )}
 
@@ -225,7 +237,7 @@ export default function BookingsClient({
         <button onClick={() => setTab('browse')} style={tabStyle(tab === 'browse')}>Browse</button>
         {userId && (
           <button onClick={() => setTab('mine')} style={tabStyle(tab === 'mine')}>
-            My bookings{myUpcoming.length > 0 && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, color: 'var(--m15)' }}>{myUpcoming.length}</span>}
+            My bookings{myUpcoming.length > 0 && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, color: 'var(--bk-accent)' }}>{myUpcoming.length}</span>}
           </button>
         )}
         {isManager && (
@@ -240,8 +252,8 @@ export default function BookingsClient({
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              <button onClick={() => { setCategory(null); setTag(null) }} style={pill(category === null)}>All</button>
-              {CATEGORIES.map(c => (
+              {CATEGORIES.length > 1 && <button onClick={() => { setCategory(null); setTag(null) }} style={pill(category === null)}>All</button>}
+              {CATEGORIES.length > 1 && CATEGORIES.map(c => (
                 <button key={c} onClick={() => { setCategory(c); setTag(null) }} style={pill(category === c, CATEGORY_META[c].color)}>
                   {CATEGORY_META[c].emoji} {CATEGORY_META[c].label}
                 </button>
@@ -257,9 +269,9 @@ export default function BookingsClient({
               {tagsHere.map(t => (
                 <button key={t} onClick={() => setTag(tag === t ? null : t)} style={{
                   fontSize: 11.5, fontWeight: 600, borderRadius: 20, padding: '2px 9px', cursor: 'pointer',
-                  border: `1px solid ${tag === t ? 'var(--m15)' : 'transparent'}`,
-                  background: tag === t ? 'color-mix(in srgb, var(--m15) 12%, var(--surface))' : 'var(--bg-2)',
-                  color: tag === t ? 'var(--m15)' : 'var(--ink-3)',
+                  border: `1px solid ${tag === t ? 'var(--bk-accent)' : 'transparent'}`,
+                  background: tag === t ? 'color-mix(in srgb, var(--bk-accent) 12%, var(--surface))' : 'var(--bg-2)',
+                  color: tag === t ? 'var(--bk-accent)' : 'var(--ink-3)',
                 }}>#{t}</button>
               ))}
             </div>
@@ -311,7 +323,7 @@ export default function BookingsClient({
           <div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10 }}>Upcoming</div>
             {myUpcoming.length === 0 ? (
-              <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>No upcoming bookings. <button onClick={() => setTab('browse')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--m15)', fontWeight: 600, cursor: 'pointer', fontSize: 13 }}>Browse the commons →</button></div>
+              <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>No upcoming bookings. <button onClick={() => setTab('browse')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--bk-accent)', fontWeight: 600, cursor: 'pointer', fontSize: 13 }}>Browse the commons →</button></div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {myUpcoming.map(b => (
@@ -357,7 +369,7 @@ export default function BookingsClient({
           <div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10 }}>Inventory you can manage</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {items
+              {scopeItems
                 .filter(i => canManageItem(i, userId, role, leadCircles))
                 .sort((a, b) => Number(b.is_active) - Number(a.is_active) || a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
                 .map(i => (
@@ -395,7 +407,8 @@ export default function BookingsClient({
       {form && (
         <ItemFormModal
           existing={form.existing}
-          defaultCategory={category ?? 'tools'}
+          defaultCategory={category ?? CATEGORIES[0]}
+          categories={CATEGORIES}
           role={role}
           leadCircles={leadCircles}
           knownTags={knownTags}

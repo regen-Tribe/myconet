@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ModalShell } from '@/core/components/ModalShell'
 import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
 import type { BookingCategory, BookingItem } from './types'
-import { CATEGORIES, CATEGORY_META } from './lib/inventory'
+import { CATEGORY_META } from './lib/inventory'
 
 export interface ItemPayload {
   name: string
@@ -26,10 +26,12 @@ const inputStyle: React.CSSProperties = {
 const normalizeTag = (t: string) => t.trim().toLowerCase().replace(/^#/, '').replace(/\s+/g, ' ').slice(0, 30)
 
 export function ItemFormModal({
-  existing, defaultCategory, role, leadCircles, knownTags, onClose, onSave,
+  existing, defaultCategory, categories, role, leadCircles, knownTags, onClose, onSave,
 }: {
   existing: BookingItem | null
   defaultCategory: BookingCategory
+  /** Categories this page offers (accommodation, or tools + spaces). */
+  categories: BookingCategory[]
   role: string
   leadCircles: string[]
   /** Tags already used in the inventory, offered as suggestions. */
@@ -97,7 +99,7 @@ export function ItemFormModal({
         <div>
           <span style={labelStyle}>Category</span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {CATEGORIES.map(c => (
+            {categories.map(c => (
               <button key={c} type="button" onClick={() => setCategory(c)} style={chip(category === c, CATEGORY_META[c].color)}>
                 {CATEGORY_META[c].emoji} {CATEGORY_META[c].label}
               </button>
@@ -114,8 +116,8 @@ export function ItemFormModal({
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
               {tags.map(t => (
                 <button key={t} type="button" onClick={() => setTags(list => list.filter(x => x !== t))} title="Remove tag" style={{
-                  fontSize: 12, fontWeight: 600, color: 'var(--m15)', background: 'color-mix(in srgb, var(--m15) 10%, var(--surface))',
-                  border: '1px solid color-mix(in srgb, var(--m15) 35%, var(--rule))', borderRadius: 20, padding: '3px 10px', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 600, color: 'var(--bk-accent)', background: 'color-mix(in srgb, var(--bk-accent) 10%, var(--surface))',
+                  border: '1px solid color-mix(in srgb, var(--bk-accent) 35%, var(--rule))', borderRadius: 20, padding: '3px 10px', cursor: 'pointer',
                 }}>#{t} ×</button>
               ))}
             </div>
@@ -187,7 +189,7 @@ export function ItemFormModal({
           <button type="button" onClick={onClose} style={{ fontSize: 13, fontWeight: 600, padding: '8px 16px', borderRadius: 'var(--radius)', border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink-2)', cursor: 'pointer' }}>
             Cancel
           </button>
-          <button type="submit" disabled={saving} style={{ fontSize: 13, fontWeight: 600, padding: '8px 18px', borderRadius: 'var(--radius)', border: 'none', background: 'var(--m15)', color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+          <button type="submit" disabled={saving} style={{ fontSize: 13, fontWeight: 600, padding: '8px 18px', borderRadius: 'var(--radius)', border: 'none', background: 'var(--bk-accent)', color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
             {saving ? 'Saving…' : existing ? 'Save changes' : 'Add item'}
           </button>
         </div>

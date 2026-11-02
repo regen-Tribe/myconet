@@ -15,7 +15,8 @@ Each module is an independently workable feature of the MyCoNet platform. You ca
 | `m08-contributions/` | M08 | `/contributions` | Achievement badges and contribution history | Live |
 | `m09-governance/` | M09 | `/governance` | Proposals, voting, and decision layers | Live |
 | `m14-events/` | M14 | `/events` | Calendar — core events, community hosted events, tasks; RSVPs; links to circles/projects/proposals | Live |
-| `m15-bookings/` | M15 | `/bookings` | Shared inventory — accommodation, tools, spaces; admins/circle leads manage, joining+ book | Live |
+| `m15-bookings/` | M15 | `/stays` | Accommodation — book rooms, cabins, tent sites; admins/circle leads manage, joining+ book | Live |
+| `m16-resources/` | M16 | `/bookings` | Resources — book tools, spaces and other shared things (same code as M15, `scope='resources'`) | Live |
 | `home/` | — | `/home` | Public and member-facing community landing page | Live |
 | `admin/` | — | `/admin/users` | Admin-only user editor (role + lead_circles) | Live |
 

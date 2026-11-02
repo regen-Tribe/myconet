@@ -1,6 +1,11 @@
-# M15 — Bookings
+# M15 — Accommodation (and the shared booking engine)
 
-The community commons: shared accommodation, tools and spaces that members book.
+This folder runs two modules from one codebase:
+
+- **M15 Accommodation** — `/stays`, accommodation only
+- **M16 Resources** — `/bookings` (alias `/resources`), tools and spaces — see `../m16-resources/README.md`
+
+`BookingsClient` takes a `scope` (`stays` | `resources`); `SCOPE_META` in `lib/inventory.ts` sets each page's number, label, route, accent (`--bk-accent`) and categories. The loader is `BookingsPage.tsx` (`renderBookings`).
 
 - **Admins and circle leads** add items to the inventory, tag them, and approve requests
 - **Joining members and above** book items
@@ -17,7 +22,8 @@ The community commons: shared accommodation, tools and spaces that members book.
 
 | Route | File |
 |-------|------|
-| `/bookings` | `app/bookings/page.tsx` → `BookingsClient` |
+| `/stays` | `app/stays/page.tsx` → `renderBookings('stays')` |
+| `/bookings` | `app/bookings/page.tsx` → `renderBookings('resources')`; `?category=accommodation` redirects to `/stays` |
 
 Query params: `tab=browse|mine|manage`, `category=accommodation|tools|spaces`, `item=<id>` (opens the pop-up).
 

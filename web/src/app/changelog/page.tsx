@@ -2,6 +2,17 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.60',
+    date: '2026-11-02',
+    title: 'Bookings split into M15 Accommodation and M16 Resources',
+    items: [
+      'M15 Accommodation (/stays): book guest rooms, cabins and tent sites, by the night.',
+      'M16 Resources (/bookings, also /resources): book tools, spaces and other shared things, by the hour.',
+      'Each has its own sidebar entry, dashboard card, My bookings and Manage tabs. Adding an item only offers that module\'s categories.',
+      'Old links to /bookings?category=accommodation now open the Accommodation page.',
+    ],
+  },
+  {
     version: 'v3.59',
     date: '2026-11-02',
     title: 'Sidebar: Bookings sits under Calendar',

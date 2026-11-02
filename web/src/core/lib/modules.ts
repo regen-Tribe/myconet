@@ -87,8 +87,13 @@ export const MODULES: Module[] = [
     icon: '🗓', color: '#0d9488', href: '/events', live: true,
   },
   {
-    num: '15', name: 'Bookings',
-    desc: 'Shared inventory — book accommodation, tools and spaces. Admins and circle leads manage what can be booked.',
-    icon: '🔑', color: '#c2410c', href: '/bookings', live: true,
+    num: '15', name: 'Accommodation',
+    desc: 'Book a place to stay — guest rooms, cabins, tent sites. Admins and circle leads manage what can be booked.',
+    icon: '🏡', color: '#c2410c', href: '/stays', live: true,
+  },
+  {
+    num: '16', name: 'Resources',
+    desc: 'Book shared tools, spaces and other community resources. Admins and circle leads manage the inventory.',
+    icon: '🔑', color: '#4d7c0f', href: '/bookings', live: true,
   },
 ]

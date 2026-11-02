@@ -10,7 +10,8 @@ const CLUBHOUSE = [
   { num: '04', name: 'Blueprint',   color: 'var(--m4)',  href: '/blueprint' },
   { num: '05', name: 'Join',        color: 'var(--m5)',  href: '/join' },
   { num: '14', name: 'Calendar',    color: 'var(--m14)', href: '/events' },
-  { num: '15', name: 'Bookings',    color: 'var(--m15)', href: '/bookings' },
+  { num: '15', name: 'Accommodation', color: 'var(--m15)', href: '/stays' },
+  { num: '16', name: 'Resources',   color: 'var(--m16)', href: '/bookings' },
 ] as const
 
 const MEMBER_MODULES = [

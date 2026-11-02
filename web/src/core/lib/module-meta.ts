@@ -14,5 +14,6 @@ export const MODULE_META: Record<string, { bg: string; label: string; desc: stri
   '12': { bg: '#b45309', label: 'MycoNet Agent',          desc: 'The community brain — reads all modules, connects the dots, and runs the background approval queue.' },
   '13': { bg: '#78350f', label: 'Hive',                   desc: 'Inter-community layer — shared resources, collaboration, and mutual aid across multiple neighborhoods.' },
   '14': { bg: '#0d9488', label: 'Calendar',               desc: 'The community calendar — core events, community hosted events and tasks, with RSVPs, sign-ups, and links to circles, projects and proposals.' },
-  '15': { bg: '#c2410c', label: 'Bookings',               desc: 'The community commons — book shared accommodation, tools and spaces. Admins and circle leads manage the inventory.' },
+  '15': { bg: '#c2410c', label: 'Accommodation',          desc: 'Book a place to stay in the community — guest rooms, cabins, tent sites. Admins and circle leads manage what can be booked.' },
+  '16': { bg: '#4d7c0f', label: 'Resources',              desc: 'Book shared tools, spaces and other community resources. Admins and circle leads manage the inventory.' },
 }

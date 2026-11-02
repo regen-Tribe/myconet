@@ -163,9 +163,14 @@ export default async function DashboardPage() {
       color: 'var(--m14)', href: '/events', locked: false,
     },
     {
-      num: '15', name: 'Bookings',
-      desc: atLeast(role, 'joining') ? 'Book accommodation, tools and spaces' : 'Browse shared accommodation, tools and spaces',
-      color: 'var(--m15)', href: '/bookings', locked: false,
+      num: '15', name: 'Accommodation',
+      desc: atLeast(role, 'joining') ? 'Book a room, cabin or tent site' : 'See where you could stay',
+      color: 'var(--m15)', href: '/stays', locked: false,
+    },
+    {
+      num: '16', name: 'Resources',
+      desc: atLeast(role, 'joining') ? 'Book shared tools and spaces' : 'Browse shared tools and spaces',
+      color: 'var(--m16)', href: '/bookings', locked: false,
     },
   ]
 

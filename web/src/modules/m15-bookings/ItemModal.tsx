@@ -104,7 +104,7 @@ export function ItemModal({
         <div>
           <div style={sectionLabel}>Booked times</div>
           {!userId ? (
-            <div style={{ fontSize: 13, color: 'var(--ink-3)' }}><Link href="/auth/login" style={{ color: 'var(--m15)', fontWeight: 600 }}>Sign in</Link> to see when it’s free and book it.</div>
+            <div style={{ fontSize: 13, color: 'var(--ink-3)' }}><Link href="/auth/login" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Sign in</Link> to see when it’s free and book it.</div>
           ) : !canBook(role) && upcoming.length === 0 ? (
             <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>The schedule is visible to joining members and above.</div>
           ) : upcoming.length === 0 ? (
@@ -114,7 +114,7 @@ export function ItemModal({
               {upcoming.map(b => (
                 <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 12.5, background: 'var(--bg-2)', borderRadius: 8, padding: '7px 10px' }}>
                   <span style={{ color: 'var(--ink-2)' }}>{fmtBookingRange(b, item.category)}</span>
-                  <span style={{ color: b.user_id === userId ? 'var(--m15)' : 'var(--ink-3)', fontWeight: 600, flexShrink: 0 }}>
+                  <span style={{ color: b.user_id === userId ? 'var(--bk-accent)' : 'var(--ink-3)', fontWeight: 600, flexShrink: 0 }}>
                     {b.user_id === userId ? 'You' : personName(b.person)}{b.status === 'pending' ? ' · pending' : ''}
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export function ItemModal({
                 {error && <div style={{ fontSize: 13, color: '#dc2626', background: 'color-mix(in srgb, #dc2626 8%, var(--surface))', borderRadius: 8, padding: '8px 10px' }}>{error}</div>}
                 <button type="submit" disabled={busy || !!clash} style={{
                   alignSelf: 'flex-start', fontSize: 13, fontWeight: 600, padding: '9px 18px', borderRadius: 'var(--radius)', border: 'none',
-                  background: 'var(--m15)', color: '#fff', cursor: busy || clash ? 'not-allowed' : 'pointer', opacity: busy || clash ? 0.6 : 1,
+                  background: 'var(--bk-accent)', color: '#fff', cursor: busy || clash ? 'not-allowed' : 'pointer', opacity: busy || clash ? 0.6 : 1,
                 }}>
                   {busy ? 'Booking…' : item.requires_approval ? 'Send request' : 'Book'}
                 </button>
@@ -159,7 +159,7 @@ export function ItemModal({
           ) : (
             <div style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--bg-2)', borderRadius: 10, padding: '10px 12px', lineHeight: 1.5 }}>
               🔒 Joining members and above can book shared items. You’re a {ROLE_LABELS[role] ?? 'Explorer'}.{' '}
-              <Link href="/join" style={{ color: 'var(--m15)', fontWeight: 600 }}>Start joining →</Link>
+              <Link href="/join" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Start joining →</Link>
             </div>
           )
         )}
@@ -169,7 +169,7 @@ export function ItemModal({
             <button onClick={onToggleActive} style={{ fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 'var(--radius)', border: '1px solid var(--rule)', background: 'var(--surface)', color: item.is_active ? '#dc2626' : 'var(--ink-2)', cursor: 'pointer' }}>
               {item.is_active ? 'Archive' : 'Restore'}
             </button>
-            <button onClick={onEdit} style={{ fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 'var(--radius)', border: 'none', background: 'var(--m15)', color: '#fff', cursor: 'pointer' }}>
+            <button onClick={onEdit} style={{ fontSize: 12, fontWeight: 600, padding: '6px 12px', borderRadius: 'var(--radius)', border: 'none', background: 'var(--bk-accent)', color: '#fff', cursor: 'pointer' }}>
               Edit item
             </button>
           </div>
