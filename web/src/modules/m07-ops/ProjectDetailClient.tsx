@@ -10,6 +10,8 @@ import { PILLARS, PILLAR_META, isPillar, type Pillar } from '@/core/lib/pillars'
 import { isActiveProject, isOpenForProposals, PROJECT_STATUS_META, PROJECT_KANBAN_COLUMNS } from '@/core/lib/project-status'
 import { CalendarPicker } from './CalendarPicker'
 import { PermissionNoticeModal } from './PermissionNoticeModal'
+import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
+import type { CalendarEvent } from '@/modules/m14-events/types'
 import { circleChangeBlock, projectEditBlock, type CircleDirectory, type PermissionNotice } from '@/core/lib/ops-permissions'
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -116,7 +118,7 @@ export default function ProjectDetailClient({
   deliverables: initialDeliverables, myProposal: initialMyProposal, userId, userRole, leadCircles, circleDirectory, isAdmin, isProjectCreator,
   projectSubscribers: initialProjectSubscribers, isProjectSubscribed: initialIsProjectSubscribed,
   deliverableSubscribers: initialDeliverableSubscribers,
-  leadProfile, creatorProfile,
+  leadProfile, creatorProfile, projectEvents,
 }: {
   project: Project
   updates: ProjectUpdate[]
@@ -134,6 +136,7 @@ export default function ProjectDetailClient({
   deliverableSubscribers: Record<string, SubscriberProfile[]>
   leadProfile: { first_name: string | null; username: string | null } | null
   creatorProfile: { first_name: string | null; username: string | null } | null
+  projectEvents: CalendarEvent[]
 }) {
   const supabase = createClient()
   const router = useRouter()
@@ -853,6 +856,12 @@ export default function ProjectDetailClient({
               })}
             </div>
           </div>
+
+          {/* ── Events (M14) ─────────────────────────────────────────────────── */}
+          <LinkedEventsList
+            events={projectEvents}
+            addHref={isJoiningOrAbove(userRole) ? `/events?new=1&project=${project.id}` : null}
+          />
 
           {/* ── Updates feed ─────────────────────────────────────────────────── */}
           <div>

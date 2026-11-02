@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import ProjectDetailClient from '@/modules/m07-ops/ProjectDetailClient'
 import { isOpsAdmin } from '@/core/lib/roles'
 import { fetchCircleDirectory } from '@/core/lib/ops-permissions'
+import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import type { Project, ProjectUpdate, CollaborationAgreement, SubscriberProfile } from '@/modules/m07-ops/types'
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -108,6 +109,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   const circleDirectory = await fetchCircleDirectory(supabase)
 
+  // M14 events linked to this project (RLS hides members-only ones from visitors)
+  const { data: eventRows } = await supabase
+    .from('events')
+    .select(EVENT_SELECT)
+    .eq('project_id', id)
+    .gte('starts_at', new Date(Date.now() - 7 * 86400000).toISOString())
+    .order('starts_at', { ascending: true })
+
   return (
     <ProjectDetailClient
       project={project}
@@ -126,6 +135,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       deliverableSubscribers={deliverableSubscribers}
       leadProfile={leadProfile}
       creatorProfile={creatorProfile}
+      projectEvents={(eventRows ?? []).map(toEvent)}
     />
   )
 }

@@ -81,4 +81,9 @@ export const MODULES: Module[] = [
     desc: 'Inter-community layer — shared resources, collaboration, and mutual aid across neighborhoods.',
     icon: '⬡', color: '#0891b2', href: null, live: false,
   },
+  {
+    num: '14', name: 'Events',
+    desc: 'Community calendar — core events from members and leads, community hosted events from anyone joining, with RSVPs.',
+    icon: '🗓', color: '#0d9488', href: '/events', live: true,
+  },
 ]

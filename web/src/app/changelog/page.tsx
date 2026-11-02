@@ -2,6 +2,19 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.56',
+    date: '2026-11-01',
+    title: 'M14 Events: community calendar with core and community hosted events, RSVPs',
+    items: [
+      'New Events module at /events with Month, Week and List views, a circle filter, and a color legend matching the five circles.',
+      'Two calendars: Core events (posted by full members, circle leads and project leads) and Community hosted (any joining member or above can post).',
+      'Events can link to a circle, an Ops project and a Governance proposal. Project pages now show their upcoming events with an "+ Add event" shortcut.',
+      'RSVP as Going or Maybe and see who else is coming. RSVP names are only visible to signed-in users.',
+      'Public events: tick "Public event" and logged-out visitors can see it; everything else stays members-only.',
+      'Hosts can edit or delete their events; admins and the event circle\'s leads can too. The database enforces the same rules.',
+    ],
+  },
+  {
     version: 'v3.55',
     date: '2026-10-29',
     title: 'M07 Ops: explains blocked moves, new Circles tab, travel scoring fix',

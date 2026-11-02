@@ -127,6 +127,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen }: {
     { label: 'Network', href: '/network', icon: '🌐' },
     { label: 'Contributions', href: '/contributions', icon: '✦' },
     { label: 'Governance', href: '/governance', icon: '☉' },
+    { label: 'Events', href: '/events', icon: '🗓' },
     'divider',
     { label: isDark ? 'Light mode' : 'Dark mode', action: toggleTheme, icon: isDark ? '☀' : '◑' },
     'divider',

@@ -9,6 +9,7 @@ const CLUBHOUSE = [
   { num: '01', name: 'Members',     color: 'var(--m1)',  href: '/network' },
   { num: '04', name: 'Blueprint',   color: 'var(--m4)',  href: '/blueprint' },
   { num: '05', name: 'Join',        color: 'var(--m5)',  href: '/join' },
+  { num: '14', name: 'Events',      color: 'var(--m14)', href: '/events' },
 ] as const
 
 const MEMBER_MODULES = [

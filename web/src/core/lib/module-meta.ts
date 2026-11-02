@@ -13,4 +13,5 @@ export const MODULE_META: Record<string, { bg: string; label: string; desc: stri
   '11': { bg: '#64748b', label: 'Quinn',                  desc: 'Your personal AI guide — daily reminders, goal tracking, and routing to the right people in the community.' },
   '12': { bg: '#b45309', label: 'MycoNet Agent',          desc: 'The community brain — reads all modules, connects the dots, and runs the background approval queue.' },
   '13': { bg: '#78350f', label: 'Hive',                   desc: 'Inter-community layer — shared resources, collaboration, and mutual aid across multiple neighborhoods.' },
+  '14': { bg: '#0d9488', label: 'Events',                 desc: 'The community calendar — core events, community hosted events, RSVPs, and links to circles, projects and proposals.' },
 }
