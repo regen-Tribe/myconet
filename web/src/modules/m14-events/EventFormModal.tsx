@@ -6,7 +6,7 @@ import { ROLE_LABELS } from '@/core/lib/roles'
 import type { CalendarEvent, EventKind, LinkOption } from './types'
 import { toLocalDateInput, toLocalInput } from './lib/calendar'
 import { canCreateKind, KIND_META } from './lib/permissions'
-import { ModalShell } from './EventDetailModal'
+import { ModalShell } from '@/core/components/ModalShell'
 
 /** Columns written to `events` on create/update. */
 export interface EventPayload {
@@ -74,7 +74,7 @@ export function EventFormModal({
   )
   const [projectId, setProjectId] = useState(existing?.project_id ?? draft.project_id ?? '')
   const [proposalId, setProposalId] = useState(existing?.proposal_id ?? draft.proposal_id ?? '')
-  const [isPublic, setIsPublic] = useState(existing?.is_public ?? false)
+  const [isPublic, setIsPublic] = useState(existing?.is_public ?? true)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [kindNote, setKindNote] = useState<string | null>(null)

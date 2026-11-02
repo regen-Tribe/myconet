@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { isFullMember as checkFullMember, isJoiningOrAbove, ROLE_LABELS } from '@/core/lib/roles'
+import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
+import type { CalendarEvent } from '@/modules/m14-events/types'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
 type Member = { id: string; first_name: string | null; last_name: string | null; headline: string | null; city: string | null; country: string | null; avatar_url: string | null; username: string | null }
@@ -32,6 +34,7 @@ interface Props {
   applicationStatus?: string | null
   joiningRewardNew?: boolean
   matchScores?: Record<string, { score: number; reasons: string[] }>
+  upcomingEvents?: CalendarEvent[]
 }
 
 const CHECK_ICON = (
@@ -208,7 +211,7 @@ export default function HomeClient({
   projects, activeProjectCount, deliverables,
   isLoggedIn, hasApplied, isFullMember,
   role = 'explorer', applicationStatus, joiningRewardNew = false,
-  matchScores = {},
+  matchScores = {}, upcomingEvents = [],
 }: Props) {
   const name = firstName || (isLoggedIn ? 'there' : 'you')
   const roleLabel = ROLE_LABELS[role] ?? 'Explorer'
@@ -307,6 +310,7 @@ export default function HomeClient({
             { mod: '07', icon: '⚙️', text: 'Contribute to goals & projects',  target: 'ops',        color: 'var(--m7)' },
             { mod: '08', icon: '✦',  text: 'Get rewards for your contributions', target: 'contributions', color: 'var(--m8)' },
             { mod: '09', icon: '☉',  text: 'Make decisions together',          target: 'governance', color: 'var(--m9)' },
+            { mod: '14', icon: '🗓', text: 'Gather at community events',       target: 'events',     color: 'var(--m14)' },
           ].map(({ mod, icon, text, target, color }) => (
             <ModulePill key={mod} mod={mod} icon={icon} text={text} target={target} color={color} />
           ))}
@@ -536,6 +540,7 @@ export default function HomeClient({
                 { num: '01', name: 'Residents', color: 'var(--m1)' },
                 { num: '04', name: 'Blueprint', color: 'var(--m4)' },
                 { num: '05', name: 'Join', color: 'var(--m5)' },
+                { num: '14', name: 'Events', color: 'var(--m14)' },
               ].map(m => (
                 <div key={m.num} style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '6px 6px',
@@ -1334,6 +1339,40 @@ export default function HomeClient({
             )}
           </div>
         </div>
+      </section>
+
+      {/* ── M14 — Events ────────────────────────────────────── */}
+      <section className={sectionCls} style={sectionW} id="events">
+        <Split>
+          <SectionHead
+            mod="14" label="Events" color="var(--m14)"
+            h="Show up. Gather. Celebrate."
+            lead="Workdays, circle meetings, potlucks and celebrations all live on one community calendar. Anyone can browse public events. Joining members host their own, and RSVPs show who's coming."
+            href="/events"
+            why={[
+              '<strong>Core events</strong> — official gatherings posted by members, circle leads and project leads.',
+              '<strong>Community hosted</strong> — anyone joining the community can put an event on the calendar.',
+              '<strong>Linked to the work</strong> — tag a circle, an Ops project or a governance proposal.',
+            ]}
+          />
+          <DemoCard>
+            <LinkedEventsList
+              events={upcomingEvents}
+              title="Coming up"
+              viewAllHref="/events?view=list"
+              addHref={isJoiningPlus ? '/events?new=1' : null}
+              limit={4}
+              showKind
+              emptyText="Nothing on the calendar yet — check back soon."
+            />
+            <Link href="/events" style={{
+              display: 'inline-block', marginTop: 16, fontSize: 13, fontWeight: 700, color: '#fff',
+              background: 'var(--m14)', padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
+            }}>
+              Open the calendar →
+            </Link>
+          </DemoCard>
+        </Split>
       </section>
 
       {/* ── Closing CTA ─────────────────────────────────────── */}

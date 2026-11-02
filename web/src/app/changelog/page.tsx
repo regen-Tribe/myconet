@@ -2,6 +2,20 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.57',
+    date: '2026-11-01',
+    title: 'M15 Bookings: shared accommodation, tools and spaces; upcoming events on Dashboard and Home',
+    items: [
+      'New Bookings module at /bookings: browse the community inventory by category (Accommodation, Tools, Spaces), by tag, or by search. Anyone can browse; joining members and above can book.',
+      'Admins and circle leads add items, tag them, set capacity and location, and choose whether bookings need approval. Circle leads manage items in their circles and items with no circle.',
+      'Accommodation books by night (check-in/check-out); tools and spaces by time. Double bookings are blocked by the database, and the form warns before you submit.',
+      'My bookings lists your upcoming and past bookings with Cancel. Manage shows requests waiting for approval (with a badge count) and lets leads edit, archive and restore items.',
+      'Dashboard: new "Upcoming events" card and module cards for Events and Bookings.',
+      'Home and the public landing page now have an Events section showing what\'s coming up; logged-out visitors see public events and can open the calendar.',
+      'New events are public by default (untick "Public event" to keep one members-only).',
+    ],
+  },
+  {
     version: 'v3.56',
     date: '2026-11-01',
     title: 'M14 Events: community calendar with core and community hosted events, RSVPs',

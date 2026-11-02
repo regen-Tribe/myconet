@@ -1,0 +1,50 @@
+# M15 — Bookings
+
+The community commons: shared accommodation, tools and spaces that members book.
+
+- **Admins and circle leads** add items to the inventory, tag them, and approve requests
+- **Joining members and above** book items
+- **Everyone** (even logged out) can browse what's in the inventory
+
+## What users see here
+
+- **Browse** — category chips (🏡 Accommodation, 🔧 Tools, 🏛 Spaces), tag chips from the items in view, search; cards show "Free now" / "In use until …" for members
+- **Item pop-up** — details, booked times (with who), and the booking form. Accommodation books by night (check-in/check-out dates); tools and spaces by time. Overlaps are caught in the form and again by the database.
+- **My bookings** — upcoming (with Cancel) and past/cancelled
+- **Manage** (admins + circle leads) — pending requests with Approve/Decline, the inventory they can manage with Edit/Archive/Restore, "+ Add item"
+
+## Routes
+
+| Route | File |
+|-------|------|
+| `/bookings` | `app/bookings/page.tsx` → `BookingsClient` |
+
+Query params: `tab=browse|mine|manage`, `category=accommodation|tools|spaces`, `item=<id>` (opens the pop-up).
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `BookingsClient.tsx` | Page: tabs, filters, book / cancel / approve, item save and archive |
+| `ItemModal.tsx` | Item details, schedule, booking form, manager actions |
+| `ItemFormModal.tsx` | Add/edit item: category, tags, circle, capacity, approval toggle |
+| `lib/inventory.ts` | Categories, status labels, permission helpers, formatting, error messages |
+| `lib/queries.ts` | `ITEM_SELECT`, `BOOKING_SELECT`, row normalizers |
+
+## Database tables
+
+Migration: `supabase/migrations/20261101_m15_bookings.sql` (repo root).
+
+| Table | Access |
+|-------|--------|
+| `booking_items` | Read: active items for everyone, archived for admins/circle leads. Insert: admin, or circle lead with no circle / a circle they lead. Update/delete: `private.can_manage_item()` — admin, or circle lead when the item has no circle, is in their circles, or they added it |
+| `bookings` | Read: own bookings, or everything for joining+. Insert: joining+ for themselves. Update: booker (cancel only) or item manager |
+
+- `bookings_no_overlap` — exclusion constraint (btree_gist): pending/confirmed bookings of one item can't overlap. Error code `23P01`.
+- `bookings_guard` trigger — sets status on insert from `requires_approval` (pending vs confirmed; the client's value is ignored), blocks bookings of archived items, lets non-managers only cancel, stamps `decided_by` on approve/decline.
+
+## Gotchas
+
+- One row = one bookable thing. Five identical bikes are five items (tag them `bike`).
+- Accommodation ranges are local midnight → midnight with `[)` bounds, so back-to-back stays don't clash.
+- No notifications yet: leads see pending requests in the Manage tab and the badge count.

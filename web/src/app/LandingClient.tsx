@@ -2,9 +2,11 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import { VERSION } from '@/core/lib/version'
+import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
+import type { CalendarEvent } from '@/modules/m14-events/types'
 import './landing.css'
 
-interface Props { firstName: string | null; communityPurpose?: string | null }
+interface Props { firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[] }
 
 /* ── Tiny SVG icons ── */
 const Check = ({ size = 12 }: { size?: number }) => (
@@ -32,6 +34,7 @@ const CH_CARDS = [
   { num: '07', name: 'Operations',         desc: '12 deliverables · 3 due Friday',          color: 'var(--m7)', href: '/ops' },
   { num: '08', name: 'Your contributions', desc: '420 pts · 3 badges · top 25%',            color: 'var(--m8)', href: '/contributions' },
   { num: '09', name: 'Governance',         desc: '2 proposals open for your vote',          color: 'var(--m9)', href: '/governance' },
+  { num: '14', name: 'Events',             desc: 'Community calendar · open to everyone',   color: 'var(--m14)', href: '/events' },
   { num: '04', name: 'Blueprint pillars',  desc: 'Ecology 4 · Social 3 · Economy 2',        color: 'var(--m4)', href: '/blueprint' },
   { num: '01', name: 'Travel & visits',    desc: '3 explorers visiting next month',         color: 'var(--m1)', href: '/network' },
 ]
@@ -127,6 +130,7 @@ function TopBar({ name }: { name: string | null }) {
           <a className="lp-topnav-link" href="#blueprint">The project</a>
           <a className="lp-topnav-link" href="#join">Join</a>
           <a className="lp-topnav-link" href="#governance">Decide</a>
+          <a className="lp-topnav-link" href="#events">Events</a>
           {name ? (
             <Link className="lp-topnav-cta" href="/dashboard">Hi, {name} →</Link>
           ) : (
@@ -718,6 +722,33 @@ function GovernanceSection() {
   )
 }
 
+/* ── M14 Events ── */
+function EventsSection({ events }: { events: CalendarEvent[] }) {
+  return (
+    <section className="lp-section" id="events">
+      <SectionHead
+        mod="14" label="Events" color="var(--m14)"
+        h="Show up. Gather. Celebrate."
+        lead="Workdays, circle meetings, potlucks and celebrations all live on one community calendar. You can browse public events right now, no account needed."
+      />
+      <div style={{ marginTop: 28, maxWidth: 640, background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 12, padding: 22 }}>
+        <LinkedEventsList
+          events={events}
+          title="Coming up"
+          viewAllHref="/events?view=list"
+          addHref={null}
+          limit={4}
+          showKind
+          emptyText="Nothing on the public calendar yet — check back soon."
+        />
+        <div className="lp-cta-row" style={{ marginTop: 18 }}>
+          <Link className="lp-btn lp-btn-primary" href="/events">Open the calendar <Arrow /></Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ── Closing ── */
 function Closing({ name }: { name: string | null }) {
   return (
@@ -739,7 +770,7 @@ function Closing({ name }: { name: string | null }) {
 }
 
 /* ── Root ── */
-export default function LandingClient({ firstName, communityPurpose }: Props) {
+export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [] }: Props) {
   return (
     <div className="lp">
       <Hero name={firstName} communityPurpose={communityPurpose ?? null} />
@@ -751,6 +782,7 @@ export default function LandingClient({ firstName, communityPurpose }: Props) {
       <OpsSection />
       <ContributionsSection />
       <GovernanceSection />
+      <EventsSection events={upcomingEvents} />
       <Closing name={firstName} />
       <footer className="lp-footer">
         MyCoNet · MyCommunityNetwork · Regenerative Neighborhood Framework · Open sourced by The Regen Tribe Collective

@@ -1,5 +1,7 @@
 import { createClient } from '@/core/lib/supabase/server'
 import Link from 'next/link'
+import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
+import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type Values } from '@/modules/m04-blueprint/lib/blueprint-compute'
 
 const ROLE_LABELS: Record<string, string> = {
@@ -64,9 +66,16 @@ export default async function DashboardPage() {
       .select('id, title, created_at, user_profiles(first_name, last_name, username)')
       .order('created_at', { ascending: false })
       .limit(4),
+    // M14 — RLS limits visitors and explorers to public events
+    supabase.from('events')
+      .select(EVENT_SELECT)
+      .gte('starts_at', new Date(Date.now() - 86400000).toISOString())
+      .order('starts_at', { ascending: true })
+      .limit(10),
   ])
 
-  const [blueprintRes, memberCountRes, projectsRes, recentMembersRes, recentProjectsRes, openProposalsRes, recentProposalsRes, opsUpdatesRes, opsTasksRes, recentOffersRes, recentSeeksRes] = publicFetches
+  const [blueprintRes, memberCountRes, projectsRes, recentMembersRes, recentProjectsRes, openProposalsRes, recentProposalsRes, opsUpdatesRes, opsTasksRes, recentOffersRes, recentSeeksRes, upcomingEventsRes] = publicFetches
+  const upcomingEvents = (upcomingEventsRes.data ?? []).map(toEvent)
 
   let profile: any = null
   let application: any = null
@@ -145,6 +154,18 @@ export default async function DashboardPage() {
         ? `${openProposals} open proposal${openProposals !== 1 ? 's' : ''} · vote or comment`
         : 'No open proposals · submit one',
       color: 'var(--m9)', href: '/governance', locked: locked('member'),
+    },
+    {
+      num: '14', name: 'Events',
+      desc: upcomingEvents.length > 0
+        ? `${upcomingEvents.length} upcoming · RSVP or host one`
+        : 'Community calendar · host an event',
+      color: 'var(--m14)', href: '/events', locked: false,
+    },
+    {
+      num: '15', name: 'Bookings',
+      desc: atLeast(role, 'joining') ? 'Book accommodation, tools and spaces' : 'Browse shared accommodation, tools and spaces',
+      color: 'var(--m15)', href: '/bookings', locked: false,
     },
   ]
 
@@ -300,6 +321,18 @@ export default async function DashboardPage() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 10, padding: '16px 18px' }}>
+            <LinkedEventsList
+              events={upcomingEvents}
+              title="M14 · Upcoming events"
+              viewAllHref="/events?view=list"
+              addHref={atLeast(role, 'joining') ? '/events?new=1' : null}
+              limit={4}
+              showKind
+              emptyText="Nothing scheduled yet."
+            />
+          </div>
 
           <div style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 10, padding: '16px 18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>

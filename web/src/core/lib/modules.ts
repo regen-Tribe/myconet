@@ -86,4 +86,9 @@ export const MODULES: Module[] = [
     desc: 'Community calendar — core events from members and leads, community hosted events from anyone joining, with RSVPs.',
     icon: '🗓', color: '#0d9488', href: '/events', live: true,
   },
+  {
+    num: '15', name: 'Bookings',
+    desc: 'Shared inventory — book accommodation, tools and spaces. Admins and circle leads manage what can be booked.',
+    icon: '🔑', color: '#c2410c', href: '/bookings', live: true,
+  },
 ]

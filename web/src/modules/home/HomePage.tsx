@@ -2,6 +2,7 @@ import { createClient } from '@/core/lib/supabase/server'
 import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type Values } from '@/modules/m04-blueprint/lib/blueprint-compute'
 import { computeMatch } from '@/modules/m01-network/lib/match-score'
 import HomeClient from '@/modules/home/HomeClient'
+import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { isFullMember as checkFullMember } from '@/core/lib/roles'
 
 export default async function HomePage() {
@@ -16,6 +17,7 @@ export default async function HomePage() {
     projectsRes,
     activeProjectCountRes,
     deliverablesRes,
+    eventsRes,
   ] = await Promise.all([
     supabase.from('blueprints').select('answers, updated_at').eq('is_community', true).maybeSingle(),
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
@@ -33,6 +35,12 @@ export default async function HomePage() {
       .select('id, title, status, due_date, project_id, user_profiles(username)')
       .order('created_at', { ascending: false })
       .limit(5),
+    // M14 — logged-out visitors get public events only (RLS)
+    supabase.from('events')
+      .select(EVENT_SELECT)
+      .gte('starts_at', new Date(Date.now() - 86400000).toISOString())
+      .order('starts_at', { ascending: true })
+      .limit(10),
   ])
 
   const bp = blueprintRes.data as { answers: unknown; updated_at: string } | null
@@ -116,6 +124,7 @@ export default async function HomePage() {
       applicationStatus={applicationStatus}
       joiningRewardNew={joiningRewardNew}
       matchScores={matchScores}
+      upcomingEvents={(eventsRes.data ?? []).map(toEvent)}
     />
   )
 }

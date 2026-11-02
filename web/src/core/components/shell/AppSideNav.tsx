@@ -17,6 +17,7 @@ const MEMBER_MODULES = [
   { num: '07', name: 'Operations',    color: 'var(--m7)', href: '/ops' as string | null },
   { num: '08', name: 'Contributions', color: 'var(--m8)', href: '/contributions' as string | null },
   { num: '09', name: 'Governance',    color: 'var(--m9)', href: '/governance' as string | null },
+  { num: '15', name: 'Bookings',      color: 'var(--m15)', href: '/bookings' as string | null },
 ]
 
 function NavItem({ num, name, color, href, active, onClick }: {

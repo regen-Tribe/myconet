@@ -861,6 +861,7 @@ export default function ProjectDetailClient({
           <LinkedEventsList
             events={projectEvents}
             addHref={isJoiningOrAbove(userRole) ? `/events?new=1&project=${project.id}` : null}
+            hideWhenEmpty
           />
 
           {/* ── Updates feed ─────────────────────────────────────────────────── */}
