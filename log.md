@@ -2,7 +2,7 @@
 
 ---
 
-## 2026-11-01 — v3.56 — M14 Events calendar (committed 494ab87, deploy pending)
+## 2026-11-01 — v3.56 — M14 Events calendar (deployed, version de1a8588)
 
 - **DB** — `events` + `event_rsvps` (migration `supabase/migrations/20261101_m14_events.sql`, applied to vzgoulsqmhvhbjhzlzkf). `kind` = `core` (member+ posts) or `community` (joining+ posts); `is_public` shows to logged-out visitors; optional `circle`, `project_id`, `proposal_id`. Edit/delete: host, admin, or circle lead of the event's circle. RLS helpers `private.my_role()` / `private.my_lead_circles()` (security definer, private schema). Verified by impersonating zach (joining), oj (circle_lead), joe (explorer) and anon in a rolled-back block.
 - **UI** — `modules/m14-events/`: tabs Core events / Community hosted, Month / Week / List views, circle filter, event pop-up with RSVP (going/maybe) and two-step delete, create/edit form (core locked with an explanation for joining members). Deep links: `/events?event=<id>`, `?new=1&project=<id>`.
