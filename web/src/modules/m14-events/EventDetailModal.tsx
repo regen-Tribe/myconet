@@ -48,6 +48,7 @@ export function EventDetailModal({
   const [busy, setBusy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const color = eventColor(event)
+  const kindMeta = KIND_META[event.kind]
   const going = rsvps.filter(r => r.status === 'going')
   const maybe = rsvps.filter(r => r.status === 'maybe')
   const mine = userId ? rsvps.find(r => r.user_id === userId)?.status ?? null : null
@@ -125,15 +126,15 @@ export function EventDetailModal({
         )}
 
         <div>
-          <div style={sectionLabel}>Who’s coming</div>
+          <div style={sectionLabel}>{kindMeta.rsvpHeading}</div>
           {userId ? (
             <>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-                {rsvpBtn('going', 'Going')}
+                {rsvpBtn('going', kindMeta.goingLabel)}
                 {rsvpBtn('maybe', 'Maybe')}
               </div>
-              {going.length === 0 && maybe.length === 0 && <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>No one has RSVP’d yet.</div>}
-              {going.length > 0 && <div style={{ marginBottom: 8 }}><div style={{ fontSize: 12, color: 'var(--ink-3)', marginBottom: 6 }}>{going.length} going</div><PeopleChips people={going} /></div>}
+              {going.length === 0 && maybe.length === 0 && <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>{kindMeta.noneYet}</div>}
+              {going.length > 0 && <div style={{ marginBottom: 8 }}><div style={{ fontSize: 12, color: 'var(--ink-3)', marginBottom: 6 }}>{going.length} {kindMeta.goingCount}</div><PeopleChips people={going} /></div>}
               {maybe.length > 0 && <div><div style={{ fontSize: 12, color: 'var(--ink-3)', marginBottom: 6 }}>{maybe.length} maybe</div><PeopleChips people={maybe} /></div>}
             </>
           ) : (

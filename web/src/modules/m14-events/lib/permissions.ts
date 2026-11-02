@@ -1,15 +1,17 @@
 /**
  * Who can post and edit events. Mirrors the `events` RLS policies:
  *   - community events: joining members and above
- *   - core events: full members, leads, advisors, admins
+ *   - core events and tasks: full members, leads, advisors, admins
  *   - edit/delete: the creator, an admin, or a circle lead for the event's circle
  */
 
 import { isFullMember, isJoiningOrAbove } from '@/core/lib/roles'
 import type { CalendarEvent, EventKind } from '../types'
 
+export const EVENT_KINDS: EventKind[] = ['core', 'community', 'task']
+
 export function canCreateKind(kind: EventKind, role: string): boolean {
-  return kind === 'core' ? isFullMember(role) : isJoiningOrAbove(role)
+  return kind === 'community' ? isJoiningOrAbove(role) : isFullMember(role)
 }
 
 export function canEditEvent(
@@ -20,19 +22,31 @@ export function canEditEvent(
   return role === 'circle_lead' && !!e.circle && leadCircles.includes(e.circle)
 }
 
-export const KIND_META: Record<EventKind, { label: string; short: string; blurb: string }> = {
+/** Wording for each calendar; tasks use sign-up language instead of RSVP. */
+export const KIND_META: Record<EventKind, {
+  label: string; short: string; blurb: string
+  rsvpHeading: string; goingLabel: string; goingCount: string; youGoing: string; noneYet: string
+}> = {
   core: {
     label: 'Core events',
     short: 'Core',
     blurb: 'Official community events posted by members, circle leads and project leads.',
+    rsvpHeading: 'Who’s coming', goingLabel: 'Going', goingCount: 'going', youGoing: '✓ You’re going', noneYet: 'No one has RSVP’d yet.',
   },
   community: {
     label: 'Community hosted',
     short: 'Community',
     blurb: 'Events hosted by anyone in the community, including joining members.',
+    rsvpHeading: 'Who’s coming', goingLabel: 'Going', goingCount: 'going', youGoing: '✓ You’re going', noneYet: 'No one has RSVP’d yet.',
+  },
+  task: {
+    label: 'Tasks',
+    short: 'Task',
+    blurb: 'Things the community needs done, posted by members and leads. Sign up to help.',
+    rsvpHeading: 'Who’s helping', goingLabel: 'I’ll help', goingCount: 'helping', youGoing: '✓ You’re helping', noneYet: 'No one has signed up yet.',
   },
 }
 
 export function isEventKind(v: string | undefined): v is EventKind {
-  return v === 'core' || v === 'community'
+  return v === 'core' || v === 'community' || v === 'task'
 }

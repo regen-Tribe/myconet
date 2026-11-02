@@ -14,7 +14,7 @@ Each module is an independently workable feature of the MyCoNet platform. You ca
 | `m07-ops/` | M07 | `/ops` | Five-column Project Kanban with drag-and-drop and proposal-to-deliverable flow | Live |
 | `m08-contributions/` | M08 | `/contributions` | Achievement badges and contribution history | Live |
 | `m09-governance/` | M09 | `/governance` | Proposals, voting, and decision layers | Live |
-| `m14-events/` | M14 | `/events` | Community calendar — core + community hosted events, RSVPs, links to circles/projects/proposals | Live |
+| `m14-events/` | M14 | `/events` | Calendar — core events, community hosted events, tasks; RSVPs; links to circles/projects/proposals | Live |
 | `m15-bookings/` | M15 | `/bookings` | Shared inventory — accommodation, tools, spaces; admins/circle leads manage, joining+ book | Live |
 | `home/` | — | `/home` | Public and member-facing community landing page | Live |
 | `admin/` | — | `/admin/users` | Admin-only user editor (role + lead_circles) | Live |

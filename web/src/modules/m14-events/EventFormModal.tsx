@@ -5,7 +5,7 @@ import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
 import { ROLE_LABELS } from '@/core/lib/roles'
 import type { CalendarEvent, EventKind, LinkOption } from './types'
 import { toLocalDateInput, toLocalInput } from './lib/calendar'
-import { canCreateKind, KIND_META } from './lib/permissions'
+import { canCreateKind, EVENT_KINDS, KIND_META } from './lib/permissions'
 import { ModalShell } from '@/core/components/ModalShell'
 
 /** Columns written to `events` on create/update. */
@@ -59,7 +59,7 @@ export function EventFormModal({
   onSave: (payload: EventPayload) => Promise<string | null>
 }) {
   const canCore = canCreateKind('core', role)
-  const initialKind: EventKind = existing?.kind ?? (draft.kind === 'core' && canCore ? 'core' : 'community')
+  const initialKind: EventKind = existing?.kind ?? (draft.kind && draft.kind !== 'community' && canCore ? draft.kind : 'community')
 
   const [title, setTitle] = useState(existing?.title ?? '')
   const [kind, setKind] = useState<EventKind>(initialKind)
@@ -84,8 +84,8 @@ export function EventFormModal({
   const endDate = end.slice(0, 10)
 
   function pickKind(k: EventKind) {
-    if (k === 'core' && !canCore) {
-      setKindNote(`Core events are posted by full members, circle leads and project leads. You're a ${ROLE_LABELS[role] ?? 'Explorer'}, so you can post a community hosted event instead.`)
+    if (k !== 'community' && !canCore) {
+      setKindNote(`${KIND_META[k].label} are posted by full members, circle leads and project leads. You're a ${ROLE_LABELS[role] ?? 'Explorer'}, so you can post a community hosted event instead.`)
       return
     }
     setKindNote(null)
@@ -134,7 +134,7 @@ export function EventFormModal({
   }
 
   return (
-    <ModalShell title={existing ? 'Edit event' : 'New event'} onClose={onClose} maxWidth={560}>
+    <ModalShell title={existing ? (existing.kind === 'task' ? 'Edit task' : 'Edit event') : 'New event or task'} onClose={onClose} maxWidth={560}>
       <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
           <label style={labelStyle} htmlFor="ev-title">Title</label>
@@ -143,10 +143,10 @@ export function EventFormModal({
 
         <div>
           <span style={labelStyle}>Calendar</span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-            {(['core', 'community'] as EventKind[]).map(k => {
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8 }}>
+            {EVENT_KINDS.map(k => {
               const active = kind === k
-              const locked = k === 'core' && !canCore
+              const locked = k !== 'community' && !canCore
               return (
                 <button
                   key={k}

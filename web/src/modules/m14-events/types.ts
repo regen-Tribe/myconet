@@ -1,4 +1,4 @@
-export type EventKind = 'core' | 'community'
+export type EventKind = 'core' | 'community' | 'task'
 export type RsvpStatus = 'going' | 'maybe'
 
 export interface PersonLite {

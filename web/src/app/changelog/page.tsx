@@ -2,6 +2,16 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.58',
+    date: '2026-11-02',
+    title: 'M14 renamed Calendar; new Tasks tab',
+    items: [
+      'The Events module is now called Calendar in the sidebar, menus, dashboard and home pages. /calendar also works as an address.',
+      'New Tasks tab next to Core events and Community hosted: things the community needs done, posted by members, circle leads and project leads. Instead of Going/Maybe, people tap "I\'ll help" or "Maybe", and the task shows who\'s helping.',
+      'Joining members see Tasks locked in the form, with an explanation, the same as Core events.',
+    ],
+  },
+  {
     version: 'v3.57',
     date: '2026-11-01',
     title: 'M15 Bookings: shared accommodation, tools and spaces; upcoming events on Dashboard and Home',

@@ -34,7 +34,7 @@ const CH_CARDS = [
   { num: '07', name: 'Operations',         desc: '12 deliverables · 3 due Friday',          color: 'var(--m7)', href: '/ops' },
   { num: '08', name: 'Your contributions', desc: '420 pts · 3 badges · top 25%',            color: 'var(--m8)', href: '/contributions' },
   { num: '09', name: 'Governance',         desc: '2 proposals open for your vote',          color: 'var(--m9)', href: '/governance' },
-  { num: '14', name: 'Events',             desc: 'Community calendar · open to everyone',   color: 'var(--m14)', href: '/events' },
+  { num: '14', name: 'Calendar',           desc: 'Events and tasks · open to everyone',     color: 'var(--m14)', href: '/events' },
   { num: '04', name: 'Blueprint pillars',  desc: 'Ecology 4 · Social 3 · Economy 2',        color: 'var(--m4)', href: '/blueprint' },
   { num: '01', name: 'Travel & visits',    desc: '3 explorers visiting next month',         color: 'var(--m1)', href: '/network' },
 ]
@@ -130,7 +130,7 @@ function TopBar({ name }: { name: string | null }) {
           <a className="lp-topnav-link" href="#blueprint">The project</a>
           <a className="lp-topnav-link" href="#join">Join</a>
           <a className="lp-topnav-link" href="#governance">Decide</a>
-          <a className="lp-topnav-link" href="#events">Events</a>
+          <a className="lp-topnav-link" href="#events">Calendar</a>
           {name ? (
             <Link className="lp-topnav-cta" href="/dashboard">Hi, {name} →</Link>
           ) : (
@@ -727,7 +727,7 @@ function EventsSection({ events }: { events: CalendarEvent[] }) {
   return (
     <section className="lp-section" id="events">
       <SectionHead
-        mod="14" label="Events" color="var(--m14)"
+        mod="14" label="Calendar" color="var(--m14)"
         h="Show up. Gather. Celebrate."
         lead="Workdays, circle meetings, potlucks and celebrations all live on one community calendar. You can browse public events right now, no account needed."
       />

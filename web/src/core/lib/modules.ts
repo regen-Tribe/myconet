@@ -82,8 +82,8 @@ export const MODULES: Module[] = [
     icon: '⬡', color: '#0891b2', href: null, live: false,
   },
   {
-    num: '14', name: 'Events',
-    desc: 'Community calendar — core events from members and leads, community hosted events from anyone joining, with RSVPs.',
+    num: '14', name: 'Calendar',
+    desc: 'Community calendar — core events, community hosted events and tasks, with RSVPs and sign-ups.',
     icon: '🗓', color: '#0d9488', href: '/events', live: true,
   },
   {

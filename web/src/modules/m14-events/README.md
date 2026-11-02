@@ -1,9 +1,10 @@
-# M14 — Events
+# M14 — Calendar
 
-The community calendar. Two calendars side by side:
+The community calendar (labelled "Calendar" in the UI; route `/events`, with `/calendar` redirecting). Three calendars side by side:
 
 - **Core events** — official events, posted by full members, circle leads, project leads, advisors and admins
 - **Community hosted** — events anyone joining or above can post
+- **Tasks** — things the community needs done; same posting rule as core. RSVP reads "I'll help" / "Who's helping" (`KIND_META` holds the wording)
 
 ## What users see here
 
@@ -19,7 +20,7 @@ The community calendar. Two calendars side by side:
 |-------|------|
 | `/events` | `app/events/page.tsx` → `EventsClient` |
 
-Query params: `tab=core|community`, `view=month|week|list`, `event=<id>` (opens the pop-up), `new=1&project=<id>&proposal=<id>&circle=<pillar>` (opens a pre-filled form).
+Query params: `tab=core|community|task`, `view=month|week|list`, `event=<id>` (opens the pop-up), `new=1&project=<id>&proposal=<id>&circle=<pillar>` (opens a pre-filled form).
 
 ## Files
 
@@ -36,11 +37,11 @@ Query params: `tab=core|community`, `view=month|week|list`, `event=<id>` (opens 
 
 ## Database tables
 
-Migration: `supabase/migrations/20261101_m14_events.sql` (repo root).
+Migrations: `supabase/migrations/20261101_m14_events.sql`, `20261102_m14_event_tasks.sql` (repo root).
 
 | Table | Access |
 |-------|--------|
-| `events` | Read: public events for everyone, all events for joining+. Insert: community = joining+, core = full member+. Update/delete: host, admin, or circle lead of the event's circle |
+| `events` | Read: public events for everyone, all events for joining+. Insert: community = joining+, core and task = full member+. Update/delete: host, admin, or circle lead of the event's circle |
 | `event_rsvps` | One row per (event, user), status `going`/`maybe`. Signed-in users read; each user writes only their own |
 
 Policies use `private.my_role()` / `private.my_lead_circles()` (security definer, not exposed over the API).

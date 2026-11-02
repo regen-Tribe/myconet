@@ -6,7 +6,7 @@ import { createClient } from '@/core/lib/supabase/client'
 import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
 import type { CalendarEvent, EventKind, EventRsvp, EventsView, LinkOption, PersonLite, RsvpStatus } from './types'
 import { addDays, fmtMonthTitle, fmtWeekTitle, isPast, startOfDay } from './lib/calendar'
-import { canCreateKind, canEditEvent, KIND_META } from './lib/permissions'
+import { canCreateKind, canEditEvent, EVENT_KINDS, KIND_META } from './lib/permissions'
 import { EVENT_SELECT, toEvent } from './lib/queries'
 import { ListView, MonthView, WeekView } from './CalendarViews'
 import { EventDetailModal } from './EventDetailModal'
@@ -74,10 +74,9 @@ export default function EventsClient({
     return () => clearTimeout(t)
   }, [toast])
 
-  const counts = useMemo(() => ({
-    core: events.filter(e => e.kind === 'core' && now && !isPast(e, now)).length,
-    community: events.filter(e => e.kind === 'community' && now && !isPast(e, now)).length,
-  }), [events, now])
+  const counts = useMemo(() => Object.fromEntries(
+    EVENT_KINDS.map(k => [k, now ? events.filter(e => e.kind === k && !isPast(e, now)).length : 0]),
+  ) as Record<EventKind, number>, [events, now])
 
   const visible = events.filter(e => e.kind === tab && (!circleFilter || e.circle === circleFilter))
   const openEvent = openId ? events.find(e => e.id === openId) ?? null : null
@@ -170,19 +169,19 @@ export default function EventsClient({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m14) 10%, var(--surface))', color: 'var(--m14)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            Module 14 · Events
+            Module 14 · Calendar
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
             Community calendar
           </h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
-            {counts.core} core · {counts.community} community hosted · upcoming
+            {counts.core} core · {counts.community} community hosted · {counts.task} task{counts.task === 1 ? '' : 's'} · upcoming
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           {canPostCommunity ? (
             <button onClick={() => openNew()} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--m14)', border: 'none', borderRadius: 8, padding: '8px 16px', cursor: 'pointer' }}>
-              + New event
+              + New event or task
             </button>
           ) : userId ? (
             <Link href="/join" style={{ fontSize: 12, color: 'var(--ink-3)', maxWidth: 260, lineHeight: 1.45, textDecoration: 'none' }}>
@@ -204,7 +203,7 @@ export default function EventsClient({
 
       {/* ── Kind tabs ─────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--rule)', marginBottom: 8, overflowX: 'auto' }}>
-        {(['core', 'community'] as EventKind[]).map(k => (
+        {EVENT_KINDS.map(k => (
           <button key={k} onClick={() => setTab(k)} style={tabStyle(tab === k)}>
             {KIND_META[k].label}
             {counts[k] > 0 && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, color: 'var(--m14)' }}>{counts[k]}</span>}

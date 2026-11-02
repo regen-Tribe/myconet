@@ -2,6 +2,7 @@
 
 import { isPillar, PILLAR_META } from '@/core/lib/pillars'
 import type { CalendarEvent, EventRsvp } from './types'
+import { KIND_META } from './lib/permissions'
 import {
   DAY_LABELS, dayKey, fmtDayLong, fmtEventWhen, fmtTime, groupByDay, isPast,
   monthGrid, sameDay, startOfDay, weekDays,
@@ -218,8 +219,8 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
                     </div>
                   </div>
                   <div style={{ flexShrink: 0, textAlign: 'right', fontSize: 11, color: 'var(--ink-3)' }}>
-                    {going > 0 && <div>{going} going</div>}
-                    {mine && <div style={{ fontWeight: 700, color: 'var(--m14)' }}>{mine.status === 'going' ? '✓ You’re going' : 'Maybe'}</div>}
+                    {going > 0 && <div>{going} {KIND_META[e.kind].goingCount}</div>}
+                    {mine && <div style={{ fontWeight: 700, color: 'var(--m14)' }}>{mine.status === 'going' ? KIND_META[e.kind].youGoing : 'Maybe'}</div>}
                   </div>
                 </button>
               )

@@ -156,10 +156,10 @@ export default async function DashboardPage() {
       color: 'var(--m9)', href: '/governance', locked: locked('member'),
     },
     {
-      num: '14', name: 'Events',
+      num: '14', name: 'Calendar',
       desc: upcomingEvents.length > 0
-        ? `${upcomingEvents.length} upcoming · RSVP or host one`
-        : 'Community calendar · host an event',
+        ? `${upcomingEvents.length} upcoming · RSVP, help out or host`
+        : 'Events and tasks · host or help out',
       color: 'var(--m14)', href: '/events', locked: false,
     },
     {
@@ -325,7 +325,7 @@ export default async function DashboardPage() {
           <div style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 10, padding: '16px 18px' }}>
             <LinkedEventsList
               events={upcomingEvents}
-              title="M14 · Upcoming events"
+              title="M14 · Coming up on the calendar"
               viewAllHref="/events?view=list"
               addHref={atLeast(role, 'joining') ? '/events?new=1' : null}
               limit={4}
