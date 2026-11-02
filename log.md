@@ -2,6 +2,12 @@
 
 ---
 
+## 2026-11-02 — v3.58 — Calendar rename + Tasks tab (deployed, version b347f7cc)
+
+- M14 shown as **Calendar** everywhere (sidebar, top-bar menu, registry, dashboard, home, landing). Route stays `/events`; `/calendar` redirects with query params.
+- New event kind **`task`** (migration `20261102_m14_event_tasks.sql`): kind check widened; added insert policy "members can create tasks" (full members+) beside the existing one. `KIND_META` carries per-kind RSVP wording ("I'll help" / "Who's helping" for tasks). `EVENT_KINDS` drives tabs and the form.
+- Gotcha: Supabase MCP `apply_migration` auto-cancels statements that `drop policy` (confirmation can't show in this session). Add a new policy alongside instead; `alter table … drop constraint …, add constraint …` in one statement went through.
+
 ## 2026-11-01 — v3.57 — M15 Bookings + events on Dashboard/Home (deployed, version 7393335a)
 
 - **M15 Bookings** (`/bookings`, `modules/m15-bookings/`) — `booking_items` (category accommodation/tools/spaces, tags[], circle, location, capacity, requires_approval, is_active) and `bookings` (pending/confirmed/declined/cancelled). Migration `supabase/migrations/20261101_m15_bookings.sql`.
