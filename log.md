@@ -2,6 +2,14 @@
 
 ---
 
+## 2026-11-01 — v3.56 — M14 Events calendar (committed 494ab87, deploy pending)
+
+- **DB** — `events` + `event_rsvps` (migration `supabase/migrations/20261101_m14_events.sql`, applied to vzgoulsqmhvhbjhzlzkf). `kind` = `core` (member+ posts) or `community` (joining+ posts); `is_public` shows to logged-out visitors; optional `circle`, `project_id`, `proposal_id`. Edit/delete: host, admin, or circle lead of the event's circle. RLS helpers `private.my_role()` / `private.my_lead_circles()` (security definer, private schema). Verified by impersonating zach (joining), oj (circle_lead), joe (explorer) and anon in a rolled-back block.
+- **UI** — `modules/m14-events/`: tabs Core events / Community hosted, Month / Week / List views, circle filter, event pop-up with RSVP (going/maybe) and two-step delete, create/edit form (core locked with an explanation for joining members). Deep links: `/events?event=<id>`, `?new=1&project=<id>`.
+- **Links** — project pages show upcoming linked events with "+ Add event". Sidebar + top-bar menu entries; module registry entry `14`; color `--m14` #0d9488.
+- **Gotchas** — `current_role` is a reserved word (don't name a function that); `circle = any((select fn()))` fails with text = text[], use `any(fn())`. Calendar renders after mount because dates are viewer-local.
+- **Not done** — recurring events, .ics export, events on M09 proposal cards; logged-in flows not browser-tested (no test account). Pre-existing hydration error from nested `<a>` (version badge inside logo link) in `AppTopBar`.
+
 ## 2026-10-29 — v3.55 — M07: blocked moves explain themselves + Circles tab
 
 Prompted by a circle_lead (`oj`: hardware/economy/tech) who couldn't drag a humanware card and got no explanation, then edited it from project settings, which showed a save but changed nothing (RLS returned 0 rows, no error, and the code never checked).
