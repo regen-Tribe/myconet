@@ -2,6 +2,17 @@
 
 ---
 
+## 2026-11-01 — v3.57 — M15 Bookings + events on Dashboard/Home (deployed, version 7393335a)
+
+- **M15 Bookings** (`/bookings`, `modules/m15-bookings/`) — `booking_items` (category accommodation/tools/spaces, tags[], circle, location, capacity, requires_approval, is_active) and `bookings` (pending/confirmed/declined/cancelled). Migration `supabase/migrations/20261101_m15_bookings.sql`.
+  - Admins add anywhere; circle leads add with no circle or in circles they lead; `private.can_manage_item()` = admin, or circle lead when item has no circle / is in their circles / they added it.
+  - Joining+ book; explorers browse only; visitors see active items, no bookings.
+  - `bookings_no_overlap` exclusion constraint (btree_gist) on pending+confirmed; `bookings_guard` trigger sets status from `requires_approval`, blocks archived items, limits non-managers to cancelling, stamps `decided_by`.
+  - Verified with zach / oj / joe / anon in a rolled-back block.
+- **Events everywhere** — `LinkedEventsList` generalized (title, view-all, limit, kind tag); dashboard "M14 · Upcoming events" card + M14/M15 module cards; Events section on `/home` and the public landing (`/`, logged-out). New events default to public.
+- `ModalShell` moved to `core/components/ModalShell.tsx`.
+- **Not done** — booking notifications, multi-unit items (one row per thing), signed-in flows not browser-tested.
+
 ## 2026-11-01 — v3.56 — M14 Events calendar (deployed, version de1a8588)
 
 - **DB** — `events` + `event_rsvps` (migration `supabase/migrations/20261101_m14_events.sql`, applied to vzgoulsqmhvhbjhzlzkf). `kind` = `core` (member+ posts) or `community` (joining+ posts); `is_public` shows to logged-out visitors; optional `circle`, `project_id`, `proposal_id`. Edit/delete: host, admin, or circle lead of the event's circle. RLS helpers `private.my_role()` / `private.my_lead_circles()` (security definer, private schema). Verified by impersonating zach (joining), oj (circle_lead), joe (explorer) and anon in a rolled-back block.
