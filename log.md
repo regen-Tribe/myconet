@@ -2,6 +2,9 @@
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-11-02 — v3.58 — Calendar rename + Tasks tab (deployed, version b347f7cc)
 
 - M14 shown as **Calendar** everywhere (sidebar, top-bar menu, registry, dashboard, home, landing). Route stays `/events`; `/calendar` redirects with query params.
@@ -39,11 +42,17 @@ Prompted by a circle_lead (`oj`: hardware/economy/tech) who couldn't drag a huma
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-10-29 — Fixed M01 travel match scoring (date tiers never fired)
 
 `match-score.ts` read `from_date` / `to_date` from `user_bio.places_traveling`, but the profile editor (and both profile views) write `startDate` / `endDate`. Every travel match fell through to the flat 4-pt "same destination" tier; the 10-pt (overlapping dates) and 6-pt (within 30 days) tiers never fired. The scorer now reads `startDate` / `endDate`. Verified all three tiers with sample plans. No DB change.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-10-29 — DB only (no version bump) — Fixed `projects` RLS: circle_leads couldn't create or move projects
 
@@ -73,6 +82,9 @@ No application code changed and no deploy was needed.
 - **No DELETE policy on `projects`** — nobody, admins included, can delete a project.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-23 — v3.45 — M01 Members module restyled to match the dashboard + DESIGN-SYSTEM.md
 
@@ -111,6 +123,9 @@ All restyled pages use the same patterns:
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-05-23 — v3.44 — Version badge on landing page, single VERSION constant, changelog backfill
 
 The version label that lives under the logo (and links to `/changelog`) was only rendered inside the logged-in `AppTopBar`, so guests visiting the public landing page never saw which build they were looking at. Fixed it on the public side, and extracted the version string into one shared module so a bump is one line going forward.
@@ -123,6 +138,9 @@ The version label that lives under the logo (and links to `/changelog`) was only
 - **README.md** — added a Changelog link to the Links section pointing to `https://myconet.correa-oscar11.workers.dev/changelog` + the source file path.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-23 — v3.43 — M01 shell consistency across all /network/* and /u/* pages
 
@@ -142,6 +160,9 @@ The `/network` dashboard had a different layout than `/u/[username]` — flat ce
 Visitors without a session see the sidebar's "Sign in" button and the right panel's "Join MyCoNet" CTA — same as `/u/[username]` already did for guests.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-23 — v3.42 — M01 matching v2, root docs consolidation
 
@@ -191,6 +212,9 @@ Two May 8/9 planning docs were sitting at the repo root, partly superseded but e
 - Restored `archive/Modules/design_handoff_portal_explainer/` (268 KB, 10 files) — `DOCS.md` was already pointing to it but the dir was untracked. This is the original design spec that produced the now-live `/home` Portal Explainer.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-23 — v3.41 — Unified Project Kanban, circles, drag-and-drop, admin users editor
 
@@ -251,6 +275,9 @@ Big PM-pass restructure of M07 Operations. The board now has a single mental mod
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-05-21 — v3.10 — Match scoring, AppTopBar dropdown, Home access tiers, Governance 4-layer demo
 
 This session wired real computed match scores across the network, upgraded the top bar to a full dropdown menu, added a role-aware access tiers explainer to /home, and replaced the governance placeholder with a proper 4-layer interactive demo.
@@ -293,6 +320,9 @@ This session wired real computed match scores across the network, upgraded the t
 - Server component now fetches `community_values` and a sample of buddy profiles for all visitors (not just logged-in users), so the multi-step join flow renders correctly for guests.
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-21 — v3.01 — AppShell, M08 achievements, M09 governance, /home portal explainer
 
@@ -340,6 +370,9 @@ This session extended the platform from M07 → M09, added a persistent app shel
 - Version tag `v3.01` added below logo in AppTopBar
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-15 — UX polish, guest access, visual identity system
 
@@ -411,6 +444,9 @@ The main landing page (`/`) was generic copy. Replaced with a storytelling flow:
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-05-14 — Conflict-aware AI review panel
 
 ### Blueprint — AI import conflict resolution
@@ -420,6 +456,9 @@ The main landing page (`/`) was generic copy. Replaced with a storytelling flow:
 - Non-conflict fields (AI-only answers) retain the existing accept/reject toggle behavior
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-14 — PDF upload, nav links, admin review panels
 
@@ -510,6 +549,9 @@ Black → Brown → Red → Orange → Yellow → Green → Blue → Indigo → 
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-05-10 — Execution Plan Created
 
 ### Stack decision
@@ -519,6 +561,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 - `EXECUTION-PLAN.md` v1.0 — Phase-by-phase build plan
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-05-08 — Module Structure Updated to 14 Modules (00–13)
 
@@ -538,6 +583,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 
 ---
 
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
+
 ## 2026-04-13 — Executive Summary Created
 
 - Created `EXECUTIVE-SUMMARY.md` — comprehensive feature breakdown
@@ -545,6 +593,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 - Modular Monolith chosen over microservices — complexity should match maturity
 
 ---
+
+## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
+
 
 ## 2026-04-11 — Project Start
 
