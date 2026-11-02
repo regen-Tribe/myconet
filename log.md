@@ -2,6 +2,12 @@
 
 ---
 
+## 2026-11-02 — v3.60 — Bookings split: M15 Accommodation + M16 Resources (deployed, 0630b85f)
+
+- **M15 Accommodation** `/stays` (accommodation only) and **M16 Resources** `/bookings` (tools + spaces; `/resources` redirects). Same tables and rules; one `BookingsClient` with `scope`, configured by `SCOPE_META` (num, label, route, accent via `--bk-accent`, categories). Shared loader `modules/m15-bookings/BookingsPage.tsx` (`renderBookings`) — page.tsx files can't export helpers.
+- Each page filters items, My bookings, pending requests and the Manage list to its categories; the add-item form only offers that scope's categories. `/bookings?category=accommodation` redirects to `/stays`.
+- Sidebar: Calendar → Accommodation → Resources. Dashboard cards and top-bar menu updated; `--m16: #4d7c0f`.
+
 ## 2026-11-02 — v3.59 — Bookings moved under Calendar in the sidebar (deployed, f4c06804)
 
 
