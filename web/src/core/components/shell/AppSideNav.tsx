@@ -10,6 +10,7 @@ const CLUBHOUSE = [
   { num: '04', name: 'Blueprint',   color: 'var(--m4)',  href: '/blueprint' },
   { num: '05', name: 'Join',        color: 'var(--m5)',  href: '/join' },
   { num: '14', name: 'Calendar',    color: 'var(--m14)', href: '/events' },
+  { num: '15', name: 'Bookings',    color: 'var(--m15)', href: '/bookings' },
 ] as const
 
 const MEMBER_MODULES = [
@@ -17,7 +18,6 @@ const MEMBER_MODULES = [
   { num: '07', name: 'Operations',    color: 'var(--m7)', href: '/ops' as string | null },
   { num: '08', name: 'Contributions', color: 'var(--m8)', href: '/contributions' as string | null },
   { num: '09', name: 'Governance',    color: 'var(--m9)', href: '/governance' as string | null },
-  { num: '15', name: 'Bookings',      color: 'var(--m15)', href: '/bookings' as string | null },
 ]
 
 function NavItem({ num, name, color, href, active, onClick }: {

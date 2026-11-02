@@ -2,6 +2,14 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.59',
+    date: '2026-11-02',
+    title: 'Sidebar: Bookings sits under Calendar',
+    items: [
+      'M15 Bookings moved up in the sidebar to sit directly under M14 Calendar.',
+    ],
+  },
+  {
     version: 'v3.58',
     date: '2026-11-02',
     title: 'M14 renamed Calendar; new Tasks tab',
