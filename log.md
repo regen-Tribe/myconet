@@ -2,6 +2,21 @@
 
 ---
 
+## 2026-11-02 — v3.61 — Audit: security hardening, live stats, cleanup (deployed, f260d0b8)
+
+Full-app audit; fixed items 1–13, left 14–15 open.
+- **Security (DB, `20261102_security_hardening.sql`)** — all added as new triggers/RESTRICTIVE policies (the MCP auto-cancels `drop policy`):
+  - `guard_profile_privileges` trigger: only admins / trusted server code change `role` or `lead_circles` (any user could self-promote to admin — confirmed with joe). Inserts from the API are forced to explorer.
+  - `promote_to_member_if_eligible()` RPC replaces the client-side role update in `core/lib/promotions.ts`.
+  - Deliverables: insert/update/delete need `private.can_manage_project()` (ops leads or project creator/lead). `del_write_auth` had allowed any signed-in user.
+  - Proposals need full members; `proposal_votes` layers: sociocracy = circle_lead, democracy = full member, merit = advisor/admin.
+  - Applications: only admins set a non-pending status. Achievements: only earned keys.
+- **Security (app)** — `/api/scan` requires admin/circle lead and caps prompts at 25k chars (it forwarded raw prompts — an open LLM proxy). `/api/governance/ai-check` requires sign-in and truncates input.
+- **Bugs** — `.eq('status','active')` on projects (no such status) on dashboard/home/landing → `ACTIVE_PROJECT_STATUSES`. Advisors locked out (dashboard rank list) → `roleAtLeast()` in roles.ts. Email signups went to `/onboarding`, which wrote non-existent columns → now `/profile/edit`; `/onboarding` redirects. Nested `<Link>` in AppTopBar (hydration error on every page) un-nested.
+- **Placeholders** — dashboard "+4 this week"/"2 need help" and landing "38 members", "420 pts", footer "v3.0" now live counts / VERSION; landing demo profiles labelled "Example profiles".
+- **Cleanup** — removed Nav, ModuleHeader, ui/tabs, NetworkRightPanel, DashCardTooltip, landing TopBar, `@radix-ui/react-tabs`. Added `eslint.config.mjs` (house-style rules off; 0 errors, 45 warnings). Fixed Blueprint component-in-render, `require()`, `<a href="/">`. Root `.gitignore` for `.DS_Store`.
+- **Still open** — notifications (bookings/events); pre-existing Supabase advisor warnings (mutable search_path on old functions, `is_admin`/`handle_new_user`/`rls_auto_enable` exposed via RPC, leaked-password protection off); 45 lint warnings (unused vars, hook deps).
+
 ## 2026-11-02 — v3.60 — Bookings split: M15 Accommodation + M16 Resources (deployed, 0630b85f)
 
 - **M15 Accommodation** `/stays` (accommodation only) and **M16 Resources** `/bookings` (tools + spaces; `/resources` redirects). Same tables and rules; one `BookingsClient` with `scope`, configured by `SCOPE_META` (num, label, route, accent via `--bk-accent`, categories). Shared loader `modules/m15-bookings/BookingsPage.tsx` (`renderBookings`) — page.tsx files can't export helpers.
