@@ -170,21 +170,21 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen }: {
         <span>Modules</span>
       </button>
 
-      {/* Brand */}
-      <Link href="/home" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
-        <div style={{
+      {/* Brand — logo/name and the version badge are sibling links (links can't nest) */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        <Link href="/home" aria-label="MyCoNet home" style={{
           width: 26, height: 26, borderRadius: 7, flexShrink: 0,
           background: 'radial-gradient(circle at 30% 30%, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, #000))',
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,.3)',
         }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href="/home" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>MyCoNet</span>
             <span className="topbar-brand-sub" style={{ color: 'var(--ink-4)', fontWeight: 400, fontSize: 14 }}>/</span>
             <span className="topbar-brand-sub" style={{ fontFamily: 'var(--mono)', fontSize: 11.5, fontWeight: 500, color: 'var(--ink-3)' }}>
               MyCommunityNetwork
             </span>
-          </div>
+          </Link>
           <Link href="/changelog" style={{ textDecoration: 'none' }}
             onMouseEnter={e => (e.currentTarget.querySelector('span')!.style.background = 'color-mix(in srgb, var(--accent-color) 18%, var(--bg-2))')}
             onMouseLeave={e => (e.currentTarget.querySelector('span')!.style.background = 'var(--bg-2)')}>
@@ -200,7 +200,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen }: {
             </span>
           </Link>
         </div>
-      </Link>
+      </div>
 
       {/* Search */}
       <div className="topbar-search" style={{

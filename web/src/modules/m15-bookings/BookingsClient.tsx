@@ -140,7 +140,7 @@ export default function BookingsClient({
     const saved = toItem(data)
     if (!CATEGORIES.includes(saved.category)) {
       // Added from the other page's category — send them where it lives
-      window.location.href = `${SCOPE_META[scopeForCategory(saved.category)].path}?item=${saved.id}`
+      window.location.assign(`${SCOPE_META[scopeForCategory(saved.category)].path}?item=${saved.id}`)
       return null
     }
     setItems(list => [...list, saved])

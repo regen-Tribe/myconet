@@ -2,17 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/core/lib/supabase/server'
 
 export async function POST(req: NextRequest) {
+  // Signed-in users only, so the AI key can't be used anonymously
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ confidence: 75, reasoning: 'Sign in to see the AI check.' }, { status: 401 })
+
   const apiKey = process.env.MINIMAX_API_KEY
   if (!apiKey) return NextResponse.json({ confidence: 75, reasoning: 'AI check not configured.' })
 
   let body: { title?: string; description?: string | null }
   try { body = await req.json() } catch { return NextResponse.json({ confidence: 75, reasoning: 'Invalid request.' }) }
 
-  const { title, description } = body
+  const title = typeof body.title === 'string' ? body.title.slice(0, 300) : ''
+  const description = typeof body.description === 'string' ? body.description.slice(0, 4000) : null
   if (!title) return NextResponse.json({ confidence: 75, reasoning: 'No proposal title provided.' })
 
   // Fetch community blueprint to compare against
-  const supabase = await createClient()
   const { data: bp } = await supabase
     .from('blueprints')
     .select('answers')

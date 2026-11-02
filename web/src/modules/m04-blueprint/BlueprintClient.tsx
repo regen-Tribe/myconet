@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
 import { FW_DATA, PILLAR_STEPS, type StepDef, type PhaseDef, type GuideContent } from '@/modules/m04-blueprint/lib/wizard-data'
 import { computePillarScores, computeGatesPassed, computePhaseProgress, type Values as SharedValues } from '@/modules/m04-blueprint/lib/blueprint-compute'
@@ -947,7 +948,8 @@ function StepView({ step, phase, values, onField, onSlider, onCheck, onNext, onP
     return <GateView step={step} phase={phase} values={values} onPrev={onPrev} onNext={onNext} />
   }
 
-  const ImportButton = ({ section }: { section: string }) => (
+  // A render helper, not a component — a component defined here would remount every render
+  const importButton = (section: string) => (
     <button className="btn-section-import" onClick={() => onImport(step, section)}
       title="Use AI to fill this section from a document">
       <span className="btn-section-import-icon">✨</span>
@@ -967,7 +969,7 @@ function StepView({ step, phase, values, onField, onSlider, onCheck, onNext, onP
           <div className="section-head">
             <div className="section-title">Reflect &amp; record</div>
             <div className="section-meta-row">
-              <ImportButton section="fields" />
+              {importButton('fields')}
               <span className="section-meta">Saved automatically</span>
             </div>
           </div>
@@ -983,7 +985,7 @@ function StepView({ step, phase, values, onField, onSlider, onCheck, onNext, onP
           <div className="section-head">
             <div className="section-title">Checklist</div>
             <div className="section-meta-row">
-              <ImportButton section="checklist" />
+              {importButton('checklist')}
               <span className="section-meta">{step.checklist.filter(c => values[c.id]).length} / {step.checklist.length}</span>
             </div>
           </div>
@@ -996,7 +998,7 @@ function StepView({ step, phase, values, onField, onSlider, onCheck, onNext, onP
           <div className="section-head">
             <div className="section-title">Self-assessment</div>
             <div className="section-meta-row">
-              <ImportButton section="sliders" />
+              {importButton('sliders')}
               <span className="section-meta">Drag to score 0–10</span>
             </div>
           </div>
@@ -1599,13 +1601,13 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
     readOnly || Object.keys(initialAnswers).length > 0 ? 'dashboard' : 'welcome'
   )
 
-  const supabase = createClient()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const save = useCallback(
-    debounce(async (vals: Values) => {
-      await supabase.from('blueprints').update({ answers: vals }).eq('id', blueprintId)
+  // One debounced saver per blueprint; it creates its own client so it doesn't
+  // depend on a value that changes every render
+  const save = useMemo(
+    () => debounce(async (vals: Values) => {
+      await createClient().from('blueprints').update({ answers: vals }).eq('id', blueprintId)
     }, 1800),
-    [blueprintId]
+    [blueprintId],
   )
 
   useEffect(() => {
@@ -1644,12 +1646,12 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
 
   const handlePrint = () => {
     setShowDoc(false)
-    setTimeout(() => {
+    setTimeout(async () => {
       const printDiv = document.createElement('div')
       printDiv.id = '__print_root'
       printDiv.style.cssText = 'position:fixed;inset:0;background:white;z-index:9999;overflow:auto;padding:32px 48px;font-family:sans-serif;color:#0a0a0a;'
       document.body.appendChild(printDiv)
-      const { createRoot } = require('react-dom/client') as typeof import('react-dom/client')
+      const { createRoot } = await import('react-dom/client')
       const root = createRoot(printDiv)
       root.render(<DocBody values={values} />)
       setTimeout(() => {
@@ -1702,10 +1704,10 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
             <span>{tab === 'nav' ? 'Steps' : tab === 'content' ? 'Content' : 'Radar'}</span>
           </button>
         ))}
-        <a href="/" className="mobile-tab" style={{ textDecoration: 'none' }}>
+        <Link href="/" className="mobile-tab" style={{ textDecoration: 'none' }}>
           <span className="mobile-tab-icon">⌂</span>
           <span>Home</span>
-        </a>
+        </Link>
       </nav>
 
       <div className="app">
@@ -1726,7 +1728,7 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
             </div>
           </div>
 
-          <a href="/" className="home-link">← Home</a>
+          <Link href="/" className="home-link">← Home</Link>
 
           <ul className="phase-list">
             <li className={`step${currentId === 'welcome' ? ' active' : ''}`}
@@ -1849,7 +1851,7 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
                   if (confirm('Reset all wizard data? This cannot be undone.')) {
                     setValues({})
                     setCurrentId('welcome')
-                    supabase.from('blueprints').update({ answers: {}, flags: {} }).eq('id', blueprintId)
+                    createClient().from('blueprints').update({ answers: {}, flags: {} }).eq('id', blueprintId)
                   }
                 }}>
                 Reset progress

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/core/lib/supabase/server'
+import { isCircleAdmin } from '@/core/lib/roles'
 
 function extractJSON(content: string): string | null {
   // Strip complete <think>...</think> blocks first
@@ -27,7 +29,19 @@ function extractJSON(content: string): string | null {
   return null
 }
 
+// Blueprint chunks are 15k chars plus the instruction template
+const MAX_PROMPT_CHARS = 25000
+
 export async function POST(req: NextRequest) {
+  // Only blueprint managers may spend AI credits here — this endpoint forwards a raw prompt
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Sign in to use the AI scan.' }, { status: 401 })
+  const { data: profile } = await supabase.from('user_profiles').select('role').eq('id', user.id).maybeSingle()
+  if (!isCircleAdmin(profile?.role ?? '')) {
+    return NextResponse.json({ error: 'Only admins and circle leads can run the AI scan.' }, { status: 403 })
+  }
+
   const apiKey = process.env.MINIMAX_API_KEY
   if (!apiKey) {
     return NextResponse.json({ error: 'MINIMAX_API_KEY not configured.' }, { status: 500 })
@@ -43,6 +57,9 @@ export async function POST(req: NextRequest) {
   const { prompt } = body
   if (!prompt || typeof prompt !== 'string') {
     return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
+  }
+  if (prompt.length > MAX_PROMPT_CHARS) {
+    return NextResponse.json({ error: 'Prompt too long.' }, { status: 413 })
   }
 
   const callMiniMax = async () => fetch('https://api.minimax.io/v1/chat/completions', {

@@ -12,7 +12,6 @@ core/
 │   │   ├── AppSideNav.tsx     Left sidebar — module links gated by role
 │   │   └── AppShell.tsx       Root layout wrapper that receives role from server
 │   ├── ui/             shadcn/ui primitives (Button, Card, Dialog, etc.)
-│   ├── ModuleHeader.tsx  Colored module banner with number + description
 │   ├── Nav.tsx           Legacy nav bar (used on landing page)
 │   └── ThemeToggle.tsx   Light/dark mode switch
 ├── contexts/
@@ -71,7 +70,7 @@ Constants `MEMBER_ROLES` and `JOINING_OR_ABOVE` are also exported for use in `.f
 
 ## Member promotion (`core/lib/promotions.ts`)
 
-`promoteToMemberIfEligible(supabase, userId, currentRole)` — called in server pages for `joining` users. Checks in parallel whether the user has an accepted agreement **or** an active project. If either condition is met, it updates `user_profiles.role` to `'member'` and upserts the `community_member` achievement, then returns the new role string.
+`promoteToMemberIfEligible(supabase, userId, currentRole)` — called in server pages for `joining` users. Calls the `promote_to_member_if_eligible()` database function, which checks for an accepted agreement **or** a project of theirs that's on the board, sets `role = 'member'` and awards `community_member`, then returns the new role string. It runs in the database because a trigger (`guard_profile_privileges`) stops users changing their own role.
 
 ```ts
 role = await promoteToMemberIfEligible(supabase, user.id, role)

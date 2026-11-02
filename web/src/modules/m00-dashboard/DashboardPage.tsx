@@ -1,23 +1,12 @@
 import { createClient } from '@/core/lib/supabase/server'
 import Link from 'next/link'
+import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
+import { ROLE_LABELS, roleAtLeast } from '@/core/lib/roles'
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type Values } from '@/modules/m04-blueprint/lib/blueprint-compute'
 
-const ROLE_LABELS: Record<string, string> = {
-  explorer:     'Explorer',
-  joining:      'Joining',
-  member:       'Member',
-  circle_lead:  'Circle Lead',
-  project_lead: 'Project Lead',
-  admin:        'Admin',
-}
-
-const ROLE_ORDER = ['explorer', 'joining', 'member', 'circle_lead', 'project_lead', 'admin']
-const roleRank = (r: string) => ROLE_ORDER.indexOf(r)
-function atLeast(userRole: string, minRole: string) {
-  return roleRank(userRole) >= roleRank(minRole)
-}
+const atLeast = roleAtLeast
 
 type ModuleCard = {
   num: string
@@ -36,7 +25,7 @@ export default async function DashboardPage() {
   const publicFetches = await Promise.all([
     supabase.from('blueprints').select('answers, flags, updated_at').eq('is_community', true).maybeSingle(),
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
-    supabase.from('projects').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    supabase.from('projects').select('id', { count: 'exact', head: true }).in('status', [...ACTIVE_PROJECT_STATUSES]),
     supabase.from('user_profiles')
       .select('id, first_name, last_name, username, avatar_url, created_at')
       .order('created_at', { ascending: false })
@@ -66,6 +55,10 @@ export default async function DashboardPage() {
       .select('id, title, created_at, user_profiles(first_name, last_name, username)')
       .order('created_at', { ascending: false })
       .limit(4),
+    supabase.from('user_profiles').select('id', { count: 'exact', head: true })
+      .gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
+    supabase.from('projects').select('id', { count: 'exact', head: true })
+      .in('status', [...ACTIVE_PROJECT_STATUSES]).eq('open_for_collaborators', true),
     // M14 — RLS limits visitors and explorers to public events
     supabase.from('events')
       .select(EVENT_SELECT)
@@ -74,7 +67,9 @@ export default async function DashboardPage() {
       .limit(10),
   ])
 
-  const [blueprintRes, memberCountRes, projectsRes, recentMembersRes, recentProjectsRes, openProposalsRes, recentProposalsRes, opsUpdatesRes, opsTasksRes, recentOffersRes, recentSeeksRes, upcomingEventsRes] = publicFetches
+  const [blueprintRes, memberCountRes, projectsRes, recentMembersRes, recentProjectsRes, openProposalsRes, recentProposalsRes, opsUpdatesRes, opsTasksRes, recentOffersRes, recentSeeksRes, newMembersRes, needHelpRes, upcomingEventsRes] = publicFetches
+  const newMembersThisWeek = newMembersRes.count ?? 0
+  const projectsNeedingHelp = needHelpRes.count ?? 0
   const upcomingEvents = (upcomingEventsRes.data ?? []).map(toEvent)
 
   let profile: any = null
@@ -293,7 +288,7 @@ export default async function DashboardPage() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 20 }}>
-        <StatCard label="Members" value={String(memberCount)} delta="+4 this week" href="/network" />
+        <StatCard label="Members" value={String(memberCount)} delta={newMembersThisWeek > 0 ? `+${newMembersThisWeek} this week` : 'none new this week'} href="/network" />
         <StatCard
           label="Blueprint readiness"
           value={overall !== null ? `${overall.toFixed(1)}` : '—'}
@@ -302,7 +297,7 @@ export default async function DashboardPage() {
           deltaColor="var(--m4)"
           href="/blueprint"
         />
-        <StatCard label="Open projects" value={String(activeProjects)} delta={activeProjects > 0 ? `${Math.min(activeProjects, 2)} need help` : 'None yet'} href="/ops" />
+        <StatCard label="Open projects" value={String(activeProjects)} delta={activeProjects === 0 ? 'None yet' : projectsNeedingHelp > 0 ? `${projectsNeedingHelp} open to collaborators` : 'none need help right now'} href="/ops" />
         <StatCard
           label="Open proposals"
           value={String(openProposals)}

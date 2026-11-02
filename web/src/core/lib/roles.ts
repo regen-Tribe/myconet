@@ -27,6 +27,15 @@ export const isCircleLead = (role: string): boolean => role === 'circle_lead'
 export const isAdvisorOrAdmin = (role: string): boolean =>
   ['advisor', 'admin'].includes(role)
 
+// Seniority for "at least X" checks. Advisors sit with full members; the two
+// lead roles share a rank because neither outranks the other.
+const ROLE_RANK: Record<string, number> = {
+  explorer: 0, joining: 1, member: 2, advisor: 2, project_lead: 3, circle_lead: 3, admin: 4,
+}
+
+export const roleAtLeast = (role: string, minRole: string): boolean =>
+  (ROLE_RANK[role] ?? 0) >= (ROLE_RANK[minRole] ?? 0)
+
 // Display names for user_profiles.role
 export const ROLE_LABELS: Record<string, string> = {
   explorer: 'Explorer',

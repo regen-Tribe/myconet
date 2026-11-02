@@ -22,7 +22,7 @@ export default async function GovernancePage() {
       .in('role', [...MEMBER_ROLES]),
   ])
 
-  let myVotes: Record<string, Record<string, string>> = {} // { proposalId: { layer: vote } }
+  const myVotes: Record<string, Record<string, string>> = {} // { proposalId: { layer: vote } }
   let isFullMember = false
   let role = 'explorer'
 

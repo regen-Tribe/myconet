@@ -21,7 +21,6 @@ Community heads-up display. Shows live community stats, module entry points, and
 | File | Purpose |
 |------|---------|
 | `DashboardPage.tsx` | Server Component — all data fetches + full render (stat cards, module grid, activity feed) |
-| `DashCardTooltip.tsx` | Client Component — hover tooltip wrapper for dashboard stat cards |
 
 ## Database tables
 

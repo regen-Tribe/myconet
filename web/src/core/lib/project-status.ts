@@ -33,9 +33,12 @@ export const PROJECT_STATUS_META: Record<string, { label: string; color: string 
   paused:      { label: 'Paused',      color: '#f59e0b' },
 }
 
+/** Statuses of projects that are actively being worked — for `.in('status', …)` queries. */
+export const ACTIVE_PROJECT_STATUSES = ['backlog', 'in_progress', 'review'] as const
+
 /** True when a project is in a state where it's actively being worked. */
 export function isActiveProject(status: string): boolean {
-  return status === 'backlog' || status === 'in_progress' || status === 'review'
+  return (ACTIVE_PROJECT_STATUSES as readonly string[]).includes(status)
 }
 
 /** True when a project is open enough that members can still propose collaboration. */

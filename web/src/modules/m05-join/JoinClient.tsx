@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { isJoiningOrAbove } from '@/core/lib/roles'
 import { createClient } from '@/core/lib/supabase/client'
 import Link from 'next/link'
 
@@ -52,6 +53,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string; desc: string
   rejected:  { label: 'Not a fit (yet)', color: '#ef4444', desc: 'This application was not accepted at this time.' },
 }
 
+// Steps on the membership roadmap (advisors are shown at the member step)
 const ROLE_ORDER = ['explorer', 'joining', 'member', 'project_lead', 'circle_lead', 'admin']
 
 const ROLE_MAP = [
@@ -367,7 +369,7 @@ interface RoadmapProps {
 }
 
 function RoleRoadmap({ currentRole, milestones, applicationStatus, onApply, onReapply, userId }: RoadmapProps) {
-  const currentIdx = currentRole ? ROLE_ORDER.indexOf(currentRole) : -1
+  const currentIdx = currentRole ? ROLE_ORDER.indexOf(currentRole === 'advisor' ? 'member' : currentRole) : -1
 
   const doneMap: Record<string, boolean> = {
     profile: milestones.profile,
@@ -564,7 +566,7 @@ export default function JoinClient({
   const [submitted, setSubmitted] = useState(false)
   const [reapplying, setReapplying] = useState(false)
 
-  const isAccepted = ['joining', 'member', 'circle_lead', 'project_lead', 'admin'].includes(userRole)
+  const isAccepted = isJoiningOrAbove(userRole)
 
   const milestones = {
     profile: isProfileComplete,

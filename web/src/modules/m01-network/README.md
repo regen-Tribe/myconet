@@ -21,7 +21,6 @@ Profile-based member discovery with AI-powered compatibility matching. Members p
 | `DiscoverClient.tsx` | Filterable/searchable full member directory |
 | `MatchesTabs.tsx` | Tabbed view of Top / Good / Potential matches |
 | `NetworkSidebar.tsx` | Left sidebar with nav links and user summary |
-| `NetworkRightPanel.tsx` | Right panel (activity, resources) |
 | `OffersPage.tsx` | CRUD interface for user's skill/resource offers |
 | `SeeksPage.tsx` | CRUD interface for user's help requests |
 | `ProfilePage.tsx` | User's own profile view (avatar upload, tabs) |

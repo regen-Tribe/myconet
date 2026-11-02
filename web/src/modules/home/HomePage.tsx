@@ -2,8 +2,9 @@ import { createClient } from '@/core/lib/supabase/server'
 import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type Values } from '@/modules/m04-blueprint/lib/blueprint-compute'
 import { computeMatch } from '@/modules/m01-network/lib/match-score'
 import HomeClient from '@/modules/home/HomeClient'
+import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
-import { isFullMember as checkFullMember } from '@/core/lib/roles'
+import { isFullMember as checkFullMember, isJoiningOrAbove } from '@/core/lib/roles'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -28,9 +29,9 @@ export default async function HomePage() {
     supabase.from('community_values').select('id, title, description, sort_order').order('sort_order'),
     supabase.from('projects')
       .select('id, title, description, needs, open_for_collaborators, status')
-      .eq('status', 'active')
+      .in('status', [...ACTIVE_PROJECT_STATUSES])
       .limit(3),
-    supabase.from('projects').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    supabase.from('projects').select('id', { count: 'exact', head: true }).in('status', [...ACTIVE_PROJECT_STATUSES]),
     supabase.from('deliverables')
       .select('id, title, status, due_date, project_id, user_profiles(username)')
       .order('created_at', { ascending: false })
@@ -62,7 +63,7 @@ export default async function HomePage() {
   let role = 'explorer'
   let applicationStatus: string | null = null
   let joiningRewardNew = false
-  let matchScores: Record<string, { score: number; reasons: string[] }> = {}
+  const matchScores: Record<string, { score: number; reasons: string[] }> = {}
 
   if (user) {
     const memberIds = (membersRes.data ?? []).map((m: any) => m.id)
@@ -80,7 +81,7 @@ export default async function HomePage() {
     applicationStatus = appRes.data?.status ?? null
     isFullMember = checkFullMember(role)
 
-    if (['joining', 'member', 'circle_lead', 'project_lead', 'admin'].includes(role)) {
+    if (isJoiningOrAbove(role)) {
       const { error } = await supabase.from('user_achievements').upsert(
         { user_id: user.id, achievement_key: 'community_joiner' },
         { onConflict: 'user_id,achievement_key', ignoreDuplicates: true }

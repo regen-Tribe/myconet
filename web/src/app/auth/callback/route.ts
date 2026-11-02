@@ -12,7 +12,8 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      const dest = onboarding ? '/onboarding' : redirectTo
+      // New signups set up their profile in the real editor
+      const dest = onboarding ? '/profile/edit' : redirectTo
       return NextResponse.redirect(`${origin}${dest}`)
     }
   }

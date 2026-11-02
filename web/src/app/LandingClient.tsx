@@ -6,7 +6,7 @@ import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import type { CalendarEvent } from '@/modules/m14-events/types'
 import './landing.css'
 
-interface Props { firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[] }
+interface Props { firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[]; stats: LandingStats }
 
 /* ── Tiny SVG icons ── */
 const Check = ({ size = 12 }: { size?: number }) => (
@@ -26,18 +26,25 @@ const Arrow = () => (
 const initials = (n: string) => n.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase()
 
 /* ── Data ── */
-const CH_CARDS = [
-  { num: '01', name: 'Community Network',  desc: 'Meet 38 members and explorers',           color: 'var(--m1)', href: '/network' },
-  { num: '04', name: 'Project Blueprint',  desc: 'Phase 2 of 4 · PROVE',                    color: 'var(--m4)', href: '/blueprint' },
-  { num: '05', name: 'Join the community', desc: '4 steps · Sign the values',               color: 'var(--m5)', href: '/join', cta: true },
-  { num: '06', name: 'Active projects',    desc: '5 open · 2 need help this week',          color: 'var(--m6)', href: '/agreements' },
-  { num: '07', name: 'Operations',         desc: '12 deliverables · 3 due Friday',          color: 'var(--m7)', href: '/ops' },
-  { num: '08', name: 'Your contributions', desc: '420 pts · 3 badges · top 25%',            color: 'var(--m8)', href: '/contributions' },
-  { num: '09', name: 'Governance',         desc: '2 proposals open for your vote',          color: 'var(--m9)', href: '/governance' },
-  { num: '14', name: 'Calendar',           desc: 'Events and tasks · open to everyone',     color: 'var(--m14)', href: '/events' },
-  { num: '04', name: 'Blueprint pillars',  desc: 'Ecology 4 · Social 3 · Economy 2',        color: 'var(--m4)', href: '/blueprint' },
-  { num: '01', name: 'Travel & visits',    desc: '3 explorers visiting next month',         color: 'var(--m1)', href: '/network' },
-]
+export interface LandingStats { members: number; activeProjects: number; deliverables: number; openProposals: number }
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+
+/** Clubhouse preview cards — counts are live, so visitors see the real community. */
+function clubhouseCards(st: LandingStats) {
+  return [
+    { num: '01', name: 'Community Network',  desc: `Meet ${plural(st.members, 'member')} and explorers`,   color: 'var(--m1)', href: '/network' },
+    { num: '04', name: 'Project Blueprint',  desc: 'Our neighborhood plan, phase by phase',                color: 'var(--m4)', href: '/blueprint' },
+    { num: '05', name: 'Join the community', desc: 'A few steps · sign the values',                         color: 'var(--m5)', href: '/join', cta: true },
+    { num: '06', name: 'Active projects',    desc: `${plural(st.activeProjects, 'project')} underway`,      color: 'var(--m6)', href: '/agreements' },
+    { num: '07', name: 'Operations',         desc: plural(st.deliverables, 'deliverable'),                  color: 'var(--m7)', href: '/ops' },
+    { num: '08', name: 'Your contributions', desc: 'Points and badges for showing up',                      color: 'var(--m8)', href: '/contributions' },
+    { num: '09', name: 'Governance',         desc: `${plural(st.openProposals, 'proposal')} open for votes`, color: 'var(--m9)', href: '/governance' },
+    { num: '14', name: 'Calendar',           desc: 'Events and tasks · open to everyone',                   color: 'var(--m14)', href: '/events' },
+    { num: '15', name: 'Accommodation',      desc: 'Book a place to stay',                                  color: 'var(--m15)', href: '/stays' },
+    { num: '16', name: 'Resources',          desc: 'Shared tools and spaces',                               color: 'var(--m16)', href: '/bookings' },
+  ]
+}
 
 const MEMBERS = [
   { name: 'Ana Whitewater', where: 'San Cristóbal, MX',        av: 'var(--m1)', offers: ['Permaculture design', 'Mycology'],     seeks: ['Co-builders'],     match: 92 },
@@ -105,55 +112,6 @@ function SectionHead({ mod, label, color, h, lead }: { mod: string; label: strin
   )
 }
 
-/* ── Top bar ── */
-function TopBar({ name }: { name: string | null }) {
-  return (
-    <header className="lp-topbar">
-      <div className="lp-topbar-inner">
-        <a className="lp-logo" href="#welcome">
-          <span className="lp-logo-mark" />
-          <span style={{ display: 'inline-flex', flexDirection: 'column', lineHeight: 1 }}>
-            <span>MyCoNet</span>
-            <Link href="/changelog" style={{
-              fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 600,
-              color: 'var(--ink-4)', letterSpacing: '0.06em',
-              textDecoration: 'none', marginTop: 3,
-            }}
-              onClick={e => e.stopPropagation()}>
-              {VERSION}
-            </Link>
-          </span>
-        </a>
-        <nav className="lp-topnav">
-          <a className="lp-topnav-link is-current" href="#welcome">Welcome</a>
-          <a className="lp-topnav-link" href="#meet">Meet members</a>
-          <a className="lp-topnav-link" href="#blueprint">The project</a>
-          <a className="lp-topnav-link" href="#join">Join</a>
-          <a className="lp-topnav-link" href="#governance">Decide</a>
-          <a className="lp-topnav-link" href="#events">Calendar</a>
-          {name ? (
-            <Link className="lp-topnav-cta" href="/dashboard">Hi, {name} →</Link>
-          ) : (
-            <Link className="lp-topnav-cta" href="/auth/signup">Join for free</Link>
-          )}
-        </nav>
-        {/* Mobile — just the CTA */}
-        <div className="lp-topnav-mobile">
-          {name ? (
-            <Link href="/dashboard" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--accent-color)', padding: '8px 14px', borderRadius: 999 }}>
-              Dashboard →
-            </Link>
-          ) : (
-            <Link href="/auth/signup" style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--accent-color)', padding: '8px 14px', borderRadius: 999 }}>
-              Join free
-            </Link>
-          )}
-        </div>
-      </div>
-    </header>
-  )
-}
-
 /* ── Hero ── */
 function Hero({ name, communityPurpose }: { name: string | null; communityPurpose: string | null }) {
   const displayName = name ?? 'you'
@@ -179,7 +137,7 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
 }
 
 /* ── Clubhouse preview ── */
-function ClubhousePreview({ name }: { name: string | null }) {
+function ClubhousePreview({ name, stats }: { name: string | null; stats: LandingStats }) {
   const displayName = name ?? 'Explorer'
   return (
     <div className="lp-clubhouse">
@@ -231,7 +189,7 @@ function ClubhousePreview({ name }: { name: string | null }) {
               people — sign the values to unlock the full community.
             </p>
             <div className="lp-ch-grid">
-              {CH_CARDS.map((c, i) => (
+              {clubhouseCards(stats).map((c, i) => (
                 <Link href={c.href} key={i} style={{ textDecoration: 'none' }}>
                   <div className="lp-ch-card" style={{ cursor: 'pointer' }}>
                     <div className="lp-accent-bar" style={{ background: c.color }} />
@@ -283,7 +241,7 @@ function MeetSection() {
               <span className="lp-mod-pill" style={{ background: 'var(--m1)' }}>M01</span>
               <strong>Residents · Top matches for you</strong>
             </div>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>38 members</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>Example profiles</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {MEMBERS.map((r, i) => (
@@ -763,18 +721,18 @@ function Closing({ name }: { name: string | null }) {
           <Link className="lp-btn lp-btn-primary" href="/auth/signup">Begin joining → <Arrow /></Link>
           <Link className="lp-btn lp-btn-secondary" href="/network">Just browse first</Link>
         </div>
-        <div className="lp-footnote">MyCoNet · MyCommunityNetwork · RNF · v3.0</div>
+        <div className="lp-footnote">MyCoNet · MyCommunityNetwork · RNF · {VERSION}</div>
       </div>
     </section>
   )
 }
 
 /* ── Root ── */
-export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [] }: Props) {
+export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [], stats }: Props) {
   return (
     <div className="lp">
       <Hero name={firstName} communityPurpose={communityPurpose ?? null} />
-      <ClubhousePreview name={firstName} />
+      <ClubhousePreview name={firstName} stats={stats} />
       <MeetSection />
       <BlueprintSection />
       <JoinSection />

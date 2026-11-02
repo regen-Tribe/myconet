@@ -2,6 +2,23 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.61',
+    date: '2026-11-02',
+    title: 'Security fixes, live numbers, cleanup',
+    items: [
+      'Security: members can no longer change their own role or circle leadership; only admins can. Promotion from joining to member now happens in the database.',
+      'Security: only ops leads and a project\'s creator or lead can add, edit or delete its deliverables.',
+      'Security: governance is enforced by the database — full members propose; circle leads vote in Sociocracy, full members in Democracy, advisors and admins in Meritocracy.',
+      'Security: the AI blueprint scan needs an admin or circle lead, and the governance AI check needs a signed-in user. Applicants can\'t set their own application decision, and badges must be earned.',
+      'Fixed: "Open projects" on the dashboard, home and landing page counted projects with an old status and always showed 0.',
+      'Fixed: advisors saw member modules as locked on the dashboard and Join page.',
+      'Fixed: new email signups were sent to an old onboarding page that couldn\'t save; they now land in the profile editor.',
+      'Fixed: a nested link in the top bar caused a page error on every load.',
+      'Dashboard and landing page show real numbers instead of placeholders (new members this week, projects open to collaborators, live counts).',
+      'Cleanup: removed five unused components and an unused package, added a lint setup, stopped tracking .DS_Store files.',
+    ],
+  },
+  {
     version: 'v3.60',
     date: '2026-11-02',
     title: 'Bookings split into M15 Accommodation and M16 Resources',
