@@ -2,6 +2,13 @@
 
 ---
 
+## 2026-11-03 — v3.62–3.63 — Advisor in admin dropdown; M17 Org chart (deployed, d8c788a0)
+
+- v3.62: `/admin/users` role dropdown lacked Advisor (advisors displayed wrong and couldn't be assigned).
+- v3.63 **M17 Org chart** `/org` (`modules/m17-org/`, migration `20261103_m17_org_chart.sql`): `org_units` (kind circle — one per pillar, seeded — or team) and `org_unit_members` (lead/member, title). Public read. Edit via `private.can_lead_circle()` (admin / circle lead of that circle) and `private.can_edit_org_unit()` (+ team leads for their team). Circle leads still come from `user_profiles.lead_circles` (admin-set). Verified with oj/zach/joe/anon in a rolled-back block.
+- Sidebar: Org chart under Members; top-bar menu, dashboard card, Ops › Circles links to it. `--m17: #be123c`.
+- Gotcha: MCP `execute_sql` also auto-cancels any statement containing `delete`, even inside a rolled-back test block — leave deletes out of test blocks.
+
 ## 2026-11-02 — v3.61 — Audit: security hardening, live stats, cleanup (deployed, f260d0b8)
 
 Full-app audit; fixed items 1–13, left 14–15 open.
