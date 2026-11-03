@@ -144,7 +144,7 @@ export default function OrgChartClient({
       {/* ── Page head ─────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 22 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m17) 10%, var(--surface))', color: 'var(--m17)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-          Module 17 · Org chart
+          Module 17 · Circles
         </div>
         <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
           Who does what

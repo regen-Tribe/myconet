@@ -2,6 +2,15 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.64',
+    date: '2026-11-03',
+    title: 'Sidebar reorganized; Org chart renamed Circles',
+    items: [
+      'M17 Org chart is now called Circles and sits directly above Operations in the sidebar. /circles also works as an address.',
+      'Calendar moved up to sit above Blueprint.',
+    ],
+  },
+  {
     version: 'v3.63',
     date: '2026-11-03',
     title: 'M17 Org chart',

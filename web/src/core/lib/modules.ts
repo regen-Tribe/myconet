@@ -97,7 +97,7 @@ export const MODULES: Module[] = [
     icon: '🔑', color: '#4d7c0f', href: '/bookings', live: true,
   },
   {
-    num: '17', name: 'Org chart',
+    num: '17', name: 'Circles',
     desc: 'The circles and teams that run the community, and who leads each one.',
     icon: '🧭', color: '#be123c', href: '/org', live: true,
   },

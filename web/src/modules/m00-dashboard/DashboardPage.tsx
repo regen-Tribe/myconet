@@ -158,7 +158,7 @@ export default async function DashboardPage() {
       color: 'var(--m14)', href: '/events', locked: false,
     },
     {
-      num: '17', name: 'Org chart',
+      num: '17', name: 'Circles',
       desc: 'Circles, teams and who leads them',
       color: 'var(--m17)', href: '/org', locked: false,
     },

@@ -103,7 +103,7 @@ export function CirclesTab({
       </div>
 
       <Link href="/org" style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--m17)', textDecoration: 'none' }}>
-        See the full org chart, with teams inside each circle →
+        See the Circles org chart, with teams inside each circle →
       </Link>
 
       {directory.admins.length > 0 && (
