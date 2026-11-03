@@ -5,12 +5,15 @@ import { VERSION } from '@/core/lib/version'
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from '@/modules/home/CommunityGlance'
+import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from '@/modules/home/ModulePreviews'
+import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
 import type { GlanceTile } from '@/modules/home/lib/at-a-glance'
 import './landing.css'
 
 interface Props {
   firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[]; stats: LandingStats
   communityName: string; glance: GlanceTile[]
+  previews: { items: PreviewItem[]; circles: CirclesPreviewData }
 }
 
 /* ── Tiny SVG icons ── */
@@ -195,27 +198,17 @@ function ClubhousePreview({ name, stats }: { name: string | null; stats: Landing
             </div>
             <div className="lp-ch-nav">
               <div className="lp-ch-nav-label">Clubhouse</div>
-              {[
-                { num: '00', label: 'Dashboard',  color: 'var(--ink)', active: true },
-                { num: '01', label: 'Residents',  color: 'var(--m1)' },
-                { num: '04', label: 'Blueprint',  color: 'var(--m4)' },
-                { num: '05', label: 'Join',       color: 'var(--m5)' },
-              ].map(m => (
-                <div key={m.num} className={`lp-ch-nav-item${m.active ? ' is-active' : ''}`}>
+              {CLUBHOUSE.map(m => (
+                <div key={m.num} className={`lp-ch-nav-item${m.num === '00' ? ' is-active' : ''}`}>
                   <span className="lp-swatch" style={{ background: m.color }} />
-                  <span className="lp-mnum">M{m.num}</span> {m.label}
+                  <span className="lp-mnum">M{m.num}</span> {m.name}
                 </div>
               ))}
               <div className="lp-ch-nav-label">Once you&apos;re in</div>
-              {[
-                { num: '06', label: 'Agreements',    color: 'var(--m6)' },
-                { num: '07', label: 'Operations',    color: 'var(--m7)' },
-                { num: '08', label: 'Contributions', color: 'var(--m8)' },
-                { num: '09', label: 'Governance',    color: 'var(--m9)' },
-              ].map(m => (
+              {MEMBER_MODULES.map(m => (
                 <div key={m.num} className="lp-ch-nav-item" style={{ opacity: 0.5 }}>
                   <span className="lp-swatch" style={{ background: m.color }} />
-                  <span className="lp-mnum">M{m.num}</span> {m.label}
+                  <span className="lp-mnum">M{m.num}</span> {m.name}
                 </div>
               ))}
             </div>
@@ -746,6 +739,18 @@ function EventsSection({ events }: { events: CalendarEvent[] }) {
   )
 }
 
+/* ── M15 / M16 / M17 — live previews ── */
+function PreviewSection({ id, mod, label, color, h, lead, children }: {
+  id: string; mod: string; label: string; color: string; h: string; lead: string; children: React.ReactNode
+}) {
+  return (
+    <section className="lp-section" id={id}>
+      <SectionHead mod={mod} label={label} color={color} h={h} lead={lead} />
+      <div style={{ marginTop: 28, maxWidth: 720 }}>{children}</div>
+    </section>
+  )
+}
+
 /* ── Closing ── */
 function Closing({ name }: { name: string | null }) {
   return (
@@ -767,7 +772,7 @@ function Closing({ name }: { name: string | null }) {
 }
 
 /* ── Root ── */
-export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [], stats, communityName, glance }: Props) {
+export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [], stats, communityName, glance, previews }: Props) {
   return (
     <div className="lp">
       <Hero name={firstName} communityPurpose={communityPurpose ?? null} />
@@ -777,14 +782,32 @@ export default function LandingClient({ firstName, communityPurpose, upcomingEve
         </section>
       )}
       <ClubhousePreview name={firstName} stats={stats} />
+      {/* Module sections follow the sidebar order */}
       <MeetSection />
+      <EventsSection events={upcomingEvents} />
       <BlueprintSection />
       <JoinSection />
+      <PreviewSection id="stays" mod="15" label="Accommodation" color="var(--m15)"
+        h="Come stay with us."
+        lead="Guest rooms, cabins and tent sites for visits, work weeks and trial stays. Joining members book by the night; some stays are approved by a lead first.">
+        <StaysPreview items={previews.items} />
+      </PreviewSection>
+      <PreviewSection id="resources" mod="16" label="Resources" color="var(--m16)"
+        h="Share more, own less."
+        lead="Tools, vehicles, kitchens and spaces the community shares. Browse what's available, see when it's free, and book it by the hour."
+      >
+        <ResourcesPreview items={previews.items} />
+      </PreviewSection>
       <AgreementsSection />
+      <PreviewSection id="circles" mod="17" label="Circles" color="var(--m17)"
+        h="Know who does what."
+        lead="Five circles — ecology, hardware, humanware, economy and tech — each with leads, members and teams. See who to talk to about anything, from the food forest to the website."
+      >
+        <CirclesPreview data={previews.circles} />
+      </PreviewSection>
       <OpsSection />
       <ContributionsSection />
       <GovernanceSection />
-      <EventsSection events={upcomingEvents} />
       <Closing name={firstName} />
       <footer className="lp-footer">
         MyCoNet · MyCommunityNetwork · Regenerative Neighborhood Framework · Open sourced by The Regen Tribe Collective

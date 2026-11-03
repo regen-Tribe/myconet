@@ -3,6 +3,7 @@ import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type
 import { computeMatch } from '@/modules/m01-network/lib/match-score'
 import HomeClient from '@/modules/home/HomeClient'
 import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
+import { loadModulePreviews } from '@/modules/home/lib/preview-data'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { isFullMember as checkFullMember, isJoiningOrAbove } from '@/core/lib/roles'
@@ -20,6 +21,7 @@ export default async function HomePage() {
     activeProjectCountRes,
     deliverablesRes,
     eventsRes,
+    previews,
   ] = await Promise.all([
     supabase.from('blueprints').select('answers, updated_at').eq('is_community', true).maybeSingle(),
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
@@ -43,6 +45,7 @@ export default async function HomePage() {
       .gte('starts_at', new Date(Date.now() - 86400000).toISOString())
       .order('starts_at', { ascending: true })
       .limit(10),
+    loadModulePreviews(supabase),
   ])
 
   const bp = blueprintRes.data as { answers: unknown; updated_at: string } | null
@@ -128,6 +131,7 @@ export default async function HomePage() {
       joiningRewardNew={joiningRewardNew}
       matchScores={matchScores}
       upcomingEvents={(eventsRes.data ?? []).map(toEvent)}
+      previews={previews}
     />
   )
 }

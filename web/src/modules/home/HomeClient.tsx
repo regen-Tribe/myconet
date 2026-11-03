@@ -5,6 +5,8 @@ import { isFullMember as checkFullMember, isJoiningOrAbove, ROLE_LABELS } from '
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from './CommunityGlance'
+import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from './ModulePreviews'
+import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
 import type { GlanceTile } from './lib/at-a-glance'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
@@ -38,6 +40,7 @@ interface Props {
   matchScores?: Record<string, { score: number; reasons: string[] }>
   upcomingEvents?: CalendarEvent[]
   glance?: GlanceTile[]
+  previews?: { items: PreviewItem[]; circles: CirclesPreviewData } | null
 }
 
 const CHECK_ICON = (
@@ -214,7 +217,7 @@ export default function HomeClient({
   projects, activeProjectCount, deliverables,
   isLoggedIn, hasApplied, isFullMember,
   role = 'explorer', applicationStatus, joiningRewardNew = false,
-  matchScores = {}, upcomingEvents = [], glance = [],
+  matchScores = {}, upcomingEvents = [], glance = [], previews = null,
 }: Props) {
   const name = firstName || (isLoggedIn ? 'there' : 'you')
   const roleLabel = ROLE_LABELS[role] ?? 'Explorer'
@@ -305,15 +308,18 @@ export default function HomeClient({
         </div>
         <div className="home-pills" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
           {[
-            { mod: '00', icon: '⊞', text: 'See the community at a glance', target: 'clubhouse', color: 'var(--ink)' },
+            { mod: '00', icon: '⊞', text: 'See how the portal works',          target: 'clubhouse', color: 'var(--ink)' },
             { mod: '01', icon: '👋', text: 'Meet the community & invite others', target: 'meet',   color: 'var(--m1)' },
-            { mod: '04', icon: '📋', text: 'Read the community documentation', target: 'blueprint', color: 'var(--m4)' },
+            { mod: '14', icon: '🗓', text: 'Gather and pitch in on the calendar', target: 'events',  color: 'var(--m14)' },
+            { mod: '04', icon: '📋', text: 'Read the community plan',           target: 'blueprint', color: 'var(--m4)' },
             { mod: '05', icon: '🌱', text: 'Join if you align with the values', target: 'join',    color: 'var(--m5)' },
+            { mod: '15', icon: '🏡', text: 'Book a place to stay',              target: 'stays',   color: 'var(--m15)' },
+            { mod: '16', icon: '🔑', text: 'Borrow shared tools & spaces',      target: 'resources', color: 'var(--m16)' },
             { mod: '06', icon: '🤝', text: "Make agreements on how you'll collaborate", target: 'agreements', color: 'var(--m6)' },
+            { mod: '17', icon: '🧭', text: 'See who leads what',                target: 'circles', color: 'var(--m17)' },
             { mod: '07', icon: '⚙️', text: 'Contribute to goals & projects',  target: 'ops',        color: 'var(--m7)' },
             { mod: '08', icon: '✦',  text: 'Get rewards for your contributions', target: 'contributions', color: 'var(--m8)' },
             { mod: '09', icon: '☉',  text: 'Make decisions together',          target: 'governance', color: 'var(--m9)' },
-            { mod: '14', icon: '🗓', text: 'Gather and pitch in on the calendar', target: 'events',  color: 'var(--m14)' },
           ].map(({ mod, icon, text, target, color }) => (
             <ModulePill key={mod} mod={mod} icon={icon} text={text} target={target} color={color} />
           ))}
@@ -545,13 +551,7 @@ export default function HomeClient({
                 </div>
               </div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', padding: '8px 6px 4px' }}>Clubhouse</div>
-              {[
-                { num: '00', name: 'Dashboard', color: 'var(--ink)', active: true },
-                { num: '01', name: 'Residents', color: 'var(--m1)' },
-                { num: '04', name: 'Blueprint', color: 'var(--m4)' },
-                { num: '05', name: 'Join', color: 'var(--m5)' },
-                { num: '14', name: 'Calendar', color: 'var(--m14)' },
-              ].map(m => (
+              {CLUBHOUSE.map(m => ({ ...m, active: m.num === '00' })).map(m => (
                 <div key={m.num} style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '6px 6px',
                   borderRadius: 6, background: m.active ? 'var(--surface)' : 'transparent',
@@ -564,12 +564,7 @@ export default function HomeClient({
                 </div>
               ))}
               <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', padding: '10px 6px 4px' }}>Once you're in</div>
-              {[
-                { num: '06', name: 'Agreements', color: 'var(--m6)' },
-                { num: '07', name: 'Operations', color: 'var(--m7)' },
-                { num: '08', name: 'Contributions', color: 'var(--m8)' },
-                { num: '09', name: 'Governance', color: 'var(--m9)' },
-              ].map(m => (
+              {MEMBER_MODULES.map(m => (
                 <div key={m.num} style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '6px 6px',
                   borderRadius: 6, marginBottom: 1, opacity: 0.45,
@@ -739,6 +734,41 @@ export default function HomeClient({
             <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--rule)', textAlign: 'right' }}>
               <Link href="/network" style={{ fontSize: 12.5, color: 'var(--m1)', fontWeight: 600, textDecoration: 'none' }}>View all members →</Link>
             </div>
+          </DemoCard>
+        </Split>
+      </section>
+
+      {/* ── M14 — Events ────────────────────────────────────── */}
+      <section className={sectionCls} style={sectionW} id="events">
+        <Split>
+          <SectionHead
+            mod="14" label="Calendar" color="var(--m14)"
+            h="Show up. Gather. Celebrate."
+            lead="Workdays, circle meetings, potlucks and celebrations all live on one community calendar. Anyone can browse public events. Joining members host their own, and RSVPs show who's coming."
+            href="/events"
+            why={[
+              '<strong>Core events</strong> — official gatherings posted by members, circle leads and project leads.',
+              '<strong>Community hosted</strong> — anyone joining the community can put an event on the calendar.',
+              '<strong>Tasks</strong> — things the community needs done. Sign up to help.',
+              '<strong>Linked to the work</strong> — tag a circle, an Ops project or a governance proposal.',
+            ]}
+          />
+          <DemoCard>
+            <LinkedEventsList
+              events={upcomingEvents}
+              title="Coming up"
+              viewAllHref="/events?view=list"
+              addHref={isJoiningPlus ? '/events?new=1' : null}
+              limit={4}
+              showKind
+              emptyText="Nothing on the calendar yet — check back soon."
+            />
+            <Link href="/events" style={{
+              display: 'inline-block', marginTop: 16, fontSize: 13, fontWeight: 700, color: '#fff',
+              background: 'var(--m14)', padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
+            }}>
+              Open the calendar →
+            </Link>
           </DemoCard>
         </Split>
       </section>
@@ -919,6 +949,46 @@ export default function HomeClient({
         </Split>
       </section>
 
+      {/* ── M15 — Accommodation (live preview) ─────────────────── */}
+      {previews && (
+        <section className={sectionCls} style={sectionW} id="stays">
+          <Split>
+            <SectionHead
+              mod="15" label="Accommodation" color="var(--m15)"
+              h="Come stay with us."
+              lead="Guest rooms, cabins and tent sites for visits, work weeks and trial stays. Joining members book by the night; some stays are approved by a lead first."
+              href="/stays"
+              why={[
+                '<strong>See what’s free</strong> — every stay shows its booked nights.',
+                '<strong>Instant or approved</strong> — leads choose which stays need a yes first.',
+                '<strong>No double bookings</strong> — two stays can’t overlap.',
+              ]}
+            />
+            <StaysPreview items={previews.items} />
+          </Split>
+        </section>
+      )}
+
+      {/* ── M16 — Resources (live preview) ─────────────────── */}
+      {previews && (
+        <section className={sectionCls} style={sectionW} id="resources">
+          <Split>
+            <SectionHead
+              mod="16" label="Resources" color="var(--m16)"
+              h="Share more, own less."
+              lead="Tools, vehicles, kitchens and spaces the community shares. Browse what's available, see when it's free, and book it by the hour."
+              href="/bookings"
+              why={[
+                '<strong>Tagged and searchable</strong> — find the drill, the van or the great hall fast.',
+                '<strong>Live availability</strong> — see who has it and until when.',
+                '<strong>Looked after</strong> — circle leads manage the inventory and approvals.',
+              ]}
+            />
+            <ResourcesPreview items={previews.items} />
+          </Split>
+        </section>
+      )}
+
       {/* ── M06 — Agreements ────────────────────────────────── */}
       <section className={sectionCls} style={sectionW} id="agreements">
         <Split reverse>
@@ -1007,6 +1077,26 @@ export default function HomeClient({
           />
         </Split>
       </section>
+
+      {/* ── M17 — Circles (live preview) ─────────────────── */}
+      {previews && (
+        <section className={sectionCls} style={sectionW} id="circles">
+          <Split>
+            <SectionHead
+              mod="17" label="Circles" color="var(--m17)"
+              h="Know who does what."
+              lead="Five circles — ecology, hardware, humanware, economy and tech — each with leads, members and teams. See who to talk to about anything, from the food forest to the website."
+              href="/org"
+              why={[
+                '<strong>Leads at a glance</strong> — every circle shows who’s responsible.',
+                '<strong>Teams inside circles</strong> — departments with their own leads and members.',
+                '<strong>Kept current</strong> — circle and team leads edit their own part.',
+              ]}
+            />
+            <CirclesPreview data={previews.circles} />
+          </Split>
+        </section>
+      )}
 
       {/* ── M07 — Operations ────────────────────────────────── */}
       <section className={sectionCls} style={sectionW} id="ops">
@@ -1349,41 +1439,6 @@ export default function HomeClient({
             )}
           </div>
         </div>
-      </section>
-
-      {/* ── M14 — Events ────────────────────────────────────── */}
-      <section className={sectionCls} style={sectionW} id="events">
-        <Split>
-          <SectionHead
-            mod="14" label="Calendar" color="var(--m14)"
-            h="Show up. Gather. Celebrate."
-            lead="Workdays, circle meetings, potlucks and celebrations all live on one community calendar. Anyone can browse public events. Joining members host their own, and RSVPs show who's coming."
-            href="/events"
-            why={[
-              '<strong>Core events</strong> — official gatherings posted by members, circle leads and project leads.',
-              '<strong>Community hosted</strong> — anyone joining the community can put an event on the calendar.',
-              '<strong>Tasks</strong> — things the community needs done. Sign up to help.',
-              '<strong>Linked to the work</strong> — tag a circle, an Ops project or a governance proposal.',
-            ]}
-          />
-          <DemoCard>
-            <LinkedEventsList
-              events={upcomingEvents}
-              title="Coming up"
-              viewAllHref="/events?view=list"
-              addHref={isJoiningPlus ? '/events?new=1' : null}
-              limit={4}
-              showKind
-              emptyText="Nothing on the calendar yet — check back soon."
-            />
-            <Link href="/events" style={{
-              display: 'inline-block', marginTop: 16, fontSize: 13, fontWeight: 700, color: '#fff',
-              background: 'var(--m14)', padding: '8px 16px', borderRadius: 8, textDecoration: 'none',
-            }}>
-              Open the calendar →
-            </Link>
-          </DemoCard>
-        </Split>
       </section>
 
       {/* ── Closing CTA ─────────────────────────────────────── */}

@@ -2,6 +2,17 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.69',
+    date: '2026-11-03',
+    title: 'Landing and Home: module previews brought up to date',
+    items: [
+      'New sections for M15 Accommodation ("Come stay with us"), M16 Resources ("Share more, own less") and M17 Circles ("Know who does what"), showing the real places to stay, shared tools and spaces, and circle leads.',
+      'Module sections now follow the sidebar order: Members, Calendar, Blueprint, Join, Accommodation, Resources, Agreements, Circles, Operations, Contributions, Governance.',
+      'The sidebar in the portal preview now matches the real one (Members instead of Residents; Calendar, Accommodation, Resources and Circles added). Both read from one shared list, so they stay in sync.',
+      'Home\'s module pills include the new modules, in the same order.',
+    ],
+  },
+  {
     version: 'v3.68',
     date: '2026-11-03',
     title: 'Hero: "regenerative neighborhood" on one line',

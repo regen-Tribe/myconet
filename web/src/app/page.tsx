@@ -4,6 +4,7 @@ import LandingClient from './LandingClient'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
+import { loadModulePreviews } from '@/modules/home/lib/preview-data'
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -29,11 +30,12 @@ export default async function LandingPage() {
     .order('starts_at', { ascending: true })
     .limit(10)
 
-  const [members, projects, deliverables, proposals] = await Promise.all([
+  const [members, projects, deliverables, proposals, previews] = await Promise.all([
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
     supabase.from('projects').select('id', { count: 'exact', head: true }).in('status', [...ACTIVE_PROJECT_STATUSES]),
     supabase.from('deliverables').select('id', { count: 'exact', head: true }),
     supabase.from('proposals').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+    loadModulePreviews(supabase),
   ])
   const stats = {
     members: members.count ?? 0,
@@ -42,5 +44,5 @@ export default async function LandingPage() {
     openProposals: proposals.count ?? 0,
   }
 
-  return <LandingClient firstName={null} communityPurpose={communityPurpose} upcomingEvents={(eventRows ?? []).map(toEvent)} stats={stats} communityName={communityName} glance={glance} />
+  return <LandingClient firstName={null} communityPurpose={communityPurpose} upcomingEvents={(eventRows ?? []).map(toEvent)} stats={stats} communityName={communityName} glance={glance} previews={previews} />
 }
