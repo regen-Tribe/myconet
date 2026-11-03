@@ -2,6 +2,14 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.62',
+    date: '2026-11-03',
+    title: 'Admin › Users: Advisor role option',
+    items: [
+      'The role dropdown on /admin/users now includes Advisor, so advisors show correctly and can be assigned there.',
+    ],
+  },
+  {
     version: 'v3.61',
     date: '2026-11-02',
     title: 'Security fixes, live numbers, cleanup',

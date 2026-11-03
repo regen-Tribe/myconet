@@ -17,6 +17,7 @@ const ROLES = [
   { value: 'explorer',     label: 'Explorer',     color: 'var(--ink-3)' },
   { value: 'joining',      label: 'Joining',      color: 'var(--m5)' },
   { value: 'member',       label: 'Member',       color: 'var(--m9)' },
+  { value: 'advisor',      label: 'Advisor',      color: 'var(--m8)' },
   { value: 'project_lead', label: 'Project lead', color: 'var(--m7)' },
   { value: 'circle_lead',  label: 'Circle lead',  color: 'var(--m4)' },
   { value: 'admin',        label: 'Admin',        color: '#dc2626' },
