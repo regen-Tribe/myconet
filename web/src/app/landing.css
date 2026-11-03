@@ -75,10 +75,10 @@
   animation: lp-ping 1.6s ease-out infinite;
 }
 .lp-hero h1 {
-  font-size: clamp(40px, 6vw, 68px);
+  font-size: clamp(32px, 4.6vw, 52px);
   line-height: 1.02; letter-spacing: -0.025em;
   margin: 22px 0 22px; font-weight: 700;
-  text-wrap: balance; max-width: 14ch;
+  text-wrap: balance; max-width: 22ch;
 }
 .lp-hero h1 .accent { color: var(--accent-color); }
 .lp-hero h1 .underline {

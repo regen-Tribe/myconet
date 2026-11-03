@@ -125,7 +125,7 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
       <span className="lp-pill">MyCoNet · Member portal</span>
       <h1>
         Welcome, {displayName}.<br />
-        This is the <span className="underline">digital clubhouse</span> for a regenerative
+        This is the <span className="underline">portal</span> for a regenerative
         neighborhood being formed — <span className="accent">together</span>.
       </h1>
       <p className="lp-lead">
@@ -142,9 +142,42 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
 }
 
 /* ── Clubhouse preview ── */
+const PORTAL_STEPS = [
+  { n: '1', title: 'Explore', text: 'Read the plan, meet the members, and browse the calendar — no account needed.' },
+  { n: '2', title: 'Join', text: 'Apply, sign the community values, and become a joining member.' },
+  { n: '3', title: 'Contribute', text: 'Book stays and resources, host events, join projects, and help decide what happens next.' },
+]
+
 function ClubhousePreview({ name, stats }: { name: string | null; stats: LandingStats }) {
   const displayName = name ?? 'Explorer'
   return (
+    <>
+    <section className="lp-section" id="how-it-works" style={{ paddingTop: 72, paddingBottom: 28 }}>
+      <span className="lp-eyebrow" style={{ background: 'color-mix(in srgb, var(--ink) 8%, transparent)', color: 'var(--ink-2)' }}>
+        <span className="lp-mod-dot" style={{ background: 'var(--ink-2)' }} />
+        How this community portal works
+      </span>
+      <h2 className="lp-section-h">One portal for the whole neighborhood.</h2>
+      <p className="lp-section-lead">
+        MyCoNet is where this community organizes itself. Each module looks after one part of neighborhood life —
+        members, the plan, joining, the calendar, places to stay, shared resources, projects, contributions and
+        decisions. Below is a preview of the dashboard that ties them together once you sign in.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginTop: 24 }}>
+        {PORTAL_STEPS.map(s => (
+          <div key={s.n} style={{ display: 'flex', gap: 12, background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 12, padding: '14px 16px' }}>
+            <span style={{ width: 26, height: 26, borderRadius: '50%', flexShrink: 0, display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 700, color: '#fff', background: 'var(--accent-color)' }}>{s.n}</span>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>{s.title}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.5 }}>{s.text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginTop: 28 }}>
+        Preview · what members see
+      </div>
+    </section>
     <div className="lp-clubhouse">
       <div className="lp-clubhouse-inner">
         <div className="lp-chrome">
@@ -214,6 +247,7 @@ function ClubhousePreview({ name, stats }: { name: string | null; stats: Landing
         </div>
       </div>
     </div>
+    </>
   )
 }
 
@@ -717,7 +751,7 @@ function Closing({ name }: { name: string | null }) {
   return (
     <section className="lp-closing">
       <div className="lp-closing-box">
-        <h2>Ready to step into the clubhouse{name ? `, ${name}` : ''}?</h2>
+        <h2>Ready to step into the neighborhood{name ? `, ${name}` : ''}?</h2>
         <p>
           You don&apos;t have to decide today. Read the Blueprint. Meet a member. Visit. Talk.
           When you&apos;re ready, sign the values — and start showing up.

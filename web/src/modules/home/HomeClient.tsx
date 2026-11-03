@@ -278,16 +278,16 @@ export default function HomeClient({
         </span>
         <h1 style={{
           fontFamily: 'var(--display)',
-          fontSize: 'clamp(40px, 6vw, 68px)',
-          lineHeight: 1.02, letterSpacing: '-0.025em', fontWeight: 700,
-          color: 'var(--ink)', marginBottom: 22, maxWidth: '18ch',
+          fontSize: 'clamp(32px, 4.6vw, 52px)',
+          lineHeight: 1.05, letterSpacing: '-0.025em', fontWeight: 700,
+          color: 'var(--ink)', marginBottom: 22, maxWidth: '20ch',
         }}>
           Welcome, {name}.<br />
           This is the{' '}
           <span style={{
             background: 'linear-gradient(to bottom, transparent 65%, color-mix(in srgb, var(--accent-color) 28%, transparent) 65%)',
           }}>
-            digital clubhouse
+            portal
           </span>
           {' '}for our regenerative neighborhood being formed — <span style={{ color: 'var(--accent-color)' }}>together</span>.
         </h1>
@@ -488,9 +488,9 @@ export default function HomeClient({
               fontFamily: 'var(--display)', fontSize: 'clamp(22px, 2.8vw, 32px)',
               color: 'var(--ink)', lineHeight: 1.15, letterSpacing: '-0.015em',
               margin: '0 0 12px', maxWidth: '26ch',
-            }}>Your community, at a glance.</h2>
-            <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.7, maxWidth: '52ch', margin: 0 }}>
-              The dashboard brings everything together — who's here, what's being built, and what needs your attention. It updates live as members, projects, and deliverables move forward.
+            }}>How this community portal works.</h2>
+            <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.7, maxWidth: '56ch', margin: 0 }}>
+              Each module looks after one part of neighborhood life — members, the plan, joining, the calendar, places to stay, shared resources, projects, contributions and decisions. The dashboard ties them together: who's here, what's being built, and what needs your attention, updated live.
             </p>
           </div>
           <Link href="/dashboard" style={{
@@ -1398,7 +1398,7 @@ export default function HomeClient({
             fontFamily: 'var(--display)', fontSize: 'clamp(26px, 4vw, 40px)',
             color: 'var(--ink)', lineHeight: 1.15, letterSpacing: '-0.015em', marginBottom: 16,
           }}>
-            Ready to step into the clubhouse, {name}?
+            Ready to step into the neighborhood, {name}?
           </h2>
           <p style={{ fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.7, maxWidth: '48ch', margin: '0 auto 28px' }}>
             You don't have to decide today. Read the Blueprint. Meet a member. Visit. Talk.

@@ -2,6 +2,17 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.67',
+    date: '2026-11-03',
+    title: 'Landing: "How this community portal works", smaller hero',
+    items: [
+      'Hero headline now says "This is the portal for a regenerative neighborhood being formed — together" and is a size smaller.',
+      'New "How this community portal works" intro above the module preview on the landing page: what the modules cover, three steps (Explore → Join → Contribute), and the preview labelled as what members see.',
+      'Home page: the dashboard preview section is now titled "How this community portal works." with the same explanation.',
+      'Closing call to action reads "Ready to step into the neighborhood?"',
+    ],
+  },
+  {
     version: 'v3.66',
     date: '2026-11-03',
     title: 'Hero wording: regenerative neighborhood',
