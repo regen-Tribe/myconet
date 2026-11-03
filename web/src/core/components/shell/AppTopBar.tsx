@@ -125,6 +125,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen }: {
     { label: 'Edit profile', href: '/profile/edit', icon: '✏️' },
     { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
     { label: 'Network', href: '/network', icon: '🌐' },
+    { label: 'Org chart', href: '/org', icon: '🧭' },
     { label: 'Contributions', href: '/contributions', icon: '✦' },
     { label: 'Governance', href: '/governance', icon: '☉' },
     { label: 'Calendar', href: '/events', icon: '🗓' },

@@ -102,6 +102,10 @@ export function CirclesTab({
         })}
       </div>
 
+      <Link href="/org" style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--m17)', textDecoration: 'none' }}>
+        See the full org chart, with teams inside each circle →
+      </Link>
+
       {directory.admins.length > 0 && (
         <div style={{ fontSize: 12, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
           <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)' }}>Admins · every circle</span>

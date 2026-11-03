@@ -2,6 +2,17 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.63',
+    date: '2026-11-03',
+    title: 'M17 Org chart',
+    items: [
+      'New Org chart module at /org: community stewards (admins) at the top, then the five circles with their purpose, leads and members, and the teams (departments) inside each circle with their own leads and members.',
+      'Everyone can see it, including visitors who aren\'t signed in.',
+      'Admins edit everything; circle leads edit their circle and add, edit or remove its teams; team leads edit their own team. People can have titles (e.g. "Treasurer").',
+      'Circle leads are still assigned by admins under Admin › Users; the chart links there. The Operations › Circles tab links to the full chart.',
+    ],
+  },
+  {
     version: 'v3.62',
     date: '2026-11-03',
     title: 'Admin › Users: Advisor role option',

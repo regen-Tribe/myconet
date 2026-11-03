@@ -96,4 +96,9 @@ export const MODULES: Module[] = [
     desc: 'Book shared tools, spaces and other community resources. Admins and circle leads manage the inventory.',
     icon: '🔑', color: '#4d7c0f', href: '/bookings', live: true,
   },
+  {
+    num: '17', name: 'Org chart',
+    desc: 'The circles and teams that run the community, and who leads each one.',
+    icon: '🧭', color: '#be123c', href: '/org', live: true,
+  },
 ]

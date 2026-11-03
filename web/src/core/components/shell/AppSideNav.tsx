@@ -7,6 +7,7 @@ import { isFullMember, isAdmin } from '@/core/lib/roles'
 const CLUBHOUSE = [
   { num: '00', name: 'Dashboard',   color: 'var(--ink)', href: '/dashboard' },
   { num: '01', name: 'Members',     color: 'var(--m1)',  href: '/network' },
+  { num: '17', name: 'Org chart',   color: 'var(--m17)', href: '/org' },
   { num: '04', name: 'Blueprint',   color: 'var(--m4)',  href: '/blueprint' },
   { num: '05', name: 'Join',        color: 'var(--m5)',  href: '/join' },
   { num: '14', name: 'Calendar',    color: 'var(--m14)', href: '/events' },

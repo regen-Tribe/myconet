@@ -158,6 +158,11 @@ export default async function DashboardPage() {
       color: 'var(--m14)', href: '/events', locked: false,
     },
     {
+      num: '17', name: 'Org chart',
+      desc: 'Circles, teams and who leads them',
+      color: 'var(--m17)', href: '/org', locked: false,
+    },
+    {
       num: '15', name: 'Accommodation',
       desc: atLeast(role, 'joining') ? 'Book a room, cabin or tent site' : 'See where you could stay',
       color: 'var(--m15)', href: '/stays', locked: false,

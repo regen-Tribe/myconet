@@ -15,5 +15,6 @@ export const MODULE_META: Record<string, { bg: string; label: string; desc: stri
   '13': { bg: '#78350f', label: 'Hive',                   desc: 'Inter-community layer — shared resources, collaboration, and mutual aid across multiple neighborhoods.' },
   '14': { bg: '#0d9488', label: 'Calendar',               desc: 'The community calendar — core events, community hosted events and tasks, with RSVPs, sign-ups, and links to circles, projects and proposals.' },
   '15': { bg: '#c2410c', label: 'Accommodation',          desc: 'Book a place to stay in the community — guest rooms, cabins, tent sites. Admins and circle leads manage what can be booked.' },
+  '17': { bg: '#be123c', label: 'Org chart',              desc: 'The circles and teams that run the community, and who leads each one. Leads and admins keep it up to date.' },
   '16': { bg: '#4d7c0f', label: 'Resources',              desc: 'Book shared tools, spaces and other community resources. Admins and circle leads manage the inventory.' },
 }

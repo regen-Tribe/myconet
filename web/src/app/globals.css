@@ -79,6 +79,7 @@
   --m14: #0d9488;
   --m15: #c2410c;
   --m16: #4d7c0f;
+  --m17: #be123c;
 
   /* Extra tokens used by the landing page */
   --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 1px 1px rgba(0,0,0,.03);
@@ -504,3 +505,9 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
   .ev-dots { display: flex; }
   .ev-week { grid-template-columns: 1fr; }
 }
+
+/* ─── M17 Org chart ─────────────────────────────────────────────── */
+.org-circles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: start; }
+@media (max-width: 1280px) { .org-circles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px)  { .org-circles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px)  { .org-circles { grid-template-columns: 1fr; border-top: none !important; } }
