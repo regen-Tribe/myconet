@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import AppShell from '@/core/components/shell/AppShell'
 import { createClient } from '@/core/lib/supabase/server'
+import { loadCircleRows } from '@/core/lib/circles-server'
+import { CirclesProvider } from '@/core/components/CirclesProvider'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: { user } }, circles] = await Promise.all([supabase.auth.getUser(), loadCircleRows(supabase)])
 
   let role = 'explorer'
   if (user) {
@@ -34,7 +36,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }} />
       </head>
       <body>
-        <AppShell role={role} isLoggedIn={!!user}>{children}</AppShell>
+        <CirclesProvider rows={circles}>
+          <AppShell role={role} isLoggedIn={!!user}>{children}</AppShell>
+        </CirclesProvider>
       </body>
     </html>
   )

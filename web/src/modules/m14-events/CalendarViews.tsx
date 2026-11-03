@@ -1,6 +1,7 @@
 'use client'
 
-import { isPillar, PILLAR_META } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSet } from '@/core/lib/circles'
 import type { CalendarEvent, EventRsvp } from './types'
 import { KIND_META } from './lib/permissions'
 import {
@@ -8,12 +9,13 @@ import {
   monthGrid, sameDay, startOfDay, weekDays,
 } from './lib/calendar'
 
-export function eventColor(e: CalendarEvent): string {
-  return isPillar(e.circle) ? PILLAR_META[e.circle].color : 'var(--m14)'
+export function eventColor(e: CalendarEvent, circles: CircleSet): string {
+  return circles.has(e.circle) ? circles.meta(e.circle).color : 'var(--m14)'
 }
 
 function EventChip({ event, onOpen, showTime = true }: { event: CalendarEvent; onOpen: (id: string) => void; showTime?: boolean }) {
-  const color = eventColor(event)
+  const circles = useCircles()
+  const color = eventColor(event, circles)
   return (
     <button
       onClick={ev => { ev.stopPropagation(); onOpen(event.id) }}
@@ -41,6 +43,7 @@ export function MonthView({ anchor, events, now, onOpen, onPickDay }: {
   /** Clicking a day's empty space or "+N more" jumps to that day's week. */
   onPickDay: (d: Date) => void
 }) {
+  const circles = useCircles()
   const days = monthGrid(anchor)
   const byDay = groupByDay(events)
   const MAX = 3
@@ -89,7 +92,7 @@ export function MonthView({ anchor, events, now, onOpen, onPickDay }: {
               {list.length > 0 && (
                 <div className="ev-dots" style={{ gap: 3, flexWrap: 'wrap' }}>
                   {list.slice(0, 4).map(e => (
-                    <span key={e.id} style={{ width: 6, height: 6, borderRadius: '50%', background: eventColor(e), opacity: isPast(e, now) ? 0.5 : 1 }} />
+                    <span key={e.id} style={{ width: 6, height: 6, borderRadius: '50%', background: eventColor(e, circles), opacity: isPast(e, now) ? 0.5 : 1 }} />
                   ))}
                 </div>
               )}
@@ -106,6 +109,7 @@ export function MonthView({ anchor, events, now, onOpen, onPickDay }: {
 export function WeekView({ anchor, events, now, onOpen }: {
   anchor: Date; events: CalendarEvent[]; now: Date; onOpen: (id: string) => void
 }) {
+  const circles = useCircles()
   const days = weekDays(anchor)
   const byDay = groupByDay(events)
 
@@ -129,7 +133,7 @@ export function WeekView({ anchor, events, now, onOpen }: {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {list.length === 0 && <div style={{ fontSize: 11, color: 'var(--ink-4)' }}>—</div>}
               {list.map(e => {
-                const color = eventColor(e)
+                const color = eventColor(e, circles)
                 return (
                   <button
                     key={e.id}
@@ -162,6 +166,7 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
   events: CalendarEvent[]; rsvps: EventRsvp[]; userId: string | null; now: Date
   showPast: boolean; onOpen: (id: string) => void
 }) {
+  const circles = useCircles()
   const visible = events
     .filter(e => showPast ? isPast(e, now) : !isPast(e, now))
     .sort((a, b) => (showPast ? -1 : 1) * (new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()))
@@ -192,7 +197,7 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {g.items.map(e => {
-              const color = eventColor(e)
+              const color = eventColor(e, circles)
               const going = rsvps.filter(r => r.event_id === e.id && r.status === 'going').length
               const mine = userId ? rsvps.find(r => r.event_id === e.id && r.user_id === userId) : null
               return (
@@ -213,7 +218,7 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
                     <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: '2px 10px' }}>
                       {e.location && <span>📍 {e.location}</span>}
                       {e.online_url && <span>💻 Online</span>}
-                      {isPillar(e.circle) && <span style={{ color }}>{PILLAR_META[e.circle].emoji} {PILLAR_META[e.circle].label}</span>}
+                      {circles.has(e.circle) && <span style={{ color }}>{circles.meta(e.circle).emoji} {circles.meta(e.circle).label}</span>}
                       {e.project && <span>⚙️ {e.project.title}</span>}
                       {e.is_public && <span>🌍 Public</span>}
                     </div>

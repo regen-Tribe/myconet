@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 
 export interface AdminUserRow {
   id: string
@@ -31,6 +32,7 @@ function userDisplayName(u: AdminUserRow): string {
 }
 
 export default function UsersAdminClient({ initialUsers }: { initialUsers: AdminUserRow[] }) {
+  const circles = useCircles()
   const supabase = createClient()
   const [users, setUsers] = useState<AdminUserRow[]>(initialUsers)
   const [filter, setFilter] = useState('')
@@ -71,7 +73,7 @@ export default function UsersAdminClient({ initialUsers }: { initialUsers: Admin
     }
   }
 
-  function toggleCircle(id: string, pillar: Pillar) {
+  function toggleCircle(id: string, pillar: CircleSlug) {
     const u = users.find(x => x.id === id)
     if (!u) return
     const current = u.lead_circles ?? []
@@ -136,8 +138,8 @@ export default function UsersAdminClient({ initialUsers }: { initialUsers: Admin
                 </div>
                 {isCircleLead && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8 }}>
-                    {PILLARS.map(p => {
-                      const meta = PILLAR_META[p]
+                    {circles.slugs.map(p => {
+                      const meta = circles.meta(p)
                       const active = leadCircles.includes(p)
                       return (
                         <button

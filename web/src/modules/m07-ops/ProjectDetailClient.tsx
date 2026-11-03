@@ -6,7 +6,8 @@ import { isJoiningOrAbove } from '@/core/lib/roles'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Project, Deliverable, ProjectUpdate, CollaborationAgreement, MyProposal, SubscriberProfile } from './types'
-import { PILLARS, PILLAR_META, isPillar, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import { isActiveProject, isOpenForProposals, PROJECT_STATUS_META, PROJECT_KANBAN_COLUMNS } from '@/core/lib/project-status'
 import { CalendarPicker } from './CalendarPicker'
 import { PermissionNoticeModal } from './PermissionNoticeModal'
@@ -138,13 +139,14 @@ export default function ProjectDetailClient({
   creatorProfile: { first_name: string | null; username: string | null } | null
   projectEvents: CalendarEvent[]
 }) {
+  const circles = useCircles()
   const supabase = createClient()
   const router = useRouter()
   const s = PROJECT_STATUS_META[project.status] ?? PROJECT_STATUS_META.backlog
 
   const canManage = isAdmin || isProjectCreator
   // Settings write to `projects`, whose RLS is stricter than canManage
-  const settingsBlock = projectEditBlock(project, userId, userRole, leadCircles)
+  const settingsBlock = projectEditBlock(project, userId, userRole, leadCircles, circles)
   const [notice, setNotice] = useState<PermissionNotice | null>(null)
   const canPropose = !canManage && project.open_for_collaborators && isOpenForProposals(project.status)
 
@@ -167,7 +169,7 @@ export default function ProjectDetailClient({
   // ── Project settings ──────────────────────────────────────────────────────
   const [editStatus, setEditStatus] = useState(project.status)
   const [editOpenCollab, setEditOpenCollab] = useState(project.open_for_collaborators)
-  const [editCircle, setEditCircle] = useState<Pillar | ''>(isPillar(project.circle) ? project.circle : '')
+  const [editCircle, setEditCircle] = useState<CircleSlug | ''>(circles.has(project.circle) ? project.circle : '')
   const [editDeadline, setEditDeadline] = useState<string | null>(project.deadline ?? null)
   const [savingSettings, setSavingSettings] = useState(false)
 
@@ -417,7 +419,7 @@ export default function ProjectDetailClient({
 
   async function saveProjectSettings() {
     if (settingsBlock) { setNotice(settingsBlock); return }
-    const circleBlock = circleChangeBlock(editCircle, userRole, leadCircles)
+    const circleBlock = circleChangeBlock(editCircle, userRole, leadCircles, circles)
     if (circleBlock) { setNotice(circleBlock); return }
     setSavingSettings(true)
     // RLS rejects silently (0 rows, no error), so ask for the row back to tell
@@ -432,7 +434,7 @@ export default function ProjectDetailClient({
       setNotice({
         title: "Settings didn't save",
         message: error?.message ?? 'The database didn’t allow this change for your account.',
-        circle: isPillar(project.circle) ? project.circle : null,
+        circle: circles.has(project.circle) ? project.circle : null,
       })
       return
     }
@@ -465,8 +467,8 @@ export default function ProjectDetailClient({
                   Open for collaborators
                 </span>
               )}
-              {isPillar(project.circle) && (() => {
-                const m = PILLAR_META[project.circle]
+              {circles.has(project.circle) && (() => {
+                const m = circles.meta(project.circle)
                 return (
                   <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: m.color, background: `${m.color}15`, padding: '3px 10px', borderRadius: 20 }}>
                     {m.emoji} {m.label}
@@ -949,8 +951,8 @@ export default function ProjectDetailClient({
               <div style={{ marginBottom: 12 }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--ink-3)', marginBottom: 6 }}>Circle</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                  {PILLARS.map(p => {
-                    const meta = PILLAR_META[p]
+                  {circles.slugs.map(p => {
+                    const meta = circles.meta(p)
                     const active = editCircle === p
                     return (
                       <button
@@ -958,7 +960,7 @@ export default function ProjectDetailClient({
                         type="button"
                         onClick={() => {
                           const next = active ? '' : p
-                          const block = settingsBlock ?? circleChangeBlock(next, userRole, leadCircles)
+                          const block = settingsBlock ?? circleChangeBlock(next, userRole, leadCircles, circles)
                           if (block) setNotice(block)
                           else setEditCircle(next)
                         }}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { isPillar, PILLAR_META } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
 import type { CalendarEvent, EventRsvp, RsvpStatus } from './types'
 import { fmtEventWhen } from './lib/calendar'
 import { KIND_META } from './lib/permissions'
@@ -45,9 +45,10 @@ export function EventDetailModal({
   onEdit: () => void
   onDelete: () => Promise<void>
 }) {
+  const circles = useCircles()
   const [busy, setBusy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const color = eventColor(event)
+  const color = eventColor(event, circles)
   const kindMeta = KIND_META[event.kind]
   const going = rsvps.filter(r => r.status === 'going')
   const maybe = rsvps.filter(r => r.status === 'maybe')
@@ -91,9 +92,9 @@ export function EventDetailModal({
           <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', background: 'var(--m14)', borderRadius: 20, padding: '2px 9px' }}>
             {KIND_META[event.kind].short}
           </span>
-          {isPillar(event.circle) && (
+          {circles.has(event.circle) && (
             <span style={{ fontSize: 11, fontWeight: 700, color, background: `color-mix(in srgb, ${color} 12%, var(--surface))`, borderRadius: 20, padding: '2px 9px' }}>
-              {PILLAR_META[event.circle].emoji} {PILLAR_META[event.circle].label}
+              {circles.meta(event.circle).emoji} {circles.meta(event.circle).label}
             </span>
           )}
           <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-3)', background: 'var(--bg-2)', borderRadius: 20, padding: '2px 9px' }}>

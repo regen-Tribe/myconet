@@ -23,7 +23,8 @@ core/
 │   ├── roles.ts          Role authority helpers — isFullMember, isCircleAdmin, isOpsAdmin, isAdmin, etc.
 │   ├── promotions.ts     Member promotion logic — promoteToMemberIfEligible()
 │   ├── format.ts         Shared display helpers — fmtDate, formatDeadline, colorForId, initialForName
-│   ├── pillars.ts        The 5 circles (ecology, hardware, humanware, economy, tech) — PILLARS, PILLAR_META, isPillar
+│   ├── circles.ts        The community's circles (from the `circles` table): CircleSet helpers
+│   ├── circles-server.ts loadCircles(supabase), cached per request
 │   ├── project-status.ts M07 Kanban model — PROJECT_KANBAN_COLUMNS, PROJECT_STATUS_META, isActiveProject, isOpenForProposals
 │   └── utils.ts          Tailwind class merge helper (cn)
 └── types/
@@ -41,7 +42,8 @@ import type { Database } from '@/core/types/database'
 import { isFullMember, isCircleAdmin, isOpsAdmin } from '@/core/lib/roles'
 import { promoteToMemberIfEligible } from '@/core/lib/promotions'
 import { fmtDate, formatDeadline, colorForId, initialForName } from '@/core/lib/format'
-import { PILLARS, PILLAR_META, isPillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'   // client: circles.list / .meta(slug) / .has(slug)
+import { loadCircles } from '@/core/lib/circles-server'          // server
 import { PROJECT_KANBAN_COLUMNS, PROJECT_STATUS_META, isActiveProject } from '@/core/lib/project-status'
 ```
 

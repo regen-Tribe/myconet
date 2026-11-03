@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import type { CalendarEvent, EventKind, EventRsvp, EventsView, LinkOption, PersonLite, RsvpStatus } from './types'
 import { addDays, fmtMonthTitle, fmtWeekTitle, isPast, startOfDay } from './lib/calendar'
 import { canCreateKind, canEditEvent, EVENT_KINDS, KIND_META } from './lib/permissions'
@@ -36,12 +37,13 @@ export default function EventsClient({
   /** Set when arriving from "+ Add event" on a project or proposal. */
   initialDraft: EventDraft | null
 }) {
+  const circles = useCircles()
   const supabase = createClient()
   const [events, setEvents] = useState(initialEvents)
   const [rsvps, setRsvps] = useState(initialRsvps)
   const [tab, setTab] = useState<EventKind>(initialTab)
   const [view, setView] = useState<EventsView>(initialView)
-  const [circleFilter, setCircleFilter] = useState<Pillar | ''>('')
+  const [circleFilter, setCircleFilter] = useState<CircleSlug | ''>('')
   const [showPast, setShowPast] = useState(false)
   const [openId, setOpenId] = useState<string | null>(initialEventId)
   const [form, setForm] = useState<{ existing: CalendarEvent | null; draft: EventDraft } | null>(
@@ -234,12 +236,12 @@ export default function EventsClient({
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <select
             value={circleFilter}
-            onChange={e => setCircleFilter(e.target.value as Pillar | '')}
+            onChange={e => setCircleFilter(e.target.value as CircleSlug | '')}
             aria-label="Filter by circle"
             style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 8, padding: '6px 8px' }}
           >
             <option value="">All circles</option>
-            {PILLARS.map(p => <option key={p} value={p}>{PILLAR_META[p].emoji} {PILLAR_META[p].label}</option>)}
+            {circles.slugs.map(p => <option key={p} value={p}>{circles.meta(p).emoji} {circles.meta(p).label}</option>)}
           </select>
           <div style={{ display: 'flex', border: '1px solid var(--rule)', borderRadius: 8, overflow: 'hidden' }}>
             {VIEWS.map(v => (
@@ -270,9 +272,9 @@ export default function EventsClient({
 
       {/* Legend */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px', marginTop: 14, fontSize: 11.5, color: 'var(--ink-3)' }}>
-        {PILLARS.map(p => (
+        {circles.slugs.map(p => (
           <span key={p} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: PILLAR_META[p].color }} />{PILLAR_META[p].label}
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: circles.meta(p).color }} />{circles.meta(p).label}
           </span>
         ))}
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>

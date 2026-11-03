@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { PILLAR_META } from '@/core/lib/pillars'
-import { circleLabel, type CircleDirectory, type PermissionNotice, type PersonRef } from '@/core/lib/ops-permissions'
+import { useCircles } from '@/core/components/CirclesProvider'
+import { type CircleDirectory, type PermissionNotice, type PersonRef } from '@/core/lib/ops-permissions'
 
 function PeopleList({ people }: { people: PersonRef[] }) {
   return (
@@ -31,6 +31,7 @@ export function PermissionNoticeModal({
   directory: CircleDirectory
   onClose: () => void
 }) {
+  const circles = useCircles()
   if (!notice) return null
   const circleLeads = notice.circle ? directory.leads[notice.circle] : []
   const sectionLabel: React.CSSProperties = {
@@ -73,7 +74,7 @@ export function PermissionNoticeModal({
           {notice.circle && (
             <div>
               <div style={sectionLabel}>
-                <span style={{ color: PILLAR_META[notice.circle].color }}>{circleLabel(notice.circle)}</span> leads
+                <span style={{ color: circles.meta(notice.circle).color }}>{circles.label(notice.circle)}</span> leads
               </div>
               {circleLeads.length > 0
                 ? <PeopleList people={circleLeads} />

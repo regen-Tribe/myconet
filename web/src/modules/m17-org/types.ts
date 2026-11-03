@@ -1,4 +1,4 @@
-import type { Pillar } from '@/core/lib/pillars'
+import type { CircleSlug } from '@/core/lib/circles'
 
 export type UnitKind = 'circle' | 'team'
 export type UnitRole = 'lead' | 'member'
@@ -12,7 +12,7 @@ export interface OrgPerson {
 export interface OrgUnit {
   id: string
   kind: UnitKind
-  circle: Pillar
+  circle: CircleSlug
   name: string
   description: string | null
   sort_order: number

@@ -2,7 +2,8 @@
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 import { FormField, FocusInput, FocusTextarea, inputStyle } from './AgreementFormFields'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 
 interface Props {
   userId: string
@@ -10,11 +11,12 @@ interface Props {
 }
 
 export default function NewProjectModal({ userId, onClose }: Props) {
+  const circles = useCircles()
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
   const [needs, setNeeds] = useState('')
   const [deadline, setDeadline] = useState('')
-  const [circle, setCircle] = useState<Pillar | ''>('')
+  const [circle, setCircle] = useState<CircleSlug | ''>('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
@@ -103,8 +105,8 @@ export default function NewProjectModal({ userId, onClose }: Props) {
 
               <FormField label="Circle" hint="which pillar this project belongs to">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {PILLARS.map(p => {
-                    const meta = PILLAR_META[p]
+                  {circles.slugs.map(p => {
+                    const meta = circles.meta(p)
                     const active = circle === p
                     return (
                       <button

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PILLARS, PILLAR_META } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
 import type { CircleDirectory } from '@/core/lib/ops-permissions'
 
 /**
@@ -109,6 +109,7 @@ export function ResourcesPreview({ items }: { items: PreviewItem[] }) {
 }
 
 export function CirclesPreview({ data }: { data: CirclesPreviewData }) {
+  const circles = useCircles()
   return (
     <div style={card}>
       <div style={head}>M17 · Who leads what</div>
@@ -118,8 +119,8 @@ export function CirclesPreview({ data }: { data: CirclesPreviewData }) {
         </div>
       )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8 }}>
-        {PILLARS.map(c => {
-          const meta = PILLAR_META[c]
+        {circles.slugs.map(c => {
+          const meta = circles.meta(c)
           const leads = data.directory.leads[c]
           const teams = data.teams[c] ?? []
           return (

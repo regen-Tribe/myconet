@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/core/lib/supabase/client'
-import { isPillar, PILLAR_META, PILLARS } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
 import { PROJECT_KANBAN_COLUMNS } from '@/core/lib/project-status'
 import { canMoveProject, projectEditBlock, type CircleDirectory, type PermissionNotice } from '@/core/lib/ops-permissions'
 import { DeliverablesTab } from './DeliverablesTab'
@@ -117,7 +117,8 @@ function ProjectKanbanCard({
   /** Called when the user tries to drag a card they can't move. */
   onBlockedDrag?: () => void
 }) {
-  const circleMeta = isPillar(project.circle) ? PILLAR_META[project.circle] : null
+  const circles = useCircles()
+  const circleMeta = circles.has(project.circle) ? circles.meta(project.circle) : null
   const accent = circleMeta?.color ?? 'var(--m7)'
 
   const deadline = project.deadline ? new Date(project.deadline + 'T00:00:00') : null
@@ -214,6 +215,7 @@ export default function OpsClient({
   isAdmin, userId, userRole, leadCircles, sprintName,
   projectSubscribers, userProfiles, canPropose, circleDirectory, initialTab,
 }: OpsClientProps) {
+  const circles = useCircles()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<OpsTab>(initialTab)
   const [notice, setNotice] = useState<PermissionNotice | null>(null)
@@ -227,7 +229,7 @@ export default function OpsClient({
   async function moveProject(projectId: string, newStatus: string) {
     const p = boardProjects.find(x => x.id === projectId)
     if (!p || p.status === newStatus) return
-    const block = projectEditBlock(p, userId, userRole, leadCircles)
+    const block = projectEditBlock(p, userId, userRole, leadCircles, circles)
     if (block) { setNotice(block); return }
     setBoardProjects(prev => prev.map(x => x.id === projectId ? { ...x, status: newStatus } : x))
     const supabase = createClient()
@@ -238,7 +240,7 @@ export default function OpsClient({
       setNotice({
         title: "That move didn't save",
         message: error?.message ?? 'The database didn’t allow this change for your account. Ask a lead of this circle or an admin to move it.',
-        circle: isPillar(p.circle) ? p.circle : null,
+        circle: circles.has(p.circle) ? p.circle : null,
       })
     } else {
       router.refresh()
@@ -389,8 +391,8 @@ export default function OpsClient({
             {/* Circle filter */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.07em', fontFamily: 'var(--mono)', marginRight: 2 }}>Circle</span>
-              {[null, ...PILLARS].map(circle => {
-                const meta = circle ? PILLAR_META[circle] : null
+              {[null, ...circles.slugs].map(circle => {
+                const meta = circle ? circles.meta(circle) : null
                 const isActive = selectedCircle === circle
                 return (
                   <button
@@ -489,11 +491,11 @@ export default function OpsClient({
                         project={p}
                         subtaskCount={stats.total}
                         doneCount={stats.done}
-                        canMove={canMoveProject(p, userId, userRole, leadCircles)}
+                        canMove={canMoveProject(p, userId, userRole, leadCircles, circles)}
                         subscribers={subs}
                         leadName={leadName}
                         onDragStart={(id) => setDraggingId(id)}
-                        onBlockedDrag={userId ? () => setNotice(projectEditBlock(p, userId, userRole, leadCircles)) : undefined}
+                        onBlockedDrag={userId ? () => setNotice(projectEditBlock(p, userId, userRole, leadCircles, circles)) : undefined}
                         onDragEnd={() => { setDraggingId(null); setDropTarget(null) }}
                         isDragging={draggingId === p.id}
                       />

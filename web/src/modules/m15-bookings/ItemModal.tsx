@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ModalShell } from '@/core/components/ModalShell'
-import { isPillar, PILLAR_META } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
 import { ROLE_LABELS } from '@/core/lib/roles'
 import type { Booking, BookingItem } from './types'
 import {
@@ -37,6 +37,7 @@ export function ItemModal({
   onEdit: () => void
   onToggleActive: () => Promise<void>
 }) {
+  const circles = useCircles()
   const meta = CATEGORY_META[item.category]
   const byNight = meta.unit === 'night'
 
@@ -85,8 +86,8 @@ export function ItemModal({
           {item.tags.map(t => (
             <span key={t} style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-2)', background: 'var(--bg-2)', borderRadius: 20, padding: '2px 9px' }}>#{t}</span>
           ))}
-          {isPillar(item.circle) && (
-            <span style={{ fontSize: 11, fontWeight: 700, color: PILLAR_META[item.circle].color }}>{PILLAR_META[item.circle].emoji} {PILLAR_META[item.circle].label}</span>
+          {circles.has(item.circle) && (
+            <span style={{ fontSize: 11, fontWeight: 700, color: circles.meta(item.circle).color }}>{circles.meta(item.circle).emoji} {circles.meta(item.circle).label}</span>
           )}
           {!item.is_active && <span style={{ fontSize: 11, fontWeight: 700, color: '#dc2626' }}>Archived</span>}
         </div>

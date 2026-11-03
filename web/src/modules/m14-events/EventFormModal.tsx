@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import { ROLE_LABELS } from '@/core/lib/roles'
 import type { CalendarEvent, EventKind, LinkOption } from './types'
 import { toLocalDateInput, toLocalInput } from './lib/calendar'
@@ -19,7 +20,7 @@ export interface EventPayload {
   all_day: boolean
   kind: EventKind
   is_public: boolean
-  circle: Pillar | null
+  circle: CircleSlug | null
   project_id: string | null
   proposal_id: string | null
 }
@@ -58,6 +59,7 @@ export function EventFormModal({
   /** Resolves to an error message, or null on success. */
   onSave: (payload: EventPayload) => Promise<string | null>
 }) {
+  const circles = useCircles()
   const canCore = canCreateKind('core', role)
   const initialKind: EventKind = existing?.kind ?? (draft.kind && draft.kind !== 'community' && canCore ? draft.kind : 'community')
 
@@ -69,8 +71,8 @@ export function EventFormModal({
   const [location, setLocation] = useState(existing?.location ?? '')
   const [onlineUrl, setOnlineUrl] = useState(existing?.online_url ?? '')
   const [description, setDescription] = useState(existing?.description ?? '')
-  const [circle, setCircle] = useState<Pillar | ''>(
-    (PILLARS as readonly string[]).includes(existing?.circle ?? draft.circle ?? '') ? ((existing?.circle ?? draft.circle) as Pillar) : '',
+  const [circle, setCircle] = useState<CircleSlug | ''>(
+    (circles.slugs as readonly string[]).includes(existing?.circle ?? draft.circle ?? '') ? ((existing?.circle ?? draft.circle) as CircleSlug) : '',
   )
   const [projectId, setProjectId] = useState(existing?.project_id ?? draft.project_id ?? '')
   const [proposalId, setProposalId] = useState(existing?.proposal_id ?? draft.proposal_id ?? '')
@@ -96,7 +98,7 @@ export function EventFormModal({
     setProjectId(id)
     // Default the circle to the project's circle when none is chosen yet
     const p = projects.find(x => x.id === id)
-    if (p?.circle && !circle && (PILLARS as readonly string[]).includes(p.circle)) setCircle(p.circle as Pillar)
+    if (p?.circle && !circle && (circles.slugs as readonly string[]).includes(p.circle)) setCircle(p.circle as CircleSlug)
   }
 
   async function submit(e: React.FormEvent) {
@@ -211,8 +213,8 @@ export function EventFormModal({
               fontSize: 12, fontWeight: 600, borderRadius: 20, padding: '4px 11px', cursor: 'pointer',
               border: `1px solid ${circle === '' ? 'var(--ink-2)' : 'var(--rule)'}`, background: 'var(--surface)', color: 'var(--ink-2)',
             }}>None</button>
-            {PILLARS.map(p => {
-              const meta = PILLAR_META[p]
+            {circles.slugs.map(p => {
+              const meta = circles.meta(p)
               const active = circle === p
               return (
                 <button key={p} type="button" onClick={() => setCircle(p)} style={{

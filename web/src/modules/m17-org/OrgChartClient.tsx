@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import type { CircleDirectory, PersonRef } from '@/core/lib/ops-permissions'
 import type { OrgMember, OrgPerson, OrgUnit } from './types'
 import { canEditUnit, canLeadCircle, MEMBER_SELECT, toMember } from './lib/org'
@@ -47,10 +48,11 @@ export default function OrgChartClient({
   role: string
   leadCircles: string[]
 }) {
+  const circles = useCircles()
   const supabase = createClient()
   const [units, setUnits] = useState(initialUnits)
   const [members, setMembers] = useState(initialMembers)
-  const [editing, setEditing] = useState<{ unit: OrgUnit | null; circle: Pillar } | null>(null)
+  const [editing, setEditing] = useState<{ unit: OrgUnit | null; circle: CircleSlug } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
 
   useEffect(() => {
@@ -59,20 +61,20 @@ export default function OrgChartClient({
     return () => clearTimeout(t)
   }, [toast])
 
-  const circleUnit = (c: Pillar) => units.find(u => u.kind === 'circle' && u.circle === c)
-  const teamsOf = (c: Pillar) => units.filter(u => u.kind === 'team' && u.circle === c).sort((a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name))
+  const circleUnit = (c: CircleSlug) => units.find(u => u.kind === 'circle' && u.circle === c)
+  const teamsOf = (c: CircleSlug) => units.filter(u => u.kind === 'team' && u.circle === c).sort((a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name))
   const membersOf = (unitId: string) => members
     .filter(m => m.unit_id === unitId)
     .sort((a, b) => (a.role === b.role ? (a.person?.name ?? '').localeCompare(b.person?.name ?? '') : a.role === 'lead' ? -1 : 1))
 
   // Where the signed-in user sits, for the summary line
-  const myCircles = PILLARS.filter(c => role === 'circle_lead' && leadCircles.includes(c))
+  const myCircles = circles.slugs.filter(c => role === 'circle_lead' && leadCircles.includes(c))
   const myTeams = userId ? units.filter(u => u.kind === 'team' && members.some(m => m.unit_id === u.id && m.user_id === userId)) : []
-  const myCircleMemberships = userId ? PILLARS.filter(c => { const cu = circleUnit(c); return cu && members.some(m => m.unit_id === cu.id && m.user_id === userId) }) : []
+  const myCircleMemberships = userId ? circles.slugs.filter(c => { const cu = circleUnit(c); return cu && members.some(m => m.unit_id === cu.id && m.user_id === userId) }) : []
 
   const myParts = [
-    myCircles.length ? `lead ${myCircles.map(c => PILLAR_META[c].label).join(', ')}` : null,
-    myCircleMemberships.length ? `are in ${myCircleMemberships.map(c => PILLAR_META[c].label).join(', ')}` : null,
+    myCircles.length ? `lead ${myCircles.map(c => circles.meta(c).label).join(', ')}` : null,
+    myCircleMemberships.length ? `are in ${myCircleMemberships.map(c => circles.meta(c).label).join(', ')}` : null,
     myTeams.length ? `are on ${myTeams.map(t => t.name).join(', ')}` : null,
   ].filter(Boolean)
   const mySummary = myParts.length ? `You ${myParts.join(' · ')}.` : null
@@ -169,8 +171,8 @@ export default function OrgChartClient({
 
       {/* ── Circles ───────────────────────────────────────────────────── */}
       <div className="org-circles" style={{ borderTop: '2px solid var(--rule)', paddingTop: 16 }}>
-        {PILLARS.map(c => {
-          const meta = PILLAR_META[c]
+        {circles.slugs.map(c => {
+          const meta = circles.meta(c)
           const cu = circleUnit(c)
           const leads: PersonRef[] = directory.leads[c]
           const circleMembers = cu ? membersOf(cu.id) : []

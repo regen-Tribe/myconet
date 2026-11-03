@@ -1,7 +1,7 @@
 import { createClient } from '@/core/lib/supabase/server'
 import EventsClient from '@/modules/m14-events/EventsClient'
 import { isJoiningOrAbove } from '@/core/lib/roles'
-import { isPillar } from '@/core/lib/pillars'
+import { loadCircles } from '@/core/lib/circles-server'
 import { isEventKind } from '@/modules/m14-events/lib/permissions'
 import { EVENT_SELECT, RSVP_SELECT, toEvent, toRsvp } from '@/modules/m14-events/lib/queries'
 import type { EventDraft } from '@/modules/m14-events/EventFormModal'
@@ -14,7 +14,7 @@ export default async function EventsPage({ searchParams }: {
 }) {
   const sp = await searchParams
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: { user } }, circles] = await Promise.all([supabase.auth.getUser(), loadCircles(supabase)])
 
   let role = 'explorer'
   let leadCircles: string[] = []
@@ -65,7 +65,7 @@ export default async function EventsPage({ searchParams }: {
         kind: initialTab,
         project_id: projects.some(p => p.id === sp.project) ? sp.project! : null,
         proposal_id: proposals.some(p => p.id === sp.proposal) ? sp.proposal! : null,
-        circle: isPillar(sp.circle)
+        circle: circles.has(sp.circle)
           ? sp.circle
           : projects.find(p => p.id === sp.project)?.circle ?? null,
       }

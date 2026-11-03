@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import { CalendarPicker } from './CalendarPicker'
 
 export default function NewProjectClient({
@@ -13,12 +14,13 @@ export default function NewProjectClient({
   userId: string
   isOpsAdmin: boolean
 }) {
+  const circles = useCircles()
   const supabase = createClient()
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [openForCollab, setOpenForCollab] = useState(true)
-  const [circle, setCircle] = useState<Pillar | ''>('')
+  const [circle, setCircle] = useState<CircleSlug | ''>('')
   const [deadline, setDeadline] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -112,8 +114,8 @@ export default function NewProjectClient({
             Circle <span style={{ fontWeight: 400, color: 'var(--ink-4)' }}>— which pillar does this belong to?</span>
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {PILLARS.map(p => {
-              const meta = PILLAR_META[p]
+            {circles.slugs.map(p => {
+              const meta = circles.meta(p)
               const active = circle === p
               return (
                 <button

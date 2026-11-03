@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { ModalShell } from '@/core/components/ModalShell'
-import { PILLARS, PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import type { BookingCategory, BookingItem } from './types'
 import { CATEGORY_META } from './lib/inventory'
 
@@ -11,7 +12,7 @@ export interface ItemPayload {
   description: string | null
   category: BookingCategory
   tags: string[]
-  circle: Pillar | null
+  circle: CircleSlug | null
   location: string | null
   capacity: number | null
   requires_approval: boolean
@@ -39,6 +40,7 @@ export function ItemFormModal({
   onClose: () => void
   onSave: (payload: ItemPayload) => Promise<string | null>
 }) {
+  const circles = useCircles()
   const [name, setName] = useState(existing?.name ?? '')
   const [category, setCategory] = useState<BookingCategory>(existing?.category ?? defaultCategory)
   const [tags, setTags] = useState<string[]>(existing?.tags ?? [])
@@ -46,13 +48,13 @@ export function ItemFormModal({
   const [description, setDescription] = useState(existing?.description ?? '')
   const [location, setLocation] = useState(existing?.location ?? '')
   const [capacity, setCapacity] = useState(existing?.capacity ? String(existing.capacity) : '')
-  const [circle, setCircle] = useState<Pillar | ''>((existing?.circle as Pillar) ?? '')
+  const [circle, setCircle] = useState<CircleSlug | ''>((existing?.circle as CircleSlug) ?? '')
   const [requiresApproval, setRequiresApproval] = useState(existing?.requires_approval ?? category === 'accommodation')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   // Circle leads can only place items in circles they lead (or no circle)
-  const circleAllowed = (c: Pillar) => role === 'admin' || leadCircles.includes(c) || existing?.circle === c
+  const circleAllowed = (c: CircleSlug) => role === 'admin' || leadCircles.includes(c) || existing?.circle === c
   const suggestions = [...new Set([...CATEGORY_META[category].suggestedTags, ...knownTags])].filter(t => !tags.includes(t)).slice(0, 10)
 
   function addTag(raw: string) {
@@ -159,16 +161,16 @@ export function ItemFormModal({
           <span style={labelStyle}>Circle <span style={{ fontWeight: 400, color: 'var(--ink-4)' }}>(who looks after it)</span></span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             <button type="button" onClick={() => setCircle('')} style={chip(circle === '', 'var(--ink-2)')}>None</button>
-            {PILLARS.map(p => {
+            {circles.slugs.map(p => {
               const ok = circleAllowed(p)
               return (
                 <button
                   key={p} type="button" disabled={!ok}
                   onClick={() => setCircle(p)}
                   title={ok ? undefined : 'You can only add items to circles you lead.'}
-                  style={{ ...chip(circle === p, PILLAR_META[p].color), opacity: ok ? 1 : 0.4, cursor: ok ? 'pointer' : 'not-allowed' }}
+                  style={{ ...chip(circle === p, circles.meta(p).color), opacity: ok ? 1 : 0.4, cursor: ok ? 'pointer' : 'not-allowed' }}
                 >
-                  {PILLAR_META[p].emoji} {PILLAR_META[p].label}
+                  {circles.meta(p).emoji} {circles.meta(p).label}
                 </button>
               )
             })}

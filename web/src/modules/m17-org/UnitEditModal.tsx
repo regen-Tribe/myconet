@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { ModalShell } from '@/core/components/ModalShell'
-import { PILLAR_META, type Pillar } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
+import type { CircleSlug } from '@/core/lib/circles'
 import type { OrgMember, OrgPerson, OrgUnit, UnitRole } from './types'
 
 export interface UnitDraft {
@@ -23,7 +24,7 @@ export function UnitEditModal({
 }: {
   /** null when creating a new team */
   unit: OrgUnit | null
-  circle: Pillar
+  circle: CircleSlug
   members: OrgMember[]
   people: OrgPerson[]
   canDelete: boolean
@@ -31,8 +32,9 @@ export function UnitEditModal({
   onSave: (draft: UnitDraft) => Promise<string | null>
   onDelete: () => Promise<string | null>
 }) {
+  const circles = useCircles()
   const isCircle = unit?.kind === 'circle'
-  const meta = PILLAR_META[circle]
+  const meta = circles.meta(circle)
   const [name, setName] = useState(unit?.name ?? '')
   const [description, setDescription] = useState(unit?.description ?? '')
   const [rows, setRows] = useState(members.map(m => ({ user_id: m.user_id, role: m.role, title: m.title ?? '' })))

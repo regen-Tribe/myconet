@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { PILLARS, PILLAR_META } from '@/core/lib/pillars'
+import { useCircles } from '@/core/components/CirclesProvider'
 import { isActiveProject } from '@/core/lib/project-status'
 import { ROLE_LABELS } from '@/core/lib/roles'
-import { circleLabel, type CircleDirectory, type PersonRef } from '@/core/lib/ops-permissions'
+import { type CircleDirectory, type PersonRef } from '@/core/lib/ops-permissions'
 import type { Project } from './types'
 
 function PersonChip({ person, isMe }: { person: PersonRef; isMe: boolean }) {
@@ -36,16 +36,17 @@ export function CirclesTab({
   /** Projects the user leads, created, is assigned in, or watches. */
   involvedProjectIds: Set<string>
 }) {
+  const circles = useCircles()
   const isAdmin = userRole === 'admin'
-  const myLeadCircles = PILLARS.filter(c => userRole === 'circle_lead' && leadCircles.includes(c))
-  const myInvolvedCircles = PILLARS.filter(c => projects.some(p => p.circle === c && involvedProjectIds.has(p.id)))
+  const myLeadCircles = circles.slugs.filter(c => userRole === 'circle_lead' && leadCircles.includes(c))
+  const myInvolvedCircles = circles.slugs.filter(c => projects.some(p => p.circle === c && involvedProjectIds.has(p.id)))
 
   const summary = !userId
     ? 'Sign in to see which circles you belong to.'
     : isAdmin
       ? 'You’re an admin, so you can move and edit projects in every circle.'
       : myLeadCircles.length
-        ? `You lead ${myLeadCircles.map(circleLabel).join(', ')}. You can move and edit projects in ${myLeadCircles.length === 1 ? 'that circle' : 'those circles'}.`
+        ? `You lead ${myLeadCircles.map(c => circles.label(c)).join(', ')}. You can move and edit projects in ${myLeadCircles.length === 1 ? 'that circle' : 'those circles'}.`
         : userRole === 'project_lead'
           ? 'You’re a project lead. You can move and edit the projects you created or lead.'
           : 'You don’t lead a circle. Circle leads and admins move projects on the board.'
@@ -63,7 +64,7 @@ export function CirclesTab({
             Involved in:{' '}
             {myInvolvedCircles.length
               ? myInvolvedCircles.map(c => (
-                  <span key={c} style={{ color: PILLAR_META[c].color, fontWeight: 600, marginRight: 8 }}>{circleLabel(c)}</span>
+                  <span key={c} style={{ color: circles.meta(c).color, fontWeight: 600, marginRight: 8 }}>{circles.label(c)}</span>
                 ))
               : 'no circle projects yet — lead, join or watch a project to get involved.'}
           </div>
@@ -72,8 +73,8 @@ export function CirclesTab({
 
       {/* One card per circle */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
-        {PILLARS.map(c => {
-          const meta = PILLAR_META[c]
+        {circles.slugs.map(c => {
+          const meta = circles.meta(c)
           const leads = directory.leads[c]
           const circleProjects = projects.filter(p => p.circle === c)
           const active = circleProjects.filter(p => isActiveProject(p.status)).length
