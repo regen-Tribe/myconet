@@ -5,15 +5,16 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "build:cf": "opennextjs-cloudflare build",
-    "deploy:cf": "opennextjs-cloudflare build && wrangler deploy",
-    "preview:cf": "opennextjs-cloudflare build && wrangler dev",
+    "build:cf": "npm run instance && opennextjs-cloudflare build",
+    "deploy:cf": "npm run instance && opennextjs-cloudflare build && wrangler deploy",
+    "preview:cf": "npm run instance && opennextjs-cloudflare build && wrangler dev",
     "start": "next start",
     "lint": "eslint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "preview": "npm run instance && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "npm run instance && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "npm run instance && opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "instance": "node scripts/instance.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

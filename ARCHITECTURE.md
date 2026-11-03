@@ -429,7 +429,7 @@ cd web && npm run deploy:cf
 
 **Live URL:** `https://myconet.correa-oscar11.workers.dev`
 
-Environment variables are set in `.dev.vars` (local) and Cloudflare dashboard (production):
+Public settings (Supabase URL + anon key, app URL, Worker name) come from `instance/config.jsonc`, which generates `web/wrangler.jsonc` at build time (see `INSTANCES.md`). Secrets are Cloudflare secrets. Locally, `.dev.vars` / `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_APP_URL`

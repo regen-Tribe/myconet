@@ -1,0 +1,85 @@
+// Reads this community's instance/config.jsonc and generates the files the build
+// needs: web/wrangler.jsonc and web/.env.production.local (public env vars, which
+// Next inlines at build time). Run automatically before every build/deploy.
+//
+//   node scripts/instance.mjs            generate
+//   MYCONET_INSTANCE_DIR=../other node … use another instance folder
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const INSTANCE_DIR = resolve(WEB, process.env.MYCONET_INSTANCE_DIR ?? '../instance')
+
+/** JSON with // and /* *\/ comments and trailing commas. */
+function parseJsonc(text) {
+  let out = '', inStr = false
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i + 1]
+    if (inStr) {
+      out += c
+      if (c === '\\') out += text[++i]
+      else if (c === '"') inStr = false
+    } else if (c === '"') { inStr = true; out += c }
+    else if (c === '/' && n === '/') { while (i < text.length && text[i] !== '\n') i++; out += '\n' }
+    else if (c === '/' && n === '*') { i = text.indexOf('*/', i + 2) + 1 }
+    else out += c
+  }
+  return JSON.parse(out.replace(/,(\s*[}\]])/g, '$1'))
+}
+
+export function loadInstance() {
+  const file = resolve(INSTANCE_DIR, 'config.jsonc')
+  if (!existsSync(file)) {
+    throw new Error(`No instance config at ${file}. Copy instance.example/ to instance/ and fill it in.`)
+  }
+  const cfg = parseJsonc(readFileSync(file, 'utf8'))
+  const problems = []
+  if (!/^[a-z0-9-]+$/.test(cfg.id ?? '')) problems.push('id: lowercase letters, numbers and dashes')
+  if (!cfg.displayName) problems.push('displayName is required')
+  if (!/^https:\/\/[^/]+$/.test(cfg.appUrl ?? '')) problems.push('appUrl: https://host, no trailing slash')
+  if (!/^[a-z0-9-]+$/.test(cfg.cloudflare?.workerName ?? '')) problems.push('cloudflare.workerName: lowercase letters, numbers and dashes')
+  if (!/^https:\/\/[a-z0-9]+\.supabase\.co$/.test(cfg.supabase?.url ?? '')) problems.push('supabase.url: https://<ref>.supabase.co')
+  if (!cfg.supabase?.anonKey) problems.push('supabase.anonKey is required')
+  if (problems.length) throw new Error(`instance/config.jsonc:\n  - ${problems.join('\n  - ')}`)
+  return cfg
+}
+
+function wranglerConfig(cfg) {
+  return {
+    $schema: 'node_modules/wrangler/config-schema.json',
+    main: '.open-next/worker.js',
+    name: cfg.cloudflare.workerName,
+    ...(cfg.cloudflare.accountId ? { account_id: cfg.cloudflare.accountId } : {}),
+    workers_dev: true,
+    compatibility_date: '2026-05-11',
+    compatibility_flags: ['nodejs_compat', 'global_fetch_strictly_public'],
+    vars: publicEnv(cfg),
+    assets: { directory: '.open-next/assets', binding: 'ASSETS' },
+    // Self-reference binding; must match the worker name (https://opennext.js.org/cloudflare/caching)
+    services: [{ binding: 'WORKER_SELF_REFERENCE', service: cfg.cloudflare.workerName }],
+    // Image optimization (https://opennext.js.org/cloudflare/howtos/image)
+    images: { binding: 'IMAGES' },
+  }
+}
+
+function publicEnv(cfg) {
+  return {
+    NEXT_PUBLIC_SUPABASE_URL: cfg.supabase.url,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: cfg.supabase.anonKey,
+    NEXT_PUBLIC_APP_URL: cfg.appUrl,
+  }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  let cfg
+  try { cfg = loadInstance() } catch (e) { console.error(`\n✖ ${e.message}\n`); process.exit(1) }
+  const banner = `// GENERATED from instance/config.jsonc by scripts/instance.mjs — don't edit.\n`
+  writeFileSync(resolve(WEB, 'wrangler.jsonc'), banner + JSON.stringify(wranglerConfig(cfg), null, 2) + '\n')
+  writeFileSync(
+    resolve(WEB, '.env.production.local'),
+    `# GENERATED from instance/config.jsonc by scripts/instance.mjs — don't edit.\n` +
+      Object.entries(publicEnv(cfg)).map(([k, v]) => `${k}=${v}`).join('\n') + '\n',
+  )
+  console.log(`MyCoNet instance: ${cfg.displayName} (${cfg.id}) → worker "${cfg.cloudflare.workerName}"`)
+}

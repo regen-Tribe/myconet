@@ -1,0 +1,26 @@
+// A new community's MyCoNet settings. Copy this folder to `instance/` and fill it in.
+// The build reads it and generates web/wrangler.jsonc and the public env vars.
+// No secrets here: the Supabase anon key is public by design; the service-role key,
+// AI keys and chat tokens are Cloudflare secrets (`npx wrangler secret put …`).
+{
+  // Short id, lowercase letters/numbers/dashes (used in names and logs)
+  "id": "my-community",
+  // Shown where the portal names the community until the Blueprint has a name
+  "displayName": "My Community",
+
+  // Where the portal will live (no trailing slash)
+  "appUrl": "https://myconet-my-community.<your-subdomain>.workers.dev",
+
+  "cloudflare": {
+    // Worker name: lowercase letters, numbers, dashes. Becomes <workerName>.<subdomain>.workers.dev
+    "workerName": "myconet-my-community",
+    // Your Cloudflare account ID (dashboard → Workers & Pages → right sidebar)
+    "accountId": ""
+  },
+
+  "supabase": {
+    // Supabase dashboard → Project Settings → API
+    "url": "https://<project-ref>.supabase.co",
+    "anonKey": ""
+  }
+}

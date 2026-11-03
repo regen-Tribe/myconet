@@ -30,7 +30,7 @@ New members join **by invitation only** — someone already in the community sha
 - **Worker name:** `myconet`
 - **GitHub:** https://github.com/regentribes/tribesplatform-v2-docs (single branch: `master`)
 - **Deploy command:** `cd web && npm run deploy:cf`
-- **Config:** `web/wrangler.jsonc`
+- **Config:** `instance/config.jsonc` (this community's settings). `web/wrangler.jsonc` and `web/.env.production.local` are **generated** from it by `web/scripts/instance.mjs` before every build/deploy: don't edit them
 - **Adapter:** `@opennextjs/cloudflare` v1.19.9 (OpenNext)
 - **Current version:** v3.50 (source of truth: `web/src/core/lib/version.ts` — used by `AppTopBar` and `LandingClient`)
 - **Design system:** see `DESIGN-SYSTEM.md` at the repo root. Canonical reference implementation is `web/src/modules/m00-dashboard/DashboardPage.tsx`. All new module pages must match the dashboard's visual language.
@@ -80,7 +80,7 @@ myconet/
 │   │       ├── home/, m00-dashboard/, m01-network/, m04-blueprint/
 │   │       ├── m05-join/, m06-agreements/, m07-ops/, m08-contributions/, m09-governance/
 │   ├── CONTRIBUTING.md               ← How to contribute to one module
-│   └── wrangler.jsonc                ← Cloudflare config
+│   └── wrangler.jsonc                ← GENERATED from ../instance/config.jsonc
 │
 ├── archive/Modules/                  ← Pre-v2 standalone sources (reference only)
 ├── DOCS.md                           ← Index of every README in the repo
@@ -134,7 +134,7 @@ File: `web/src/app/api/scan/route.ts` (the route was renamed from `/api/claude`)
 
 ### Environment variables
 - `MINIMAX_API_KEY` — Cloudflare Worker secret via `wrangler secret put MINIMAX_API_KEY`
-- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` — in `wrangler.jsonc` vars section
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL` — from `instance/config.jsonc` (supabase.url, supabase.anonKey, appUrl); inlined at build time
 - Local dev: `.dev.vars` file in `/web` (gitignored)
 
 ### Email (auth magic links)
@@ -151,7 +151,7 @@ File: `web/src/app/api/scan/route.ts` (the route was renamed from `/api/claude`)
 - Do NOT raise `max_completion_tokens` above 8192 for MiniMax calls — 524 timeout
 - Do NOT increase `CHUNK_SIZE` above ~7000 chars — same timeout
 - Do NOT add a system message to MiniMax calls — token budget burn
-- Do NOT deploy secrets in `wrangler.jsonc` — use `wrangler secret put`
+- Do NOT put secrets in `instance/config.jsonc` — use `wrangler secret put`
 - Do NOT use `npm run deploy` — use `npm run deploy:cf`
 - Do NOT hard-code role strings (`role === 'admin'`) — use the helpers in `@/core/lib/roles`
 - Do NOT hard-code project status strings (`status === 'active'`) — that value no longer exists. Use `isActiveProject()` / `isOpenForProposals()` from `@/core/lib/project-status`.

@@ -15,3 +15,7 @@ tsconfig.tsbuildinfo
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# Generated from ../instance/config.jsonc by scripts/instance.mjs
+wrangler.jsonc
+.env.production.local

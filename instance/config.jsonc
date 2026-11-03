@@ -1,0 +1,21 @@
+// RTRN (Regen Hood 0) — this community's MyCoNet settings.
+// The build reads this file and generates web/wrangler.jsonc and the public env vars.
+// No secrets here: the anon key is public by design; the service-role key, AI keys
+// and chat tokens are Cloudflare secrets (`npx wrangler secret put …`).
+{
+  "id": "rtrn",
+  "displayName": "Regen Hood 0",
+
+  "appUrl": "https://myconet.correa-oscar11.workers.dev",
+
+  "cloudflare": {
+    // Worker name = the *.workers.dev subdomain and the WORKER_SELF_REFERENCE service
+    "workerName": "myconet"
+    // "accountId": "…"   // set when the community deploys from its own Cloudflare account
+  },
+
+  "supabase": {
+    "url": "https://vzgoulsqmhvhbjhzlzkf.supabase.co",
+    "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6Z291bHNxbWh2aGJqaHpsemtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2ODY1MjMsImV4cCI6MjA5MzI2MjUyM30.q3YfwcTFGv6U5eN1Sj031Ia1V-tMtcboZ82PWFQuXg4"
+  }
+}

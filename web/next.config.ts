@@ -1,9 +1,13 @@
 import type { NextConfig } from 'next'
+import { loadInstance } from './scripts/instance.mjs'
+
+const instance = loadInstance()
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'vzgoulsqmhvhbjhzlzkf.supabase.co' },
+      // Avatars and other uploads come from this community's Supabase storage
+      { protocol: 'https', hostname: new URL(instance.supabase.url).hostname },
     ],
   },
 }
