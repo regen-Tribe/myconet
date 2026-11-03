@@ -72,6 +72,8 @@ The core loop is proven:
 
 **Goal:** Deploy a second independent portal for a new community, proving the cloning process works end-to-end.
 
+> **Updated 2026-11-03:** the second community is **Protopia**, and the approach is now one shared codebase with per-instance config instead of forking. See [`INSTANCES.md`](./INSTANCES.md); the steps below are kept for history.
+
 **What cloning means:**
 1. Fork/clone the repo
 2. Create a new Supabase project (separate DB, separate auth)

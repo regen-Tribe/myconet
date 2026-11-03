@@ -466,6 +466,8 @@ Source of truth: `src/lib/module-meta.ts`
 
 ## 11. Multi-Community Architecture (Phase 3)
 
+> **Updated 2026-11-03:** communities now share one codebase with per-instance config rather than forks. See [`INSTANCES.md`](./INSTANCES.md).
+
 The platform is built to be cloned. When a second community wants a portal:
 1. Fork/clone the repo
 2. Create a new Supabase project

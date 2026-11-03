@@ -14,6 +14,8 @@ Every explainer / README file in this repo, with what it's for and who should re
 | [`EXECUTIVE-SUMMARY.md`](./EXECUTIVE-SUMMARY.md) | Full platform overview — all 14 modules, 3 agents, user journey, SPARK/THRIVE service model, dev phases. | Strategic / non-technical. |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Implementation blueprint — module specs, SQL schema, planned M10–M13 agent architecture (event bus, MycoNet memory, Telegram approval flow), deployment. | Engineers. |
 | [`EXECUTION-PLAN.md`](./EXECUTION-PLAN.md) | Project execution plan — milestones, sequencing. | Project leads. |
+| [`INSTANCES.md`](./INSTANCES.md) | Multi-instance plan — one codebase for RTRN, Protopia and future communities; config, databases, CI deploys, shared chat agent. | Engineers, project leads. |
+| [`CORE-EXTRACTION.md`](./CORE-EXTRACTION.md) | Plan for turning the RTRN code into MyCoNet core: what stays in core, what moves to each community repo, step-by-step phases. | Engineers, project leads. |
 | [`CLEANUP.md`](./CLEANUP.md) | Historical refactor notes and dead-code removal logs. | Reference only. |
 | [`CLAUDE.md`](./CLAUDE.md) | Coding-agent context — current architecture, what NOT to do, common commands. | AI coding agents + new engineers. |
 | [`log.md`](./log.md) | Project change log — major decisions, module changes, version history. | Anyone wanting recent history. |
