@@ -65,11 +65,9 @@
   --tag-chip-bg: hsl(142 40% 90%);
   --tag-chip-color: hsl(142 50% 28%);
 
-  /* Module colors — source of truth is src/lib/module-meta.ts */
+  /* Module colors (M02/M03 removed: they're a separate platform) */
   --m0: #18181b;
   --m1: #92400e;
-  --m2: #b91c1c;
-  --m3: #ea580c;
   --m4: #ca8a04;
   --m5: #15803d;
   --m6: #1d4ed8;

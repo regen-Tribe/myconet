@@ -45,7 +45,7 @@ How we turn today's RTRN portal code into **MyCoNet core**, the master codebase 
 | `app/auth/login/page.tsx` (lines ~147, 235) | "This portal is for **Regen Hood 0**…" | Community name from the database |
 | `modules/m04-blueprint/BlueprintClient.tsx:1156` | "The Regen Tribe Regenerative Neighborhood — Regen Hood 0 — Plan" | "{community name} — Plan" |
 | `BlueprintClient.tsx:1328, 1531`, `LandingClient.tsx:813`, `HomeClient.tsx:1478` | Footers | One shared `<FrameworkCredit/>` component: "MyCoNet · Regenerative Neighborhood Framework · open sourced by The Regen Tribe Collective" |
-| `core/lib/modules.ts:27, 32`, `core/lib/module-meta.ts`, `modules/README.md` | M02 and M03 linking to `tribesplatform.app` | **Delete** M02 and M03 from core |
+| `core/lib/modules.ts:27, 32`, `core/lib/module-meta.ts`, `modules/README.md` | M02 and M03 linking to `tribesplatform.app` | ✅ Deleted 2026-11-03 (both files were already unused) |
 | `core/lib/pillars.ts` + `events`, `booking_items`, `org_units` check constraints + `projects.circle`, `user_profiles.lead_circles` | The five circles | `circles` table, set at setup (`INSTANCES.md` §6). RTRN's five are seeded in the RTRN repo |
 | `core/lib/roles.ts` `ROLE_LABELS` | Role display names | Defaults in core; renames from config |
 | `modules/m09-governance/GovernanceClient.tsx`, `LandingClient.tsx:104`, `HomeClient.tsx:55`, DB policies on `proposal_votes` | The 4-layer voting model | Layers + thresholds from config (phase 4, the biggest change) |
@@ -91,7 +91,7 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
 3. Snapshot RTRN's content we'll seed later (circles, org units, blueprint), as a seed file for the RTRN repo only.
 
 ### Phase 1 — Make the code configurable (in today's repo)
-4. **Remove M02 and M03:** the module list, the meta, the READMEs, and any landing or home references.
+4. ✅ **Remove M02 and M03** (done 2026-11-03). They were only in two unused files, so the live site didn't change.
 5. **Instance config layer:** add `instance/config.jsonc` + `instance.example/`. The build generates `wrangler.jsonc` from it. RTRN's current values go in `instance/`.
 6. **Community name everywhere:** login, Blueprint title and exports read the community name from the database. Add the shared `<FrameworkCredit/>` component.
 7. **Circles become data** (`INSTANCES.md` §6.3): `circles` table, check constraints become foreign keys, and the ~20 files using `PILLARS` read the list instead. RTRN is seeded with its five.

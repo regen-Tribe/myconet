@@ -25,8 +25,6 @@ core/
 │   ├── format.ts         Shared display helpers — fmtDate, formatDeadline, colorForId, initialForName
 │   ├── pillars.ts        The 5 circles (ecology, hardware, humanware, economy, tech) — PILLARS, PILLAR_META, isPillar
 │   ├── project-status.ts M07 Kanban model — PROJECT_KANBAN_COLUMNS, PROJECT_STATUS_META, isActiveProject, isOpenForProposals
-│   ├── modules.ts        Module registry — the canonical list of all M00–M13 modules
-│   ├── module-meta.ts    Display metadata (bg color, label, desc) for each module number
 │   └── utils.ts          Tailwind class merge helper (cn)
 └── types/
     └── database.ts     TypeScript types generated from the Supabase schema

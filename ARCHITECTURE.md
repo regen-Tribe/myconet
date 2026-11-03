@@ -393,7 +393,7 @@ $$;
 | `src/components/AppTopBar.tsx` | Top nav — logo + v3.01, search bar, bell, user pill (→ `/profile/edit`), profile completion bar. |
 | `src/components/AppSideNav.tsx` | Left side nav — M00–M09 module links with module colors. |
 | `src/contexts/ProfileCompletion.tsx` | React context sharing profile completion % between `AppTopBar` (seeds from DB) and profile wizard (pushes live updates). |
-| `src/lib/module-meta.ts` | Single source of truth for all 14 module colors, labels, and descriptions. No `'use client'` directive — importable by both server and client components. |
+| `src/core/lib/nav.ts` | Sidebar module list and order (also used by the landing/home previews). Module colours are the `--mNN` tokens in `globals.css`. |
 | `src/components/ModuleHeader.tsx` | Colored header band at the top of each module page. Hover/tap reveals module description. Imports from `module-meta.ts`. |
 | `src/components/DashCardTooltip.tsx` | Client wrapper for dashboard module cards. Hover shows a popup with the module description and module-color accent border. |
 | `src/app/network/MemberList.tsx` | Client component for the member grid. Holds tile/list view toggle state (server components can't hold UI state). |
@@ -460,7 +460,7 @@ All 14 modules follow a rainbow color order for consistent visual identity:
 | 12 | MycoNet Agent | Gold `#b45309` |
 | 13 | Hive | Brown-dark `#78350f` |
 
-Source of truth: `src/lib/module-meta.ts`
+Source of truth: the `--mNN` tokens in `src/app/globals.css`. M02 and M03 were removed from MyCoNet on 2026-11-03; they'll be a separate platform.
 
 ---
 

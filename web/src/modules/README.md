@@ -21,7 +21,7 @@ Each module is an independently workable feature of the MyCoNet platform. You ca
 | `home/` | — | `/home` | Public and member-facing community landing page | Live |
 | `admin/` | — | `/admin/users` | Admin-only user editor (role + lead_circles) | Live |
 
-M02 (Neighborhood Directory) and M03 (Resources) are hosted externally and not in this codebase.
+M02 (Neighborhood Directory) and M03 (Resources & Tools) are not part of MyCoNet; they'll be a separate platform. M10–M13 (agents, Hive) are planned.
 
 Each module has its own `README.md` — start there before touching any code in that folder.
 
