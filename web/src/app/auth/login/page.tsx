@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { COMMUNITY_NAME } from '@/core/lib/instance'
 
 type Mode = 'login' | 'register' | 'forgot'
 
@@ -116,7 +117,7 @@ export default function AuthPage() {
 
               {/* Sign up CTA */}
               <div style={{ marginTop: 32, padding: '20px 24px', borderRadius: 12, background: 'color-mix(in srgb, var(--accent-color) 6%, var(--surface))', border: '1px solid color-mix(in srgb, var(--accent-color) 20%, var(--rule))' }}>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent-color)', marginBottom: 8 }}>Regen Hood 0</div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent-color)', marginBottom: 8 }}>{COMMUNITY_NAME}</div>
                 <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>New here? You're welcome.</div>
                 <p style={{ fontSize: 12.5, color: 'var(--ink-3)', margin: '0 0 12px', lineHeight: 1.65 }}>
                   This is the member portal for a <strong style={{ color: 'var(--ink-2)' }}>regenerative neighborhood</strong> being formed together — meet the people involved, read the community documentation, join if you align with the values, contribute to projects, and help make decisions.
@@ -141,10 +142,10 @@ export default function AuthPage() {
             </div>
           ) : (
             <>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent-color)', marginBottom: 10 }}>Regen Hood 0</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent-color)', marginBottom: 10 }}>{COMMUNITY_NAME}</div>
               <h1 style={{ fontFamily: 'var(--display)', fontSize: 26, fontWeight: 700, color: 'var(--ink)', margin: '0 0 10px' }}>Join the community</h1>
               <p style={{ fontSize: 13.5, color: 'var(--ink-3)', margin: '0 0 10px', lineHeight: 1.65 }}>
-                This portal is for <strong style={{ color: 'var(--ink-2)' }}>Regen Hood 0</strong> — a regenerative neighborhood being built together. Here you can:
+                This portal is for <strong style={{ color: 'var(--ink-2)' }}>{COMMUNITY_NAME}</strong> — a regenerative neighborhood being built together. Here you can:
               </p>
               {/* Mobile-only compact tagline (bullets are hidden on small screens) */}
               <p className="auth-reg-tagline" style={{ display: 'none', fontSize: 13, color: 'var(--ink-3)', margin: '0 0 18px', lineHeight: 1.6 }}>
@@ -232,7 +233,7 @@ export default function AuthPage() {
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.6)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
-            Regen Hood 0
+            {COMMUNITY_NAME}
           </div>
           <h2 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em', margin: '0 0 20px', maxWidth: '16ch' }}>
             A regenerative neighborhood, built together.

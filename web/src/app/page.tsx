@@ -5,6 +5,7 @@ import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
 import { loadModulePreviews } from '@/modules/home/lib/preview-data'
+import { communityName as getCommunityName } from '@/core/lib/instance'
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -19,7 +20,7 @@ export default async function LandingPage() {
     .maybeSingle()
   const answers = (bp?.answers ?? null) as Record<string, unknown> | null
   const communityPurpose = (answers?.purpose as string) || null
-  const communityName = (answers?.project_name as string) || 'Our community'
+  const communityName = getCommunityName(answers)
   const glance = buildGlanceTiles(answers)
 
   // Visitors are logged out here, so RLS returns public events only

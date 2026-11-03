@@ -7,6 +7,7 @@ import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from './CommunityGlance'
 import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from './ModulePreviews'
 import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
+import { FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import type { GlanceTile } from './lib/at-a-glance'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
@@ -1475,7 +1476,7 @@ export default function HomeClient({
             </Link>
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--ink-4)' }}>
-            MyCoNet · MyCommunityNetwork · Regenerative Neighborhood Framework · v2.0
+            {FRAMEWORK_CREDIT}
           </div>
         </div>
       </section>

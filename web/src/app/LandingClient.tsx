@@ -7,6 +7,7 @@ import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from '@/modules/home/CommunityGlance'
 import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from '@/modules/home/ModulePreviews'
 import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
+import { FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import type { GlanceTile } from '@/modules/home/lib/at-a-glance'
 import './landing.css'
 
@@ -810,7 +811,7 @@ export default function LandingClient({ firstName, communityPurpose, upcomingEve
       <GovernanceSection />
       <Closing name={firstName} />
       <footer className="lp-footer">
-        MyCoNet · MyCommunityNetwork · Regenerative Neighborhood Framework · Open sourced by The Regen Tribe Collective
+        {FRAMEWORK_CREDIT}
       </footer>
     </div>
   )

@@ -68,6 +68,7 @@ function publicEnv(cfg) {
     NEXT_PUBLIC_SUPABASE_URL: cfg.supabase.url,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: cfg.supabase.anonKey,
     NEXT_PUBLIC_APP_URL: cfg.appUrl,
+    NEXT_PUBLIC_COMMUNITY_NAME: cfg.displayName,
   }
 }
 

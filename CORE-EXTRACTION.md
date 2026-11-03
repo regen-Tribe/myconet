@@ -93,7 +93,7 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
 ### Phase 1 — Make the code configurable (in today's repo)
 4. ✅ **Remove M02 and M03** (done 2026-11-03). They were only in two unused files, so the live site didn't change.
 5. ✅ **Instance config layer** (done 2026-11-03). `instance/config.jsonc` + `instance.example/`; `web/scripts/instance.mjs` generates `wrangler.jsonc` and `.env.production.local` before every build/deploy. Checked with a fake instance (its settings were used, RTRN's weren't) and RTRN redeployed unchanged.
-6. **Community name everywhere:** login, Blueprint title and exports read the community name from the database. Add the shared `<FrameworkCredit/>` component.
+6. ✅ **Community name everywhere** (done 2026-11-03). `core/lib/instance.ts`: `COMMUNITY_NAME` (the instance's short name, for login and branding), `communityName(answers)` (the Blueprint's working name, falling back to the short name), and `FRAMEWORK_CREDIT` for footers and Blueprint exports. No community names left in `web/src`.
 7. **Circles become data** (`INSTANCES.md` §6.3): `circles` table, check constraints become foreign keys, and the ~20 files using `PILLARS` read the list instead. RTRN is seeded with its five.
 8. **Modules on/off:** the sidebar (`core/lib/nav.ts`), routes and landing sections respect `config.modules`. A disabled module's routes return 404.
 9. **Role labels:** `ROLE_LABELS` gets defaults in core and renames from config. The ladder and the permissions don't change.

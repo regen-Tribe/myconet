@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
 import { FW_DATA, PILLAR_STEPS, type StepDef, type PhaseDef, type GuideContent } from '@/modules/m04-blueprint/lib/wizard-data'
 import { computePillarScores, computeGatesPassed, computePhaseProgress, type Values as SharedValues } from '@/modules/m04-blueprint/lib/blueprint-compute'
+import { communityName, FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import '@/modules/m04-blueprint/wizard.css'
 
 async function extractPdfText(file: File, onProgress?: (page: number, total: number) => void): Promise<string> {
@@ -1153,7 +1154,7 @@ function DashboardView({ values, onJump, onPrint }: {
   return (
     <div>
       <Crumb items={['Project', 'Dashboard']} />
-      <h1 className="step-title">The Regen Tribe Regenerative Neighborhood — Regen Hood 0 — Plan</h1>
+      <h1 className="step-title">{communityName(values)} — Plan</h1>
       <p className="step-lede">A live diagnostic across pillars, phases, and frameworks.</p>
 
       {/* Land & Scale stat boxes */}
@@ -1325,7 +1326,7 @@ function downloadMarkdown(values: Values) {
     })
   })
   if (!hasActions) md += `All foundations look solid. Next horizon: continuous regeneration.\n`
-  md += `\n---\n\n*Generated ${today} · Regenerative Neighborhood Framework v2.0 · Open Sourced by The Regen Tribe Collective*\n`
+  md += `\n---\n\n*Generated ${today} · ${FRAMEWORK_CREDIT}*\n`
 
   const blob = new Blob([md], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
@@ -1528,7 +1529,7 @@ function DocBody({ values }: { values: Values }) {
       </DocSection>
 
       <div style={{ marginTop: 40, paddingTop: 16, borderTop: '2px solid var(--rule)', fontSize: 11, color: 'var(--ink-3)', textAlign: 'center', lineHeight: 1.8, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>
-        Generated {today} · Regenerative Neighborhood Framework v2.0 · Open Sourced by The Regen Tribe Collective
+        Generated {today} · {FRAMEWORK_CREDIT}
       </div>
     </div>
   )

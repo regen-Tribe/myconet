@@ -4,6 +4,7 @@ import { computeMatch } from '@/modules/m01-network/lib/match-score'
 import HomeClient from '@/modules/home/HomeClient'
 import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
 import { loadModulePreviews } from '@/modules/home/lib/preview-data'
+import { communityName as getCommunityName } from '@/core/lib/instance'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { isFullMember as checkFullMember, isJoiningOrAbove } from '@/core/lib/roles'
@@ -53,7 +54,7 @@ export default async function HomePage() {
   const overall = bp ? computeOverallReadiness(bpAnswers) : null
   const gatesPassed = bp ? computeGatesPassed(bpAnswers) : null
   const phaseProgress = bp ? computePhaseProgress(bpAnswers) : []
-  const communityName = (bpAnswers.project_name as string) || 'Our Community'
+  const communityName = getCommunityName(bpAnswers)
   const communityPurpose = (bpAnswers.purpose as string) || null
   const landSize = (bpAnswers.land_size as string) || null
   const plannedHomes = (bpAnswers.planned_homes as string) || null

@@ -1,6 +1,6 @@
 # Home Portal
 
-The community's public and member-facing home page for **Regen Hood 0 — The Regen Tribe Regenerative Neighborhood**. Shows live data from all modules and adapts to the viewer's role. Also serves as the main onboarding experience for new and prospective members.
+The community's public and member-facing home page for the community (its name comes from `instance/config.jsonc` and the Blueprint's working name, via `core/lib/instance.ts`). Shows live data from all modules and adapts to the viewer's role. Also serves as the main onboarding experience for new and prospective members.
 
 ## What users see here
 
