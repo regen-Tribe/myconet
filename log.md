@@ -2,6 +2,9 @@
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -89,6 +92,9 @@ Prompted by a circle_lead (`oj`: hardware/economy/tech) who couldn't drag a huma
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -110,6 +116,9 @@ Prompted by a circle_lead (`oj`: hardware/economy/tech) who couldn't drag a huma
 `match-score.ts` read `from_date` / `to_date` from `user_bio.places_traveling`, but the profile editor (and both profile views) write `startDate` / `endDate`. Every travel match fell through to the flat 4-pt "same destination" tier; the 10-pt (overlapping dates) and 6-pt (within 30 days) tiers never fired. The scorer now reads `startDate` / `endDate`. Verified all three tiers with sample plans. No DB change.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -155,6 +164,9 @@ No application code changed and no deploy was needed.
 - **No DELETE policy on `projects`** — nobody, admins included, can delete a project.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -209,6 +221,9 @@ All restyled pages use the same patterns:
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -237,6 +252,9 @@ The version label that lives under the logo (and links to `/changelog`) was only
 - **README.md** — added a Changelog link to the Links section pointing to `https://myconet.correa-oscar11.workers.dev/changelog` + the source file path.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -272,6 +290,9 @@ The `/network` dashboard had a different layout than `/u/[username]` — flat ce
 Visitors without a session see the sidebar's "Sign in" button and the right panel's "Join MyCoNet" CTA — same as `/u/[username]` already did for guests.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -337,6 +358,9 @@ Two May 8/9 planning docs were sitting at the repo root, partly superseded but e
 - Restored `archive/Modules/design_handoff_portal_explainer/` (268 KB, 10 files) — `DOCS.md` was already pointing to it but the dir was untracked. This is the original design spec that produced the now-live `/home` Portal Explainer.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -413,6 +437,9 @@ Big PM-pass restructure of M07 Operations. The board now has a single mental mod
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -471,6 +498,9 @@ This session wired real computed match scores across the network, upgraded the t
 - Server component now fetches `community_values` and a sample of buddy profiles for all visitors (not just logged-in users), so the multi-step join flow renders correctly for guests.
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -534,6 +564,9 @@ This session extended the platform from M07 → M09, added a persistent app shel
 - Version tag `v3.01` added below logo in AppTopBar
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -621,6 +654,9 @@ The main landing page (`/`) was generic copy. Replaced with a storytelling flow:
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -646,6 +682,9 @@ The main landing page (`/`) was generic copy. Replaced with a storytelling flow:
 - Non-conflict fields (AI-only answers) retain the existing accept/reject toggle behavior
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -752,6 +791,9 @@ Black → Brown → Red → Orange → Yellow → Green → Blue → Indigo → 
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -777,6 +819,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 - `EXECUTION-PLAN.md` v1.0 — Phase-by-phase build plan
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
@@ -812,6 +857,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 
 ---
 
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
+
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
 
@@ -835,6 +883,9 @@ Staying on Supabase (auth + DB + realtime) and Next.js App Router on Cloudflare 
 - Modular Monolith chosen over microservices — complexity should match maturity
 
 ---
+
+## 2026-11-03 — v3.68 — "regenerative neighborhood" kept on one line in both heroes (deployed, f8b39816). `.keep-together` in globals.css (wraps below 520px). Gotcha: the dev server served stale globals.css after appending rules — check prod build CSS / restart doesn't always help; the production build had it.
+
 
 ## 2026-11-03 — v3.67 — Landing "How this community portal works" intro; hero "portal", smaller (deployed). Hero h1 clamp(32px,4.6vw,52px), max-width 22ch; Home preview section retitled; closing CTA "step into the neighborhood".
 
