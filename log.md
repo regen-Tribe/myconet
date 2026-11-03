@@ -2,6 +2,17 @@
 
 ---
 
+## 2026-11-03 — Core extraction: Phase 0 + Phase 1 steps 4–7 (deployed, a98d84e2)
+
+Groundwork for running RTRN, Protopia and later communities from one MyCoNet core. Plans are in `INSTANCES.md` and `CORE-EXTRACTION.md`. No version bump: core release notes start at v4.0 when the repos split.
+- Tag `rtrn-v3.69` (11e3431).
+- `supabase/migrations/20261104000000_myconet_core_baseline.sql`: the full structure, generated from the live catalog. The old November migrations are now in `supabase/archive/pre-baseline/`.
+- Fixed: the role check didn't allow `advisor` (`…0100_allow_advisor_role`).
+- Removed M02/M03, whose dead `core/lib/modules.ts` and `module-meta.ts` files only linked out to tribesplatform.app.
+- `instance/config.jsonc` + `instance.example/`. `web/scripts/instance.mjs` generates `web/wrangler.jsonc` and `.env.production.local`. Don't edit either.
+- Community name and credit come from `core/lib/instance.ts`; no hard-coded "Regen Hood 0" left.
+- Circles are data: a `circles` table, foreign keys, and a `lead_circles` trigger (`…0200`, `…0300`), with RTRN seeded from `instance/seed/circles.sql`. `pillars.ts` is replaced by `useCircles()` / `loadCircles()` across 18 files.
+
 ## 2026-11-03 — v3.69 — Landing / Home module previews updated (deployed, 3e368778)
 
 - New live preview sections for M15 Accommodation, M16 Resources, M17 Circles (`modules/home/ModulePreviews.tsx`, data via `lib/preview-data.ts`) on `/` and `/home`.
