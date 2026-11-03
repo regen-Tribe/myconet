@@ -84,3 +84,8 @@ To add a new section:
 3. Add a corresponding `ModulePill` entry in the pill array (with matching `target` ID)
 
 Keep `HomePage.tsx` as a thin data layer — all rendering belongs in `HomeClient.tsx`.
+
+
+## Community at a glance
+
+`CommunityGlance.tsx` renders tiles on `/` (landing) and `/home`. Text comes from the community blueprint's answers via `lib/at-a-glance.ts` (`buildGlanceTiles`): each tile tries a list of answer keys in order, takes the first sentence, trims to ~170 chars, and is skipped if empty. Edit the tile list there; edit the wording in the Blueprint.

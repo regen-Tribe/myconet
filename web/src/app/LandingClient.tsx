@@ -4,9 +4,14 @@ import Link from 'next/link'
 import { VERSION } from '@/core/lib/version'
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import type { CalendarEvent } from '@/modules/m14-events/types'
+import { CommunityGlance } from '@/modules/home/CommunityGlance'
+import type { GlanceTile } from '@/modules/home/lib/at-a-glance'
 import './landing.css'
 
-interface Props { firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[]; stats: LandingStats }
+interface Props {
+  firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[]; stats: LandingStats
+  communityName: string; glance: GlanceTile[]
+}
 
 /* ── Tiny SVG icons ── */
 const Check = ({ size = 12 }: { size?: number }) => (
@@ -728,10 +733,15 @@ function Closing({ name }: { name: string | null }) {
 }
 
 /* ── Root ── */
-export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [], stats }: Props) {
+export default function LandingClient({ firstName, communityPurpose, upcomingEvents = [], stats, communityName, glance }: Props) {
   return (
     <div className="lp">
       <Hero name={firstName} communityPurpose={communityPurpose ?? null} />
+      {glance.length > 0 && (
+        <section className="lp-section" id="at-a-glance" style={{ paddingTop: 64 }}>
+          <CommunityGlance name={communityName} tiles={glance} />
+        </section>
+      )}
       <ClubhousePreview name={firstName} stats={stats} />
       <MeetSection />
       <BlueprintSection />

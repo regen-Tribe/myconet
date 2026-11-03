@@ -511,3 +511,7 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
 @media (max-width: 1280px) { .org-circles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 860px)  { .org-circles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px)  { .org-circles { grid-template-columns: 1fr; border-top: none !important; } }
+
+/* ─── Community at a glance tiles ───────────────────────────────── */
+.glance-tile { transition: border-color 140ms, box-shadow 140ms, transform 140ms; }
+.glance-tile:hover { border-color: color-mix(in srgb, var(--m4) 40%, var(--rule)) !important; box-shadow: 0 6px 18px rgba(0,0,0,.06); transform: translateY(-1px); }

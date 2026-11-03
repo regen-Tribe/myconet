@@ -2,6 +2,15 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.65',
+    date: '2026-11-03',
+    title: 'Landing page: the community at a glance',
+    items: [
+      'New "The community at a glance" tiles right under the hero on the public landing page and on Home: what we are, why, where, land and homes, food, energy and water, how we decide, how we live, who owns it, values, where we are now, and how to join.',
+      'The tiles are written from the community Blueprint, so updating the Blueprint updates the landing page. Each tile links to the full plan (or to Governance, Calendar or Join).',
+    ],
+  },
+  {
     version: 'v3.64',
     date: '2026-11-03',
     title: 'Sidebar reorganized; Org chart renamed Circles',

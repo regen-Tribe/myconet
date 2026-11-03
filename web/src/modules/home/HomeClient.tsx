@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { isFullMember as checkFullMember, isJoiningOrAbove, ROLE_LABELS } from '@/core/lib/roles'
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import type { CalendarEvent } from '@/modules/m14-events/types'
+import { CommunityGlance } from './CommunityGlance'
+import type { GlanceTile } from './lib/at-a-glance'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
 type Member = { id: string; first_name: string | null; last_name: string | null; headline: string | null; city: string | null; country: string | null; avatar_url: string | null; username: string | null }
@@ -35,6 +37,7 @@ interface Props {
   joiningRewardNew?: boolean
   matchScores?: Record<string, { score: number; reasons: string[] }>
   upcomingEvents?: CalendarEvent[]
+  glance?: GlanceTile[]
 }
 
 const CHECK_ICON = (
@@ -211,7 +214,7 @@ export default function HomeClient({
   projects, activeProjectCount, deliverables,
   isLoggedIn, hasApplied, isFullMember,
   role = 'explorer', applicationStatus, joiningRewardNew = false,
-  matchScores = {}, upcomingEvents = [],
+  matchScores = {}, upcomingEvents = [], glance = [],
 }: Props) {
   const name = firstName || (isLoggedIn ? 'there' : 'you')
   const roleLabel = ROLE_LABELS[role] ?? 'Explorer'
@@ -456,6 +459,13 @@ export default function HomeClient({
             </Link>
           </div>
         </div>
+      )}
+
+      {/* ── The community at a glance ───────────────────────── */}
+      {glance.length > 0 && (
+        <section className={sectionCls} style={{ maxWidth: 1100, margin: '0 auto', padding: '56px 28px 0' }} id="at-a-glance">
+          <CommunityGlance name={communityName} tiles={glance} />
+        </section>
       )}
 
       {/* ── Dashboard label ─────────────────────────────────── */}

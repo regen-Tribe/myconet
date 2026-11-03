@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import LandingClient from './LandingClient'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
+import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -15,7 +16,10 @@ export default async function LandingPage() {
     .select('answers')
     .eq('is_community', true)
     .maybeSingle()
-  const communityPurpose = ((bp?.answers as Record<string, unknown>)?.purpose as string) || null
+  const answers = (bp?.answers ?? null) as Record<string, unknown> | null
+  const communityPurpose = (answers?.purpose as string) || null
+  const communityName = (answers?.project_name as string) || 'Our community'
+  const glance = buildGlanceTiles(answers)
 
   // Visitors are logged out here, so RLS returns public events only
   const { data: eventRows } = await supabase
@@ -38,5 +42,5 @@ export default async function LandingPage() {
     openProposals: proposals.count ?? 0,
   }
 
-  return <LandingClient firstName={null} communityPurpose={communityPurpose} upcomingEvents={(eventRows ?? []).map(toEvent)} stats={stats} />
+  return <LandingClient firstName={null} communityPurpose={communityPurpose} upcomingEvents={(eventRows ?? []).map(toEvent)} stats={stats} communityName={communityName} glance={glance} />
 }
