@@ -2,6 +2,15 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.66',
+    date: '2026-11-03',
+    title: 'Hero wording: regenerative neighborhood',
+    items: [
+      'The Home hero now reads "the digital clubhouse for our regenerative neighborhood being formed — together" (was "regenerative community").',
+      'New purpose text under the hero (it comes from the Blueprint\'s Purpose, which was updated): "We create this Regenerative Neighborhood to re-develop society so it\'s good for humans & planet…"',
+    ],
+  },
+  {
     version: 'v3.65',
     date: '2026-11-03',
     title: 'Landing page: the community at a glance',

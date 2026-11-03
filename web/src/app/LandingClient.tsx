@@ -131,7 +131,7 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
       <p className="lp-lead">
         {communityPurpose
           ? communityPurpose
-          : "You're not on a social network. You're inside the operating system of a community-in-formation. Meet the people gathering around it, read the plan they're building, contribute the work you're good at, and help decide what happens next."}
+          : "We create this Regenerative Neighborhood to re-develop society so it's good for humans & planet — we focus on everyone having their core and higher needs met while living in alignment with nature. We collaborate to make our community thrive, to create things we are passionate about, and to make a positive impact."}
       </p>
       <div className="lp-cta-row">
         <a className="lp-btn lp-btn-primary" href="#meet">Take the tour <Arrow /></a>

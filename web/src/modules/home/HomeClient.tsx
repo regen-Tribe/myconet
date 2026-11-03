@@ -289,7 +289,7 @@ export default function HomeClient({
           }}>
             digital clubhouse
           </span>
-          {' '}for our regenerative community being formed — <span style={{ color: 'var(--accent-color)' }}>together</span>.
+          {' '}for our regenerative neighborhood being formed — <span style={{ color: 'var(--accent-color)' }}>together</span>.
         </h1>
         <p style={{
           fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.75,
@@ -297,7 +297,7 @@ export default function HomeClient({
         }}>
           {communityPurpose
             ? communityPurpose
-            : "You're not on a social network. You're inside the operating system of a community-in-formation. Meet the people, read the plan, contribute your work, and help decide what happens next."}
+            : "We create this Regenerative Neighborhood to re-develop society so it's good for humans & planet — we focus on everyone having their core and higher needs met while living in alignment with nature. We collaborate to make our community thrive, to create things we are passionate about, and to make a positive impact."}
         </p>
         {/* Module pills */}
         <div style={{ fontSize: 12, color: 'var(--ink-4)', fontFamily: 'var(--mono)', letterSpacing: '0.04em', marginBottom: 10 }}>
