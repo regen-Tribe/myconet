@@ -94,7 +94,12 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
 4. ✅ **Remove M02 and M03** (done 2026-11-03). They were only in two unused files, so the live site didn't change.
 5. ✅ **Instance config layer** (done 2026-11-03). `instance/config.jsonc` + `instance.example/`; `web/scripts/instance.mjs` generates `wrangler.jsonc` and `.env.production.local` before every build/deploy. Checked with a fake instance (its settings were used, RTRN's weren't) and RTRN redeployed unchanged.
 6. ✅ **Community name everywhere** (done 2026-11-03). `core/lib/instance.ts`: `COMMUNITY_NAME` (the instance's short name, for login and branding), `communityName(answers)` (the Blueprint's working name, falling back to the short name), and `FRAMEWORK_CREDIT` for footers and Blueprint exports. No community names left in `web/src`.
-7. **Circles become data** (`INSTANCES.md` §6.3): `circles` table, check constraints become foreign keys, and the ~20 files using `PILLARS` read the list instead. RTRN is seeded with its five.
+7. ✅ **Circles become data** (code + database done 2026-11-03; the Blueprint setup step is still to do).
+   - The `circles` table has admin-only writes, and adding a circle creates its org-chart unit.
+   - The three check constraints are now foreign keys, plus `projects.circle`; `lead_circles` is validated by a trigger.
+   - `pillars.ts` is gone. Client code uses `useCircles()` and server code uses `loadCircles()`.
+   - RTRN is seeded from `instance/seed/circles.sql`.
+   - **Still to do:** the Blueprint wizard's Circles step and the AI scan's `circles` field (`INSTANCES.md` §6.2), and an admin screen to add, rename or retire circles.
 8. **Modules on/off:** the sidebar (`core/lib/nav.ts`), routes and landing sections respect `config.modules`. A disabled module's routes return 404.
 9. **Role labels:** `ROLE_LABELS` gets defaults in core and renames from config. The ladder and the permissions don't change.
 10. **Look & feel:** colour and font tokens and the logo come from `instance/theme`.
