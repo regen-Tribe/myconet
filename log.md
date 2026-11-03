@@ -2,6 +2,12 @@
 
 ---
 
+## 2026-11-03 — v3.66 — Hero copy (deployed, e6c09acb)
+
+- Home hero: "for our regenerative **neighborhood** being formed" (was community). Landing hero already said neighborhood.
+- Text under both heroes is the Blueprint `purpose` answer; updated it in the DB (community blueprint `8393d200…`) to Oz's wording, and made the same text the code fallback.
+- Previous purpose, for restoring: "We create this Regenerative Neighborhood as an experiment to re-develop society so it's good for you, us, and the planet — we focus on everyone having their core and higher needs met while living in alignment with nature. \nWe are health, growth, & connection minded. \nWe collaborate to make our community thrive, to create things we are passionate about, and to make a positive impact."
+
 ## 2026-11-03 — v3.65 — "Community at a glance" tiles on / and /home (deployed, c3822455)
 
 - `modules/home/CommunityGlance.tsx` + `lib/at-a-glance.ts`: 12 tiles built from community blueprint answers (each tries keys in order, first sentence, ~170 chars, skipped if empty). Under the hero on the landing page and on /home.
