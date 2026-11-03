@@ -515,3 +515,7 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
 /* ─── Community at a glance tiles ───────────────────────────────── */
 .glance-tile { transition: border-color 140ms, box-shadow 140ms, transform 140ms; }
 .glance-tile:hover { border-color: color-mix(in srgb, var(--m4) 40%, var(--rule)) !important; box-shadow: 0 6px 18px rgba(0,0,0,.06); transform: translateY(-1px); }
+
+/* Keep a phrase on one line, except on phones where it wouldn't fit */
+.keep-together { white-space: nowrap; }
+@media (max-width: 520px) { .keep-together { white-space: normal; } }

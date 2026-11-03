@@ -125,8 +125,8 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
       <span className="lp-pill">MyCoNet · Member portal</span>
       <h1>
         Welcome, {displayName}.<br />
-        This is the <span className="underline">portal</span> for a regenerative
-        neighborhood being formed — <span className="accent">together</span>.
+        This is the <span className="underline">portal</span> for a{' '}
+        <span className="keep-together">regenerative neighborhood</span> being formed — <span className="accent">together</span>.
       </h1>
       <p className="lp-lead">
         {communityPurpose

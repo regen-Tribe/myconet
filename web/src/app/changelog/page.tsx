@@ -2,6 +2,14 @@ import Link from 'next/link'
 
 const ENTRIES = [
   {
+    version: 'v3.68',
+    date: '2026-11-03',
+    title: 'Hero: "regenerative neighborhood" on one line',
+    items: [
+      'In the landing and Home heroes, "regenerative neighborhood" now stays together on one line (it can still wrap on narrow phones so the page doesn\'t scroll sideways).',
+    ],
+  },
+  {
     version: 'v3.67',
     date: '2026-11-03',
     title: 'Landing: "How this community portal works", smaller hero',

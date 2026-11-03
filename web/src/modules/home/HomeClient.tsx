@@ -289,7 +289,7 @@ export default function HomeClient({
           }}>
             portal
           </span>
-          {' '}for our regenerative neighborhood being formed — <span style={{ color: 'var(--accent-color)' }}>together</span>.
+          {' '}for our <span className="keep-together">regenerative neighborhood</span> being formed — <span style={{ color: 'var(--accent-color)' }}>together</span>.
         </h1>
         <p style={{
           fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.75,
