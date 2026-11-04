@@ -1,58 +1,59 @@
-# TribesPlatform v2
+# MyCoNet
 
-> AI-native operating system for regenerative neighborhoods.
+> The community portal for regenerative neighborhoods. Open sourced by The Regen Tribe Collective.
 
-> Last updated: 2026-05-23
+MyCoNet is one community's operating system: members, the Regenerative Neighborhood Framework
+Blueprint, joining, agreements, operations, circles, calendar, bookings, contributions and
+governance. Each community runs its own copy, with its own database and hosting, from this core.
 
-## Quick Start
+## Core and communities
 
-**New to the project?** Start with `EXECUTIVE-SUMMARY.md` — it covers what the platform is, all 14 modules, the three agents, and how it works. For a full index of every doc in the repo, see [`DOCS.md`](./DOCS.md).
+| Repo | What |
+|---|---|
+| [`regen-Tribe/myconet`](https://github.com/regen-Tribe/myconet) | **Core**: the same for every community. Tagged releases (`v4.x.y`). |
+| [`regen-Tribe/myconet-rtrn`](https://github.com/regen-Tribe/myconet-rtrn) | RTRN (Regen Hood 0) |
+| `protopia-community/myconet-protopia` | Protopia |
 
-## The Docs
+A community repo is core plus its own `instance/` folder (settings, seed data, history). It pulls
+core releases and changes nothing outside `instance/`. How it works: [`INSTANCES.md`](./INSTANCES.md)
+and [`CORE-EXTRACTION.md`](./CORE-EXTRACTION.md). **Starting a new community:**
+[`instance.example/README.md`](./instance.example/README.md).
 
-Each document serves a different purpose. Read them in order.
+## The docs
 
 | Document | What it's for |
-|----------|---------------|
-| [`DOCS.md`](./DOCS.md) | **Index of every README and explainer file** in the repo, grouped by location. Find anything fast. |
-| `EXECUTIVE-SUMMARY.md` | **Start here.** Full platform overview — what it is, all 14 modules, 3 agents, user journey, SPARK/THRIVE service model, dev phases, tech stack. |
-| `ARCHITECTURE.md` | Implementation blueprint — module specs, SQL schema, planned M10–M13 agent architecture (event bus, MycoNet memory, Telegram approval flow), deployment. |
-| [`DESIGN-SYSTEM.md`](./DESIGN-SYSTEM.md) | **Visual language reference.** Design tokens, component patterns (StatCard, ModCard, eyebrows, next-step cards), composition rules, what NOT to do. Canonical implementation: `web/src/modules/m00-dashboard/DashboardPage.tsx`. |
-| `CLAUDE.md` | Agent / new-engineer context — what's built, deployment, things NOT to do, common commands. |
-| `log.md` | Project change log — tracks major decisions, module changes, architecture shifts over time. |
-| [`web/CONTRIBUTING.md`](./web/CONTRIBUTING.md) | How to contribute to a single module without needing the whole codebase. |
-| `README.md` | This file. Quick index and quick reference. |
+|---|---|
+| [`DOCS.md`](./DOCS.md) | Index of every README and explainer in the repo. |
+| `EXECUTIVE-SUMMARY.md` | Platform overview: modules, agents, user journey, service model. |
+| `ARCHITECTURE.md` | Implementation blueprint: module specs, schema, agent architecture, deployment. |
+| [`DESIGN-SYSTEM.md`](./DESIGN-SYSTEM.md) | Visual language: tokens, components, composition rules. |
+| `CLAUDE.md` | Agent / new-engineer context: what's built, how to deploy, what not to do. |
+| `INSTANCES.md`, `CORE-EXTRACTION.md` | Running several communities from one core. |
+| [`CHANGELOG.md`](./CHANGELOG.md) | Core release notes, from v4.0.0. A community's own history is its `instance/log.md`. |
+| `instance/README.md` | This community: live URL, accounts, people. (Not in the core repo.) |
+| [`web/CONTRIBUTING.md`](./web/CONTRIBUTING.md) | Contributing to a single module. |
 
-## The 14 Modules
+## Modules
 
-| # | Module | Purpose |
-|---|--------|---------|
-| 00 | MyCoNet Dashboard | Core team's real-time command center |
-| 01 | Community Network | Profile discovery + AI matching |
-| 02 | Neighborhood Directory | Live map of regenerative neighborhoods |
-| 03 | Resources & Tools | Curated regenerative knowledge base |
-| 04 | Blueprint | Guided planning wizard (SPARK → PROVE → BUILD → LIVE) |
-| 05 | Join | Application and onboarding |
-| 06 | Agreements | Digital contracts + Stripe payments |
-| 07 | Operations | Projects, tasks, budgets |
-| 08 | Contribution Tracking | Points, badges, reputation |
-| 09 | Governance | AI-facilitated decisions and conflict resolution |
-| 10 | Genesis Bot | Telegram bridge — DB change requests via chat |
-| 11 | Quinn | Personal AI assistant per member |
-| 12 | MycoNet Agent | Community brain — coordinates all agents and modules |
-| 13 | Hive | Inter-community network layer |
+| # | Module | Route |
+|---|---|---|
+| M00 | Dashboard | `/dashboard` |
+| M01 | Members (profiles, AI matching) | `/network` |
+| M04 | Blueprint (RNF wizard, AI document scan, circles setup) | `/blueprint` |
+| M05 | Join | `/join` |
+| M06 | Agreements | `/agreements` |
+| M07 | Operations (projects, Kanban) | `/ops` |
+| M08 | Contributions | `/contributions` |
+| M09 | Governance (4-layer voting) | `/governance` |
+| M14 | Calendar (events, tasks) | `/events` |
+| M15 | Accommodation | `/stays` |
+| M16 | Resources (tools, spaces) | `/bookings` |
+| M17 | Circles (org chart) | `/org` |
 
-## Three Agents
+Planned: M10 Genesis bot, M11 Quinn, M12 MycoNet agent, M13 Hive.
 
-- **Quinn** (Module 11) — personal AI, daily reminders, routes member input
-- **MycoNet** (Module 12) — community brain, pushes updates, maintains memory
-- **Genesis** (Module 10) — Telegram bot, members request changes, leadership approves
+## Stack
 
-## Links
-
-- **Live Platform:** https://myconet.correa-oscar11.workers.dev
-- **Changelog:** https://myconet.correa-oscar11.workers.dev/changelog — full release history (every shipped version with what changed and why). Source: [`web/src/app/changelog/page.tsx`](./web/src/app/changelog/page.tsx).
-
-## Status
-
-🟢 **v3.50 LIVE** — M00–M09 deployed on Cloudflare Workers as `myconet`. Recent: M01 profile pages fully restyled — all tab bodies (About, Personality, Offers, Requests, Travel) now use inline-style design-system components, matching the dashboard visual language end-to-end.
+Next.js 16 (App Router) on Cloudflare Workers (OpenNext) · Supabase (Postgres, Auth, RLS) ·
+MiniMax M2.7 for the Blueprint scan. Module code in `web/src/modules/`, shared code in `web/src/core/`,
+database in `supabase/migrations/`.

@@ -10,7 +10,7 @@
 -- (`supabase migration repair --status applied <version>`), don't run it.
 --
 -- Generated from the live catalog (pg_get_*def). Supersedes the five
--- November migrations, now in supabase/archive/pre-baseline/.
+-- November migrations, kept in RTRN's repo (instance/supabase-archive/).
 
 set check_function_bodies = false;
 set search_path = public, extensions;

@@ -28,7 +28,7 @@ project and Cloudflare account; nothing is shared with other communities.
 
 **3. Database** (empty Supabase project)
 - Run every file in `supabase/migrations/` in order (`supabase db push`, or each file
-  through the SQL editor). Don't run `supabase/archive/`.
+  through the SQL editor). Only `supabase/migrations/`; nothing else.
 - Supabase › Authentication › URL Configuration: Site URL = `appUrl`, and add
   `<appUrl>/**` to the redirect URLs.
 

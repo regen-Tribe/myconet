@@ -427,7 +427,7 @@ cd web && npm run deploy:cf
 # Runs: opennextjs-cloudflare build && wrangler deploy
 ```
 
-**Live URL:** `https://myconet.correa-oscar11.workers.dev`
+**Live URL:** each community's `appUrl` (`instance/config.jsonc`).
 
 Public settings (Supabase URL + anon key, app URL, Worker name) come from `instance/config.jsonc`, which generates `web/wrangler.jsonc` at build time (see `INSTANCES.md`). Secrets are Cloudflare secrets. Locally, `.dev.vars` / `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_URL`
@@ -578,7 +578,7 @@ All Genesis requests require human approval — no autonomous DB writes from cha
 | `EXECUTIVE-SUMMARY.md` | What the platform is, who it's for, what's live, the vision |
 | `EXECUTION-PLAN.md` | Sprint-by-sprint build plan with module specs |
 | `ARCHITECTURE.md` (this doc) | Actual DB schema, routes, tech stack, deployment |
-| `log.md` | Running changelog of all decisions and changes |
+| `instance/log.md` | Running changelog of all decisions and changes |
 
 ---
 

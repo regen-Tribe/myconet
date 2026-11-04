@@ -26,13 +26,11 @@ New members join **by invitation only** — someone already in the community sha
 ## Deployment
 
 - **Platform:** Cloudflare Workers (NOT Vercel — migrated due to 60s timeout incompatibility with MiniMax M2.7)
-- **Live URL:** https://myconet.correa-oscar11.workers.dev
-- **Worker name:** `myconet`
-- **GitHub:** https://github.com/regen-Tribe/myconet-rtrn (single branch: `master`). Moved from `regentribes/tribesplatform-v2-docs` on 2026-11-03; the old URL redirects.
-- **Deploy command:** `cd web && npm run deploy:cf`
+- **This community** (live URL, Worker, repo, database, people): `instance/README.md`. Core is `regen-Tribe/myconet`; a community repo only changes `instance/` (see `INSTANCES.md`).
+- **Deploy command:** `cd web && npm run deploy`
 - **Config:** `instance/config.jsonc` (this community's settings). `web/wrangler.jsonc` and `web/.env.production.local` are **generated** from it by `web/scripts/instance.mjs` before every build/deploy: don't edit them
 - **Adapter:** `@opennextjs/cloudflare` v1.19.9 (OpenNext)
-- **Current version:** v3.50 (source of truth: `web/src/core/lib/version.ts` — used by `AppTopBar` and `LandingClient`)
+- **Current version:** `web/src/core/lib/version.ts` (shown by `AppTopBar` and `LandingClient`)
 - **Design system:** see `DESIGN-SYSTEM.md` at the repo root. Canonical reference implementation is `web/src/modules/m00-dashboard/DashboardPage.tsx`. All new module pages must match the dashboard's visual language.
 
 ---
@@ -42,7 +40,7 @@ New members join **by invitation only** — someone already in the community sha
 | Layer | Choice |
 |-------|--------|
 | Framework | Next.js 16.2.6 (App Router) |
-| Database / Auth | Supabase (project: `vzgoulsqmhvhbjhzlzkf`, eu-west-1) |
+| Database / Auth | Supabase (one project per community; see `instance/README.md`) |
 | Hosting | Cloudflare Workers via OpenNext |
 | AI model | MiniMax M2.7 (reasoning model) — used in Blueprint doc scanning only |
 | Styling | CSS custom properties + inline styles; Tailwind utility classes are used sparingly. Responsive overrides live in `globals.css` |
@@ -84,7 +82,8 @@ myconet/
 │
 ├── archive/Modules/                  ← Pre-v2 standalone sources (reference only)
 ├── DOCS.md                           ← Index of every README in the repo
-├── ARCHITECTURE.md, CLAUDE.md, README.md, log.md, EXECUTIVE-SUMMARY.md, …
+├── ARCHITECTURE.md, CLAUDE.md, README.md, CHANGELOG.md, EXECUTIVE-SUMMARY.md, …
+├── instance/                         ← This community only: config, seed, history (instance/log.md)
 ```
 
 See `DOCS.md` for the full index of explainer files.
@@ -181,6 +180,6 @@ cd web && npx tsc --noEmit
 
 `DOCS.md` at the repo root is the index. The full set:
 
-- **Root** — `README.md`, `EXECUTIVE-SUMMARY.md`, `ARCHITECTURE.md`, `EXECUTION-PLAN.md`, `CLEANUP.md`, `log.md`, this file
+- **Root** — `README.md`, `EXECUTIVE-SUMMARY.md`, `ARCHITECTURE.md`, `EXECUTION-PLAN.md`, `CHANGELOG.md` (core releases), this file; the community's own history is `instance/log.md`
 - **App** — `web/CONTRIBUTING.md`, `web/src/core/README.md`, `web/src/modules/README.md`
 - **Modules** — `web/src/modules/mXX-name/README.md` (one per module)
