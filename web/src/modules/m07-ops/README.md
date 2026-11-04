@@ -83,7 +83,7 @@ Existing accepted / active / completed agreements from before this flow was adde
 
 ## Circles
 
-Every project belongs to one of five pillar circles (or none): **ecology · hardware · humanware · economy · tech**. Defined in `@/core/lib/pillars`. The circle drives:
+Every project belongs to one of the community's circles (or none), from the `circles` table via `useCircles()`. The circle drives:
 
 - The badge shown on the project card and header.
 - The colored left-border accent on Kanban cards (when set).

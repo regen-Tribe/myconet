@@ -110,7 +110,7 @@ CREATE TABLE user_profiles (
   places_traveling TEXT,
   lead_circles TEXT[] DEFAULT '{}',
     -- Which pillar circles this user is responsible for (only meaningful for circle_lead role).
-    -- Each entry is one of: ecology | hardware | humanware | economy | tech.
+    -- Each entry is a circles.slug (checked by a trigger).
     -- Admins set this on /admin/users. Used by the M07 Kanban drag-permission check.
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
@@ -163,7 +163,7 @@ CREATE TABLE projects (
     -- pending | backlog | in_progress | review | done | paused
   open_for_collaborators BOOLEAN DEFAULT false,
   circle TEXT,
-    -- one of: ecology | hardware | humanware | economy | tech
+    -- references circles(slug)
     -- see @/core/lib/pillars
   needs TEXT[],
   deadline DATE,

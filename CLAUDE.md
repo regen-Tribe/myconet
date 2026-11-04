@@ -71,7 +71,7 @@ myconet/
 │   │   │   ├── lib/supabase/         ← server.ts + client.ts
 │   │   │   ├── lib/roles.ts          ← isFullMember, isCircleAdmin, isOpsAdmin, isAdmin
 │   │   │   ├── lib/format.ts         ← fmtDate, formatDeadline, colorForId, initialForName
-│   │   │   ├── lib/pillars.ts        ← The 5 circles (ecology, hardware, humanware, economy, tech)
+│   │   │   ├── lib/circles.ts        ← Circles come from the `circles` table (useCircles / loadCircles)
 │   │   │   ├── lib/project-status.ts ← Kanban columns + isActiveProject() + isOpenForProposals()
 │   │   │   ├── lib/promotions.ts     ← promoteToMemberIfEligible()
 │   │   │   └── types/database.ts

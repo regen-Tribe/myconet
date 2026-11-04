@@ -193,8 +193,7 @@ Save only what the admin confirms.
 > "What are your community's circles? These are the standing groups that look after an area of community life, like land and food, building, finances, or care and wellbeing. For each one, give a **name** and a **one-line purpose**. If you already know who leads it, add their name. Most communities start with 3 to 7."
 >
 > "Not sure yet? You can start from a template and change it any time:
-> - **Neighborhood org chart** (the default): Community Management · Venue Management · Space Maintenance · Kitchen Management · Marketing & Outreach · Sustainable Systems · Operations · Strategy
-> - **Regen five:** Ecology · Hardware · Humanware · Economy · Tech
+> - **Neighborhood org chart** (the default): Community Management · Venue Management · Space Maintenance · Kitchen Management · Marketing & Outreach · Sustainable Systems · Operations · Strategy, each with its roles (created as teams on the Circles page)
 > - **Start small:** Land & Food · Building · Community & Care · Finance"
 
 Keep asking until there's at least one circle. Don't continue setup on a default the admin didn't choose.
@@ -213,7 +212,7 @@ Circles are fixed in code and in the database today. That has to change before a
 - **The three check constraints** (`events_circle_check`, `booking_items_circle_check`, `org_units_circle_check`) become foreign keys to `circles(slug)`. `user_profiles.lead_circles` and `projects.circle` are validated against the table too.
 - **`core/lib/pillars.ts`** (`PILLARS`, `PILLAR_META`, `isPillar`, used by about 20 files) is replaced by a list loaded from `circles` once per request and passed down.
 - **The scan prompt** gains the `circles` field above. The Blueprint wizard gets a final **Circles** step that runs Steps B–D. ✅ Built 2026-11-03. A circle's purpose is stored as its org unit's description (the text the Circles page already shows), not in `circles`; lead names go in `circles.leads_to_assign`.
-- **RTRN's migration** seeds its existing five circles with the same slugs, so nothing changes for RTRN.
+- **RTRN's migration** seeds its existing five circles with the same slugs, so nothing changes for RTRN. (Update 2026-11-03: RTRN then moved to the eight neighborhood org chart circles with their roles, `instance/seed/switch-to-neighborhood-circles.sql`; the five are retired.)
 
 ---
 

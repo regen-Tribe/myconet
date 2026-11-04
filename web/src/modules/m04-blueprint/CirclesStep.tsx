@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/core/lib/supabase/client'
 import {
-  CIRCLE_COLORS, CIRCLE_EMOJIS, CIRCLE_TEMPLATES, emojiFor, foundCircles, slugFor, type FoundCircle,
+  CIRCLE_COLORS, CIRCLE_EMOJIS, CIRCLE_TEMPLATES, emojiFor, foundCircles, roleDescription, slugFor,
+  type CircleRole, type FoundCircle,
 } from '@/modules/m04-blueprint/lib/circle-setup'
 
 /**
@@ -22,6 +23,8 @@ interface CircleRow {
 interface Draft {
   key: string; include: boolean; name: string; purpose: string; leads: string
   source?: string; emoji?: string; color?: string
+  /** From a template: created as teams in the circle */
+  roles?: CircleRole[]
 }
 
 interface Edit { slug: string; name: string; purpose: string; leads: string; emoji: string; color: string }
@@ -85,7 +88,7 @@ export default function CirclesStep({ values, canEdit, onImport, onClearFound, o
   const addBlank = () => setDrafts(ds => [...ds, { key: draftKey(), include: true, name: '', purpose: '', leads: '' }])
   const applyTemplate = (id: string) => {
     const t = CIRCLE_TEMPLATES.find(x => x.id === id)
-    if (t) setDrafts(t.circles.map(c => ({ key: draftKey(), include: true, name: c.name, purpose: c.purpose, emoji: c.emoji, leads: '' })))
+    if (t) setDrafts(t.circles.map(c => ({ key: draftKey(), include: true, name: c.name, purpose: c.purpose, emoji: c.emoji, roles: c.roles, leads: '' })))
   }
 
   const saveDrafts = async () => {
@@ -113,6 +116,13 @@ export default function CirclesStep({ values, canEdit, onImport, onClearFound, o
     // Adding a circle creates its org-chart unit; its description is the circle's purpose
     await Promise.all(included.map((d, i) => supabase.from('org_units')
       .update({ description: d.purpose.trim() }).eq('kind', 'circle').eq('circle', newRows[i].slug)))
+    const teams = included.flatMap((d, i) => (d.roles ?? []).map((r, j) => ({
+      kind: 'team', circle: newRows[i].slug, name: r.name, description: roleDescription(r), sort_order: j + 1,
+    })))
+    if (teams.length) {
+      const { error: teamErr } = await supabase.from('org_units').insert(teams)
+      if (teamErr) setError(`Circles saved, but their roles weren't: ${teamErr.message}`)
+    }
     setDrafts([])
     onClearFound()
     await load()
@@ -281,6 +291,11 @@ export default function CirclesStep({ values, canEdit, onImport, onClearFound, o
                   </div>
                   <div style={{ ...label, marginTop: 8 }}>Who leads it (optional, a note for now)</div>
                   <input className="input" value={d.leads} maxLength={300} placeholder="Names, comma separated" onChange={e => setDraft(d.key, { leads: e.target.value })} />
+                  {d.roles && d.roles.length > 0 && (
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 8, lineHeight: 1.45 }}>
+                      Roles (added as teams on the Circles page): {d.roles.map(r => r.name).join(' · ')}
+                    </div>
+                  )}
                   {d.source && <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--ink-3)', marginTop: 8, lineHeight: 1.45 }}>From your document: &ldquo;{d.source}&rdquo;</div>}
                 </div>
                 <button onClick={() => setDrafts(ds => ds.filter(x => x.key !== d.key))} aria-label="Remove"

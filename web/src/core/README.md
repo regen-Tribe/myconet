@@ -78,15 +78,9 @@ role = await promoteToMemberIfEligible(supabase, user.id, role)
 
 This runs at the top of `app/agreements/page.tsx` and `app/ops/page.tsx`.
 
-## Circles — the 5 pillars (`core/lib/pillars.ts`)
+## Circles (`core/lib/circles.ts`)
 
-A "circle" is one of the 5 regenerative pillars a project can belong to. Used as a categorical bucket on M07 Operations.
-
-```ts
-export const PILLARS = ['ecology', 'hardware', 'humanware', 'economy', 'tech'] as const
-```
-
-`PILLAR_META[p]` returns `{ label, color, emoji }` for each. `isPillar(value)` is a type guard. `user_profiles.lead_circles: text[]` records which circles a `circle_lead` is responsible for — see `/admin/users` for assignment.
+Circles are the community's standing groups, rows in the `circles` table, set during setup (Blueprint › Circles; `INSTANCES.md` §6). Projects, events, bookable items and the org chart belong to a circle. Client code reads them with `useCircles()`, server code with `loadCircles()`; `meta(slug)` returns `{ label, color, emoji }` and `has(slug)` is a type guard. The default set is the neighborhood org chart (`modules/m04-blueprint/lib/circle-setup.ts`). `user_profiles.lead_circles: text[]` records which circles a `circle_lead` is responsible for — see `/admin/users` for assignment.
 
 ## Project status (`core/lib/project-status.ts`)
 

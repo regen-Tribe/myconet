@@ -1086,7 +1086,7 @@ export default function HomeClient({
             <SectionHead
               mod="17" label="Circles" color="var(--m17)"
               h="Know who does what."
-              lead="Five circles — ecology, hardware, humanware, economy and tech — each with leads, members and teams. See who to talk to about anything, from the food forest to the website."
+              lead="Every circle in the community, with its purpose, leads, members and roles. See who to talk to about anything, from the kitchen to the website."
               href="/org"
               why={[
                 '<strong>Leads at a glance</strong> — every circle shows who’s responsible.',

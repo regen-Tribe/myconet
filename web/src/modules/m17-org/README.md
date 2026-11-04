@@ -2,7 +2,7 @@
 
 Shown as **Circles** in the UI (sidebar, menus, dashboard); route `/org`, with `/circles` redirecting.
 
-Who does what: the community stewards (admins), the five circles, the teams (departments) inside each circle, and who leads each one. Route: `/org`. Public — logged-out visitors can see it too.
+Who does what: the community stewards (admins), the community's circles, the teams (departments) inside each circle, and who leads each one. Route: `/org`. Public — logged-out visitors can see it too.
 
 ## Who can edit
 

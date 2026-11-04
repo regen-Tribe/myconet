@@ -46,29 +46,68 @@ export function foundCircles(values: Record<string, unknown>): FoundCircle[] {
   return mergeFoundCircles([values[FOUND_CIRCLES_KEY]])
 }
 
-// The first template is the default, from the neighborhood org chart ("Neighborhoods Org Charts.pdf")
-export const CIRCLE_TEMPLATES: { id: string; label: string; circles: { name: string; purpose: string; emoji?: string }[] }[] = [
+/** A role inside a circle. Saved as a team on the org chart; its duties become the description. */
+export interface CircleRole { name: string; duties: string[] }
+
+export interface TemplateCircle { name: string; purpose: string; emoji?: string; roles?: CircleRole[] }
+
+export const roleDescription = (r: CircleRole) => r.duties.map(d => `• ${d}`).join('\n') || null
+
+// The first template is the default: the neighborhood org chart ("Neighborhoods Org Charts.pdf").
+// RTRN's instance/seed/circles.sql seeds the same circles and roles.
+export const CIRCLE_TEMPLATES: { id: string; label: string; circles: TemplateCircle[] }[] = [
   {
     id: 'neighborhood', label: 'Neighborhood org chart',
     circles: [
-      { name: 'Community Management', emoji: '🤝', purpose: 'Volunteers, leaders, welcoming new members and holding community circles' },
-      { name: 'Venue Management',     emoji: '🏡', purpose: 'Hospitality, preparing rooms, rental requests and events' },
-      { name: 'Space Maintenance',    emoji: '🔧', purpose: 'Cleaning, property repairs, and wifi and connectivity' },
-      { name: 'Kitchen Management',   emoji: '🍳', purpose: 'Food lists, the weekly meal plan and the cooking rota' },
-      { name: 'Marketing & Outreach', emoji: '📣', purpose: 'Content strategy, social media and promoting events' },
-      { name: 'Sustainable Systems',  emoji: '🌱', purpose: 'Energy, water, waste management and permaculture' },
-      { name: 'Operations',           emoji: '📋', purpose: 'Project management, team dynamics and finance' },
-      { name: 'Strategy',             emoji: '🧭', purpose: 'Vision, mission, values and timeline' },
-    ],
-  },
-  {
-    id: 'regen-five', label: 'Regen five',
-    circles: [
-      { name: 'Ecology',   purpose: 'Land, water, soil, food and biodiversity' },
-      { name: 'Hardware',  purpose: 'Buildings, energy, water systems and infrastructure' },
-      { name: 'Humanware', purpose: 'Relationships, culture, care and belonging' },
-      { name: 'Economy',   purpose: 'Money, value flows, contributions and livelihoods' },
-      { name: 'Tech',      purpose: 'Digital tools, data and connectivity' },
+      {
+        name: 'Community Management', emoji: '🤝', purpose: 'Volunteers, leaders, welcoming new members and holding community circles',
+        roles: [
+          { name: 'Volunteer Lead', duties: ['Point of contact for volunteers'] },
+          { name: 'Community Manager', duties: ['Point of contact for leaders', 'High-level logistics'] },
+          { name: 'Community Host', duties: ['Onboards new community members to the space', 'Offers support with house and room logistics to community members'] },
+          { name: 'Community Space Holder', duties: ['Hosting community circles', 'Holding heart space for community members'] },
+        ],
+      },
+      {
+        name: 'Venue Management', emoji: '🏡', purpose: 'Hospitality, preparing rooms, rental requests and events',
+        roles: [
+          { name: 'Hospitality Lead', duties: ['Preparing rooms', 'Managing rental requests', 'Shares available locations with marketing'] },
+          { name: 'Events Lead', duties: ['Planning events', 'Collaborating with the marketing lead to market events'] },
+        ],
+      },
+      {
+        name: 'Space Maintenance', emoji: '🔧', purpose: 'Cleaning, property repairs, and wifi and connectivity',
+        roles: [
+          { name: 'Cleaning Lead', duties: ['Creating the cleaning schedule', 'Overseeing the cleaning culture in the community', 'Managing cleaning fairies'] },
+          { name: 'Maintenance Lead', duties: ['Managing property fixes'] },
+          { name: 'Technology Lead', duties: ['Manages wifi and connectivity issues'] },
+        ],
+      },
+      {
+        name: 'Kitchen Management', emoji: '🍳', purpose: 'Food lists, the weekly meal plan and the cooking rota',
+        roles: [
+          { name: 'Kitchen Lead', duties: ['Creating the food list', 'Overseeing cooking fairies', 'Weekly food plan and recipes'] },
+          { name: 'Cooking Fairy', duties: ['Can be volunteers or community members', 'Cooking meals', 'Cleaning the dishes', 'Unpacking groceries'] },
+        ],
+      },
+      {
+        name: 'Marketing & Outreach', emoji: '📣', purpose: 'Content strategy, social media and promoting events',
+        roles: [
+          { name: 'Marketing / Social Media Manager', duties: ['Managing content strategy', 'Following up with content creators', 'Posting content'] },
+          { name: 'Content Creator', duties: ['Capturing content', 'Editing content'] },
+        ],
+      },
+      {
+        name: 'Sustainable Systems', emoji: '🌱', purpose: 'Energy, water, waste management and permaculture',
+        roles: [
+          { name: 'Energy', duties: [] },
+          { name: 'Water', duties: [] },
+          { name: 'Waste Management', duties: [] },
+          { name: 'Permaculture', duties: [] },
+        ],
+      },
+      { name: 'Operations', emoji: '📋', purpose: 'Project management, team dynamics and finance' },
+      { name: 'Strategy',   emoji: '🧭', purpose: 'Vision, mission, values and timeline' },
     ],
   },
   {

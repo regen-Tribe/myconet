@@ -46,7 +46,7 @@ How we turn today's RTRN portal code into **MyCoNet core**, the master codebase 
 | `modules/m04-blueprint/BlueprintClient.tsx:1156` | "The Regen Tribe Regenerative Neighborhood — Regen Hood 0 — Plan" | "{community name} — Plan" |
 | `BlueprintClient.tsx:1328, 1531`, `LandingClient.tsx:813`, `HomeClient.tsx:1478` | Footers | One shared `<FrameworkCredit/>` component: "MyCoNet · Regenerative Neighborhood Framework · open sourced by The Regen Tribe Collective" |
 | `core/lib/modules.ts:27, 32`, `core/lib/module-meta.ts`, `modules/README.md` | M02 and M03 linking to `tribesplatform.app` | ✅ Deleted 2026-11-03 (both files were already unused) |
-| `core/lib/pillars.ts` + `events`, `booking_items`, `org_units` check constraints + `projects.circle`, `user_profiles.lead_circles` | The five circles | `circles` table, set at setup (`INSTANCES.md` §6). RTRN's five are seeded in the RTRN repo |
+| `core/lib/pillars.ts` + `events`, `booking_items`, `org_units` check constraints + `projects.circle`, `user_profiles.lead_circles` | The five circles | `circles` table, set at setup (`INSTANCES.md` §6). ✅ Default = the neighborhood org chart (8 circles + roles); RTRN switched to it, seed in `instance/seed/` |
 | `core/lib/roles.ts` `ROLE_LABELS` | Role display names | Defaults in core; renames from config |
 | `modules/m09-governance/GovernanceClient.tsx`, `LandingClient.tsx:104`, `HomeClient.tsx:55`, DB policies on `proposal_votes` | The 4-layer voting model | Layers + thresholds from config (phase 4, the biggest change) |
 | `app/globals.css`, `landing.css`, logo | Colours, fonts, mark | CSS tokens overridden by `instance/theme` |
@@ -98,7 +98,7 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
    - The `circles` table has admin-only writes, and adding a circle creates its org-chart unit.
    - The three check constraints are now foreign keys, plus `projects.circle`; `lead_circles` is validated by a trigger.
    - `pillars.ts` is gone. Client code uses `useCircles()` and server code uses `loadCircles()`.
-   - RTRN is seeded from `instance/seed/circles.sql`.
+   - RTRN is seeded from `instance/seed/circles.sql`: since 2026-11-03 the eight neighborhood org chart circles and their roles (as teams). `switch-to-neighborhood-circles.sql` moved RTRN's projects, teams and leads off the old five, which are retired.
    - ✅ **Blueprint Circles step** (`modules/m04-blueprint/CirclesStep.tsx`, before the Dashboard). The AI scan returns a `circles` list (each with a source quote, the rest dropped); found circles wait in the Blueprint answers (`_circles_found`) until an admin confirms them. With none found it asks the §6.2 question and offers the two templates. Saving writes `circles` rows (slug, emoji, colour picked automatically) and the purpose into the circle's org unit; lead names go in `circles.leads_to_assign` (`…0400_circles_setup`). The step also renames, edits and retires circles, and the Dashboard warns while there are none.
    - **Still to do:** a "Manage circles" entry on the Circles page (`/org`) for admins. The Blueprint step already does it, so this may only need a link.
 8. **Modules on/off:** the sidebar (`core/lib/nav.ts`), routes and landing sections respect `config.modules`. A disabled module's routes return 404.
