@@ -6,6 +6,9 @@ import { createClient } from '@/core/lib/supabase/client'
 import { FW_DATA, PILLAR_STEPS, type StepDef, type PhaseDef, type GuideContent } from '@/modules/m04-blueprint/lib/wizard-data'
 import { computePillarScores, computeGatesPassed, computePhaseProgress, type Values as SharedValues } from '@/modules/m04-blueprint/lib/blueprint-compute'
 import { communityName, FRAMEWORK_CREDIT } from '@/core/lib/instance'
+import { useCircles } from '@/core/components/CirclesProvider'
+import CirclesStep from '@/modules/m04-blueprint/CirclesStep'
+import { CIRCLES_PROMPT_RULE, FOUND_CIRCLES_KEY, mergeFoundCircles, type FoundCircle } from '@/modules/m04-blueprint/lib/circle-setup'
 import '@/modules/m04-blueprint/wizard.css'
 
 async function extractPdfText(file: File, onProgress?: (page: number, total: number) => void): Promise<string> {
@@ -32,6 +35,8 @@ interface Props {
   blueprintId: string
   initialAnswers: Values
   initialFlags: Record<string, boolean>
+  /** Admins only: the circles table is admin-write */
+  canEditCircles?: boolean
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -75,10 +80,12 @@ function debounce<T extends (...args: Parameters<T>) => void>(fn: T, ms: number)
 interface FieldCatalogEntry {
   id: string; kind: 'text' | 'slider' | 'check'; phase: string; step: string; label: string; help: string
 }
-interface ImportScope { step?: StepDef; section?: string }
+/** A step (or one section of it), or `circles` for the Circles step's own scan. */
+interface ImportScope { step?: StepDef; section?: string; circles?: boolean }
 
 function buildFieldCatalog(scope?: ImportScope): FieldCatalogEntry[] {
   const catalog: FieldCatalogEntry[] = []
+  if (scope?.circles) return catalog
   const scopedStepId = scope?.step?.id ?? null
   const scopedSection = scope?.section ?? null
   FW_DATA.phases.forEach(phase => {
@@ -174,7 +181,10 @@ function ImportModal({ onClose, onApply, currentValues, scope }: {
     const fieldList = Object.entries(fieldsByStep).map(([s, fields]) =>
       `### ${s}\n` + fields.map(f => `- ${f.id} (${f.kind}): "${f.label}"`).join('\n')
     ).join('\n\n')
-    const scopeHint = scope?.step ? `\n\nIMPORTANT: Focus only on the "${scope.step.title}" step${scope.section ? ' (' + scope.section + ' section)' : ''}. Only return fields listed below.` : ''
+    const scopeHint = scope?.circles ? '\n\nIMPORTANT: Only look for circles. Return just the "circles" array and "_summary".'
+      : scope?.step ? `\n\nIMPORTANT: Focus only on the "${scope.step.title}" step${scope.section ? ' (' + scope.section + ' section)' : ''}. Only return fields listed below.` : ''
+    // Step-scoped imports fill fields only; full scans and the Circles step also look for circles
+    const circlesRule = scope?.step ? '' : `\n${CIRCLES_PROMPT_RULE}`
 
     const existingAnswers = catalog
       .filter(f => { const v = currentValues[f.id]; return v != null && v !== '' && String(v).length > 0 })
@@ -207,7 +217,7 @@ Rules:
 - For checklist note fields (id ending in "_note"): if the doc has relevant info, write a 1-2 sentence note. Be concrete.
 - Only include fields where you have actual evidence from the document. Omit anything you'd be guessing.
 - Also include a "_summary" key with a 2-sentence summary of what the document is about.
-- Also include "_extracted_count" with the number of fields you populated.${scopeHint}${chunkNote}
+- Also include "_extracted_count" with the number of fields you populated.${circlesRule}${scopeHint}${chunkNote}
 
 DOCUMENT:
 """
@@ -215,7 +225,7 @@ ${chunkText}
 """
 
 WIZARD FIELDS:
-${fieldList}
+${fieldList || '(none for this scan)'}
 
 Return ONLY valid JSON, no markdown fences, no commentary.`
     }
@@ -238,8 +248,10 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
 
     const mergeResults = (results: Record<string, unknown>[]): Record<string, unknown> => {
       const merged: Record<string, unknown> = {}
+      const circleLists: unknown[] = []
       results.forEach(r => {
         Object.entries(r).forEach(([k, v]) => {
+          if (k === 'circles') { circleLists.push(v); return }
           if (k.startsWith('_')) { if (!merged[k]) merged[k] = v; return }
           const existing = merged[k]
           if (existing == null) { merged[k] = v; return }
@@ -252,6 +264,8 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
           }
         })
       })
+      const circles = mergeFoundCircles(circleLists)
+      if (circles.length) merged.circles = circles
       return merged
     }
 
@@ -274,7 +288,7 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
       const accepted: Record<string, boolean> = {}
       // Default: accept new fields; for conflicts (existing answer present) default to keeping current
       Object.keys(merged).forEach(k => {
-        if (k.startsWith('_')) return
+        if (k.startsWith('_') || k === 'circles') return
         const hasExisting = currentValues[k] != null && currentValues[k] !== ''
         accepted[k] = !hasExisting
       })
@@ -290,10 +304,13 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
   const handleApply = () => {
     if (!extracted) return
     const toApply: Values = {}
-    Object.entries(extracted).forEach(([k, v]) => { if (!k.startsWith('_') && acceptedKeys[k]) toApply[k] = v })
+    Object.entries(extracted).forEach(([k, v]) => { if (!k.startsWith('_') && k !== 'circles' && acceptedKeys[k]) toApply[k] = v })
+    // Found circles wait in the answers until an admin confirms them in the Circles step
+    if (foundList.length) toApply[FOUND_CIRCLES_KEY] = foundList
     onApply(toApply); onClose()
   }
 
+  const foundList = (extracted?.circles ?? []) as FoundCircle[]
   const catalog = buildFieldCatalog(scope)
   const fieldMeta = (id: string) => catalog.find(f => f.id === id) ?? { label: id, kind: 'text' as const, step: '', phase: '', help: '' }
 
@@ -303,12 +320,13 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
         <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--ink-3)' }}>×</button>
 
         <div style={{ marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--rule)' }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', marginBottom: 6 }}>AI-ASSISTED IMPORT{scope?.step ? ' · SCOPED' : ''}</div>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', marginBottom: 6 }}>AI-ASSISTED IMPORT{scope?.step || scope?.circles ? ' · SCOPED' : ''}</div>
           <div style={{ fontFamily: 'var(--display)', fontSize: 28, marginTop: 6 }}>
-            {scope?.step ? `Fill "${scope.step.title}" ${scope.section ?? 'step'}` : 'Scan an existing document'}
+            {scope?.circles ? 'Find your circles' : scope?.step ? `Fill "${scope.step.title}" ${scope.section ?? 'step'}` : 'Scan an existing document'}
           </div>
           <div style={{ fontSize: 13.5, color: 'var(--ink-2)', marginTop: 8, fontStyle: 'italic' }}>
-            {scope?.step ? "Upload a document and we'll pre-fill just this section." : "Have a vision deck, charter, or feasibility study? Drop it in and we'll pre-fill what we can."}
+            {scope?.circles ? "Upload a charter, org chart or handbook and we'll look for the standing groups it describes. You confirm them before anything is saved."
+              : scope?.step ? "Upload a document and we'll pre-fill just this section." : "Have a vision deck, charter, or feasibility study? Drop it in and we'll pre-fill what we can."}
           </div>
         </div>
 
@@ -381,7 +399,8 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--ink-3)', marginBottom: 6 }}>DOCUMENT SUMMARY</div>
               <div style={{ fontFamily: 'var(--display)', fontSize: 16, fontStyle: 'italic', color: 'var(--ink-2)' }}>{(extracted._summary as string) || 'No summary available.'}</div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)', marginTop: 12, letterSpacing: '0.1em' }}>
-                {Object.keys(extracted).filter(k => !k.startsWith('_')).length} FIELDS POPULATED · REVIEW BELOW
+                {Object.keys(extracted).filter(k => !k.startsWith('_') && k !== 'circles').length} FIELDS POPULATED
+                {scope?.circles ? '' : ` · ${foundList.length} CIRCLE${foundList.length === 1 ? '' : 'S'} FOUND`} · REVIEW BELOW
               </div>
               {wasTruncated && (
                 <div style={{ marginTop: 10, fontSize: 12, color: '#f59e0b', background: '#f59e0b15', border: '1px solid #f59e0b40', borderRadius: 'var(--radius)', padding: '6px 10px' }}>
@@ -390,13 +409,30 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
               )}
             </div>
 
+            {(scope?.circles || foundList.length > 0) && (
+              <div style={{ marginBottom: 20, padding: '12px 14px', border: '1px solid var(--rule)', borderRadius: 'var(--radius)' }}>
+                <div style={{ fontFamily: 'var(--display)', fontSize: 16, marginBottom: 6 }}>Circles found: {foundList.length}</div>
+                {foundList.length > 0 ? (
+                  <>
+                    <ul style={{ margin: '0 0 6px', paddingLeft: 18, fontSize: 12.5, lineHeight: 1.6, color: 'var(--ink-2)' }}>
+                      {foundList.map(c => <li key={c.name}><strong>{c.name}</strong>{c.purpose ? ` — ${c.purpose}` : ''}</li>)}
+                    </ul>
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>Nothing is saved yet. You&rsquo;ll confirm, rename or remove them in the Circles step.</div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>This document doesn&rsquo;t describe any standing groups. You can add circles by hand in the Circles step.</div>
+                )}
+              </div>
+            )}
+
+            {!scope?.circles && <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
               <div style={{ fontFamily: 'var(--display)', fontSize: 18 }}>Proposed answers</div>
               <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{Object.values(acceptedKeys).filter(Boolean).length} will apply</div>
             </div>
 
             <div style={{ maxHeight: 420, overflowY: 'auto', marginBottom: 20, paddingRight: 4 }}>
-              {Object.entries(extracted).filter(([k]) => !k.startsWith('_') && k !== 'project_name').map(([key, val]) => {
+              {Object.entries(extracted).filter(([k]) => !k.startsWith('_') && k !== 'project_name' && k !== 'circles').map(([key, val]) => {
                 const meta = fieldMeta(key)
                 const accepted = acceptedKeys[key]
                 const existingVal = currentValues[key]
@@ -480,17 +516,20 @@ Return ONLY valid JSON, no markdown fences, no commentary.`
                 )
               })}
             </div>
+            </>}
 
             <div className="nav-row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
               <button className="btn btn-ghost" onClick={() => setStage('upload')}>← Back</button>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn" onClick={() => {
+                {!scope?.circles && <button className="btn" onClick={() => {
                   const allNew = !Object.entries(acceptedKeys).every(([k, v]) => v || (currentValues[k] != null && currentValues[k] !== ''))
                   const all: Record<string, boolean> = {}
-                  Object.keys(extracted).forEach(k => { if (!k.startsWith('_')) all[k] = allNew })
+                  Object.keys(extracted).forEach(k => { if (!k.startsWith('_') && k !== 'circles') all[k] = allNew })
                   setAcceptedKeys(all)
-                }}>Toggle all</button>
-                <button className="btn btn-primary" onClick={handleApply}>Apply {Object.values(acceptedKeys).filter(Boolean).length} answers →</button>
+                }}>Toggle all</button>}
+                <button className="btn btn-primary" onClick={handleApply}>
+                  {scope?.circles ? (foundList.length ? 'Review in Circles step →' : 'Close') : `Apply ${Object.values(acceptedKeys).filter(Boolean).length} answers →`}
+                </button>
               </div>
             </div>
           </div>
@@ -1128,8 +1167,8 @@ function WelcomeView({ onStart, hasProgress, onJumpToDashboard, onImport, readOn
   )
 }
 
-function DashboardView({ values, onJump, onPrint }: {
-  values: Values; onJump: (id: string) => void; onPrint: () => void
+function DashboardView({ values, onJump, onPrint, noCircles }: {
+  values: Values; onJump: (id: string) => void; onPrint: () => void; noCircles: boolean
 }) {
   const pillarScores = computePillarScores(values)
   const overall = Object.values(pillarScores).reduce((a, b) => a + b, 0) / 5
@@ -1156,6 +1195,13 @@ function DashboardView({ values, onJump, onPrint }: {
       <Crumb items={['Project', 'Dashboard']} />
       <h1 className="step-title">{communityName(values)} — Plan</h1>
       <p className="step-lede">A live diagnostic across pillars, phases, and frameworks.</p>
+
+      {noCircles && (
+        <div className="card" style={{ background: 'var(--warn-soft)', padding: '12px 16px', borderRadius: 'var(--radius)', fontSize: 13, marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <span>Setup isn&rsquo;t finished: your community has no circles yet.</span>
+          <button className="btn btn-primary" onClick={() => onJump('circles')}>Set up circles →</button>
+        </div>
+      )}
 
       {/* Land & Scale stat boxes */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 28 }}>
@@ -1575,8 +1621,9 @@ function ProjectDocumentModal({ values, onClose, onPrint }: { values: Values; on
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 
-export default function BlueprintClient({ blueprintId, initialAnswers, readOnly = false }: Props & { readOnly?: boolean }) {
+export default function BlueprintClient({ blueprintId, initialAnswers, readOnly = false, canEditCircles = false }: Props & { readOnly?: boolean }) {
   const D = FW_DATA
+  const circles = useCircles()
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   useEffect(() => {
@@ -1593,6 +1640,8 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
       { id: 'welcome', kind: 'welcome' }
     ]
     D.phases.forEach(p => p.steps.forEach(s => arr.push({ ...s, phaseRef: p })))
+    // Setup's last step (INSTANCES.md §6.2)
+    arr.push({ id: 'circles', kind: 'circles' })
     arr.push({ id: 'dashboard', kind: 'dashboard' })
     return arr
   }, [D])
@@ -1669,6 +1718,8 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
     setImportScope(step ? { step, section } : undefined)
     setShowImport(true)
   }
+  const openCirclesImport = () => { setImportScope({ circles: true }); setShowImport(true) }
+  const clearFoundCircles = () => setValues(v => { const next = { ...v }; delete next[FOUND_CIRCLES_KEY]; return next })
 
   const [mobileTab, setMobileTab] = useState<'nav' | 'content' | 'stats'>('content')
   const TABS = ['nav', 'content', 'stats'] as const
@@ -1772,9 +1823,17 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
               </li>
             ))}
 
+            <li className={`step${currentId === 'circles' ? ' active' : ''}${circles.list.length ? ' complete' : ''}`}
+              data-step-id="circles"
+              style={{ paddingLeft: 0, marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--rule-soft)' }}
+              onClick={() => jumpTo('circles')}>
+              <div className="step-dot"></div>
+              <div>◯ Circles</div>
+            </li>
+
             <li className={`step${currentId === 'dashboard' ? ' active' : ''}`}
               data-step-id="dashboard"
-              style={{ paddingLeft: 0, marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--rule-soft)' }}
+              style={{ paddingLeft: 0, marginTop: 8 }}
               onClick={() => jumpTo('dashboard')}>
               <div className="step-dot"></div>
               <div>📊 Dashboard</div>
@@ -1803,7 +1862,12 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
               onImport={() => openImport()} readOnly={readOnly} />
           )}
           {current.kind === 'dashboard' && (
-            <DashboardView values={values} onJump={jumpTo} onPrint={() => setShowDoc(true)} />
+            <DashboardView values={values} onJump={jumpTo} onPrint={() => setShowDoc(true)} noCircles={circles.list.length === 0} />
+          )}
+          {current.kind === 'circles' && (
+            <CirclesStep values={values} canEdit={canEditCircles && !readOnly}
+              onImport={openCirclesImport} onClearFound={clearFoundCircles}
+              onPrev={goPrev} onNext={goNext} />
           )}
           {(current as { phaseRef?: PhaseDef }).phaseRef && (
             <StepView

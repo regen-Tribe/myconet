@@ -30,6 +30,8 @@ The wizard structure is derived from four research-backed frameworks. Each step 
 | File | Purpose |
 |------|---------|
 | `BlueprintClient.tsx` | Full wizard UI — pillar tabs, step fields, AI scan, scoring panels |
+| `CirclesStep.tsx` | Setup's last step: confirm circles found by the scan, or ask for them (templates), and save / rename / retire them. Admins only (`circles` is admin-write) |
+| `lib/circle-setup.ts` | Scan prompt rule for circles, merging found circles, templates, slug / emoji / colour pickers |
 | `lib/blueprint-compute.ts` | Pure scoring functions — readiness, gates, phase progress |
 | `lib/wizard-data.ts` | Static wizard structure — all phases, pillars, steps, and field definitions |
 | `wizard.css` | Wizard-specific styles (scoped to blueprint, not global) |
@@ -61,6 +63,8 @@ These functions are also imported by `m00-dashboard` and `modules/home` to displ
 ## AI scanning
 
 The blueprint integrates with `/api/scan` to scan uploaded documents and suggest answers. The API route calls MiniMax M2.7 via the Cloudflare Worker.
+
+Full scans (and the Circles step's own scan) also ask for a `circles` array, following `INSTANCES.md` §6.2: standing groups only, each with a `source` quote; any without one is dropped. They are not saved as circles. They wait in the answers under `_circles_found` until an admin confirms them in the Circles step.
 
 ## How to work on this module
 

@@ -211,7 +211,7 @@ Circles are fixed in code and in the database today. That has to change before a
 - **New table `circles`:** slug, name, purpose, emoji, color, sort_order, archived_at. Readable by everyone, writable by admins.
 - **The three check constraints** (`events_circle_check`, `booking_items_circle_check`, `org_units_circle_check`) become foreign keys to `circles(slug)`. `user_profiles.lead_circles` and `projects.circle` are validated against the table too.
 - **`core/lib/pillars.ts`** (`PILLARS`, `PILLAR_META`, `isPillar`, used by about 20 files) is replaced by a list loaded from `circles` once per request and passed down.
-- **The scan prompt** gains the `circles` field above. The Blueprint wizard gets a final **Circles** step that runs Steps B–D.
+- **The scan prompt** gains the `circles` field above. The Blueprint wizard gets a final **Circles** step that runs Steps B–D. ✅ Built 2026-11-03. A circle's purpose is stored as its org unit's description (the text the Circles page already shows), not in `circles`; lead names go in `circles.leads_to_assign`.
 - **RTRN's migration** seeds its existing five circles with the same slugs, so nothing changes for RTRN.
 
 ---

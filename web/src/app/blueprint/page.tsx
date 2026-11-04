@@ -7,6 +7,7 @@ export default async function BlueprintPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   let isAdmin = false
+  let canEditCircles = false
   if (user) {
     const { data: profile } = await supabase
       .from('user_profiles')
@@ -14,6 +15,7 @@ export default async function BlueprintPage() {
       .eq('id', user.id)
       .maybeSingle()
     isAdmin = isCircleAdmin(profile?.role ?? '')
+    canEditCircles = profile?.role === 'admin'
   }
 
   const { data: communityBlueprint } = await supabase
@@ -51,6 +53,7 @@ export default async function BlueprintPage() {
         initialAnswers={{}}
         initialFlags={{}}
         readOnly={false}
+        canEditCircles={canEditCircles}
       />
     )
   }
@@ -61,6 +64,7 @@ export default async function BlueprintPage() {
       initialAnswers={(communityBlueprint.answers as Record<string, unknown>) ?? {}}
       initialFlags={(communityBlueprint.flags as Record<string, boolean>) ?? {}}
       readOnly={!isAdmin}
+      canEditCircles={canEditCircles}
     />
   )
 }
