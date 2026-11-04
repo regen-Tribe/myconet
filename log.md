@@ -2,7 +2,7 @@
 
 ---
 
-## 2026-11-03 — Core extraction: Blueprint Circles setup step (built, not deployed yet)
+## 2026-11-03 — Core extraction: Blueprint Circles setup step + neighborhood circles (deployed, 4348ed23)
 
 `INSTANCES.md` §6.2 Steps A–D, finishing CORE-EXTRACTION step 7.
 - **Scan:** full scans and a new circles-only scan ask for `circles` (name, purpose, lead_names, source). `lib/circle-setup.ts` drops any without a source quote and merges duplicates across chunks. The review screen lists them; they're stored in the answers as `_circles_found`, not saved as circles.
