@@ -7,7 +7,7 @@ import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from './CommunityGlance'
 import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from './ModulePreviews'
 import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
-import { FRAMEWORK_CREDIT } from '@/core/lib/instance'
+import { DEFAULT_PURPOSE, FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import type { GlanceTile } from './lib/at-a-glance'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
@@ -301,7 +301,7 @@ export default function HomeClient({
         }}>
           {communityPurpose
             ? communityPurpose
-            : "We create this Regenerative Neighborhood to re-develop society so it's good for humans & planet — we focus on everyone having their core and higher needs met while living in alignment with nature. We collaborate to make our community thrive, to create things we are passionate about, and to make a positive impact."}
+            : DEFAULT_PURPOSE}
         </p>
         {/* Module pills */}
         <div style={{ fontSize: 12, color: 'var(--ink-4)', fontFamily: 'var(--mono)', letterSpacing: '0.04em', marginBottom: 10 }}>

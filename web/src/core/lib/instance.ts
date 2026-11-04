@@ -12,5 +12,8 @@ export function communityName(answers: Record<string, unknown> | null | undefine
   return typeof name === 'string' && name.trim() ? name.trim() : COMMUNITY_NAME
 }
 
+/** Shown under the hero until the Blueprint has a Purpose answer. */
+export const DEFAULT_PURPOSE = 'A regenerative neighborhood in the making: a place where people meet their core and higher needs while living in alignment with nature, and build it together. Our Blueprint is still being written.'
+
 /** Framework credit shown on every MyCoNet community (footers, Blueprint exports). */
 export const FRAMEWORK_CREDIT = 'MyCoNet · Regenerative Neighborhood Framework · Open sourced by The Regen Tribe Collective'

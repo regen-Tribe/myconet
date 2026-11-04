@@ -7,7 +7,7 @@ import type { CalendarEvent } from '@/modules/m14-events/types'
 import { CommunityGlance } from '@/modules/home/CommunityGlance'
 import { CirclesPreview, ResourcesPreview, StaysPreview, type CirclesPreviewData, type PreviewItem } from '@/modules/home/ModulePreviews'
 import { CLUBHOUSE, MEMBER_MODULES } from '@/core/lib/nav'
-import { FRAMEWORK_CREDIT } from '@/core/lib/instance'
+import { DEFAULT_PURPOSE, FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import type { GlanceTile } from '@/modules/home/lib/at-a-glance'
 import './landing.css'
 
@@ -135,7 +135,7 @@ function Hero({ name, communityPurpose }: { name: string | null; communityPurpos
       <p className="lp-lead">
         {communityPurpose
           ? communityPurpose
-          : "We create this Regenerative Neighborhood to re-develop society so it's good for humans & planet — we focus on everyone having their core and higher needs met while living in alignment with nature. We collaborate to make our community thrive, to create things we are passionate about, and to make a positive impact."}
+          : DEFAULT_PURPOSE}
       </p>
       <div className="lp-cta-row">
         <a className="lp-btn lp-btn-primary" href="#meet">Take the tour <Arrow /></a>

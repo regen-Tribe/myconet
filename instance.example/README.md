@@ -11,3 +11,39 @@ See `INSTANCES.md` and `CORE-EXTRACTION.md` at the repo root.
 The build reads `instance/config.jsonc` (or the folder in `MYCONET_INSTANCE_DIR`)
 via `web/scripts/instance.mjs`, which writes `web/wrangler.jsonc` and
 `web/.env.production.local`. Both are generated: don't edit them.
+
+## Setting up a new community
+
+Everything a new community needs, in order. Each community has its own Supabase
+project and Cloudflare account; nothing is shared with other communities.
+
+**1. Accounts and tokens** (the community's own; keep tokens in the password manager)
+- Cloudflare: the account ID, and an API token from the "Edit Cloudflare Workers" template.
+- Supabase: a new project (note the project ref, URL and anon key) and an access token.
+- An AI key for the Blueprint scan (`MINIMAX_API_KEY`).
+
+**2. Repo**
+- Create the community repo from a core release, add core as the `upstream` remote.
+- Copy `instance.example/` to `instance/` and fill in `config.jsonc`.
+
+**3. Database** (empty Supabase project)
+- Run every file in `supabase/migrations/` in order (`supabase db push`, or each file
+  through the SQL editor). Don't run `supabase/archive/`.
+- Supabase › Authentication › URL Configuration: Site URL = `appUrl`, and add
+  `<appUrl>/**` to the redirect URLs.
+
+**4. Deploy**
+- `cd web && npm ci`
+- `CLOUDFLARE_API_TOKEN=… npx wrangler secret put MINIMAX_API_KEY`
+- `CLOUDFLARE_API_TOKEN=… npm run deploy`
+- Check `/`, `/auth/login` and signup load, and that a signup gets the confirmation email.
+
+**5. First admin**
+- The first admin signs up on the portal, then run `supabase/setup/first-admin.sql`
+  with their email.
+
+**6. Setup in the portal** (`INSTANCES.md` §6), as that admin
+- Blueprint: upload the community's documents (✨ Import from document), review the answers.
+- Blueprint › Circles: confirm the circles the scan found, or start from a template.
+  Setup isn't finished without at least one circle.
+- Join questions, then invite the first members; assign circle leads in Admin › Users.
