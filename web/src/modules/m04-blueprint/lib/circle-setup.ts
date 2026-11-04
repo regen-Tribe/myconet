@@ -46,7 +46,21 @@ export function foundCircles(values: Record<string, unknown>): FoundCircle[] {
   return mergeFoundCircles([values[FOUND_CIRCLES_KEY]])
 }
 
-export const CIRCLE_TEMPLATES: { id: string; label: string; circles: { name: string; purpose: string }[] }[] = [
+// The first template is the default, from the neighborhood org chart ("Neighborhoods Org Charts.pdf")
+export const CIRCLE_TEMPLATES: { id: string; label: string; circles: { name: string; purpose: string; emoji?: string }[] }[] = [
+  {
+    id: 'neighborhood', label: 'Neighborhood org chart',
+    circles: [
+      { name: 'Community Management', emoji: '🤝', purpose: 'Volunteers, leaders, welcoming new members and holding community circles' },
+      { name: 'Venue Management',     emoji: '🏡', purpose: 'Hospitality, preparing rooms, rental requests and events' },
+      { name: 'Space Maintenance',    emoji: '🔧', purpose: 'Cleaning, property repairs, and wifi and connectivity' },
+      { name: 'Kitchen Management',   emoji: '🍳', purpose: 'Food lists, the weekly meal plan and the cooking rota' },
+      { name: 'Marketing & Outreach', emoji: '📣', purpose: 'Content strategy, social media and promoting events' },
+      { name: 'Sustainable Systems',  emoji: '🌱', purpose: 'Energy, water, waste management and permaculture' },
+      { name: 'Operations',           emoji: '📋', purpose: 'Project management, team dynamics and finance' },
+      { name: 'Strategy',             emoji: '🧭', purpose: 'Vision, mission, values and timeline' },
+    ],
+  },
   {
     id: 'regen-five', label: 'Regen five',
     circles: [
@@ -73,10 +87,11 @@ export const CIRCLE_COLORS = [
   '#0f766e', '#c2410c', '#4d7c0f', '#a21caf', '#1d4ed8', '#9f1239', '#57534e',
 ]
 
-export const CIRCLE_EMOJIS = ['🌱', '🌾', '💧', '🔧', '🏡', '🤝', '💚', '💱', '⚙️', '📚', '🎨', '🧭', '⚡', '🎪', '◯']
+export const CIRCLE_EMOJIS = ['🌱', '🌾', '💧', '🔧', '🏡', '🤝', '💚', '💱', '⚙️', '📚', '🎨', '🧭', '⚡', '🎪', '🍳', '📣', '📋', '◯']
 
 // First match wins, so the more specific words come first
 const EMOJI_HINTS: [RegExp, string][] = [
+  [/kitchen|cook|meal/, '🍳'],
   [/food|farm|garden|agri/, '🌾'],
   [/water/, '💧'],
   [/ecolog|land|nature|forest|soil/, '🌱'],
@@ -91,6 +106,8 @@ const EMOJI_HINTS: [RegExp, string][] = [
   [/art|creative|music/, '🎨'],
   [/govern|decision|legal/, '🧭'],
   [/event|hospital|guest/, '🎪'],
+  [/market|outreach|media|comms/, '📣'],
+  [/operation|project/, '📋'],
 ]
 
 export function emojiFor(name: string): string {

@@ -193,6 +193,7 @@ Save only what the admin confirms.
 > "What are your community's circles? These are the standing groups that look after an area of community life, like land and food, building, finances, or care and wellbeing. For each one, give a **name** and a **one-line purpose**. If you already know who leads it, add their name. Most communities start with 3 to 7."
 >
 > "Not sure yet? You can start from a template and change it any time:
+> - **Neighborhood org chart** (the default): Community Management · Venue Management · Space Maintenance · Kitchen Management · Marketing & Outreach · Sustainable Systems · Operations · Strategy
 > - **Regen five:** Ecology · Hardware · Humanware · Economy · Tech
 > - **Start small:** Land & Food · Building · Community & Care · Finance"
 

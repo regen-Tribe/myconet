@@ -9,6 +9,7 @@
 - **Circles step** (`CirclesStep.tsx`, sidebar "◯ Circles" before Dashboard): found circles to confirm/rename/remove/add (Step B); with none, the exact §6.2 question and the Regen five / Start small templates (Step C); save writes `circles` rows with slug, emoji and colour picked for you, the purpose into the circle's org unit description, and lead names into `circles.leads_to_assign` (Step D). Existing circles can be edited, retired and restored. Admins only; others see the list. The Dashboard warns while there are no circles.
 - **DB** `20261104000400_circles_setup.sql` (applied to RTRN): `circles.leads_to_assign`; renaming a circle renames its org unit. Rolled-back test: admin insert + rename + purpose worked, explorer update blocked.
 - `npm run build` passes. RTRN looks the same apart from the new sidebar step.
+- Default template: the eight circles from the neighborhood org chart (Community Management, Venue Management, Space Maintenance, Kitchen Management, Marketing & Outreach, Sustainable Systems, Operations, Strategy), listed first; Regen five and Start small stay as alternatives.
 
 ## 2026-11-03 — Core extraction: Phase 0 + Phase 1 steps 4–7 (deployed, a98d84e2)
 

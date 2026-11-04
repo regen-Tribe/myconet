@@ -85,7 +85,7 @@ export default function CirclesStep({ values, canEdit, onImport, onClearFound, o
   const addBlank = () => setDrafts(ds => [...ds, { key: draftKey(), include: true, name: '', purpose: '', leads: '' }])
   const applyTemplate = (id: string) => {
     const t = CIRCLE_TEMPLATES.find(x => x.id === id)
-    if (t) setDrafts(t.circles.map(c => ({ key: draftKey(), include: true, name: c.name, purpose: c.purpose, leads: '' })))
+    if (t) setDrafts(t.circles.map(c => ({ key: draftKey(), include: true, name: c.name, purpose: c.purpose, emoji: c.emoji, leads: '' })))
   }
 
   const saveDrafts = async () => {
