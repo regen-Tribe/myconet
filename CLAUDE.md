@@ -28,7 +28,7 @@ New members join **by invitation only** — someone already in the community sha
 - **Platform:** Cloudflare Workers (NOT Vercel — migrated due to 60s timeout incompatibility with MiniMax M2.7)
 - **Live URL:** https://myconet.correa-oscar11.workers.dev
 - **Worker name:** `myconet`
-- **GitHub:** https://github.com/regentribes/tribesplatform-v2-docs (single branch: `master`)
+- **GitHub:** https://github.com/regen-Tribe/myconet-rtrn (single branch: `master`). Moved from `regentribes/tribesplatform-v2-docs` on 2026-11-03; the old URL redirects.
 - **Deploy command:** `cd web && npm run deploy:cf`
 - **Config:** `instance/config.jsonc` (this community's settings). `web/wrangler.jsonc` and `web/.env.production.local` are **generated** from it by `web/scripts/instance.mjs` before every build/deploy: don't edit them
 - **Adapter:** `@opennextjs/cloudflare` v1.19.9 (OpenNext)

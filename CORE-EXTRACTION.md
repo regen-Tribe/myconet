@@ -11,8 +11,8 @@ How we turn today's RTRN portal code into **MyCoNet core**, the master codebase 
 | Question | Decision |
 |---|---|
 | What is core for? | **Regenerative neighborhoods.** The Regenerative Neighborhood Framework (RNF) Blueprint wizard, the "regenerative" wording, match keywords and AI prompts all stay in core. Only names of one specific community come out. |
-| Repo layout | **Core repo + one repo per community.** `regentribes/myconet` is core. `regentribes/myconet-rtrn` and a Protopia repo pull core releases. |
-| Who owns core | **regentribes** GitHub org. |
+| Repo layout | **Core repo + one repo per community.** `regen-Tribe/myconet` is core. `regen-Tribe/myconet-rtrn` and a Protopia repo pull core releases. |
+| Who owns core | **regen-Tribe** GitHub org (owner: brucester). Today's repo moved there on 2026-11-03 as `regen-Tribe/myconet-rtrn` (was `regentribes/tribesplatform-v2-docs`; the old URL redirects). |
 | Regen Tribe credit | **Kept as framework credit** on every instance: "MyCoNet · open sourced by The Regen Tribe Collective". The community's own name comes from its settings. |
 | History | **Keep the git history, split the logs.** Core release notes start at v4.0. The RTRN-era log (v1–v3.69) moves to the RTRN repo as that community's history. |
 | M02 Neighborhood Directory, M03 Resources & Tools | **Removed from core.** They'll be a separate platform and tool. |
@@ -106,9 +106,9 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
 10. **Look & feel:** colour and font tokens and the logo come from `instance/theme`.
 
 ### Phase 2 — Split the repos
-11. Create `regentribes/myconet` from today's repo **with full history**. Remove RTRN's `instance/`, keep `instance.example/`, rewrite the docs as core docs, start the core changelog at **v4.0.0**, and tag `v4.0.0`.
-12. Create `regentribes/myconet-rtrn` from core v4.0.0. Add RTRN's `instance/` (config, theme, seed, the v1–v3.69 history log) and the sync and drift-check workflows.
-13. Point RTRN's deploy at the new repo, deploy, and check RTRN looks exactly as before. Archive `regentribes/tribesplatform-v2-docs` (read-only, nothing deleted).
+11. Create `regen-Tribe/myconet` from today's repo **with full history**. Remove RTRN's `instance/`, keep `instance.example/`, rewrite the docs as core docs, start the core changelog at **v4.0.0**, and tag `v4.0.0`.
+12. Bring `regen-Tribe/myconet-rtrn` (today's repo, already there) onto core v4.0.0: add core as `upstream`, keep RTRN's `instance/` (config, theme, seed, the v1–v3.69 history log), and add the sync and drift-check workflows.
+13. Deploy RTRN from `myconet-rtrn` on core v4.0.0 and check RTRN looks exactly as before.
 
 ### Phase 3 — Protopia
 14. Protopia's owner creates the accounts (Cloudflare, Supabase, GitHub) and API tokens.
@@ -127,7 +127,7 @@ RTRN stays live and working at every step. Steps 1–3 happen in today's repo, a
 
 ## 6. Still to decide
 
-- **Protopia's repo:** under regentribes (`regentribes/myconet-protopia`), or Protopia's own GitHub account?
+- **Protopia's repo:** under regen-Tribe (`regen-Tribe/myconet-protopia`), or Protopia's own GitHub account?
 - **RTRN's version numbers:** does RTRN show the core version (v4.0) from now on, or keep its own numbering?
 - **Governance layers:** may a community only turn layers off and change thresholds, or also define a whole new layer? Turning off and changing thresholds is far simpler and covers most needs.
 - **Role names:** confirm the ladder (explorer → joining → member → advisor → circle lead / project lead → admin) and what each can do stays fixed in core, with only the labels changing.

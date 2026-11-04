@@ -11,12 +11,12 @@ How one MyCoNet codebase runs several community portals (RTRN today, Protopia ne
 > Updated 2026-11-03: each community gets **its own repo** that pulls from the core repo. How the core gets carved out of today's RTRN code is in [`CORE-EXTRACTION.md`](./CORE-EXTRACTION.md).
 
 ```
-regentribes/myconet                 ← MyCoNet CORE (the master version)
+regen-Tribe/myconet                 ← MyCoNet CORE (the master version)
  ├─ web/  agent/  supabase/migrations/
  └─ instance.example/               default config a new community starts from
         │   core releases (tags v4.x) flow down ▼
         ├──────────────────────────────┐
-regentribes/myconet-rtrn          <protopia>/myconet-protopia
+regen-Tribe/myconet-rtrn          <protopia>/myconet-protopia
  = core + instance/ (RTRN)          = core + instance/ (Protopia)
 ```
 
