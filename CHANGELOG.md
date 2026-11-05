@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.3.1 — 2026-11-04
+
+- `core-update.yml`: opens the PR against the repo's default branch (runners have no `origin/HEAD`,
+  so v4.3.0's run pushed its branch but couldn't open the PR), and retries reuse a leftover branch
+  instead of assuming the PR exists.
+
 ## v4.3.0 — 2026-11-04
 
 No database changes.
