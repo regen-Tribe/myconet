@@ -41,7 +41,7 @@ export function EventDetailModal({
   rsvps: EventRsvp[]
   userId: string | null
   canEdit: boolean
-  /** A linked event, and the viewer may post this kind of event */
+  /** A linked event, and the viewer is a full member */
   canAddNotes: boolean
   canComment: boolean
   isAdmin: boolean

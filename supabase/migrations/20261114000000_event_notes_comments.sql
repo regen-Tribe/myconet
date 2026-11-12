@@ -1,9 +1,8 @@
 -- Event notes and comments (core v4.13.0).
 -- Notes: events from a linked calendar (Google…) can't be edited here, so members add
--- their own description in `notes`, which calendar syncs never touch. Anyone who could
--- post that kind of event may write it (joining members for community events, full
--- members for core and daily ones).
--- Comments: a thread under every event, for joining members and above.
+-- their own description in `notes`, which calendar syncs never touch. Full members
+-- (member and above) write it.
+-- Comments: a thread under every event; signed-in people read it, full members write.
 alter table public.events
   add column notes    text check (length(notes) <= 5000),
   add column notes_by uuid references public.user_profiles (id) on delete set null,
@@ -24,11 +23,7 @@ begin
     raise exception 'notes are only for events from a linked calendar';
   end if;
   -- coalesce: for visitors my_role() is null, and null must mean "no"
-  if not coalesce(
-       case when ev.kind = 'community'
-         then v_role in ('joining', 'member', 'circle_lead', 'project_lead', 'advisor', 'admin')
-         else v_role in ('member', 'circle_lead', 'project_lead', 'advisor', 'admin') end,
-       false) then
+  if not coalesce(v_role in ('member', 'circle_lead', 'project_lead', 'advisor', 'admin'), false) then
     raise exception 'not allowed to add notes to this event' using errcode = '42501';
   end if;
   update public.events
@@ -57,11 +52,11 @@ create policy "signed-in users read event comments" on public.event_comments
   for select to authenticated
   using (exists (select 1 from public.events e where e.id = event_comments.event_id));
 
-create policy "joining members comment on events" on public.event_comments
+create policy "full members comment on events" on public.event_comments
   for insert to authenticated
   with check (
     user_id = (select auth.uid())
-    and coalesce((select private.my_role()) in ('joining', 'member', 'circle_lead', 'project_lead', 'advisor', 'admin'), false)
+    and coalesce((select private.my_role()) in ('member', 'circle_lead', 'project_lead', 'advisor', 'admin'), false)
     and exists (select 1 from public.events e where e.id = event_comments.event_id)
   );
 

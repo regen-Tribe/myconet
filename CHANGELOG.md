@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.13.1 — 2026-11-12
+
+- Comments and linked-event descriptions are for **full members** (member and above) only; v4.13.0 let
+  joining members write them. v4.13.0 was never deployed, so its migration is corrected in place.
+
 ## v4.13.0 — 2026-11-12
 
 **Database:** `20261114000000_event_notes_comments.sql` (`events.notes/notes_by/notes_at`,

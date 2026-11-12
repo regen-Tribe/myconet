@@ -9,7 +9,7 @@ import { COMMENT_SELECT, toComment } from './lib/queries'
 const when = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 
-/** The comment thread under an event: signed-in people read it, joining members and above write. */
+/** The comment thread under an event: signed-in people read it, full members write. */
 export function EventComments({ eventId, userId, canComment, isAdmin, labelStyle }: {
   eventId: string
   userId: string | null
@@ -39,7 +39,7 @@ export function EventComments({ eventId, userId, canComment, isAdmin, labelStyle
     setError('')
     const { data, error } = await supabase.from('event_comments').insert({ event_id: eventId, body }).select(COMMENT_SELECT).single()
     setBusy(false)
-    if (error) { setError(error.code === '42501' ? 'Joining members and above can comment.' : error.message); return }
+    if (error) { setError(error.code === '42501' ? 'Only full members can comment.' : error.message); return }
     setComments(list => [...(list ?? []), toComment(data)])
     setDraft('')
   }
@@ -100,9 +100,7 @@ export function EventComments({ eventId, userId, canComment, isAdmin, labelStyle
               </div>
             </form>
           ) : (
-            <div style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>
-              <Link href="/join" style={{ color: 'var(--m14)', fontWeight: 600 }}>Start joining</Link> to leave comments.
-            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>Full members can leave comments.</div>
           )}
         </>
       )}
