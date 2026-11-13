@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.16.0 — 2026-11-13
+
+- **Blueprint import from a website**: new `POST /api/site-text` (admin/circle_lead) and
+  `m04-blueprint/lib/site-text.ts`. It reads the page plus up to 7 same-site links (useful paths first),
+  strips scripts/nav/footer, and returns text with `[Page n]` markers; the review cites pages by path.
+  Public URLs only (no localhost/IP literals/internal TLDs/credentials/non-default ports; each redirect re-checked).
+- **Imports add, not overwrite**: existing written answers get Keep current / Add to it (default) / Replace it;
+  existing scores and yes/no answers are kept unless replaced.
+- **Every import goes into the library**: the "Don't add it" choice is gone (`DocumentKindPicker` loses `allowSkip`).
+
 ## v4.15.8 — 2026-11-13
 
 - **Blueprint editing: admins and circle leads only**, in the database too. Migration
