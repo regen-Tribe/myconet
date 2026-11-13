@@ -34,6 +34,9 @@ export function AvatarCropper({
   const [nat, setNat] = useState<{ w: number; h: number } | null>(null)
   const [zoom, setZoom] = useState(1)
   const [offset, setOffset] = useState<Offset>({ x: 0, y: 0 })
+  // The browser couldn't decode the file (often an iPhone HEIC photo outside Safari)
+  const [failed, setFailed] = useState(false)
+  const frameRef = useRef<HTMLDivElement | null>(null)
 
   // Load the chosen file into an object URL and read its natural size.
   useEffect(() => {
@@ -41,6 +44,8 @@ export function AvatarCropper({
     setSrc(url)
     setZoom(1)
     setOffset({ x: 0, y: 0 })
+    setNat(null)
+    setFailed(false)
     return () => URL.revokeObjectURL(url)
   }, [file])
 
@@ -85,9 +90,18 @@ export function AvatarCropper({
   }
   const endDrag = () => { drag.current = null }
 
-  const onWheel = (e: React.WheelEvent) => {
-    setZoom(z => Math.min(MAX_ZOOM, Math.max(1, z - e.deltaY * 0.002)))
-  }
+  // Wheel zooms the photo, not the page behind: React's onWheel is passive and
+  // can't preventDefault, so this listens natively.
+  useEffect(() => {
+    const el = frameRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      setZoom(z => Math.min(MAX_ZOOM, Math.max(1, z - e.deltaY * 0.002)))
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
 
   // ── Produce the cropped blob ─────────────────────────────────────────────
   const apply = () => {
@@ -142,11 +156,11 @@ export function AvatarCropper({
         {/* Crop window */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
           <div
+            ref={frameRef}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerLeave={endDrag}
-            onWheel={onWheel}
             style={{
               position: 'relative', width: FRAME, height: FRAME,
               borderRadius: '50%', overflow: 'hidden',
@@ -162,6 +176,7 @@ export function AvatarCropper({
                 src={src}
                 alt=""
                 draggable={false}
+                onError={() => setFailed(true)}
                 onLoad={e => {
                   const el = e.currentTarget
                   setNat({ w: el.naturalWidth, h: el.naturalHeight })
@@ -176,13 +191,21 @@ export function AvatarCropper({
                 }}
               />
             )}
-            {!nat && (
+            {!nat && !failed && (
               <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
                 <Loader2 className="animate-spin" style={{ width: 22, height: 22, color: 'var(--ink-4)' }} />
               </div>
             )}
           </div>
         </div>
+
+        {failed && (
+          <p role="alert" style={{ fontSize: 13, lineHeight: 1.5, color: '#b91c1c', background: 'color-mix(in srgb, #dc2626 8%, var(--surface))', border: '1px solid color-mix(in srgb, #dc2626 30%, var(--rule))', borderRadius: 8, padding: '8px 10px', margin: '0 0 14px' }}>
+            This photo’s format can’t be opened here. iPhone photos are often HEIC: try a JPG or PNG
+            instead (on iPhone, a screenshot of the photo works, or set Settings › Camera › Formats
+            to “Most Compatible”).
+          </p>
+        )}
 
         {/* Zoom control */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
