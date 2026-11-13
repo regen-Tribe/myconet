@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.16.1 — 2026-11-13
+
+- Phone top bar (≤640px): "MyCoNet" is no longer hidden; it stacks above the community name and the
+  version badge (`.topbar-brand-names` column, `.topbar-brand-myconet` 11px). The "·" stays hidden.
+
 ## v4.16.0 — 2026-11-13
 
 - **Blueprint import from a website**: new `POST /api/site-text` (admin/circle_lead) and
