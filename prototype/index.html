@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyCoNet — Structure & Journey Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --surface:hsl(0 0% 100%); --bg:hsl(0 0% 100%); --bg-2:hsl(0 0% 97%); --bg-3:hsl(0 0% 94%);
+    --ink:hsl(0 0% 9%); --ink-2:hsl(0 0% 22%); --ink-3:hsl(0 0% 45%); --ink-4:hsl(0 0% 65%);
+    --rule:hsl(0 0% 89%); --rule-soft:hsl(0 0% 93%);
+    --mono:Menlo,monospace; --display:'Open Sans',sans-serif;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.04),0 1px 1px rgba(0,0,0,.03);
+    --shadow-md:0 4px 16px rgba(0,0,0,.06),0 2px 4px rgba(0,0,0,.04);
+    --shadow-lg:0 10px 40px rgba(0,0,0,.12);
+    /* module / accent colors from the live app */
+    --m0:#18181b; --m1:#92400e; --m4:#ca8a04; --m5:#15803d; --m6:#1d4ed8;
+    --m7:#4338ca; --m8:#7c3aed; --m9:#db2777; --m14:#0d9488; --m15:#c2410c; --m16:#4d7c0f; --m17:#be123c;
+    --green:#15803d; --green-2:#16a34a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--display);background:var(--bg-2);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+  a{color:inherit}
+  button{font-family:inherit}
+  .mono{font-family:var(--mono)}
+
+  /* ── Prototype toolbar ─────────────────────────────── */
+  .proto-bar{position:sticky;top:0;z-index:100;background:#0b1220;color:#cbd5e1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 16px;font-size:12px;border-bottom:1px solid #1e293b}
+  .proto-bar b{color:#fff;letter-spacing:.04em;text-transform:uppercase;font-size:10px;font-family:var(--mono)}
+  .proto-seg{display:inline-flex;background:#1e293b;border-radius:8px;padding:3px;gap:3px}
+  .proto-seg button{background:transparent;border:0;color:#94a3b8;font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer}
+  .proto-seg button.on{background:var(--green-2);color:#fff}
+  .proto-bar .hint{color:#64748b;margin-left:auto}
+
+  /* ── App shell ─────────────────────────────────────── */
+  .shell{display:grid;grid-template-columns:252px 1fr;min-height:calc(100vh - 39px)}
+  .sidenav{border-right:1px solid var(--rule);background:var(--bg-2);padding:14px 10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;position:sticky;top:39px;height:calc(100vh - 39px)}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--green-2),var(--green));display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+  .brand .nm{font-weight:800;font-size:16px;letter-spacing:-.01em}
+  .brand .ver{font-family:var(--mono);font-size:9px;color:var(--ink-4);background:var(--bg-3);padding:1px 6px;border-radius:999px}
+
+  .sec-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);padding:12px 10px 6px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;font-size:13px;color:var(--ink-2);cursor:pointer;border:1px solid transparent;transition:background .08s,border-color .08s;text-decoration:none}
+  .nav-item:hover{background:var(--surface)}
+  .nav-item .dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;background:var(--c,var(--ink-3))}
+  .nav-item.on{color:var(--ink);font-weight:600;background:color-mix(in srgb,var(--c,var(--green)) 10%,var(--surface));border-color:color-mix(in srgb,var(--c,var(--green)) 25%,var(--rule))}
+  .nav-item .lock{margin-left:auto;font-size:11px;color:var(--ink-4)}
+  .nav-cta{margin:6px 6px 2px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:9px;background:var(--green);color:#fff;font-weight:700;font-size:13px;border:0;cursor:pointer;box-shadow:var(--shadow-sm);width:calc(100% - 12px)}
+  .nav-cta.sec{background:var(--surface);color:var(--green);border:1px solid color-mix(in srgb,var(--green) 30%,var(--rule))}
+  .grow{flex:1}
+
+  .journey-box{margin:8px 4px 0;padding:12px;border-radius:10px;background:color-mix(in srgb,var(--green) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--green) 22%,var(--rule))}
+  .journey-box .steps{display:flex;align-items:center;margin-bottom:8px}
+  .journey-box .s{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;background:var(--bg-3);border:2px solid var(--rule);flex-shrink:0}
+  .journey-box .s.done{background:var(--green);border-color:var(--green)}
+  .journey-box .s.now{background:var(--green-2);border-color:var(--green-2)}
+  .journey-box .ln{flex:1;height:2px;background:var(--rule);margin:0 3px}
+  .journey-box .ln.done{background:var(--green)}
+  .journey-box .txt{font-size:11px;color:var(--ink-3);line-height:1.5}
+
+  /* ── Main column ───────────────────────────────────── */
+  .maincol{display:flex;flex-direction:column;min-width:0}
+  .topbar{position:sticky;top:39px;z-index:40;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:14px;padding:10px 22px}
+  .search{flex:1;max-width:420px;display:flex;align-items:center;gap:8px;background:var(--bg-2);border:1px solid var(--rule);border-radius:9px;padding:8px 12px;color:var(--ink-4);font-size:13px}
+  .tb-cta{display:inline-flex;align-items:center;gap:7px;background:var(--green);color:#fff;border:0;font-weight:700;font-size:13px;padding:9px 16px;border-radius:9px;cursor:pointer;box-shadow:var(--shadow-sm);white-space:nowrap}
+  .tb-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--bg-2);border:1px solid var(--rule);cursor:pointer;font-size:16px;flex-shrink:0}
+  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ec4899);display:grid;place-items:center;color:#fff;font-weight:700;cursor:pointer;flex-shrink:0}
+  .content{padding:28px 32px 90px;max-width:1040px;width:100%;margin:0 auto}
+
+  /* ── Generic UI ────────────────────────────────────── */
+  .screen{display:none;animation:fade .25s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:22px;box-shadow:var(--shadow-sm)}
+  .card+.card{margin-top:16px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--green) 10%,transparent);border:1px solid color-mix(in srgb,var(--green) 25%,transparent);color:var(--green)}
+  h1.big{font-size:34px;font-weight:800;letter-spacing:-.025em;line-height:1.1;margin:14px 0 10px}
+  .lead{font-size:16px;color:var(--ink-2);line-height:1.6;max-width:58ch}
+  .muted{color:var(--ink-3)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:0;font-weight:700;font-size:14px;padding:12px 22px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow-sm)}
+  .btn.ghost{background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);font-weight:600}
+  .btn.sm{padding:8px 14px;font-size:13px}
+  .label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .help{font-size:12px;color:var(--ink-3);margin:-2px 0 8px;line-height:1.5}
+  .field{margin-bottom:18px}
+  input.inp,textarea.inp{width:100%;padding:10px 13px;border-radius:9px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font-size:14px;font-family:inherit;outline:none}
+  input.inp:focus,textarea.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 15%,transparent)}
+  textarea.inp{resize:vertical;line-height:1.6}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .chip{font-size:12px;font-weight:600;color:var(--ink-3);background:var(--bg-2);border:1px dashed var(--rule);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.12s}
+  .chip:hover{color:var(--green);border-color:color-mix(in srgb,var(--green) 40%,var(--rule));border-style:solid}
+  .chip.added{color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--surface));border-style:solid;border-color:color-mix(in srgb,var(--green) 35%,var(--rule))}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .affirm{font-size:12px;color:var(--green);font-weight:600;margin-top:6px;display:none}
+  .affirm.show{display:block}
+
+  /* process steps row */
+  .proc{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:26px 0}
+  .proc .st{position:relative;padding:0 8px;text-align:center}
+  .proc .st .n{width:40px;height:40px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-weight:800;background:color-mix(in srgb,var(--green) 10%,var(--surface));color:var(--green);border:2px solid color-mix(in srgb,var(--green) 30%,var(--rule));position:relative;z-index:2}
+  .proc .st .t{font-weight:700;font-size:14px;margin-bottom:3px}
+  .proc .st .d{font-size:12px;color:var(--ink-3);line-height:1.45}
+  .proc .st:not(:last-child):after{content:"";position:absolute;top:20px;left:50%;right:-50%;height:2px;background:var(--rule);z-index:1}
+
+  /* timeline */
+  .tl{list-style:none;margin:8px 0 0;padding:0}
+  .tl li{display:grid;grid-template-columns:28px 1fr;gap:14px;padding-bottom:22px;position:relative}
+  .tl li:not(:last-child):before{content:"";position:absolute;left:13px;top:26px;bottom:0;width:2px;background:var(--rule)}
+  .tl .mk{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff}
+  .tl .mk.done{background:var(--green)} .tl .mk.now{background:#f59e0b} .tl .mk.todo{background:var(--bg-3);color:var(--ink-4);border:1px solid var(--rule)}
+  .tl .ti{font-weight:700;font-size:14px} .tl .ds{font-size:13px;color:var(--ink-3);margin-top:2px}
+
+  .stat{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px}
+  .stat .v{font-size:26px;font-weight:800} .stat .k{font-size:12px;color:var(--ink-3);margin-top:2px}
+  .qa{display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;cursor:pointer;transition:.12s;text-align:left}
+  .qa:hover{border-color:color-mix(in srgb,var(--green) 40%,var(--rule));box-shadow:var(--shadow-md);transform:translateY(-1px)}
+  .qa .ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:17px;color:#fff}
+  .qa .qt{font-weight:700;font-size:14px} .qa .qd{font-size:12px;color:var(--ink-3)}
+
+  .listrow{display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid var(--rule);border-radius:10px;background:var(--bg-2)}
+  .listrow+.listrow{margin-top:9px}
+  .ava-sm{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;flex-shrink:0;font-size:14px}
+
+  .locked-note{display:flex;align-items:center;gap:12px;background:color-mix(in srgb,#f59e0b 8%,var(--bg));border:1px solid color-mix(in srgb,#f59e0b 32%,var(--rule));border-radius:12px;padding:16px 18px;margin-bottom:18px}
+
+  /* journey map */
+  .jmap{display:flex;flex-direction:column;gap:0}
+  .jstage{display:grid;grid-template-columns:150px 1fr;gap:22px}
+  .jstage .left{text-align:right;padding-top:14px}
+  .jstage .mid{display:flex;flex-direction:column;align-items:center}
+  .jstage .mid .d{width:20px;height:20px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 18%,transparent)}
+  .jstage .mid .bar{flex:1;width:2px;background:var(--rule);min-height:28px}
+  .jwrap{display:grid;grid-template-columns:1fr 20px 1fr;gap:18px;align-items:start}
+  @media(max-width:900px){.jwrap{grid-template-columns:1fr}}
+
+  @media(max-width:860px){
+    .shell{grid-template-columns:1fr}
+    .sidenav{display:none}
+    .grid2,.grid3{grid-template-columns:1fr}
+    .proc{grid-template-columns:1fr 1fr;gap:18px 0}
+    h1.big{font-size:27px}
+    .content{padding:22px 16px 80px}
+    .jstage{grid-template-columns:1fr}
+    .jstage .left,.jstage .mid{display:none}
+  }
+</style>
+</head>
+<body data-stage="applicant">
+
+<!-- ══ Prototype control bar (demo only) ══ -->
+<div class="proto-bar">
+  <b>Prototype</b>
+  <span>View as:</span>
+  <div class="proto-seg" id="stageSeg">
+    <button data-stage="applicant" class="on">Applicant</button>
+    <button data-stage="added">Added / invited</button>
+    <button data-stage="approved">Approved</button>
+    <button data-stage="member">Member</button>
+  </div>
+  <button onclick="go('journey')" style="background:var(--green-2);color:#fff;border:0;font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;cursor:pointer">See full journey map →</button>
+  <span class="hint">Flip the role to watch the nav + buttons adapt. This is a mock-up — nothing is wired to real data.</span>
+</div>
+
+<div class="shell">
+  <!-- ══ Sidebar ══ -->
+  <nav class="sidenav">
+    <div class="brand">
+      <div class="logo">P</div>
+      <div><div class="nm">Protopia</div></div>
+      <span class="grow"></span>
+      <span class="ver">v5.0·proto</span>
+    </div>
+
+    <!-- contextual primary CTA lives at the TOP of nav, as a button -->
+    <button class="nav-cta" id="navCta" onclick="navCtaGo()">＋ Continue application</button>
+
+    <div class="sec-label">You</div>
+    <a class="nav-item" data-screen="dashboard" data-min="1" style="--c:var(--m0)" onclick="go('dashboard')"><span class="dot"></span>Home</a>
+    <a class="nav-item" data-screen="status" data-max="1" style="--c:var(--m5)" onclick="go('status')"><span class="dot"></span>My application</a>
+    <a class="nav-item" data-screen="profile" data-min="1" style="--c:var(--m1)" onclick="go('profile')"><span class="dot"></span>My profile</a>
+    <a class="nav-item" data-screen="journey" data-min="0" style="--c:var(--m9)" onclick="go('journey')"><span class="dot"></span>My journey</a>
+
+    <div class="sec-label">Community</div>
+    <a class="nav-item" data-screen="people" data-min="0" style="--c:var(--m1)" onclick="go('people')"><span class="dot"></span>People</a>
+    <a class="nav-item" data-screen="blueprint" data-min="0" style="--c:var(--m4)" onclick="go('blueprint')"><span class="dot"></span>Blueprint</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Circles" data-min="2" style="--c:var(--m17)" onclick="goPH(this)"><span class="dot"></span>Circles</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Governance" data-min="2" style="--c:var(--m9)" onclick="goPH(this)"><span class="dot"></span>Governance</a>
+
+    <div class="sec-label" data-min="2">Collaborate</div>
+    <a class="nav-item" data-screen="placeholder" data-title="Projects" data-min="2" style="--c:var(--m7)" onclick="goPH(this)"><span class="dot"></span>Projects</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Agreements" data-min="2" style="--c:var(--m6)" onclick="goPH(this)"><span class="dot"></span>Agreements</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Contributions" data-min="2" style="--c:var(--m8)" onclick="goPH(this)"><span class="dot"></span>Contributions</a>
+
+    <div class="sec-label">Visit</div>
+    <a class="nav-item" data-screen="placeholder" data-title="Calendar" data-min="1" style="--c:var(--m14)" onclick="goPH(this)"><span class="dot"></span>Calendar</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Stays" data-min="0" style="--c:var(--m15)" onclick="goPH(this)"><span class="dot"></span>Stays &amp; accommodation</a>
+    <a class="nav-item" data-screen="placeholder" data-title="Resources" data-min="2" style="--c:var(--m16)" onclick="goPH(this)"><span class="dot"></span>Resources</a>
+
+    <div class="grow"></div>
+    <div class="journey-box" id="journeyBox"></div>
+  </nav>
+
+  <!-- ══ Main column ══ -->
+  <div class="maincol">
+    <div class="topbar">
+      <div class="search">🔍 <span>Search people, projects, docs…</span></div>
+      <span class="grow"></span>
+      <button class="tb-cta" id="tbCta" onclick="navCtaGo()">＋ Continue application</button>
+      <div class="tb-icon">🔔</div>
+      <div class="avatar">S</div>
+    </div>
+
+    <div class="content">
+
+      <!-- ░░ APPLY LANDING (public) ░░ -->
+      <section class="screen" id="s-apply">
+        <span class="pill">● Protopia · Regenerative community</span>
+        <h1 class="big">Apply to join Protopia</h1>
+        <p class="lead">A regenerative living project on the coast. Members co-create projects, share a home base, and build something lasting together. Joining starts with a short application and a conversation — not a wall of forms.</p>
+        <div class="proc">
+          <div class="st"><div class="n">1</div><div class="t">Apply</div><div class="d">A few basic questions — 5 minutes.</div></div>
+          <div class="st"><div class="n">2</div><div class="t">Review &amp; call</div><div class="d">We read it and book an intro call.</div></div>
+          <div class="st"><div class="n">3</div><div class="t">Welcome</div><div class="d">Approved? The portal opens before you arrive.</div></div>
+          <div class="st"><div class="n">4</div><div class="t">Arrive</div><div class="d">Set up your profile and dive in.</div></div>
+        </div>
+        <div class="row">
+          <button class="btn" onclick="go('application')">Start your application →</button>
+          <button class="btn ghost" onclick="go('blueprint')">Explore the community first</button>
+        </div>
+      </section>
+
+      <!-- ░░ APPLICATION FORM ░░ -->
+      <section class="screen" id="s-application">
+        <span class="pill" style="color:var(--m5);background:color-mix(in srgb,var(--m5) 10%,transparent);border-color:color-mix(in srgb,var(--m5) 25%,transparent)">Application · Step 1 of 2</span>
+        <h1 class="big">Tell us a little about you</h1>
+        <p class="lead" style="font-size:15px">Just the essentials for now. Your full profile comes later, once you're in — so keep this light and honest.</p>
+        <div class="card" style="margin-top:20px">
+          <div class="grid2">
+            <div class="field"><label class="label">First name</label><input class="inp" placeholder="e.g. Alex" /></div>
+            <div class="field"><label class="label">Last name</label><input class="inp" placeholder="e.g. Rivera" /></div>
+          </div>
+          <div class="field">
+            <label class="label">In one line, who are you?</label>
+            <div class="help">A headline, not a paragraph. You can refine it later.</div>
+            <input class="inp" id="a_one" placeholder="e.g. Permaculture designer &amp; cook looking for a home base" />
+          </div>
+          <div class="field">
+            <label class="label">Why do you want to join Protopia?</label>
+            <div class="help">2–3 sentences is plenty. Tap a prompt below to get started.</div>
+            <textarea class="inp" id="a_why" rows="3" oninput="affirm('a_why',40)"></textarea>
+            <div class="chips">
+              <span class="chip" onclick="chip(this,'a_why','I\'m looking for a community that lives its values day to day…')">I'm looking for a values-led community…</span>
+              <span class="chip" onclick="chip(this,'a_why','I want to contribute my skills to regenerative projects…')">I want to contribute my skills…</span>
+              <span class="chip" onclick="chip(this,'a_why','I\'m ready for a change of pace and a deeper sense of belonging…')">I'm ready for a change…</span>
+            </div>
+            <div class="affirm" id="af-a_why">✓ Nice — that gives us a real sense of you.</div>
+          </div>
+          <div class="field">
+            <label class="label">What would you bring to the community?</label>
+            <div class="help">Skills, energy, resources — whatever feels true.</div>
+            <textarea class="inp" id="a_bring" rows="3" oninput="affirm('a_bring',30)"></textarea>
+            <div class="chips">
+              <span class="chip" onclick="chip(this,'a_bring','Hands-on building & repair skills')">Building &amp; repair</span>
+              <span class="chip" onclick="chip(this,'a_bring','Growing food & regenerative land care')">Growing food</span>
+              <span class="chip" onclick="chip(this,'a_bring','Facilitation & community-holding')">Facilitation</span>
+              <span class="chip" onclick="chip(this,'a_bring','Cooking for groups')">Cooking</span>
+              <span class="chip" onclick="chip(this,'a_bring','Design, web & comms')">Design &amp; comms</span>
+            </div>
+            <div class="affirm" id="af-a_bring">✓ Love it.</div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label class="label">When are you hoping to arrive?</label><div class="help">Rough is fine.</div><input class="inp" placeholder="e.g. mid-March 2026" /></div>
+            <div class="field"><label class="label">Email</label><div class="help">Where we'll send your call invite.</div><input class="inp" placeholder="you@email.com" /></div>
+          </div>
+          <div class="row" style="margin-top:4px">
+            <button class="btn ghost" onclick="go('apply')">← Back</button>
+            <span class="grow"></span>
+            <button class="btn" onclick="setStage('applicant');go('status')">Submit application →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ░░ STATUS / REVIEW ░░ -->
+      <section class="screen" id="s-status">
+        <span class="pill">● Application received</span>
+        <h1 class="big">We've got your application 🌱</h1>
+        <p class="lead">Thanks, Sonia. Here's exactly where things stand — no guessing, no silence.</p>
+        <div class="card" style="margin-top:20px">
+          <ul class="tl">
+            <li><div class="mk done">✓</div><div><div class="ti">Application submitted</div><div class="ds">Received 13 Nov · We read every one personally.</div></div></li>
+            <li><div class="mk now">●</div><div><div class="ti">Intro call</div><div class="ds">Pick a time → <a href="#" onclick="return false" style="color:var(--green);font-weight:700">Book your 30-min call</a>. We'll meet the human behind the words.</div></div></li>
+            <li><div class="mk todo">3</div><div><div class="ti">Decision</div><div class="ds">Within a few days of the call. You'll hear either way.</div></div></li>
+            <li><div class="mk todo">4</div><div><div class="ti">Welcome &amp; portal access</div><div class="ds">If it's a yes, your portal opens 2 days before your arrival.</div></div></li>
+          </ul>
+        </div>
+        <div class="card" style="background:var(--bg-2);display:flex;align-items:center;gap:14px">
+          <div style="font-size:22px">🎛️</div>
+          <div style="flex:1"><b>Prototype shortcut</b><div class="muted" style="font-size:13px">Jump ahead to see what approval looks like.</div></div>
+          <button class="btn sm" onclick="setStage('approved');go('welcome')">Simulate approval →</button>
+        </div>
+      </section>
+
+      <!-- ░░ WELCOME ░░ -->
+      <section class="screen" id="s-welcome">
+        <div style="text-align:center;max-width:620px;margin:20px auto 0">
+          <div style="width:72px;height:72px;border-radius:50%;background:color-mix(in srgb,var(--green) 12%,transparent);display:grid;place-items:center;font-size:34px;margin:0 auto 18px">🎉</div>
+          <h1 class="big" style="text-align:center">Welcome to Protopia, Sonia</h1>
+          <p class="lead" style="margin:0 auto">Your application was accepted. Your portal is open — and your arrival is in <b>2 days</b>. Let's get you set up so the community can get to know you before you walk in the door.</p>
+          <div class="card" style="margin:24px 0;text-align:left">
+            <div class="label" style="margin-bottom:12px">What just unlocked</div>
+            <div class="row" style="gap:10px">
+              <span class="chip added">People directory</span>
+              <span class="chip added">Calendar</span>
+              <span class="chip added">Stays &amp; your room</span>
+              <span class="chip added">Projects &amp; agreements</span>
+              <span class="chip added">Community chat</span>
+            </div>
+          </div>
+          <button class="btn" style="font-size:15px;padding:14px 26px" onclick="go('profile')">Complete your profile →</button>
+          <div class="muted" style="font-size:13px;margin-top:10px">Takes about 2 minutes. Skip anything you like.</div>
+        </div>
+      </section>
+
+      <!-- ░░ ADDED DIRECTLY / INVITE — FIRST RUN ░░ -->
+      <section class="screen" id="s-added">
+        <div style="text-align:center;max-width:620px;margin:20px auto 0">
+          <div style="width:72px;height:72px;border-radius:50%;background:color-mix(in srgb,var(--green) 12%,transparent);display:grid;place-items:center;font-size:34px;margin:0 auto 18px">👋</div>
+          <h1 class="big" style="text-align:center">Welcome to Protopia, Sonia</h1>
+          <p class="lead" style="margin:0 auto">You were added to the community directly — so there's no application to fill in. You're already a member. Let's get your profile set up so everyone can say hi.</p>
+          <div class="card" style="margin:22px 0 14px;text-align:left;display:flex;align-items:center;gap:14px">
+            <div class="ava-sm" style="background:#0ea5e9;width:44px;height:44px">JM</div>
+            <div style="flex:1"><div style="font-weight:700">Added by Jordan M.</div><div class="muted" style="font-size:13px">Natural builder · herbalist · member 2 yrs</div></div>
+            <span class="chip added">Your buddy</span>
+          </div>
+          <div class="card" style="margin:0 0 22px;text-align:left">
+            <div class="label" style="margin-bottom:12px">You already have full access</div>
+            <div class="row" style="gap:10px">
+              <span class="chip added">People</span><span class="chip added">Projects</span><span class="chip added">Agreements</span>
+              <span class="chip added">Calendar</span><span class="chip added">Governance</span><span class="chip added">Stays</span>
+            </div>
+          </div>
+          <button class="btn" style="font-size:15px;padding:14px 26px" onclick="go('profile')">Set up your profile →</button>
+          <div><button class="btn ghost sm" style="margin-top:12px" onclick="go('dashboard')">Skip for now — take me home</button></div>
+        </div>
+      </section>
+
+      <!-- ░░ PROFILE SETUP ░░ -->
+      <section class="screen" id="s-profile">
+        <span class="pill" style="color:var(--m1);background:color-mix(in srgb,var(--m1) 10%,transparent);border-color:color-mix(in srgb,var(--m1) 25%,transparent)">Your profile</span>
+        <h1 class="big">Make yourself at home</h1>
+        <p class="lead" style="font-size:15px">Add what you like — only your name is required, and you can edit everything later. Tap the suggestions to fill things in fast.</p>
+        <div class="card" style="margin-top:20px">
+          <div style="display:flex;gap:18px;align-items:center;margin-bottom:20px">
+            <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ec4899);display:grid;place-items:center;color:#fff;font-size:26px;font-weight:800">S</div>
+            <div><button class="btn ghost sm">Upload a photo</button><div class="muted" style="font-size:12px;margin-top:6px">A friendly face helps people connect.</div></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label class="label">Display name <span style="color:var(--green)">·required</span></label><input class="inp" value="Sonia" /></div>
+            <div class="field"><label class="label">Pronouns</label><input class="inp" placeholder="e.g. she/her" /></div>
+          </div>
+          <div class="field">
+            <label class="label">Headline</label>
+            <div class="help">One line people see first.</div>
+            <input class="inp" id="p_head" placeholder="What you do + what you're about" />
+            <div class="chips">
+              <span class="chip" onclick="fill('p_head','Permaculture designer & community builder')">Permaculture designer &amp; community builder</span>
+              <span class="chip" onclick="fill('p_head','Developer, grower, perpetual learner')">Developer &amp; grower</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">About you</label>
+            <div class="help">A few sentences. The prompts below are just a starting point.</div>
+            <textarea class="inp" id="p_about" rows="3" oninput="affirm('p_about',40)"></textarea>
+            <div class="chips">
+              <span class="chip" onclick="chip(this,'p_about','What brings me here is…')">What brings me here…</span>
+              <span class="chip" onclick="chip(this,'p_about','When I\'m not working you\'ll find me…')">When I'm not working…</span>
+              <span class="chip" onclick="chip(this,'p_about','I care deeply about…')">I care about…</span>
+            </div>
+            <div class="affirm" id="af-p_about">✓ Looks great.</div>
+          </div>
+          <div class="field">
+            <label class="label">Skills &amp; offerings</label>
+            <div class="help">Tap to add — this powers matching with projects and people.</div>
+            <div class="chips" id="skillChips">
+              <span class="chip" onclick="toggleSkill(this)">Carpentry</span>
+              <span class="chip" onclick="toggleSkill(this)">Permaculture</span>
+              <span class="chip" onclick="toggleSkill(this)">Cooking</span>
+              <span class="chip" onclick="toggleSkill(this)">Facilitation</span>
+              <span class="chip" onclick="toggleSkill(this)">Web/dev</span>
+              <span class="chip" onclick="toggleSkill(this)">Herbalism</span>
+              <span class="chip" onclick="toggleSkill(this)">Music</span>
+              <span class="chip" onclick="toggleSkill(this)">+ add your own</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Social links</label>
+            <div class="help">Optional — help people find you off-platform. Add only what you want public.</div>
+            <div class="grid2">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:26px;text-align:center">🌐</span><input class="inp" placeholder="yoursite.com" /></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:26px;text-align:center">📸</span><input class="inp" placeholder="@instagram" /></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:26px;text-align:center">💼</span><input class="inp" placeholder="LinkedIn" /></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:26px;text-align:center">✴️</span><input class="inp" placeholder="@x / bluesky" /></div>
+            </div>
+            <button class="chip" style="border-style:solid">＋ Add another link</button>
+          </div>
+          <div class="row" style="margin-top:4px">
+            <button class="btn ghost" onclick="go('welcome')">← Back</button>
+            <span class="grow"></span>
+            <button class="btn" onclick="setStage('member');go('dashboard')">Save &amp; enter the portal →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ░░ DASHBOARD (member home) ░░ -->
+      <section class="screen" id="s-dashboard">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px">
+          <div>
+            <div class="muted mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase">Thursday · 13 November</div>
+            <h1 class="big" style="margin:6px 0 0">Good morning, Sonia</h1>
+          </div>
+        </div>
+
+        <!-- next-step hero card, adapts by stage -->
+        <div class="card" id="nextStep" style="margin-top:18px;background:color-mix(in srgb,var(--green) 6%,var(--surface));border-color:color-mix(in srgb,var(--green) 25%,var(--rule));display:flex;align-items:center;gap:18px;flex-wrap:wrap"></div>
+
+        <div class="label" style="margin:26px 0 12px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4)">Quick actions</div>
+        <div class="grid2" style="grid-template-columns:repeat(4,1fr)">
+          <button class="qa" onclick="goPHname('Projects')"><span class="ic" style="background:var(--m7)">🧭</span><div><div class="qt">Propose a project</div><div class="qd">Start something new</div></div></button>
+          <button class="qa" onclick="goPHname('Contributions')"><span class="ic" style="background:var(--m8)">✦</span><div><div class="qt">Log a contribution</div><div class="qd">Record your hours</div></div></button>
+          <button class="qa" onclick="goPHname('Stays')"><span class="ic" style="background:var(--m15)">🏡</span><div><div class="qt">Book a stay</div><div class="qd">Reserve a room</div></div></button>
+          <button class="qa" onclick="goPHname('Agreements')"><span class="ic" style="background:var(--m6)">🤝</span><div><div class="qt">New agreement</div><div class="qd">Formalise a collab</div></div></button>
+        </div>
+
+        <div class="grid2" style="margin-top:22px">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b>Upcoming</b><a style="color:var(--green);font-weight:700;font-size:13px;cursor:pointer" onclick="goPHname('Calendar')">Calendar →</a></div>
+            <div class="listrow"><div class="ava-sm" style="background:var(--m14)">14</div><div style="flex:1"><div style="font-weight:700">Community dinner</div><div class="muted" style="font-size:12px">Tonight · 7:00pm · Main house</div></div></div>
+            <div class="listrow"><div class="ava-sm" style="background:var(--m9)">15</div><div style="flex:1"><div style="font-weight:700">Governance circle</div><div class="muted" style="font-size:12px">Fri · 10:00am · 3 proposals to vote</div></div></div>
+            <div class="listrow"><div class="ava-sm" style="background:var(--m7)">16</div><div style="flex:1"><div style="font-weight:700">Build day: greenhouse</div><div class="muted" style="font-size:12px">Sat · all day · 4 going</div></div></div>
+          </div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><b>Your projects</b><a style="color:var(--green);font-weight:700;font-size:13px;cursor:pointer" onclick="goPHname('Projects')">Operations →</a></div>
+            <div class="listrow"><div class="ava-sm" style="background:var(--m7)">🌱</div><div style="flex:1"><div style="font-weight:700">Food forest phase 2</div><div class="muted" style="font-size:12px">In progress · 2 deliverables due</div></div></div>
+            <div class="listrow"><div class="ava-sm" style="background:var(--m16)">💧</div><div style="flex:1"><div style="font-weight:700">Greywater system</div><div class="muted" style="font-size:12px">Review · waiting on you</div></div></div>
+          </div>
+        </div>
+
+        <div class="grid3" style="margin-top:22px">
+          <div class="stat"><div class="v" style="color:var(--m1)">24</div><div class="k">Members</div></div>
+          <div class="stat"><div class="v" style="color:var(--m8)">340</div><div class="k">Your contribution points</div></div>
+          <div class="stat"><div class="v" style="color:var(--m9)">3</div><div class="k">Open proposals</div></div>
+        </div>
+      </section>
+
+      <!-- ░░ PEOPLE ░░ -->
+      <section class="screen" id="s-people">
+        <h1 class="big">People</h1>
+        <p class="lead" style="font-size:15px">The humans of Protopia. Find collaborators, buddies, and friends.</p>
+        <div class="card" style="margin-top:18px">
+          <div class="listrow"><div class="ava-sm" style="background:#0ea5e9">JM</div><div style="flex:1"><div style="font-weight:700">Jordan M.</div><div class="muted" style="font-size:12px">Natural builder · herbalist · here 2 yrs</div></div><button class="btn ghost sm">View</button></div>
+          <div class="listrow"><div class="ava-sm" style="background:#8b5cf6">AR</div><div style="flex:1"><div style="font-weight:700">Alex R.</div><div class="muted" style="font-size:12px">Permaculture designer · facilitator</div></div><button class="btn ghost sm">View</button></div>
+          <div class="listrow"><div class="ava-sm" style="background:#10b981">PL</div><div style="flex:1"><div style="font-weight:700">Priya L.</div><div class="muted" style="font-size:12px">Cook · grower · governance circle</div></div><button class="btn ghost sm">View</button></div>
+        </div>
+      </section>
+
+      <!-- ░░ BLUEPRINT ░░ -->
+      <section class="screen" id="s-blueprint">
+        <span class="pill" style="color:var(--m4);background:color-mix(in srgb,var(--m4) 10%,transparent);border-color:color-mix(in srgb,var(--m4) 25%,transparent)">● Blueprint</span>
+        <h1 class="big">What Protopia is building</h1>
+        <p class="lead">Our vision, values and the agreements that hold us together. Open to everyone — read before you apply.</p>
+        <div class="card" style="margin-top:18px"><b>Our values</b>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+            <div class="listrow"><div style="font-size:20px">🌍</div><div><b>Regeneration over extraction</b><div class="muted" style="font-size:13px">We leave the land and each other better than we found them.</div></div></div>
+            <div class="listrow"><div style="font-size:20px">🤝</div><div><b>Consent &amp; care</b><div class="muted" style="font-size:13px">Decisions by those affected; disagreement is welcome.</div></div></div>
+            <div class="listrow"><div style="font-size:20px">✨</div><div><b>Contribution is visible</b><div class="muted" style="font-size:13px">Everyone's work counts and is seen.</div></div></div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:16px"><button class="btn" onclick="go('apply')">This resonates — apply →</button></div>
+      </section>
+
+      <!-- ░░ JOURNEY MAP ░░ -->
+      <section class="screen" id="s-journey">
+        <span class="pill">● The member journey</span>
+        <h1 class="big">One path, start to belonging</h1>
+        <p class="lead">Every element of the platform mapped to the stage it serves — so a member always knows where they are and what's next.</p>
+        <div class="jmap" style="margin-top:26px" id="jmap"></div>
+      </section>
+
+      <!-- ░░ GENERIC PLACEHOLDER ░░ -->
+      <section class="screen" id="s-placeholder">
+        <h1 class="big" id="ph-title">Module</h1>
+        <p class="lead" style="font-size:15px" id="ph-sub">This area exists in the real app — in the prototype it's a stand-in so the navigation is fully clickable.</p>
+        <div class="card" style="margin-top:18px;text-align:center;padding:48px 22px">
+          <div style="font-size:40px;margin-bottom:10px">🧩</div>
+          <b id="ph-title2">Module</b>
+          <div class="muted" style="max-width:40ch;margin:8px auto 0">Placeholder screen. The point of the prototype is the <i>structure, journey and calls-to-action</i> around it.</div>
+          <button class="btn sm" style="margin-top:18px" onclick="go('dashboard')">← Back to Home</button>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /maincol -->
+</div><!-- /shell -->
+
+<script>
+  // ── Journey data (drives the sidebar box + the journey-map screen) ──
+  const JOURNEY = [
+    {k:'Discover', c:'var(--ink-3)', what:'Find Protopia on the public site and read the Blueprint.', mods:'Public site · Blueprint'},
+    {k:'Apply', c:'var(--m5)', what:'A short, guided application — basic questions, no essay dump.', mods:'Application'},
+    {k:'Review & call', c:'var(--m4)', what:'Team reviews, books an intro call, decides. You always hear back.', mods:'Status timeline'},
+    {k:'Welcome', c:'var(--m14)', what:'Approved — portal opens 2 days before arrival. Set up a simple profile.', mods:'Welcome · Profile setup'},
+    {k:'Participate', c:'var(--m7)', what:'Join projects, make agreements, log contributions, come to events.', mods:'Projects · Agreements · Contributions · Calendar · Stays'},
+    {k:'Belong', c:'var(--m9)', what:'Full member: vote in governance, steward a circle, match & mentor.', mods:'Governance · Circles · People'},
+  ];
+  const STAGE_TO_JOURNEY = {applicant:1, added:3, approved:3, member:4};
+  const STAGE_NUM = {applicant:0, approved:1, added:2, member:2};
+
+  function stage(){ return document.body.dataset.stage; }
+
+  function render(){
+    const sNum = STAGE_NUM[stage()];
+    // show/hide nav items + section labels by min/max stage
+    document.querySelectorAll('.sidenav [data-min], .sidenav [data-max]').forEach(el=>{
+      const min = el.dataset.min!==undefined ? +el.dataset.min : 0;
+      const max = el.dataset.max!==undefined ? +el.dataset.max : 9;
+      el.style.display = (sNum>=min && sNum<=max) ? '' : 'none';
+    });
+    // contextual CTA
+    const cta = {
+      applicant:{t:'＋ Continue application', go:'application'},
+      added:{t:'✦ Set up your profile', go:'profile'},
+      approved:{t:'✦ Complete your profile', go:'profile'},
+      member:{t:'＋ Propose a project', go:'__Projects'},
+    }[stage()];
+    navCta.textContent = cta.t; tbCta.textContent = cta.t;
+    navCta.dataset.go = tbCta.dataset.go = cta.go;
+
+    // sidebar journey box
+    const ji = STAGE_TO_JOURNEY[stage()];
+    if(stage()==='added'){
+      journeyBox.innerHTML = `<div class="txt"><b style="color:var(--ink)">Added directly.</b> You skipped the application — welcome! Finish your profile to complete setup.</div>`;
+    } else {
+      let steps='', idxs=[1,3,5];
+      idxs.forEach((n,i)=>{
+        const cls = ji>n?'done':ji===n?'now':'';
+        steps += `<div class="s ${cls}">${ji>n?'✓':ji===n?'●':''}</div>` + (i<2?`<div class="ln ${ji>idxs[i]?'done':''}"></div>`:'');
+      });
+      journeyBox.innerHTML = `<div class="steps">${steps}</div>
+        <div class="txt"><b style="color:var(--ink)">${JOURNEY[ji].k}.</b> ${JOURNEY[ji].what}</div>`;
+    }
+
+    // dashboard next-step hero
+    const hero = {
+      added:{t:'Finish setting up your profile', d:'You\'re already in — add a photo and a line about you so people can connect.', b:'Set up profile →', go:'profile'},
+      approved:{t:'Finish setting up your profile', d:'Members can find and match with you once it\'s done.', b:'Complete profile →', go:'profile'},
+      member:{t:'You\'re all set 🎉', d:'Nothing blocking you. Jump into a project or come to tonight\'s dinner.', b:'Browse projects →', go:'__Projects'},
+      applicant:{t:'Your application is in review', d:'Book your intro call to keep things moving.', b:'View status →', go:'status'},
+    }[stage()];
+    nextStep.innerHTML = `<div style="font-size:30px">🧭</div>
+      <div style="flex:1;min-width:200px"><div style="font-weight:800;font-size:17px">${hero.t}</div>
+      <div class="muted" style="font-size:13px;margin-top:2px">${hero.d}</div></div>
+      <button class="btn" onclick="heroGo('${hero.go}')">${hero.b}</button>`;
+
+    // mark active nav
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  }
+
+  function heroGo(g){ g.startsWith('__') ? goPHname(g.slice(2)) : go(g); }
+  function navCtaGo(){ const g=navCta.dataset.go; g.startsWith('__')?goPHname(g.slice(2)):go(g); }
+
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+    const el=document.getElementById('s-'+id); if(el){el.classList.add('on');}
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('on', n.dataset.screen===id));
+    document.querySelector('.content').scrollTo?.(0,0);
+    window.scrollTo(0,0);
+  }
+  function goPH(elOrTitle){
+    const t = typeof elOrTitle==='string'?elOrTitle:elOrTitle.dataset.title;
+    document.getElementById('ph-title').textContent=t;
+    document.getElementById('ph-title2').textContent=t;
+    go('placeholder');
+    if(typeof elOrTitle!=='string'){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));elOrTitle.classList.add('on');}
+  }
+  function goPHname(t){ goPH(t); }
+
+  function setStage(s){
+    document.body.dataset.stage=s;
+    document.querySelectorAll('#stageSeg button').forEach(b=>b.classList.toggle('on', b.dataset.stage===s));
+    render();
+  }
+
+  // form helpers
+  function chip(el,id,text){
+    const ta=document.getElementById(id);
+    ta.value = (ta.value.trim()? ta.value.replace(/\s*$/,' ') : '') + text;
+    ta.dispatchEvent(new Event('input'));
+    el.classList.add('added');
+    ta.focus();
+  }
+  function fill(id,text){ const i=document.getElementById(id); i.value=text; }
+  function affirm(id,min){ const v=document.getElementById(id).value.trim().length; const a=document.getElementById('af-'+id); if(a)a.classList.toggle('show', v>=min); }
+  function toggleSkill(el){ el.classList.toggle('added'); }
+
+  // journey map screen
+  function buildMap(){
+    const sNum=STAGE_TO_JOURNEY[stage()];
+    let left='', right='';
+    const html = JOURNEY.map((j,i)=>{
+      const state = i<sNum?'done':i===sNum?'now':'future';
+      const opacity = state==='future'?.6:1;
+      return `<div class="jstage" style="--c:${j.c};opacity:${opacity}">
+        <div class="left"><div style="font-family:var(--mono);font-size:10px;color:var(--ink-4)">STAGE ${i+1}</div>
+          <div style="font-weight:800;font-size:16px;color:${j.c}">${j.k}</div>
+          ${state==='now'?'<div class="mono" style="font-size:10px;color:var(--green);font-weight:700">● YOU ARE HERE</div>':''}</div>
+        <div style="display:flex;gap:18px">
+          <div class="mid"><div class="d"></div>${i<JOURNEY.length-1?'<div class="bar"></div>':''}</div>
+          <div class="card" style="flex:1;margin:0 0 18px;padding:16px 18px">
+            <div style="font-size:14px;color:var(--ink-2);line-height:1.55">${j.what}</div>
+            <div class="mono" style="font-size:10px;color:var(--ink-4);margin-top:9px;letter-spacing:.04em">${j.mods.toUpperCase()}</div>
+          </div></div>
+      </div>`;
+    }).join('');
+    document.getElementById('jmap').innerHTML = html;
+  }
+
+  // stage buttons
+  document.querySelectorAll('#stageSeg button').forEach(b=>b.onclick=()=>{ setStage(b.dataset.stage); const s=b.dataset.stage; go(s==='applicant'?'status':s==='added'?'added':s==='approved'?'welcome':'dashboard'); });
+
+  // re-build map whenever we open it
+  const _go=go; go=function(id){ _go(id); if(id==='journey') buildMap(); };
+
+  // init
+  setStage('applicant');
+  go('apply');
+</script>
+</body>
+</html>
