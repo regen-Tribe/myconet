@@ -268,5 +268,5 @@ const btnGhost: React.CSSProperties = {
 const btnPrimary: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', gap: 6,
   fontSize: 13, fontWeight: 700, padding: '8px 16px', borderRadius: 8,
-  border: 'none', background: 'var(--accent)', color: '#fff', cursor: 'pointer',
+  border: 'none', background: 'var(--accent-color)', color: '#fff', cursor: 'pointer',
 }
