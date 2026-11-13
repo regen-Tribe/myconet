@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.14.1 — 2026-11-13
+
+**Database:** `20261115000200_growth_privacy.sql` (new `user_growth`; `user_bio.fears` and `traumas`
+moved there and dropped).
+
+- **Growth & Healing privacy**: `user_growth.visibility` is `only_me`, `full_members` (default; existing
+  answers get it), `joining`, `explorers` or `anyone` (visitors too), enforced by RLS. Profile › Edit step 5
+  has the choice; the profile shows the card only to those people, and tells the owner who it's shared with.
+- **Circle matching** for linked calendars: a title's first word may start the circle's first word or the
+  reverse (4+ letters), so "Clean Circle" → Cleaning.
+- v4.14.0 was not deployed on its own; communities get both in this update.
+
 ## v4.14.0 — 2026-11-13
 
 **Database:** `20261115000000_is_admin_means_admin.sql`, `20261115000100_public_profiles.sql`.

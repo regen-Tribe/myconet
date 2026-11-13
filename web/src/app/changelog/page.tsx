@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.14.1',
+    date: '2026-11-13',
+    title: 'You choose who sees your fears and healing journey',
+    items: [
+      'Profile › Edit › Goals & Growth now asks who can see your fears and healing journey: only you, full members, joining members and up, everyone signed up, or anyone. It starts at full members.',
+      'Calendar events named like a circle find it even when the name is a little different, for example "Clean Circle" goes in the Cleaning circle.',
+    ],
+  },
+  {
     version: 'v4.14.0',
     date: '2026-11-13',
     title: 'Public profiles and admin rights',

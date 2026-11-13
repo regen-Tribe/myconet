@@ -27,10 +27,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
   // The rest of the profile is for people who have signed up
   const none = Promise.resolve({ data: null })
-  const [bioRes, offersRes, requestsRes] = await Promise.all([
+  const [bioRes, offersRes, requestsRes, growthRes] = await Promise.all([
     user ? supabase.from('user_bio').select('*').eq('user_id', profile.id).maybeSingle() : none,
     user ? supabase.from('user_offers').select('*').eq('user_id', profile.id).eq('is_active', true) : none,
     user ? supabase.from('user_requests').select('*').eq('user_id', profile.id).eq('is_active', true) : none,
+    // Returned only to the people this person chose (the database checks)
+    supabase.from('user_growth').select('fears, traumas, visibility').eq('user_id', profile.id).maybeSingle(),
   ])
 
   // Compute match score between viewer and profile being viewed.
@@ -60,6 +62,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           requests={requestsRes.data ?? []}
           isOwn={isOwn}
           signedIn={!!user}
+          growth={growthRes.data ?? null}
           match={match}
         />
       </main>

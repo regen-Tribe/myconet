@@ -16,7 +16,7 @@ interface BioData {
   values_principles: string | null; what_creating: string | null
   personality_details: { myersBriggs?: string | null; ocean?: { openness?: number; conscientiousness?: number; extraversion?: number; agreeableness?: number; neuroticism?: number } | null } | null
   archetypes: { astrology?: { sun?: string | null; moon?: string | null; rising?: string | null } | null; humanDesign?: string | null; geneKey?: string | null; mayan?: string | null } | null
-  goals: string | null; fears: string | null; traumas: string | null
+  goals: string | null
   skills: string[] | null; interests: string[] | null
   places_traveling: Array<{ location: string; startDate?: string; endDate?: string; notes?: string }> | null
 }
@@ -29,6 +29,8 @@ interface Props {
   isOwn: boolean
   /** Visitors see the public card and shaded sections inviting them to join */
   signedIn: boolean
+  /** Fears and traumas, when this person shares them with the viewer */
+  growth: { fears: string | null; traumas: string | null; visibility: string } | null
   match?: { score: number; reasons: string[] } | null
 }
 
@@ -95,6 +97,36 @@ function EmptyCard({ icon: Icon, label }: { icon: any; label: string }) {
   )
 }
 
+const GROWTH_AUDIENCE: Record<string, string> = {
+  anyone: 'Anyone', explorers: 'Everyone signed up', joining: 'Joining members and up', full_members: 'Full members', only_me: 'Only you',
+}
+
+function GrowthCard({ growth, isOwn }: { growth: { fears: string | null; traumas: string | null; visibility: string }; isOwn: boolean }) {
+  if (!growth.fears && !growth.traumas) return null
+  return (
+    <SectionCard stripe="var(--m1)">
+      <SectionTitle icon={Heart}>Growth & Healing</SectionTitle>
+      {growth.fears && (
+        <div style={{ marginBottom: growth.traumas ? 14 : 0 }}>
+          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 5 }}>Fears & Challenges</div>
+          <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{growth.fears}</p>
+        </div>
+      )}
+      {growth.traumas && (
+        <div>
+          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 5 }}>Healing Journey</div>
+          <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{growth.traumas}</p>
+        </div>
+      )}
+      {isOwn && (
+        <div style={{ fontSize: 11.5, color: 'var(--ink-4)', marginTop: 12 }}>
+          Shared with: {GROWTH_AUDIENCE[growth.visibility] ?? growth.visibility} · <Link href="/profile/edit" style={{ color: 'var(--m1)' }}>change</Link>
+        </div>
+      )}
+    </SectionCard>
+  )
+}
+
 function UrgencyColor(urgency: string) {
   if (urgency === 'urgent') return 'var(--m9)'
   if (urgency === 'high')   return 'var(--m4)'
@@ -103,7 +135,7 @@ function UrgencyColor(urgency: string) {
 
 const LINK_ICONS: Record<string, any> = { website: Globe, instagram: AtSign, linkedin: AtSign, twitter: AtSign }
 
-export default function UserProfileClient({ profile: p, bio, offers, requests, isOwn, signedIn, match }: Props) {
+export default function UserProfileClient({ profile: p, bio, offers, requests, isOwn, signedIn, growth, match }: Props) {
   const [tab, setTab] = useState('about')
 
   const displayName = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.username
@@ -237,6 +269,7 @@ export default function UserProfileClient({ profile: p, bio, offers, requests, i
         </div>
       </div>
 
+      {!signedIn && growth && <div style={{ marginBottom: 14 }}><GrowthCard growth={growth} isOwn={false} /></div>}
       {!signedIn ? (
         <div style={{ position: 'relative' }}>
           <div aria-hidden style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, filter: 'blur(1.5px)', opacity: 0.45, pointerEvents: 'none', userSelect: 'none' }}>
@@ -345,25 +378,10 @@ export default function UserProfileClient({ profile: p, bio, offers, requests, i
                   )}
                 </SectionCard>
               )}
-              {(bio.fears || bio.traumas) && (
-                <SectionCard stripe="var(--m1)">
-                  <SectionTitle icon={Heart}>Growth & Healing</SectionTitle>
-                  {bio.fears && (
-                    <div style={{ marginBottom: bio.traumas ? 14 : 0 }}>
-                      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 4 }}>Fears & Challenges</div>
-                      <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{bio.fears}</p>
-                    </div>
-                  )}
-                  {bio.traumas && (
-                    <div>
-                      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 4 }}>Healing Journey</div>
-                      <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>{bio.traumas}</p>
-                    </div>
-                  )}
-                </SectionCard>
-              )}
+
             </>
           )}
+          {growth && <GrowthCard growth={growth} isOwn={isOwn} />}
         </div>
       )}
 
