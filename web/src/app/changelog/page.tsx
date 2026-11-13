@@ -3,11 +3,11 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.15.3',
+    version: 'v4.15.4',
     date: '2026-11-13',
     title: 'Top bar fits on phones',
     items: [
-      'On phones the top bar grows to fit, so the Modules button, logo and version no longer spill below it. The logo is a little smaller there and your name is shown as just your photo.',
+      'On phones the top bar grows to fit, so the Modules button, the full-size logo and the version no longer spill below it. Your name there is shown as just your photo.',
     ],
   },
   {
