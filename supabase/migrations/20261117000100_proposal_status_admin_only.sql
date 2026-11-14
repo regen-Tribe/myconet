@@ -15,6 +15,10 @@ begin
   if (select private.my_role()) = 'admin' then
     return new;
   end if;
+  -- Server-side jobs, the SQL editor and migrations (not the API roles) may still change it
+  if current_user not in ('anon', 'authenticated') then
+    return new;
+  end if;
   if new.status = 'withdrawn' and old.status = 'open' and old.proposer_id = (select auth.uid()) then
     return new;
   end if;
