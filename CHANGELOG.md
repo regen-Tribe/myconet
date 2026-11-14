@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.17.5 — 2026-11-14
+
+- Events: the category checkbox row above the calendar is removed (adding an event category no longer adds a filter there).
+  Categories still colour events and appear in the legend.
+
 ## v4.17.4 — 2026-11-14
 
 - Profile › Edit step 3: the OCEAN / Big Five section links to https://bigfivepersonality.me/ (like the Myers-Briggs link).

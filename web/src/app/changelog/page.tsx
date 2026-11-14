@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.17.5',
+    date: '2026-11-14',
+    title: 'Tidier calendar filters',
+    items: [
+      'Event categories no longer add their own row of checkboxes above the calendar. The top shows just the kinds of events; categories still show as coloured dots on events and in the legend.',
+    ],
+  },
+  {
     version: 'v4.17.4',
     date: '2026-11-14',
     title: 'Find your Big Five',
