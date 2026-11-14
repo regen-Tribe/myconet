@@ -5,6 +5,10 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.17.4 — 2026-11-14
+
+- Profile › Edit step 3: the OCEAN / Big Five section links to https://bigfivepersonality.me/ (like the Myers-Briggs link).
+
 ## v4.17.3 — 2026-11-14
 
 - The website crawl's first request (home page + sitemap) times out after 60s with a clear message. A JavaScript-only

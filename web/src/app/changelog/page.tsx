@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.17.4',
+    date: '2026-11-14',
+    title: 'Find your Big Five',
+    items: [
+      'Profile › Personality now invites you to take the free Big Five test at bigfivepersonality.me, then set the OCEAN sliders to match.',
+    ],
+  },
+  {
     version: 'v4.17.3',
     date: '2026-11-14',
     title: 'Website scans stop on time',
