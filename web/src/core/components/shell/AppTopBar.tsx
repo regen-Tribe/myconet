@@ -192,7 +192,6 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen }: {
       <div className="topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
         {logo_url ? (
           <Link href="/home" aria-label={`${COMMUNITY_NAME} home`} style={{ display: 'flex', flexShrink: 0 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="topbar-logo" src={logo_url} alt={`${COMMUNITY_NAME} logo`} style={{ height: 44, width: 'auto', maxWidth: 140, objectFit: 'contain', borderRadius: 8 }} />
           </Link>
         ) : (

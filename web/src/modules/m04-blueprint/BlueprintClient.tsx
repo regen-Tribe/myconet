@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
 import { FW_DATA, PILLAR_STEPS, type StepDef, type PhaseDef, type GuideContent } from '@/modules/m04-blueprint/lib/wizard-data'
-import { computePillarScores, computeGatesPassed, computePhaseProgress, type Values as SharedValues } from '@/modules/m04-blueprint/lib/blueprint-compute'
+import { computePillarScores, computeGatesPassed } from '@/modules/m04-blueprint/lib/blueprint-compute'
 import { communityName, FRAMEWORK_CREDIT } from '@/core/lib/instance'
 import { useCircles } from '@/core/components/CirclesProvider'
 import CirclesStep from '@/modules/m04-blueprint/CirclesStep'
@@ -374,7 +374,6 @@ function ImportModal({ onClose, onApply, currentValues, scope, canSetBranding = 
                 title={`${img.width}×${img.height} · page ${img.pages.join(', ')}`}
                 style={{ padding: 4, borderRadius: 8, cursor: 'pointer', background: kind === 'logo' ? 'repeating-conic-gradient(var(--bg-2) 0 25%, var(--surface) 0 50%) 0 0 / 12px 12px' : 'var(--surface)',
                   border: `2px solid ${on ? 'var(--accent)' : 'var(--rule)'}`, boxShadow: on ? '0 0 0 2px var(--accent-soft)' : 'none' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img.url} alt="" style={{ display: 'block', height: kind === 'logo' ? 56 : 72, width: kind === 'logo' ? 'auto' : 160, maxWidth: 160, objectFit: kind === 'logo' ? 'contain' : 'cover', borderRadius: 4 }} />
                 {aiPicked[kind] === img.id && <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--accent)', marginTop: 3 }}>✨ AI pick</div>}
               </button>
