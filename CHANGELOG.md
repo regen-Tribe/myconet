@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.16.5 — 2026-11-14
+
+- Blueprint: applying an import (`applyImport`) saves at once instead of waiting for the autosave pause,
+  and a toast confirms "✓ Blueprint updated: N answers saved" (or that the save was refused).
+
 ## v4.16.4 — 2026-11-14
 
 - **Event times for everyone signed in**: `event_set_times(event, starts_at, ends_at, all_day?)` (security

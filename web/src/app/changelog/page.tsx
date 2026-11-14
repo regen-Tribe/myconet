@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.16.5',
+    date: '2026-11-14',
+    title: 'Blueprint confirms imported answers',
+    items: [
+      'When you apply answers from an import, the Blueprint saves them straight away and confirms it: “✓ Blueprint updated: 24 answers saved.” If they can’t be saved, it says so.',
+    ],
+  },
+  {
     version: 'v4.16.4',
     date: '2026-11-14',
     title: 'Anyone can change an event’s time',

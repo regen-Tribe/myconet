@@ -1900,6 +1900,22 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
     if (!readOnly) save(values)
   }, [values, save, readOnly])
 
+  // Applying an import saves straight away (not after the autosave pause) and says so
+  const [applied, setApplied] = useState<{ count: number; circles: boolean; status: 'saving' | 'saved' | 'failed' } | null>(null)
+  const applyImport = async (extracted: Values) => {
+    const count = Object.keys(extracted).filter(k => k !== FOUND_CIRCLES_KEY).length
+    const circles = FOUND_CIRCLES_KEY in extracted
+    if (!count && !circles) return
+    const next = { ...values, ...extracted }
+    setValues(next)
+    setApplied({ count, circles, status: 'saving' })
+    const { data, error } = await createClient().from('blueprints').update({ answers: next }).eq('id', blueprintId).select('id')
+    const ok = !error && !!data?.length
+    setSaveFailed(!ok)
+    setApplied({ count, circles, status: ok ? 'saved' : 'failed' })
+    if (ok) setTimeout(() => setApplied(a => (a?.status === 'saved' ? null : a)), 7000)
+  }
+
   const idx = flat.findIndex(s => s.id === currentId)
   const current = flat[idx] ?? flat[0]
 
@@ -2108,6 +2124,18 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
 
         {/* Main content */}
         <main className={`main${mobileTab !== 'content' ? ' mobile-hidden' : ''}`}>
+          {applied && (
+            <div role="status" style={{ position: 'fixed', left: '50%', bottom: 96, transform: 'translateX(-50%)', zIndex: 300, maxWidth: 'calc(100vw - 32px)',
+              display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 10, fontSize: 14, fontWeight: 600, boxShadow: '0 6px 24px rgba(0,0,0,.18)',
+              background: applied.status === 'failed' ? '#b91c1c' : applied.status === 'saved' ? '#15803d' : 'var(--ink)', color: '#fff' }}>
+              <span>
+                {applied.status === 'saving' ? `Saving ${applied.count} answer${applied.count === 1 ? '' : 's'}…`
+                  : applied.status === 'failed' ? 'The answers couldn’t be saved. Only admins and circle leads can change the Blueprint.'
+                  : `✓ Blueprint updated: ${applied.count} answer${applied.count === 1 ? '' : 's'} saved${applied.circles ? ', and the circles found are waiting in the Circles step' : ''}.`}
+              </span>
+              <button onClick={() => setApplied(null)} aria-label="Dismiss" style={{ background: 'none', border: 'none', color: '#fff', fontSize: 16, cursor: 'pointer', padding: 0 }}>×</button>
+            </div>
+          )}
           {saveFailed && (
             <div role="alert" style={{ margin: '0 0 16px', padding: '10px 14px', borderRadius: 8, fontSize: 13,
               background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.35)', color: '#b91c1c' }}>
@@ -2209,7 +2237,7 @@ export default function BlueprintClient({ blueprintId, initialAnswers, readOnly 
           currentValues={values}
           scope={importScope}
           canSetBranding={isAdmin && !readOnly}
-          onApply={extracted => setValues(v => ({ ...v, ...extracted }))}
+          onApply={applyImport}
         />
       )}
     </div>
