@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.17.3 — 2026-11-14
+
+- The website crawl's first request (home page + sitemap) times out after 60s with a clear message. A JavaScript-only
+  site (e.g. rtrn-chat.vercel.app, a React app) has no server-side text and now fails fast with "no readable text".
+
 ## v4.17.2 — 2026-11-14
 
 - Website crawl (`m04-blueprint/lib/site-crawl.ts`): caps addresses tried (450) and time (5 minutes) as well

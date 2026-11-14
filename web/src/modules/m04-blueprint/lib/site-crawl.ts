@@ -12,6 +12,7 @@ const MAX_CHARS = 1_200_000
 const MAX_TRIES = 450
 const MAX_MS = 5 * 60_000
 const BATCH_TIMEOUT_MS = 45_000
+const START_TIMEOUT_MS = 60_000
 
 export interface SiteCrawl { site: string; title: string; pages: { url: string; title: string }[]; text: string; capped: boolean }
 
@@ -30,7 +31,12 @@ export async function crawlSite(
   onProgress?: (read: number, found: number, tried: number) => void,
   stop?: { current: boolean },
 ): Promise<SiteCrawl> {
-  const start = await call<{ site: string; home: SitePage; links: string[] }>({ url })
+  let start: { site: string; home: SitePage; links: string[] }
+  try {
+    start = await call<{ site: string; home: SitePage; links: string[] }>({ url }, START_TIMEOUT_MS)
+  } catch (e) {
+    throw (e as Error).name === 'TimeoutError' ? new Error('The website didn’t answer within a minute. Check the address, or upload a document instead.') : e
+  }
   const pages: SitePage[] = [start.home]
   const seen = new Set<string>([pageKey(start.home.url), ...start.links])
   const queue = [...start.links]
