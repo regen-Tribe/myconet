@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.17.6 — 2026-11-14
+
+- Reverts v4.17.5: the category checkbox row above the calendar is back.
+- Event form: Category is a select of `DAILY_CATEGORIES` (plus the event's own old category when editing), not free text,
+  so members can't create new categories. Linked-calendar rules can still set categories.
+
 ## v4.17.5 — 2026-11-14
 
 - Events: the category checkbox row above the calendar is removed (adding an event category no longer adds a filter there).

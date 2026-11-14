@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.17.6',
+    date: '2026-11-14',
+    title: 'Event categories from a set list',
+    items: [
+      'The category checkboxes are back above the calendar (undoing v4.17.5).',
+      'When you post or edit an event, the category is now picked from a list (Food, Movement, Focus hours) instead of typed, so new categories can’t be added by accident.',
+    ],
+  },
+  {
     version: 'v4.17.5',
     date: '2026-11-14',
     title: 'Tidier calendar filters',
