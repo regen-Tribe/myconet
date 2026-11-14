@@ -145,7 +145,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
     { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
     { label: 'Network', href: '/network', icon: '🌐' },
     { label: 'Circles', href: '/org', icon: '🧭' },
-    { label: 'Contributions', href: '/contributions', icon: '✦' },
+    { label: 'Achievements', href: '/contributions', icon: '✦' },
     { label: 'Governance', href: '/governance', icon: '☉' },
     { label: 'Calendar', href: '/events', icon: '🗓' },
     { label: 'Accommodation', href: '/stays', icon: '🏡' },
