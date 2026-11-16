@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.18.1',
+    date: '2026-11-16',
+    title: 'Week view like Google Calendar',
+    items: [
+      'On a computer or tablet, the Week view is now a time grid: hours down the side, one column per day, each event placed at its time and as tall as it lasts, so the rows line up across the week. Overlapping events sit side by side, all-day events sit in a strip at the top, and a red line marks the time now. It opens scrolled to the morning.',
+      'On phones the Week view stays as it was, one card per day.',
+    ],
+  },
+  {
     version: 'v4.18.0',
     date: '2026-11-16',
     title: 'Add events from a photo',

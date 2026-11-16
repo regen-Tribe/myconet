@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.18.1 — 2026-11-16
+
+- Events Week view (`CalendarViews.tsx`): wider than 640px it's a Google-style time grid (`WeekGrid`, 44px per hour,
+  overlap columns, all-day/multi-day strip, now line, sticky day header and hour gutter, scrolls to 7am or the week's
+  earliest event). Phones keep the day cards (`WeekCards`); switched by `.ev-week-grid` / `.ev-week-cards` in globals.css.
+
 ## v4.18.0 — 2026-11-16
 
 - Events: **Add from a photo** (`PhotoImportModal.tsx`, `/api/events/photo`). The photo is shrunk to 2000px in the browser,
