@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.25.1 — 2026-11-17
+
+- Project manager: shared accounts (a name or username with "admin") are never suggested to take a task; board
+  notes' file names collapse spaces ("Vision & Strategy" → `Vision Strategy.md`).
+
 ## v4.25.0 — 2026-11-17
 
 - **The project manager** (asked for in Protopia: "review existing tasks every time new tasks come in and manage

@@ -95,8 +95,10 @@ export async function reviewCircle(admin: SupabaseClient, circle: string, opts: 
   const circleName = circleRes.data.name as string
   const projects = (projRes.data ?? []) as Project[]
   const tasks = (taskRes.data ?? []) as Task[]
-  const people = (peopleRes.data ?? []) as PersonProfile[]
-  const nameOf = (id: string | null) => { const p = id ? people.find(x => x.id === id) : null; return p ? displayName(p) : null }
+  // Shared accounts ("Protopia admin") aren't people who take on work
+  const everyone = (peopleRes.data ?? []) as PersonProfile[]
+  const people = everyone.filter(p => !/admin/i.test(`${p.username ?? ''} ${displayName(p)}`))
+  const nameOf = (id: string | null) => { const p = id ? everyone.find(x => x.id === id) : null; return p ? displayName(p) : null }
   const dismissed = (sugRes.data ?? []).map(s => `${s.kind}: ${(s.payload as { title?: string; label?: string }).title ?? (s.payload as { label?: string }).label ?? ''}`).slice(0, 30)
   if (!tasks.length) {
     await admin.from('board_reviews').update({ reviewed_at: new Date().toISOString(), last_error: null }).eq('circle', circle)
@@ -204,7 +206,7 @@ export async function reviewCircle(admin: SupabaseClient, circle: string, opts: 
       const left = tasks.filter(t => !dropped.has(t.id)).map(t => (movedTo.has(t.id) ? { ...t, project_id: movedTo.get(t.id)! } : t))
       const content = buildBoardNote({ circle, circleName, status, projects, tasks: left, nameOf, suggestions })
       const folder = (process.env.KNOWLEDGE_BOARD_FOLDER || 'operations/board').replace(/^\/+|\/+$/g, '')
-      const saved = await saveNote(`${folder}/${circleName.replace(/[\\/:*?"<>|#^[\]]+/g, ' ').trim()}.md`, content, `Board status: ${circleName}`)
+      const saved = await saveNote(`${folder}/${circleName.replace(/[\\/:*?"<>|#^[\]&]+/g, ' ').replace(/\s+/g, ' ').trim()}.md`, content, `Board status: ${circleName}`)
       note = saved.url
     } catch (e) {
       errors.push(`second brain: ${(e as Error).message}`)
