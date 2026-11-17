@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.26.0 — 2026-11-17
+
+- **Ask / Do** (Phase 7 step 3; asked for in Protopia: "message the agent from MyCoNet to tell it to group the 4
+  element project and 5 senses project"). Signed-in members get a **Do** tab in the assistant: an instruction in
+  plain words → `/api/agent/plan` proposes changes on a **confirm card** (described by MyCoNet, not the AI; changes
+  this person may not make are marked) → **Do it** → `/api/agent/do` re-checks every change with the person's own
+  rights, makes it, logs it in `agent_actions` with the rows' previous values → **Undo** on the card or in the 🧭
+  panel. Changes: merge / rename / create projects, move tasks (into a project or onto the main board), rename,
+  assign, date, status, confirm drafts. No database change. Details: `web/src/modules/assistant/README.md`.
+
 ## v4.25.1 — 2026-11-17
 
 - Project manager: shared accounts (a name or username with "admin") are never suggested to take a task; board

@@ -87,7 +87,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 6 }}>Done by the agent (last 2 weeks)</div>
               {done.map(a => (
                 <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-2)', padding: '3px 0', flexWrap: 'wrap' }}>
-                  <span style={{ color: 'var(--ink-3)' }}>{DONE[a.action] ?? a.action}:</span>
+                  <span style={{ color: 'var(--ink-3)' }}>{a.action.startsWith('do_') ? 'Asked for' : DONE[a.action] ?? a.action}:</span>
                   <span>{a.label}</span>
                   {tag(a.circle)}
                   {a.reason && <span style={{ color: 'var(--ink-4)' }}>· {a.reason}</span>}
