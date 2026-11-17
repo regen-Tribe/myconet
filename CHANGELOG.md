@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.24.3 — 2026-11-17
+
+- **Meeting tasks and projects** (Oscar: "group things when you are very sure"): the main board stays the default,
+  but the agent may put a task into an open project of the same circle when it is very sure it's part of that
+  project's work (the meeting names it, or the work is unmistakably a piece of it). It must give a
+  `project_reason` (logged in `agent_actions`); without one, or for another circle's project, the task goes on
+  the main board.
+
 ## v4.24.2 — 2026-11-17
 
 - **Fix:** Fireflies' action-item headings that aren't people ("Unassigned", "Everyone", "Team", "<Name> Circle")

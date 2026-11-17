@@ -171,7 +171,7 @@ export async function processMeeting(
           await admin.from('agent_actions').insert(rows.map((r, i) => ({
             actor: ACTOR, requested_by: opts.requestedBy, action: 'create_task', meeting_id: meetingId,
             target_table: 'deliverables', target_id: made[i].id,
-            detail: { title: r.title, circle: r.w.d.circle, project_id: r.projectId, person: r.w.d.person, assignee_id: r.w.person?.id ?? null, due_date: r.w.d.due_date, due_time: r.w.d.due_time, by: read.by },
+            detail: { title: r.title, circle: r.w.d.circle, project_id: r.projectId, project_reason: r.w.d.project_reason, person: r.w.d.person, assignee_id: r.w.person?.id ?? null, due_date: r.w.d.due_date, due_time: r.w.d.due_time, by: read.by },
           })))
           added = rows.length
         }
