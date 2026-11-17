@@ -53,7 +53,21 @@ export async function fetchTranscript(id: string): Promise<Transcript> {
   return data.transcript
 }
 
-/** What a Fireflies transcript fills in on meeting_transcripts (both webhooks) */
+/** Webhooks V2 signature: X-Hub-Signature = "sha256=" + hex HMAC-SHA256 of the raw body */
+export async function verifyFirefliesSignature(raw: string, header: string | null, secret: string): Promise<boolean> {
+  if (!header) return false
+  const enc = new TextEncoder()
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+  const mac = new Uint8Array(await crypto.subtle.sign('HMAC', key, enc.encode(raw)))
+  const expected = 'sha256=' + Array.from(mac, b => b.toString(16).padStart(2, '0')).join('')
+  const got = header.trim().toLowerCase()
+  // Constant time over the expected length
+  let diff = got.length ^ expected.length
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ (got.charCodeAt(i) || 0)
+  return diff === 0
+}
+
+/** What a Fireflies transcript fills in on meeting_transcripts (all three webhooks) */
 export function transcriptFields(t: Transcript) {
   return {
     status: 'done' as const,

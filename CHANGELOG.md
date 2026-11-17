@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.21.2 — 2026-11-17
+
+- **Fireflies summaries arrive after the transcript.** The upload and ingest webhooks fire when the transcript is
+  ready, before Fireflies has written the summary and action items, so meetings came in with the transcript only
+  (Protopia's first two had no summary and no action items). New `/api/fireflies-events` for Fireflies
+  **Webhooks V2** (`meeting.transcribed`, `meeting.summarized`, HMAC-signed with the new secret
+  `FIREFLIES_SIGNING_SECRET`): it fetches the notes again (never blanking ones already in), adds a direct
+  recording that isn't in yet, and runs the meeting pipeline again (no duplicate tasks; the note is updated; the
+  email still goes once). Set it up in Fireflies: `app.fireflies.ai/integrations/api/webhook`. Details:
+  `web/src/modules/m18-meetings/README.md`.
+
 ## v4.21.1 — 2026-11-17
 
 Review of v4.20.0–v4.21.0:
