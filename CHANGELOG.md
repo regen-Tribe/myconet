@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.22.0 — 2026-11-17
+
+- **Meeting documents in tabs** (asked for in Protopia): the meeting page's Transcript box becomes a row of tabs, one
+  per document there is: Fireflies' **Notes**, **Outline**, **Bullet points**, **Topics & keywords**, the
+  **Second brain** note (read from the repo as it is now) and the **Transcript**. The first document opens; the
+  transcript only when asked.
+- Fireflies' extra notes are fetched by `/api/fireflies-events` (`meeting.summarized`) in a query of their own, so
+  a field Fireflies doesn't fill can't stop the transcript and summary. New column `fireflies_notes`
+  (**migration** `20261125000000_meeting_fireflies_notes.sql`; `supabase db push`). Meetings already in get theirs
+  on Fireflies' next webhook, or when it's sent again.
+- `NotesText.tsx`: their markdown as React elements, never HTML.
+
 ## v4.21.2 — 2026-11-17
 
 - **Fireflies summaries arrive after the transcript.** The upload and ingest webhooks fire when the transcript is

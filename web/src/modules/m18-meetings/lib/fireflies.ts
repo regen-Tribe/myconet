@@ -53,6 +53,40 @@ export async function fetchTranscript(id: string): Promise<Transcript> {
   return data.transcript
 }
 
+/** The rest of Fireflies' notes: the meeting page's tabs (meeting_transcripts.fireflies_notes) */
+export interface FirefliesNotes {
+  notes?: string; outline?: string; shorthand_bullet?: string; bullet_gist?: string
+  keywords?: string[]; topics?: string[]
+}
+
+const list = (v: unknown): string[] | undefined => {
+  const items = Array.isArray(v) ? v.map(String) : typeof v === 'string' ? v.split(/[,\n]/) : []
+  const out = items.map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
+  return out.length ? out : undefined
+}
+const text = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined)
+
+/**
+ * A query of its own, so a field Fireflies doesn't fill (or a plan without it) never stops the
+ * transcript and summary coming in. Null when there's nothing yet or Fireflies refused.
+ */
+export async function fetchFirefliesNotes(id: string): Promise<FirefliesNotes | null> {
+  try {
+    const data = await graphql<{ transcript: { summary: Record<string, unknown> | null } | null }>(`query($id: String!) { transcript(id: $id) {
+        summary { notes outline shorthand_bullet bullet_gist keywords topics_discussed }
+      } }`, { id })
+    const s = data.transcript?.summary
+    if (!s) return null
+    const notes: FirefliesNotes = {
+      notes: text(s.notes), outline: text(s.outline), shorthand_bullet: text(s.shorthand_bullet),
+      bullet_gist: text(s.bullet_gist), keywords: list(s.keywords), topics: list(s.topics_discussed),
+    }
+    return Object.values(notes).some(Boolean) ? notes : null
+  } catch {
+    return null
+  }
+}
+
 /** Webhooks V2 signature: X-Hub-Signature = "sha256=" + hex HMAC-SHA256 of the raw body */
 export async function verifyFirefliesSignature(raw: string, header: string | null, secret: string): Promise<boolean> {
   if (!header) return false

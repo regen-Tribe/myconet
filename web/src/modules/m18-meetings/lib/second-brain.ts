@@ -82,6 +82,27 @@ export function buildNote(n: NoteInput): string {
 const enc = (p: string) => p.split('/').map(encodeURIComponent).join('/')
 const b64 = (s: string) => Buffer.from(s, 'utf8').toString('base64')
 
+/** The note as it is in the repo now (people may have edited it), without its front matter; null if none */
+export async function readNote(path: string): Promise<string | null> {
+  if (!secondBrainOn()) return null
+  const branch = process.env.KNOWLEDGE_BRANCH || 'main'
+  try {
+    const res = await fetch(`https://api.github.com/repos/${process.env.KNOWLEDGE_REPO}/contents/${enc(path)}?ref=${encodeURIComponent(branch)}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.SECOND_BRAIN_GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.raw+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'myconet-agent',
+      },
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    return (await res.text()).replace(/^---\n[\s\S]*?\n---\n/, '').trim() || null
+  } catch {
+    return null
+  }
+}
+
 /** Creates or updates the note; returns its GitHub link */
 export async function saveNote(path: string, content: string, message: string): Promise<{ url: string }> {
   const repo = process.env.KNOWLEDGE_REPO!
