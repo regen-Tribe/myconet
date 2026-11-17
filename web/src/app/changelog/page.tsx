@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.24.3',
+    date: '2026-11-17',
+    title: 'Meeting tasks join a project only when it’s clear',
+    items: [
+      'A meeting task goes into an existing project only when the agent is very sure it belongs there (it says why); everything else stays on the main board with its circle.',
+    ],
+  },
+  {
     version: 'v4.24.2',
     date: '2026-11-17',
     title: 'No more “(for Unassigned)”',
