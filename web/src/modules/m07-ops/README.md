@@ -26,6 +26,29 @@ Ideas  →  Backlog  →  In progress  →  Review  →  Done
 | `UpdatesTab.tsx` | Timeline of all project updates across all projects. |
 | `types.ts` | Shared types — `Project`, `ProjectSummary`, `Deliverable`, `ProjectUpdate`, `CollaborationAgreement`, `MyProposal`. |
 
+## The project manager (v4.25.0)
+
+When a meeting adds tasks to a circle, the pipeline queues that circle (`board_reviews`). Every 10 minutes
+the database (`private.board_review_sweep()`, pg_cron + pg_net, the meetings sweep's Vault secrets) calls
+`/api/ops/board-review` once per waiting circle, and the agent (`lib/board-review.ts`, MiniMax Flash, one call)
+reviews the circle's whole board like a project manager:
+
+| It finds | It does |
+|---|---|
+| Duplicates, both its own drafts (`needs_review`, `source='meeting'`), when sure | **Merges them itself** (keeps the clearer one, takes the other's person/date, relinks the meeting links, deletes the other) |
+| A board (Chores) task or a draft that belongs to a project of the circle, when sure, with a reason | **Files it itself** |
+| Any other duplicate or move; 3+ tasks that make a project nobody made; who could take a task nobody has | **Suggests** it (`agent_suggestions`) |
+| The circle's state | Writes `knowledge.boardFolder/<Circle>.md` in the second brain (status, projects with their tasks, the board, open suggestions) |
+
+Its own changes are logged in `agent_actions` (`pm_merge`, `pm_move`, `pm_assign`) with what's needed to undo
+them. A review replaces the circle's open suggestions; dismissed ones (60 days) aren't suggested again.
+
+**On the board:** the **🧭 Project manager** panel (`ProjectManagerPanel.tsx`, `#pm`, follows the circle filter):
+suggestions with **Accept** / **Dismiss** and the agent's changes of the last two weeks with **Undo**, for
+admins and that circle's leads (`lib/pm-access.ts`; routes `/api/ops/suggestions/[id]`,
+`/api/ops/agent-actions/[id]`); everyone else sees them read-only. **On the circles** (Operations › Circles and
+`/org`): a **🧭 Project manager (N)** button for its leads opens `/ops?circle=<slug>#pm`.
+
 ## The unified Kanban model
 
 Both the main board and project detail share the same five columns, defined once in `@/core/lib/project-status`:
