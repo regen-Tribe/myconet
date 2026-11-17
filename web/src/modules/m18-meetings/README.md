@@ -69,10 +69,22 @@ work the same way. When the notes are in, `lib/pipeline.ts` (service role) runs 
    assignee, and the email lists them as "not on MyCoNet yet".
 3. **No duplicates:** `meeting_action_links` (meeting + normalised title) is claimed before each task is
    written, so a re-run or a repeated webhook adds only new tasks.
-4. **Second brain** (`lib/second-brain.ts`): `operations/meetings/YYYY-MM-DD <title>.md` in `knowledge.repo`,
-   committed by "MyCoNet agent" (`SECOND_BRAIN_GITHUB_TOKEN`): front matter (main circle or `community`,
-   `circles: […]`, `visibility: members|circle`), who was there, the summary, the tasks grouped by circle with
-   links. **Never the transcript.**
+4. **Name** (v4.23.0): the same AI call names the meeting from the title people gave and the content;
+   the title becomes `17.11.2026 <name>` (date in `COMMUNITY_TIME_ZONE`), what they called it stays in
+   `original_title` (shown small on the meeting page; the AI reads it, not its own earlier name).
+   **Second brain** (`lib/second-brain.ts`): `<knowledge.meetingsFolder>/YYYY-MM-DD <name>.md` in `knowledge.repo`
+   (default `operations/meetings`; Protopia `community coordination operations/meetings`), committed by
+   "MyCoNet agent" (`SECOND_BRAIN_GITHUB_TOKEN`): front matter (main circle or `community`, `circles: […]`,
+   `visibility: members|circle`, `source: myconet-meeting`), who was there, topics, keywords, the summary,
+   Fireflies' bullet points, notes and outline, the tasks grouped by circle with links, Fireflies' action
+   items, and a link to the **transcript** in `transcripts/<same name>` beside it. A renamed meeting (or a
+   moved folder) **moves**: the agent removes its own old files (only files with `source: myconet-meeting…`,
+   never a person's note). `notes_version` = `NOTES_VERSION`: the sweep rewrites older notes.
+   **The sweep** (`/api/meetings/sweep`, `MEETINGS_SWEEP_SECRET`): a Worker only gets about 30 s after replying,
+   so a webhook's run can stop before the note. Every 10 minutes the database (`private.meetings_sweep()`,
+   pg_cron + pg_net, URL + key in Vault: `myconet_url`, `meetings_sweep_secret`) calls it when a meeting is
+   unprocessed or its note is older; it refreshes missing Fireflies notes, runs the pipeline with 90 s for the
+   AI, at most 3 tries a meeting.
 5. **Email** (`lib/notes-email.ts`, based on Sonia's; `lib/smtp.ts` is hers unchanged): to the **leads of every
    circle involved, at the email on their account**, plus `meetings.notesEmail.alwaysTo` usernames. Not to
    outside attendees. Once automatically; "Email the notes again" sends again.

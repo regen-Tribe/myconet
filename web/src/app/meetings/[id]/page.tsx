@@ -12,7 +12,7 @@ export default async function MeetingPage({ params }: { params: Promise<{ id: st
   const { supabase, user } = await requireMeetingsAccess()
   const [{ data }, { data: profile }, { data: links }] = await Promise.all([
     supabase.from('meeting_transcripts')
-      .select('id, title, meeting_date, attendees, status, summary, action_items, transcript, error, source, needs_review, circle, visibility, created_by, created_at, processed_at, circle_source, agent_note, processing_started_at, processing_error, tasks_drafted, notes_path, notes_url, fireflies_notes, notes_emailed_at, notes_email_count, notes_email_error')
+      .select('id, title, original_title, meeting_date, attendees, status, summary, action_items, transcript, error, source, needs_review, circle, visibility, created_by, created_at, processed_at, circle_source, agent_note, processing_started_at, processing_error, tasks_drafted, notes_path, notes_url, fireflies_notes, notes_emailed_at, notes_email_count, notes_email_error')
       .eq('id', id).maybeSingle(),
     supabase.from('user_profiles').select('role').eq('id', user.id).maybeSingle(),
     supabase.from('meeting_action_links')

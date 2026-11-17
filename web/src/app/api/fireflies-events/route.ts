@@ -1,7 +1,8 @@
 import { after, NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/core/lib/supabase/service'
 import { moduleOn } from '@/core/lib/modules'
-import { fetchFirefliesNotes, fetchTranscript, transcriptFields, verifyFirefliesSignature } from '@/modules/m18-meetings/lib/fireflies'
+import { verifyFirefliesSignature } from '@/modules/m18-meetings/lib/fireflies'
+import { refreshFromFireflies } from '@/modules/m18-meetings/lib/refresh'
 import { processMeeting } from '@/modules/m18-meetings/lib/pipeline'
 
 // Fireflies Webhooks V2 (app.fireflies.ai/integrations/api/webhook, events meeting.transcribed and
@@ -34,23 +35,13 @@ export async function POST(req: NextRequest) {
     const existing = byRef ?? (await admin.from('meeting_transcripts').select('id').eq('fireflies_id', firefliesId).maybeSingle()).data
     if (!existing) return NextResponse.json({ received: true, skipped: 'not a meeting of this community' })
     const id = existing.id as string
-    const [t, extra] = await Promise.all([fetchTranscript(firefliesId), fetchFirefliesNotes(firefliesId)])
-    const fields = transcriptFields(t)
-    // Never blank notes that are already in (meeting.transcribed can come after meeting.summarized)
-    await admin.from('meeting_transcripts').update({
-      fireflies_id: firefliesId, status: fields.status, transcript: fields.transcript, error: null,
-      ...(fields.summary ? { summary: fields.summary } : {}),
-      ...(fields.action_items.length ? { action_items: fields.action_items } : {}),
-      ...(fields.meeting_date ? { meeting_date: fields.meeting_date } : {}),
-      // Notes, outline, bullets, topics and keywords: the meeting page's tabs
-      ...(extra ? { fireflies_notes: extra } : {}),
-    }).eq('id', id)
+    const got = await refreshFromFireflies(admin, id, firefliesId)
     // After the reply (Fireflies wants it within 30 s); the AI gets 22 s, as in the other two routes
     after(async () => {
       const { data: m } = await admin.from('meeting_transcripts').select('created_by').eq('id', id).maybeSingle()
       await processMeeting(admin, id, { requestedBy: m?.created_by ?? null, timeoutMs: 22_000, email: 'auto' })
     })
-    return NextResponse.json({ received: true, id, event, summary: !!fields.summary, action_items: fields.action_items.length, notes: extra ? Object.keys(extra).filter(k => extra[k as keyof typeof extra]) : [] })
+    return NextResponse.json({ received: true, id, event, ...got })
   } catch (e) {
     // 5xx so Fireflies retries (30 s, 2 min, 10 min, 30 min, 2 h)
     return NextResponse.json({ error: e instanceof Error ? e.message : 'error' }, { status: 502 })

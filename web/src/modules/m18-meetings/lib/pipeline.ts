@@ -6,7 +6,9 @@
  *      each in its own circle's best-matching project or that circle's Chores. Not a community
  *      meeting, or not sure → nothing else happens; a lead can set the circle to go on.
  *   2. the tasks go on the board as drafts (needs_review);
- *   3. the notes go to the second brain (lib/second-brain.ts): summary + tasks, never the transcript;
+ *   3. the meeting gets its name ("17.11.2026 Kitchen lead handover": the title people gave, made to
+ *      say what it was about) and goes to the second brain (lib/second-brain.ts): a note with the
+ *      summary, Fireflies' notes and the tasks, and the transcript in its own file;
  *   4. the leads of the circles involved get the notes by email (lib/notes-email.ts);
  *   5. each step is logged in agent_actions.
  * Running it again adds only tasks that aren't there yet (meeting_action_links), rewrites the note,
@@ -16,9 +18,10 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { fmtTaskWhen } from '@/core/lib/tasks'
 import { one } from '@/core/lib/rows'
 import type { ActionItem, MeetingVisibility } from '../types'
-import { draftTasks, localDay } from './draft-tasks'
+import { draftTasks, localDay, meetingName } from './draft-tasks'
 import { itemKey, matchPerson, displayName, type PersonProfile } from './people'
-import { buildNote, notePath, saveNote, secondBrainOn } from './second-brain'
+import { buildNote, buildTranscript, deleteFile, legacyNotePaths, notePath, NOTES_VERSION, saveNote, secondBrainOn, transcriptPath } from './second-brain'
+import type { FirefliesNotes } from './fireflies'
 import { buildNotesEmail, notesEmailOn, notesRecipients, sendEmails } from './notes-email'
 
 const ACTOR = 'meeting-pipeline'
@@ -55,7 +58,7 @@ export async function processMeeting(
     .update({ processing_started_at: now.toISOString() })
     .eq('id', meetingId).eq('status', 'done')
     .or(`processing_started_at.is.null,processing_started_at.lt."${new Date(now.getTime() - STALE_MS).toISOString()}"`)
-    .select('id, title, meeting_date, created_at, attendees, summary, action_items, transcript, circle, circle_source, visibility, notes_emailed_at')
+    .select('id, title, original_title, meeting_date, created_at, attendees, summary, action_items, transcript, fireflies_notes, circle, circle_source, visibility, notes_path, notes_emailed_at')
   const m = claimed?.[0]
   if (!m) return { ok: false, skipped: 'Not ready (no notes yet), or already running', added: 0, errors }
 
@@ -85,24 +88,30 @@ export async function processMeeting(
 
     // 1. The agent reads the meeting
     const read = await draftTasks({
-      meeting: { title: m.title, date: m.meeting_date ?? m.created_at, summary: m.summary, transcript: m.transcript, action_items: items, attendees: (m.attendees ?? []) as string[] },
+      // What people called it, not the agent's earlier name for it
+      meeting: { title: m.original_title ?? m.title, date: m.meeting_date ?? m.created_at, summary: m.summary, transcript: m.transcript, action_items: items, attendees: (m.attendees ?? []) as string[] },
       fixedCircle, circles, projects, openTasks, people: people.map(displayName), community, timeZone,
     }, { timeoutMs: opts.timeoutMs })
     if (read.note) errors.push(read.note)
 
     if (!read.isCommunity) {
       // Not this community's meeting, or the agent can't tell: wait for a lead
-      await release({ needs_review: true, agent_note: read.reason, processing_error: errors.join(' · ') || null })
+      await release({ needs_review: true, agent_note: read.reason, processing_error: errors.join(' · ') || null, processed_at: new Date().toISOString() })
       await log('skip_meeting', { reason: read.reason, by: read.by })
       return { ok: true, skipped: read.reason ?? 'Not a community meeting', added: 0, circle: null, by: read.by, errors }
     }
     const meetingCircle = read.circle
+    const day = localDay(m.meeting_date ?? m.created_at, timeZone)
+    // Its name: the date, then the agent's title from the content (kept as it was without the AI)
+    const title = read.title ? meetingName(day.date, read.title) : (m.title as string)
     await admin.from('meeting_transcripts').update({
       circle: meetingCircle, circle_source: fixedCircle ? 'person' : 'agent', agent_note: read.reason, needs_review: false,
+      ...(title !== m.title ? { title, original_title: m.original_title ?? m.title } : {}),
       // A circle-only meeting needs a circle
       ...(m.visibility === 'circle' && !meetingCircle ? { visibility: 'community' } : {}),
     }).eq('id', meetingId)
     if (!fixedCircle) await log('choose_circle', { circle: meetingCircle, reason: read.reason })
+    if (title !== m.title) await log('name_meeting', { title, was: m.title })
 
     // 2. The tasks, each in its circle's project or Chores
     let added = 0
@@ -158,26 +167,40 @@ export async function processMeeting(
     }).filter((t): t is NonNullable<typeof t> => !!t)
     const notOnMyCoNet = [...new Set(tasks.filter(t => t.person && !t.onMyCoNet).map(t => t.person as string))]
     const involved = [...new Set([meetingCircle, ...tasks.map(t => t.circle)].filter((c): c is string => !!c))]
-    const day = localDay(m.meeting_date ?? m.created_at, timeZone)
     const visibility = (meetingCircle ? m.visibility : 'community') as MeetingVisibility
 
-    // 3. The second brain note
+    // 3. The second brain: the note, and the transcript beside it
     let note: PipelineResult['note'] = null
     let notesUrl: string | null = null
     if (secondBrainOn()) {
-      const path = notePath(day.date, m.title)
+      const path = notePath(day.date, title)
+      const fileName = path.split('/').pop()!
       try {
-        const content = buildNote({
-          id: meetingId, title: m.title, date: day.date,
+        const base = {
+          id: meetingId, title, date: day.date,
           circle: meetingCircle ? { slug: meetingCircle, name: circleName(meetingCircle) } : null,
-          circles: involved.map(c => ({ slug: c, name: circleName(c) })), visibility,
-          attendees: (m.attendees ?? []) as string[], summary: m.summary, action_items: items, tasks, appUrl,
+          circles: involved.map(c => ({ slug: c, name: circleName(c) })), visibility, appUrl,
+        }
+        if (m.transcript) {
+          await saveNote(transcriptPath(path), buildTranscript(base, m.transcript, fileName), `Meeting transcript: ${title}`)
+        }
+        const content = buildNote({
+          ...base, attendees: (m.attendees ?? []) as string[], summary: m.summary, action_items: items, tasks,
+          fireflies: (m.fireflies_notes ?? null) as FirefliesNotes | null,
+          transcriptLink: m.transcript ? `transcripts/${fileName}` : null,
         })
-        const saved = await saveNote(path, content, `Meeting notes: ${m.title} (${day.date})`)
+        const saved = await saveNote(path, content, `Meeting notes: ${title}`)
         notesUrl = saved.url
         note = saved
-        await admin.from('meeting_transcripts').update({ notes_path: path, notes_url: saved.url }).eq('id', meetingId)
-        await log('save_note', { path, url: saved.url })
+        // Renamed (or the folder moved): remove the old copies, so each meeting is one note
+        const old = [...new Set([m.notes_path as string | null, ...legacyNotePaths(day.date, [m.original_title, m.title])])]
+          .filter((p): p is string => !!p && p !== path)
+        const removed: string[] = []
+        for (const p of old) {
+          for (const f of [p, transcriptPath(p)]) if (await deleteFile(f, `Meeting renamed: ${title}`)) removed.push(f)
+        }
+        await admin.from('meeting_transcripts').update({ notes_path: path, notes_url: saved.url, notes_version: NOTES_VERSION }).eq('id', meetingId)
+        await log('save_note', { path, url: saved.url, transcript: m.transcript ? transcriptPath(path) : null, removed })
       } catch (e) {
         note = { error: (e as Error).message }
         errors.push(`second brain: ${(e as Error).message}`)
@@ -193,7 +216,7 @@ export async function processMeeting(
       } else {
         const when = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(m.meeting_date ?? m.created_at))
         const mail = buildNotesEmail({
-          id: meetingId, title: m.title, when,
+          id: meetingId, title, when,
           circleName: meetingCircle ? circleName(meetingCircle) : null,
           summary: m.summary, tasks, notOnMyCoNet, notesUrl, appUrl,
         })
