@@ -21,6 +21,12 @@ Built by Sonia for Protopia (Nov 16). Meeting recordings are transcribed and sum
    the pipeline again; a direct recording that isn't in yet is added as in 2. Notes already in are never
    blanked. Unsigned or wrongly signed calls get a 401.
 
+**Meeting documents** (v4.22.0): at the bottom of a meeting page, one tab per document there is: Fireflies'
+**Notes**, **Outline**, **Bullet points**, **Topics & keywords** (`fireflies_notes`, fetched by
+`/api/fireflies-events` in a query of its own, `fetchFirefliesNotes()`, so a field Fireflies doesn't fill never
+stops the transcript), the **Second brain** note (read from the repo as it is now, `readNote()`, front matter
+off) and the **Transcript**. `NotesText.tsx` shows their markdown as React elements, never HTML.
+
 ## Secrets (Cloudflare, `npx wrangler secret put …`)
 
 `FIREFLIES_API_KEY`, `FIREFLIES_WEBHOOK_SECRET`, `FIREFLIES_SIGNING_SECRET` (the V2 webhook's signing secret), `PROTOPIA_INGEST_SECRET` (the ingest key; the name is
@@ -31,6 +37,7 @@ historical), `SUPABASE_SERVICE_ROLE_KEY` (the webhooks write with it: `core/lib/
 | File | Purpose |
 |------|---------|
 | `MeetingsList.tsx`, `MeetingDetail.tsx`, `UploadForm.tsx` | The three pages' UI |
+| `NotesText.tsx` | The documents' markdown (headings, bullets, bold, links) as React elements |
 | `lib/fireflies.ts` | Fireflies GraphQL: `uploadAudio`, `fetchTranscript`, transcript text, action-item parsing |
 | `lib/access.ts` | Pages: module on + joining or above |
 | `app/meetings/**`, `app/api/meetings/upload`, `app/api/fireflies-webhook`, `app/api/fireflies-ingest`, `app/api/fireflies-events` | Routes |
@@ -99,3 +106,4 @@ Migration `supabase/migrations/20261121000000_meetings.sql`: `meeting_transcript
 and above; writes through the server routes) and the private `meeting-audio` bucket (each person's own folder).
 Migration `20261124000000_meeting_pipeline.sql`: meeting `visibility` + pipeline columns, `private.in_circle()`
 and the Circle-only policy, `meeting_action_links`, `agent_actions`, `chores_project_for_server()` (service role).
+Migration `20261125000000_meeting_fireflies_notes.sql`: `fireflies_notes` jsonb (the documents' tabs).

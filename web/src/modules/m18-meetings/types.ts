@@ -1,3 +1,5 @@
+import type { FirefliesNotes } from './lib/fireflies'
+
 export type MeetingStatus = 'processing' | 'done' | 'error'
 export type MeetingVisibility = 'community' | 'circle'
 
@@ -30,7 +32,10 @@ export interface Meeting extends MeetingListItem {
   processing_started_at: string | null
   processing_error: string | null
   tasks_drafted: number | null
+  notes_path: string | null
   notes_url: string | null
+  /** The rest of Fireflies' notes (v4.22.0), shown as tabs */
+  fireflies_notes: FirefliesNotes | null
   notes_emailed_at: string | null
   notes_email_count: number | null
   notes_email_error: string | null
