@@ -14,7 +14,8 @@ import { PermissionNoticeModal } from './PermissionNoticeModal'
 import { NewTaskModal } from './NewTaskModal'
 import { fmtTaskWhen, isTaskOverdue, taskDate } from '@/core/lib/tasks'
 import { DraftBadge } from '@/core/components/DraftBadge'
-import type { Project, Deliverable, ProjectUpdate, SubscriberProfile } from './types'
+import type { Project, Deliverable, ProjectUpdate, SubscriberProfile, AgentSuggestion, PmAction } from './types'
+import { ProjectManagerPanel } from './ProjectManagerPanel'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -38,6 +39,10 @@ interface OpsClientProps {
   initialTab: OpsTab
   /** Meetings per circle this person can read; null when Meetings is off */
   meetingCounts: Record<string, number> | null
+  /** ?circle= : the board opens filtered to it (the circles' Project manager buttons) */
+  initialCircle: string | null
+  pmSuggestions: AgentSuggestion[]
+  pmActions: PmAction[]
 }
 
 type OpsTab = 'board' | 'deliverables' | 'updates' | 'circles'
@@ -236,6 +241,7 @@ export default function OpsClient({
   activeCount, deliverableCount, doneCount, atRiskCount,
   isAdmin, userId, userRole, leadCircles, sprintName,
   projectSubscribers, userProfiles, canPropose, circleDirectory, initialTab, meetingCounts,
+  initialCircle, pmSuggestions, pmActions,
 }: OpsClientProps) {
   const circles = useCircles()
   const router = useRouter()
@@ -244,7 +250,11 @@ export default function OpsClient({
   const [boardProjects, setBoardProjects] = useState<Project[]>(projects)
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<string | null>(null)
-  const [selectedCircle, setSelectedCircle] = useState<string | null>(null)
+  const [selectedCircle, setSelectedCircle] = useState<string | null>(initialCircle && circles.has(initialCircle) ? initialCircle : null)
+  // Who decides the project manager's suggestions for a circle: admins and that circle's leads
+  const canDecide = (c: string) => userRole === 'admin' || (userRole === 'circle_lead' && leadCircles.includes(c))
+  const pmCounts: Record<string, number> = {}
+  for (const sg of pmSuggestions) if (canDecide(sg.circle)) pmCounts[sg.circle] = (pmCounts[sg.circle] ?? 0) + 1
   const [myRole, setMyRole] = useState<'all' | 'lead' | 'member' | 'subscriber'>('all')
   const [overdueOnly, setOverdueOnly] = useState(false)
   const [newTask, setNewTask] = useState(false)
@@ -524,6 +534,10 @@ export default function OpsClient({
             )}
           </div>
 
+        <ProjectManagerPanel
+          suggestions={pmSuggestions} actions={pmActions} circle={selectedCircle} canDecide={canDecide}
+          taskTitles={Object.fromEntries(initialDeliverables.map(d => [d.id, d.title]))}
+        />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
           {PROJECT_KANBAN_COLUMNS.map(col => {
             const cards = grouped[col.key] ?? []
@@ -623,6 +637,7 @@ export default function OpsClient({
           leadCircles={leadCircles}
           involvedProjectIds={myInvolvedProjectIds}
           meetingCounts={meetingCounts}
+          pmCounts={pmCounts}
         />
       )}
 

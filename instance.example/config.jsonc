@@ -34,7 +34,7 @@
   // Optional: the community's second brain on GitHub. Meeting notes are saved to
   // operations/meetings/ (needs the SECOND_BRAIN_GITHUB_TOKEN secret: a fine-grained token for
   // this repo only, Contents read and write)
-  // "knowledge": { "repo": "owner/second-brain", "branch": "main", "meetingsFolder": "operations/meetings" },
+  // "knowledge": { "repo": "owner/second-brain", "branch": "main", "meetingsFolder": "operations/meetings", "boardFolder": "operations/board" },
 
   // Optional: email a meeting's notes to its circle's leads (needs MEETINGS_SMTP_PASSWORD, e.g. a
   // Gmail app password for `from`). alwaysTo: portal usernames who get every meeting's notes.

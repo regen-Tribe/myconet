@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.25.0 — 2026-11-17
+
+- **The project manager** (asked for in Protopia: "review existing tasks every time new tasks come in and manage
+  like a professional project manager"). When a meeting adds tasks to a circle, the agent reviews that circle's
+  whole board (one AI call per circle, every 10 minutes for waiting circles: `private.board_review_sweep()` →
+  `/api/ops/board-review`).
+  - **Does the safe things itself**, logged and undoable: merges duplicates that are both its own drafts; files a
+    board task or a draft into a project of the circle when very sure (with a reason).
+  - **Suggests the rest** to the circle's leads: new projects for groups of tasks, other merges and moves, who could
+    take a task nobody has. **🧭 Project manager** panel on the board (Accept / Dismiss, Undo for its changes);
+    a **🧭 Project manager (N)** button on each circle in Operations › Circles and `/org` for its leads.
+  - **Second brain:** `knowledge.boardFolder/<Circle>.md` (default `operations/board`): status, projects and their
+    tasks, the board, open suggestions; rewritten in place each review.
+- **Migration** `20261128000000_board_review.sql`: `agent_suggestions`, `board_reviews`,
+  `agent_actions.undone_by`, `private.board_review_sweep()` and its schedule (same Vault secrets as the meetings
+  sweep).
+
 ## v4.24.3 — 2026-11-17
 
 - **Meeting tasks and projects** (Oscar: "group things when you are very sure"): the main board stays the default,

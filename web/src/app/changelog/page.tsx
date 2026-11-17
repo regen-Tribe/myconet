@@ -3,6 +3,16 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.25.0',
+    date: '2026-11-17',
+    title: 'A project manager for every circle',
+    items: [
+      'When a meeting adds tasks, the MyCoNet agent reviews the circle’s whole board: it merges its own duplicate drafts and files tasks into projects when it’s sure (each can be undone).',
+      'It suggests new projects, merges, moves and who could take a task; circle leads accept or dismiss them in the 🧭 Project manager panel on the board, reached from each circle’s page.',
+      'Each circle’s board status is kept in the second brain.',
+    ],
+  },
+  {
     version: 'v4.24.3',
     date: '2026-11-17',
     title: 'Meeting tasks join a project only when it’s clear',

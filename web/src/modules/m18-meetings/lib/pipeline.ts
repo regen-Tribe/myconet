@@ -22,6 +22,7 @@ import { draftTasks, localDay, meetingName } from './draft-tasks'
 import { itemKey, matchPerson, displayName, type PersonProfile } from './people'
 import { buildNote, buildTranscript, deleteFile, legacyNotePaths, listPaths, notePath, NOTES_VERSION, saveNote, secondBrainOn, transcriptPath } from './second-brain'
 import type { FirefliesNotes } from './fireflies'
+import { requestBoardReview } from '@/modules/m07-ops/lib/board-review'
 import { buildNotesEmail, notesEmailOn, notesRecipients, sendEmails } from './notes-email'
 
 const ACTOR = 'meeting-pipeline'
@@ -194,6 +195,8 @@ export async function processMeeting(
     }).filter((t): t is NonNullable<typeof t> => !!t)
     const notOnMyCoNet = [...new Set(tasks.filter(t => t.person && !t.onMyCoNet).map(t => t.person as string))]
     const involved = [...new Set([meetingCircle, ...tasks.map(t => t.circle)].filter((c): c is string => !!c))]
+    // New tasks: the project manager reviews those circles' boards on the next sweep (m07-ops/lib/board-review.ts)
+    if (added > 0) await requestBoardReview(admin, involved)
     const visibility = (meetingCircle ? m.visibility : 'community') as MeetingVisibility
 
     // 3. The second brain: the note, and the transcript beside it
