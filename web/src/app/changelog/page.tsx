@@ -3,6 +3,18 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.21.0',
+    date: '2026-11-17',
+    title: 'Meetings turn into tasks on the board',
+    items: [
+      'Meetings recorded in Fireflies turn into tasks by themselves: the agent reads the whole meeting, works out which circle it’s about (or that it’s community-wide), and puts each task on the board as a draft in the right circle and project, with who and by when. It skips what’s already on the board, and leaves meetings that aren’t the community’s alone.',
+      'The leads of the circles involved get the notes by email, with links to the tasks. People who aren’t on the portal yet are listed so their tasks can be passed on.',
+      'The notes are saved to the community’s second brain too (summary and tasks; the transcript stays in the portal).',
+      'Meetings has filters by circle, My circles and search, and every circle has a Meeting notes button. A meeting can be Circle only, for just that circle.',
+      'On the board, a Drafts card shows the tasks waiting to be confirmed.',
+    ],
+  },
+  {
     version: 'v4.20.0',
     date: '2026-11-17',
     title: 'Tasks with a time and a circle, and on the calendar',

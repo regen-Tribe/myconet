@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { fmtTaskWhen, isTaskOverdue } from '@/core/lib/tasks'
 import type { Deliverable, ProjectSummary } from './types'
 
@@ -10,11 +11,22 @@ const STATUS_PILL: Record<string, { label: string; color: string; bg: string }> 
   done:        { label: 'Done',        color: 'var(--m5)',    bg: '#15803d18' },
 }
 
-export function DeliverablesTab({ deliverables, projects }: {
+export function DeliverablesTab({ deliverables: all, projects, draftsOnly = false, onDraftsOnly }: {
   deliverables: Deliverable[]
   projects: ProjectSummary[]
+  /** Only drafts (e.g. from meetings) waiting for a lead */
+  draftsOnly?: boolean
+  onDraftsOnly?: (on: boolean) => void
 }) {
   const projectMap = Object.fromEntries(projects.map(p => [p.id, p.title]))
+  const draftCount = all.filter(d => d.needs_review).length
+  const deliverables = draftsOnly ? all.filter(d => d.needs_review) : all
+  const draftsToggle = onDraftsOnly && (draftCount > 0 || draftsOnly) && (
+    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink-2)', cursor: 'pointer', marginBottom: 10 }}>
+      <input type="checkbox" checked={draftsOnly} onChange={e => onDraftsOnly(e.target.checked)} />
+      Only drafts to confirm ({draftCount}) · open one and save it to confirm
+    </label>
+  )
 
   const thStyle: React.CSSProperties = {
     fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700,
@@ -31,17 +43,19 @@ export function DeliverablesTab({ deliverables, projects }: {
 
   if (deliverables.length === 0) {
     return (
-      <div style={{
+      <>{draftsToggle}<div style={{
         background: 'var(--bg-2)', border: '1px solid var(--rule)',
         borderRadius: 10, padding: '40px 24px', textAlign: 'center',
         color: 'var(--ink-4)', fontSize: 13,
       }}>
-        No deliverables yet.
-      </div>
+        {draftsOnly ? 'No drafts to confirm.' : 'No deliverables yet.'}
+      </div></>
     )
   }
 
   return (
+    <>
+    {draftsToggle}
     <div style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
@@ -61,7 +75,7 @@ export function DeliverablesTab({ deliverables, projects }: {
               <tr key={d.id}>
                 <td style={{ ...tdStyle, fontWeight: 500, color: 'var(--ink)' }}>
                   {d.needs_review && <span title="A draft waiting for a lead to confirm" style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: '#b45309', background: '#fef3c7', borderRadius: 4, padding: '1px 5px', marginRight: 6 }}>Draft</span>}
-                  {d.title}
+                  <Link href={`/ops/${d.project_id}?task=${d.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>{d.title}</Link>
                 </td>
                 <td style={{ ...tdStyle, fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>
                   {projectMap[d.project_id] ?? '—'}
@@ -87,5 +101,6 @@ export function DeliverablesTab({ deliverables, projects }: {
         </tbody>
       </table>
     </div>
+    </>
   )
 }

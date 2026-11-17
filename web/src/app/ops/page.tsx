@@ -1,3 +1,4 @@
+import { meetingCountsByCircle } from '@/modules/m18-meetings/lib/counts'
 import { createClient } from '@/core/lib/supabase/server'
 import OpsClient from '@/modules/m07-ops/OpsClient'
 import { isOpsAdmin, isJoiningOrAbove } from '@/core/lib/roles'
@@ -132,6 +133,7 @@ export default async function OpsPage({ searchParams }: { searchParams: Promise<
       canPropose={isJoiningOrAbove(userRole)}
       circleDirectory={circleDirectory}
       initialTab={initialTab}
+      meetingCounts={user ? await meetingCountsByCircle(supabase) : null}
     />
   )
 }

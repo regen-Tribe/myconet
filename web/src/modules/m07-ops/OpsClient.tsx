@@ -35,6 +35,8 @@ interface OpsClientProps {
   canPropose: boolean
   circleDirectory: CircleDirectory
   initialTab: OpsTab
+  /** Meetings per circle this person can read; null when Meetings is off */
+  meetingCounts: Record<string, number> | null
 }
 
 type OpsTab = 'board' | 'deliverables' | 'updates' | 'circles'
@@ -181,7 +183,7 @@ export default function OpsClient({
   projects, deliverables: initialDeliverables, updates,
   activeCount, deliverableCount, doneCount, atRiskCount,
   isAdmin, userId, userRole, leadCircles, sprintName,
-  projectSubscribers, userProfiles, canPropose, circleDirectory, initialTab,
+  projectSubscribers, userProfiles, canPropose, circleDirectory, initialTab, meetingCounts,
 }: OpsClientProps) {
   const circles = useCircles()
   const router = useRouter()
@@ -194,6 +196,8 @@ export default function OpsClient({
   const [myRole, setMyRole] = useState<'all' | 'lead' | 'member' | 'subscriber'>('all')
   const [overdueOnly, setOverdueOnly] = useState(false)
   const [newTask, setNewTask] = useState(false)
+  const [draftsOnly, setDraftsOnly] = useState(false)
+  const draftCount = initialDeliverables.filter(d => d.needs_review).length
 
   async function moveProject(projectId: string, newStatus: string) {
     const p = boardProjects.find(x => x.id === projectId)
@@ -335,6 +339,13 @@ export default function OpsClient({
           onClick={atRiskCount > 0 ? () => { setOverdueOnly(v => !v); setActiveTab('board') } : undefined}
         />
         <StatCard label="Projects" value={totalProjects} delta={`${totalProjects} total`} />
+        {draftCount > 0 && (
+          <StatCard
+            label="Drafts" value={draftCount} valueColor="#b45309"
+            delta="tasks to confirm · click to see" active={activeTab === 'deliverables' && draftsOnly}
+            onClick={() => { setDraftsOnly(true); setActiveTab('deliverables') }}
+          />
+        )}
       </div>
 
       {/* ── Tab Row ───────────────────────────────────────────────────── */}
@@ -489,7 +500,7 @@ export default function OpsClient({
       )}
 
       {activeTab === 'deliverables' && (
-        <DeliverablesTab deliverables={initialDeliverables} projects={boardProjects} />
+        <DeliverablesTab deliverables={initialDeliverables} projects={boardProjects} draftsOnly={draftsOnly} onDraftsOnly={setDraftsOnly} />
       )}
       {activeTab === 'updates' && (
         <UpdatesTab updates={updates} projects={projects} />
@@ -503,6 +514,7 @@ export default function OpsClient({
           userRole={userRole}
           leadCircles={leadCircles}
           involvedProjectIds={myInvolvedProjectIds}
+          meetingCounts={meetingCounts}
         />
       )}
 

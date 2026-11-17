@@ -1097,7 +1097,13 @@ export default function ProjectDetailClient({
 
               {editModal.needs_review && (
                 <div style={{ fontSize: 12, color: '#92400e', background: '#fef3c7', borderRadius: 8, padding: '8px 12px', marginBottom: 16 }}>
-                  {editModal.source === 'meeting' ? 'Drafted from a meeting’s action items.' : 'A draft.'} Check it{canManage ? ' and save to confirm' : ''}.
+                  {editModal.source === 'meeting' ? 'Drafted by the agent from a meeting.' : 'A draft.'} Check it{canManage ? ' and save to confirm' : ''}.
+                </div>
+              )}
+              {editModal.source_meeting_id && (
+                <div style={{ fontSize: 12.5, color: 'var(--ink-3)', marginBottom: 16, lineHeight: 1.5 }}>
+                  <Link href={`/meetings/${editModal.source_meeting_id}`} style={{ color: 'var(--m18, var(--m7))', fontWeight: 600, textDecoration: 'none' }}>📝 From a meeting →</Link>
+                  {editModal.source_item && editModal.source_item !== editModal.title && <> · “{editModal.source_item.slice(0, 200)}”</>}
                 </div>
               )}
 
