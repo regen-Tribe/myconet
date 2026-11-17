@@ -44,7 +44,8 @@ if (!files) {
   console.log(`Nothing to send: only instance/ differs from core ${base}.`)
   process.exit(0)
 }
-const patch = git(['diff', '--binary', base, 'HEAD', ...pathspec], { cwd: root }) + '\n'
+// Not through run(): its trim() would cut a last context line that is a single space (corrupt patch)
+const patch = spawnSync('git', ['diff', '--binary', base, 'HEAD', ...pathspec], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).stdout
 
 const tmp = mkdtempSync(join(tmpdir(), 'myconet-upstream-'))
 try {
