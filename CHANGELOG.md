@@ -5,6 +5,28 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.21.0 — 2026-11-17
+
+- **The meeting pipeline** (Phase 7 step 4 of the agent plan; rewrites the goals of Sonia's Protopia PR #53). When a
+  meeting's notes are in and it has a circle: the agent drafts its tasks on the board, saves a note to the
+  community's second brain, and emails the circle's leads. Details: `web/src/modules/m18-meetings/README.md`.
+  - **Tasks from the meeting's context**, not just Fireflies' list: action items + summary + transcript + the
+    circle's open projects and tasks (MiniMax M3.1-Flash). Person, date/time said in the meeting, best-matching
+    project or the circle's Chores; skips what's on the board; adds what was agreed but missed. Falls back to the
+    action items as they are. Drafts (`needs_review`) with `source='meeting'`.
+  - People without an account keep "(for Name)" in the task title; the email lists them as not on MyCoNet yet.
+  - **Second brain note** (`knowledge.repo` + `SECOND_BRAIN_GITHUB_TOKEN`): summary + tasks with links, never the
+    transcript.
+  - **Notes email** to the circle's leads at their account email (+ `alwaysTo`), over SMTP from the Worker (Sonia's
+    `lib/smtp.ts`, unchanged). Needs `meetings.notesEmail` + `MEETINGS_SMTP_PASSWORD`.
+  - **Circle only** meetings: just the circle's members (its teams), its leads and admins can read them (RLS).
+  - `/meetings`: circle chips, My circles, All, search, Needs review. **📝 Meeting notes (N)** on each circle (/org,
+    Operations › Circles). Meeting page: tasks on the board, and for leads: circle, Circle only, put tasks on the
+    board / look again, confirm all drafts, email again. Upload form: circle + Circle only. Board: **Drafts** card;
+    Deliverables tab links to each task and filters drafts; a task shows "📝 From a meeting".
+  - `agent_actions`: every task, note and email the agent made (admins read it).
+  - New settings: `timeZone`, `knowledge`, `meetings.notesEmail`. Migration `20261124000000_meeting_pipeline.sql`.
+
 ## v4.20.0 — 2026-11-17
 
 - **Task data, for the agent and the calendar** (first step of the MyCoNet agent plan). Tasks stay on the task board and

@@ -40,6 +40,9 @@ export interface Deliverable {
   source?: 'person' | 'agent' | 'meeting'
   /** A draft (e.g. from a meeting) waiting for a lead to confirm */
   needs_review?: boolean
+  /** The meeting it came from, and what was said */
+  source_meeting_id?: string | null
+  source_item?: string | null
   user_profiles?: { first_name: string | null; username: string | null } | null
 }
 

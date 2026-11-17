@@ -3,6 +3,18 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.21.0',
+    date: '2026-11-17',
+    title: 'Meetings turn into tasks on the board',
+    items: [
+      'When a meeting’s notes are in, the agent puts its tasks on the board as drafts: who does what, by when, in the right project (or the circle’s Chores). It reads the whole meeting, not just the action items, and skips what’s already on the board.',
+      'The circle’s leads get the notes by email, with links to the tasks. People who aren’t on the portal yet are listed so their tasks can be passed on.',
+      'The notes are saved to the community’s second brain too (summary and tasks; the transcript stays in the portal).',
+      'Meetings has filters by circle, My circles and search, and every circle has a Meeting notes button. A meeting can be Circle only, for just that circle.',
+      'On the board, a Drafts card shows the tasks waiting to be confirmed.',
+    ],
+  },
+  {
     version: 'v4.20.0',
     date: '2026-11-17',
     title: 'Tasks with a time and a circle, and on the calendar',
