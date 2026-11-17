@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.24.1 — 2026-11-17
+
+- **Meeting tasks always on the main board** (asked for in Protopia): the agent no longer files a task into a
+  matching project (where it was a subtask); every meeting task goes to its circle's Chores, i.e. a card on the
+  main board tagged with its circle (v4.24.0). Open projects stay in the prompt as context only.
+
 ## v4.24.0 — 2026-11-17
 
 - **Circle tasks on the main board** (asked for in Protopia): the tasks in a circle's Chores project (from meetings

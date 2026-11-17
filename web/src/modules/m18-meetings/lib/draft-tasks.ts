@@ -4,7 +4,7 @@
  *   - is this a community meeting at all? (the Fireflies account may also record other calls)
  *   - its main circle, or none for a community-wide meeting (a morning sync touches every circle)
  *   - the tasks: one per agreed piece of work, each with its own circle, person, date/time said,
- *     and the best-matching open project of that circle, or null for the circle's Chores.
+ *     tagged with that circle on the main board (its Chores: never a project's subtask, v4.24.1).
  *   - its name: the title people gave, made to say what the meeting was about (the date goes in front)
  * It skips what's already on the board and adds what was clearly agreed but missed by Fireflies.
  * Without the AI the action items go on as they are, but only when a person already set the circle.
@@ -36,7 +36,7 @@ export interface DraftTask {
   circle: string
   /** The person as named in the meeting; matched to a member later */
   person: string | null
-  /** An open project of the task's circle, or null for that circle's Chores */
+  /** Always null since v4.24.1: meeting tasks go on the main board (the circle's Chores) */
   project_id: string | null
   due_date: string | null
   due_time: string | null
@@ -87,7 +87,7 @@ function prompt(input: DraftInput): string {
   const { date, weekday } = localDay(input.meeting.date, input.timeZone)
   const circleName = (slug: string | null) => input.circles.find(c => c.slug === slug)?.name ?? slug ?? 'no circle'
   const circles = input.circles.map(c => `- ${c.slug} · ${c.name}${c.description ? ` — ${c.description.replace(/\s+/g, ' ').slice(0, 200)}` : ''}`).join('\n')
-  const projects = input.projects.map(p => `- ${p.id} · [${p.circle ?? 'none'}] ${p.title}${p.description ? ` — ${p.description.replace(/\s+/g, ' ').slice(0, 140)}` : ''}`).join('\n') || '(none)'
+  const projects = input.projects.map(p => `- [${p.circle ?? 'none'}] ${p.title}${p.description ? ` — ${p.description.replace(/\s+/g, ' ').slice(0, 140)}` : ''}`).join('\n') || '(none)'
   const open = input.openTasks.slice(0, 150).map(t => `- [${t.circle ?? 'none'}] ${t.title}${t.project_title ? ` (${t.project_title})` : ''}`).join('\n') || '(none)'
   const items = input.meeting.action_items.map((it, i) => `${i}. ${it.speaker ? `[${it.speaker}] ` : ''}${it.text}`).join('\n') || '(none)'
   const transcript = (input.meeting.transcript ?? '').slice(0, MAX_TRANSCRIPT)
@@ -98,12 +98,12 @@ The meeting was on ${weekday} ${date} (time zone ${input.timeZone}).
 1. ${input.fixedCircle ? `A person confirmed this is a meeting of ${input.community}: set "community": true.` : `Decide whether this is a meeting of ${input.community} (its people, its land, its projects, its circles). The same Fireflies account may record other calls (personal, client, other organisations): for those, or when you're not sure, set "community": false and return no tasks.`}
 2. ${input.fixedCircle ? `A person set this meeting's circle: ${input.fixedCircle} (${circleName(input.fixedCircle)}). Keep it as the main circle.` : 'Choose the meeting\'s main circle: the circle most of the discussion and work belongs to, even if a task or two belong to other circles. Use null only when it is community-wide: a general sync, community circle or logistics meeting with reports from several circles.'}
 3. Make one task per concrete thing someone agreed to do. Start from the action items, and use the summary and transcript for who does it, by when, and anything clearly agreed that the action items missed. Skip anything already in "Open tasks on the board". Leave out vague intentions, discussion points and decisions that need no work.
-4. Give each task the circle whose work it is (it can differ from the meeting's circle). Put it in a project only when it is clearly part of that project's work, and only a project of the same circle. Routine upkeep (cleaning, repairs, checks, restocking, chores) gets project_id null: it goes to the circle's Chores.
+4. Give each task the circle whose work it is (it can differ from the meeting's circle). It goes on the community's main board tagged with that circle; the open projects below are only there to help you understand the work.
 
 5. Name the meeting: start from its title ("${input.meeting.title}") when that says something, and use the content to make it say what the meeting was about: the circle or group and the main topics, under 70 characters, no date (it is added in front), no quotes. A title that is only a time or a date ("Nov 12, 10:36 AM") says nothing: name it from the content alone.
 
 Return JSON only:
-{"community":true|false,"title":"the meeting's name","circle":"a circle slug or null","reason":"one short sentence: why this circle, or why it isn't a community meeting","tasks":[{"title":"short imperative, under 90 characters, no person's name","circle":"a circle slug","person":"the person's name as said, or null","project_id":"a project id or null","due_date":"YYYY-MM-DD or null","due_time":"HH:MM 24h or null","item":the action item number it comes from, or null,"source":"the action item's words, or a short quote from the transcript"}]}
+{"community":true|false,"title":"the meeting's name","circle":"a circle slug or null","reason":"one short sentence: why this circle, or why it isn't a community meeting","tasks":[{"title":"short imperative, under 90 characters, no person's name","circle":"a circle slug","person":"the person's name as said, or null","due_date":"YYYY-MM-DD or null","due_time":"HH:MM 24h or null","item":the action item number it comes from, or null,"source":"the action item's words, or a short quote from the transcript"}]}
 
 Dates only when the meeting says one; work relative ones ("by Friday", "next week", "tomorrow") out from ${weekday} ${date}. "Next week" with no day means the Monday after. At most ${MAX_TASKS} tasks.
 ${input.people.length ? `\nMembers' names (use these spellings when one matches): ${input.people.slice(0, 200).join(', ')}` : ''}
@@ -111,7 +111,7 @@ ${input.people.length ? `\nMembers' names (use these spellings when one matches)
 Circles:
 ${circles}
 
-Open projects ([circle] title):
+Open projects, for context ([circle] title):
 ${projects}
 
 Open tasks on the board:
@@ -145,7 +145,6 @@ export function parseDrafts(content: string, input: DraftInput): Omit<DraftResul
   try { raw = JSON.parse(c.slice(start, end + 1)) } catch { return null }
   if (typeof raw.community !== 'boolean' || !Array.isArray(raw.tasks)) return null
   const slugs = new Set(input.circles.map(c => c.slug))
-  const projectCircle = new Map(input.projects.map(p => [p.id, p.circle]))
   const circle = input.fixedCircle ?? (typeof raw.circle === 'string' && slugs.has(raw.circle) ? raw.circle : null)
   const reason = str(raw.reason, 300)
   const title = str(raw.title, 90)?.replace(/^["“']|["”']$/g, '') || null
@@ -159,16 +158,15 @@ export function parseDrafts(content: string, input: DraftInput): Omit<DraftResul
   const tasks: DraftTask[] = []
   for (const t of (raw.tasks as Record<string, unknown>[]).slice(0, MAX_TASKS)) {
     const taskTitle = str(t?.title, 120)
-    // Each task needs a circle (its own, else the meeting's) to land in a project or Chores
+    // Each task needs a circle (its own, else the meeting's) to land on the board
     const taskCircle = typeof t?.circle === 'string' && slugs.has(t.circle) ? t.circle : circle
     if (!taskTitle || !taskCircle) continue
     const idx = typeof t.item === 'number' && Number.isInteger(t.item) && items[t.item] ? t.item : null
     const date = ymd(t.due_date)
-    const pid = typeof t.project_id === 'string' && projectCircle.get(t.project_id) === taskCircle ? t.project_id : null
     tasks.push({
       title: taskTitle, circle: taskCircle,
       person: personOf(str(t.person, 80) ?? (idx !== null ? items[idx].speaker : null)),
-      project_id: pid, due_date: date, due_time: date ? hhmm(t.due_time) : null,
+      project_id: null, due_date: date, due_time: date ? hhmm(t.due_time) : null,
       item_index: idx, source_text: str(t.source, 400) ?? (idx !== null ? items[idx].text : taskTitle),
     })
   }
