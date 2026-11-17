@@ -3,6 +3,30 @@
 Instructions for AI coding agents (Codex, Cursor, Claude Code, Copilot and others).
 The full project context is in [`CLAUDE.md`](./CLAUDE.md); read it first.
 
+## Design goal: the community's second brain (every change passes this filter)
+
+MyCoNet helps the community **keep its second brain organized and up to date** with what comes in from
+**meetings** and from **people using the platform** (projects, tasks, agreements, decisions, governance,
+Blueprint, members and circles). Before designing or changing anything, answer these questions and say
+the answers in the PR:
+
+1. **What knowledge does this change create or change?** (A decision, a task, a project, an agreement, a
+   person's role, an event, a document.)
+2. **Where does it land in the second brain?** The right folder, with front matter (circle(s),
+   visibility, source, a link back to the portal) and links to related notes. If it doesn't land
+   there yet, say why and add it to the plan as a follow-up.
+3. **Does it stay current?** Update the existing note in place, never add a near-duplicate. When
+   something is renamed, finished or archived, the note says so.
+4. **Who may read it?** `visibility: members | circle`, as in the portal. Never transcripts, private
+   messages or personal data.
+5. **Can people see and undo what the agent did?** Every write is logged (`agent_actions`) and can be
+   reverted (it's git).
+
+Today only meeting notes are written (`web/src/modules/m18-meetings/lib/second-brain.ts`,
+`operations/meetings/`). Each new feature should move the rest of the platform toward the same.
+
+---
+
 ## Rules
 
 - **Start from the newest code, every session.** First run `cd web && npm run start-work`
