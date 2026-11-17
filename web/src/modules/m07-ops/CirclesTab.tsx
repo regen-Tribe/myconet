@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { MeetingNotesLink } from '@/modules/m18-meetings/MeetingNotesLink'
 import { PmLink } from './PmLink'
+import { AddCircleButton } from '@/modules/m04-blueprint/AddCircleButton'
 import { useCircles } from '@/core/components/CirclesProvider'
 import { CircleLeadName } from '@/core/components/CircleLeadName'
 import { isActiveProject } from '@/core/lib/project-status'
@@ -78,6 +79,8 @@ export function CirclesTab({
           </div>
         )}
       </div>
+
+      {isAdmin && <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: -6 }}><AddCircleButton /></div>}
 
       {/* One card per circle */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
