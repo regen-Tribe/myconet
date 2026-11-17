@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.27.0 — 2026-11-17
+
+- **+ Add circle** for admins on Operations › Circles and the `/org` chart (asked for in Protopia, for an Incubator
+  circle): name, one-line purpose (the org-chart description the meeting agent and the project manager read), emoji;
+  a free colour; its org-chart unit is made by the existing trigger. Before, circles were added only in Blueprint ›
+  ◯ Circles. No database change.
+
 ## v4.26.0 — 2026-11-17
 
 - **Ask / Do** (Phase 7 step 3; asked for in Protopia: "message the agent from MyCoNet to tell it to group the 4

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { MeetingNotesLink } from '@/modules/m18-meetings/MeetingNotesLink'
 import { PmLink } from '@/modules/m07-ops/PmLink'
+import { AddCircleButton } from '@/modules/m04-blueprint/AddCircleButton'
 import { createClient } from '@/core/lib/supabase/client'
 import { useCircles } from '@/core/components/CirclesProvider'
 import { CircleLeadName } from '@/core/components/CircleLeadName'
@@ -154,7 +155,8 @@ export default function OrgChartClient({
   return (
     <div className="ev-page" style={{ padding: '26px 32px 60px' }}>
       {/* ── Page head ─────────────────────────────────────────────────── */}
-      <div style={{ marginBottom: 22 }}>
+      <div style={{ marginBottom: 22, position: 'relative' }}>
+        {role === 'admin' && <div style={{ position: 'absolute', right: 0, top: 0 }}><AddCircleButton /></div>}
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m17) 10%, var(--surface))', color: 'var(--m17)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
           Module 17 · Circles
         </div>
