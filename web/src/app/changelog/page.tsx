@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.24.2',
+    date: '2026-11-17',
+    title: 'No more “(for Unassigned)”',
+    items: [
+      'Meeting tasks no longer get “(for Unassigned)” or “(for Kitchen Circle)” in their title: those are Fireflies headings, not people.',
+    ],
+  },
+  {
     version: 'v4.24.1',
     date: '2026-11-17',
     title: 'Meeting tasks always on the main board',

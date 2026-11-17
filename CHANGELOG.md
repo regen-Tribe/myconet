@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.24.2 — 2026-11-17
+
+- **Fix:** Fireflies' action-item headings that aren't people ("Unassigned", "Everyone", "Team", "<Name> Circle")
+  were taken for a person, so tasks got "(for Unassigned)" in their title. They now mean no person, in the AI's
+  answer and without it. (Protopia: 73 existing titles cleaned in the database.)
+
 ## v4.24.1 — 2026-11-17
 
 - **Meeting tasks always on the main board** (asked for in Protopia): the agent no longer files a task into a
