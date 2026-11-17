@@ -4,7 +4,7 @@ import { moduleOn } from '@/core/lib/modules'
 import { fetchTranscript, transcriptFields } from '@/modules/m18-meetings/lib/fireflies'
 import { processMeeting } from '@/modules/m18-meetings/lib/pipeline'
 
-// Fireflies calls this when a recording sent by /api/meetings/upload is transcribed
+// Fireflies calls this when a recording sent by /api/meetings/upload is transcribed (before the summary)
 // (?key=FIREFLIES_WEBHOOK_SECRET). clientReferenceId is our meeting_transcripts id.
 // Then, after the reply, the meeting pipeline runs: the agent chooses the circle(s) from the content
 // (or keeps the one chosen at upload), puts the tasks on the board, saves the second-brain note and
@@ -21,14 +21,21 @@ export async function POST(req: NextRequest) {
   if (!meetingId || !ref) return NextResponse.json({ received: true, note: 'missing meetingId/clientReferenceId' })
 
   const admin = createServiceClient()
+  let summarized = false
   try {
     const t = await fetchTranscript(meetingId)
-    await admin.from('meeting_transcripts').update({ fireflies_id: meetingId, ...transcriptFields(t), error: null }).eq('id', ref)
+    const fields = transcriptFields(t)
+    summarized = !!fields.summary
+    await admin.from('meeting_transcripts').update({ fireflies_id: meetingId, ...fields, error: null }).eq('id', ref)
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Transcript fetch failed'
     await admin.from('meeting_transcripts').update({ status: 'error', error: message }).eq('id', ref)
     return NextResponse.json({ received: true, error: message })
   }
+  // This webhook fires when the transcript is ready; Fireflies writes the summary and action items a
+  // little later. Without them the agent waits: /api/fireflies-ingest fills them in when the meeting is
+  // summarized (Fireflies' account webhook, with this meeting's client_reference_id) and runs it then.
+  if (!summarized) return NextResponse.json({ received: true, waiting: 'summary not ready yet' })
   // After the reply, so Fireflies isn't kept waiting. Short AI budget: the Worker's waitUntil
   // lasts about 30 s; if the AI is slower the action items go on the board as they are.
   after(async () => {

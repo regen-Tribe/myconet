@@ -13,7 +13,13 @@ Built by Sonia for Protopia (Nov 16). Meeting recordings are transcribed and sum
    action items and transcript (`status: done`, or `error`).
 2. **Recorded in Fireflies directly**: Fireflies' webhook calls
    `/api/fireflies-ingest?key=PROTOPIA_INGEST_SECRET` → a new row with `source: fireflies_direct`,
-   `needs_review: true` (skipped if that Fireflies id is already in).
+   `needs_review: true` (skipped if that Fireflies id is already in with its summary).
+
+**Uploads get their summary later.** The per-upload webhook fires when the transcript is ready, before
+Fireflies has written the summary and action items, so it saves the transcript and waits. When the
+meeting is summarized, Fireflies' account webhook (or the community's Fireflies router) calls
+`/api/fireflies-ingest` with the upload's `client_reference_id`: the row is filled in and the agent
+reads it then. The same call also fills any meeting that's here without a summary.
 
 ## Secrets (Cloudflare, `npx wrangler secret put …`)
 
