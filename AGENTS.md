@@ -31,6 +31,25 @@ of the platform toward the same, and toward agents reaching it through MyCoNet w
 
 ---
 
+## Work log discipline (every change ends here)
+
+**Any change, PR, push, release or deploy ends with the work logs updated, the same day.** A merge or deploy
+that no log mentions looks like it never happened: the log is the handoff to whoever works next.
+
+- **In this repo:** a core release goes in `CHANGELOG.md` (and `web/src/app/changelog/page.tsx`); a community's
+  change, deploy, migration or new secret (names only) in its `instance/log.md`, and a community-only code change
+  also in `instance/LOCAL-CHANGES.md`.
+- **The team's work log**, if your team keeps one outside the repo (Oscar's team: the agnetO vault,
+  `projects/active/myconet/WORKLOG.md` for the detail and the root `WORKLOG.md` as the index): after each working
+  session, what changed with its PR number, tag, commit or deploy id; the gotchas; and the open items, each with
+  **who it's waiting on**. Refresh the summary at the top when the status changes.
+- A decision that matters beyond the session goes into the decisions log too, and, if it's a design rule, into
+  this file.
+- Never write that something is done unless a log or a live check says so; a half-finished change is logged as
+  half-finished, with the blocker named.
+
+---
+
 ## Rules
 
 - **Start from the newest code, every session.** First run `cd web && npm run start-work`
