@@ -1,5 +1,6 @@
--- Meeting pipeline (v4.21.0): when a meeting's notes are in, the agent drafts its tasks on the
--- board, saves a note to the community's second brain and emails the circle's leads.
+-- Meeting pipeline (v4.21.0): when Fireflies' notes are in, the agent decides whether it's a
+-- community meeting and which circle(s) it's about, drafts its tasks on the board, saves a note to
+-- the community's second brain and emails the leads of the circles involved.
 -- Rewrites the goals of Sonia's Protopia PR #53 on top of v4.20.0's task data.
 
 -- ── Meetings: who can see them, and what the pipeline did ───────────────────
@@ -13,7 +14,14 @@ alter table public.meeting_transcripts
   add column if not exists notes_url text,
   add column if not exists notes_emailed_at timestamptz,
   add column if not exists notes_email_count integer,
-  add column if not exists notes_email_error text;
+  add column if not exists notes_email_error text,
+  -- Who chose the circle (a person, or the agent from the meeting's content) and the agent's reason
+  add column if not exists circle_source text,
+  add column if not exists agent_note text;
+
+alter table public.meeting_transcripts drop constraint if exists meeting_transcripts_circle_source_check;
+alter table public.meeting_transcripts add constraint meeting_transcripts_circle_source_check
+  check (circle_source is null or circle_source in ('person', 'agent'));
 
 comment on column public.meeting_transcripts.visibility is
   'community: every member reads it; circle: only the circle''s members, its leads and admins';

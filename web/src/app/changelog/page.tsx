@@ -7,8 +7,8 @@ const ENTRIES = [
     date: '2026-11-17',
     title: 'Meetings turn into tasks on the board',
     items: [
-      'When a meeting’s notes are in, the agent puts its tasks on the board as drafts: who does what, by when, in the right project (or the circle’s Chores). It reads the whole meeting, not just the action items, and skips what’s already on the board.',
-      'The circle’s leads get the notes by email, with links to the tasks. People who aren’t on the portal yet are listed so their tasks can be passed on.',
+      'Meetings recorded in Fireflies turn into tasks by themselves: the agent reads the whole meeting, works out which circle it’s about (or that it’s community-wide), and puts each task on the board as a draft in the right circle and project, with who and by when. It skips what’s already on the board, and leaves meetings that aren’t the community’s alone.',
+      'The leads of the circles involved get the notes by email, with links to the tasks. People who aren’t on the portal yet are listed so their tasks can be passed on.',
       'The notes are saved to the community’s second brain too (summary and tasks; the transcript stays in the portal).',
       'Meetings has filters by circle, My circles and search, and every circle has a Meeting notes button. A meeting can be Circle only, for just that circle.',
       'On the board, a Drafts card shows the tasks waiting to be confirmed.',

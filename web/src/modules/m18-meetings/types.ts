@@ -17,6 +17,10 @@ export interface MeetingListItem {
   summary: string | null
   action_items: ActionItem[]
   processed_at: string | null
+  /** Who chose the circle: a person, or the agent from the meeting's content */
+  circle_source: 'person' | 'agent' | null
+  /** The agent's reason for its choice, or why it skipped the meeting */
+  agent_note: string | null
 }
 
 export interface Meeting extends MeetingListItem {

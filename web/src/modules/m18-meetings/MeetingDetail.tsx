@@ -69,26 +69,30 @@ function LeadBar({ m, drafts, emailOn, secondBrainOn }: { m: Meeting; drafts: nu
           🔒 Circle only
         </label>
         {changed && (
-          <button onClick={() => saveSettings(!m.processed_at && ready && !!circle)} disabled={!!busy} style={btn(true)}>
-            {busy?.startsWith('settings') ? 'Saving…' : !m.processed_at && ready && circle ? 'Save and put tasks on the board' : 'Save'}
+          <button onClick={() => saveSettings(!m.processed_at && ready)} disabled={!!busy} style={btn(true)}>
+            {busy?.startsWith('settings') ? 'Saving…' : !m.processed_at && ready ? 'Save and put tasks on the board' : 'Save'}
           </button>
         )}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {drafts > 0 && <button onClick={() => act('confirm')} disabled={!!busy} style={btn(true)}>{busy === 'confirm' ? 'Confirming…' : `Confirm all ${drafts} draft${drafts === 1 ? '' : 's'}`}</button>}
-        {ready && m.circle && !changed && (
-          <button onClick={() => act('process')} disabled={!!busy || running} style={btn()} title="Adds tasks that aren’t on the board yet and rewrites the second-brain note">
-            {busy === 'process' || running ? 'Working…' : m.processed_at ? 'Look for new tasks again' : 'Put tasks on the board'}
+        {ready && !changed && (
+          <button onClick={() => act('process')} disabled={!!busy || running} style={btn()} title="The agent reads the meeting again: adds tasks that aren’t on the board yet and rewrites the second-brain note">
+            {busy === 'process' || running ? 'Working…' : m.processed_at ? 'Look for new tasks again' : m.circle ? 'Put tasks on the board' : 'Let the agent read it'}
           </button>
         )}
-        {emailOn && ready && m.circle && m.processed_at && (
+        {emailOn && ready && m.processed_at && (
           <button onClick={() => act('email')} disabled={!!busy} style={btn()}>{busy === 'email' ? 'Sending…' : m.notes_emailed_at ? 'Email the notes again' : 'Email the notes'}</button>
         )}
       </div>
       <div style={{ fontSize: 12, color: 'var(--ink-3)', lineHeight: 1.6 }}>
         {!ready ? 'Waiting for the notes from Fireflies.'
-          : !m.circle ? 'Choose the circle: then the agent drafts the tasks on the board, saves the notes to the second brain and emails the circle’s leads.'
-          : m.processed_at ? `Agent ran ${ago(m.processed_at)}.` : 'Not processed yet.'}
+          : running ? 'The agent is reading this meeting…'
+          : m.processed_at
+            ? <>Agent ran {ago(m.processed_at)}. {m.circle_source === 'agent' ? (m.circle ? 'It chose the circle' : 'It found this meeting community-wide') : m.circle ? 'The circle was set by a person' : ''}{m.agent_note ? `: ${m.agent_note}` : '.'} Change the circle above if it’s wrong (tasks already on the board stay where they are).</>
+          : m.needs_review && m.agent_note
+            ? <>The agent didn’t put anything on the board: {m.agent_note} If this is a community meeting, choose its circle and save.</>
+            : 'The agent hasn’t read this meeting yet.'}
         {m.notes_emailed_at ? ` Emailed ${m.notes_email_count ?? 0} on ${ago(m.notes_emailed_at)}.` : ''}
         {!emailOn && ' Notes email is off (no SMTP password set).'}
         {!secondBrainOn && ' Saving to the second brain is off.'}
@@ -119,7 +123,8 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
       <h1 style={{ fontFamily: 'var(--display)', fontSize: 27, color: 'var(--ink)', lineHeight: 1.15, margin: '16px 0 8px' }}>{m.title}</h1>
       <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>
         {fmtDay(m.meeting_date ?? m.created_at)}
-        {meta && <> · <span style={{ color: meta.color, fontWeight: 600 }}>{meta.emoji} {meta.label}</span></>}
+        {meta ? <> · <span style={{ color: meta.color, fontWeight: 600 }}>{meta.emoji} {meta.label}</span>{m.circle_source === 'agent' && <span title={m.agent_note ?? ''}> (chosen by the agent)</span>}</>
+          : m.processed_at ? ' · Community-wide' : ''}
         {m.visibility === 'circle' && ' · 🔒 Circle only'}
         {m.attendees.length > 0 && ` · ${m.attendees.join(', ')}`}
       </div>
@@ -128,7 +133,7 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
       {canManage && <LeadBar m={m} drafts={drafts} emailOn={emailOn} secondBrainOn={secondBrainOn} />}
       {!canManage && m.needs_review && (
         <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 10, background: 'color-mix(in srgb, var(--m18) 10%, var(--surface))', color: 'var(--m18)', fontSize: 13.5 }}>
-          Recorded straight in Fireflies: a lead sets its circle before its tasks go on the board.
+          The agent wasn’t sure this is a community meeting, so a lead is checking it before anything goes on the board.
         </div>
       )}
 
@@ -154,7 +159,7 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
           <div style={sectionStyle}>Tasks on the board{drafts ? ` · ${drafts} to confirm` : ''}</div>
           {tasks.length === 0 ? (
             <div style={{ fontSize: 14, color: 'var(--ink-3)' }}>
-              {m.processed_at ? 'No tasks came out of this meeting.' : m.circle ? 'The agent hasn’t drafted the tasks yet.' : 'The tasks go on the board once the meeting has a circle.'}
+              {m.processed_at ? 'No tasks came out of this meeting.' : m.needs_review ? 'Nothing on the board: this meeting is waiting for a lead.' : 'The agent hasn’t read this meeting yet.'}
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

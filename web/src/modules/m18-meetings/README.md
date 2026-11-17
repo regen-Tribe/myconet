@@ -31,34 +31,42 @@ historical), `SUPABASE_SERVICE_ROLE_KEY` (the webhooks write with it: `core/lib/
 
 ## The meeting pipeline (v4.21.0)
 
-When a meeting's notes are in **and it has a circle**, `lib/pipeline.ts` (service role) runs:
+Most meetings come **straight from Fireflies** (`/api/fireflies-ingest`); uploads (`/api/fireflies-webhook`)
+work the same way. When the notes are in, `lib/pipeline.ts` (service role) runs right after the reply
+(`after()`, a 22 s AI budget, since waitUntil lasts about 30 s):
 
-1. **Tasks on the board, as drafts.** `lib/draft-tasks.ts` (MiniMax M3.1-Flash, low reasoning) reads Fireflies'
-   action items, the summary and the transcript (first 40k characters), plus the circle's open projects and
-   open tasks. It writes one task per agreed piece of work, with the person, a date/time if one was said
-   (relative to the meeting day, in `COMMUNITY_TIME_ZONE`), and the best-matching open project, or `null` for
-   the circle's **Chores** (routine upkeep). It skips what's already on the board, and adds what was clearly
-   agreed but missed by Fireflies. Without the AI (no key, over the time budget, unreadable answer) Fireflies'
-   action items go on as they are. Tasks get `source='meeting'`, `source_meeting_id`, `source_item`,
-   `needs_review=true` (the Draft badge).
+1. **The agent reads the meeting** (`lib/draft-tasks.ts`, MiniMax M3.1-Flash, low reasoning, one call) against
+   the community's circles (with their org-chart descriptions), the open projects and the open tasks:
+   - **Is it a community meeting?** The same Fireflies account may record other calls. No, or not sure →
+     nothing goes on the board, to the second brain or by email; the meeting waits as *Needs review* with the
+     agent's reason (`agent_note`), and a lead can set the circle to go on.
+   - **Its main circle** (most of the discussion and work), or none for a community-wide meeting (a morning
+     sync with circle reports). A circle a person chose (at upload or on the meeting page) is kept.
+     `circle_source` says who chose it.
+   - **The tasks:** one per agreed piece of work, from the action items, summary and transcript (first 40k
+     characters); adds what was agreed but missed by Fireflies, skips what's on the board. **Each task has its
+     own circle**, a person, a date/time if one was said (relative to the meeting day, in
+     `COMMUNITY_TIME_ZONE`), and the best-matching open project of its circle, or that circle's **Chores**
+     (routine upkeep). Drafts: `needs_review=true`, `source='meeting'`, `source_meeting_id`, `source_item`.
+   - Without the AI (no key, over budget, unreadable): the action items go on as they are, but only when a
+     person set the circle; otherwise the meeting waits for a lead.
 2. **People:** `lib/people.ts` matches the name to a member (full name, username, a first name only one
-   member has). No match is normal (not everyone has an account): the task keeps "(for Name)" in its title
-   and no assignee, and the email lists them as "not on MyCoNet yet".
+   member has). No match is normal (not everyone has an account): the task keeps "(for Name)" and no
+   assignee, and the email lists them as "not on MyCoNet yet".
 3. **No duplicates:** `meeting_action_links` (meeting + normalised title) is claimed before each task is
    written, so a re-run or a repeated webhook adds only new tasks.
 4. **Second brain** (`lib/second-brain.ts`): `operations/meetings/YYYY-MM-DD <title>.md` in `knowledge.repo`,
-   committed by "MyCoNet agent" through the GitHub API (`SECOND_BRAIN_GITHUB_TOKEN`): front matter (circle,
-   `visibility: members|circle`), who was there, the summary, the tasks with links. **Never the transcript.**
-5. **Email** (`lib/notes-email.ts`, based on Sonia's; `lib/smtp.ts` is hers unchanged): to the **leads of the
-   meeting's circle at the email on their account**, plus `meetings.notesEmail.alwaysTo` usernames. Not to
+   committed by "MyCoNet agent" (`SECOND_BRAIN_GITHUB_TOKEN`): front matter (main circle or `community`,
+   `circles: […]`, `visibility: members|circle`), who was there, the summary, the tasks grouped by circle with
+   links. **Never the transcript.**
+5. **Email** (`lib/notes-email.ts`, based on Sonia's; `lib/smtp.ts` is hers unchanged): to the **leads of every
+   circle involved, at the email on their account**, plus `meetings.notesEmail.alwaysTo` usernames. Not to
    outside attendees. Once automatically; "Email the notes again" sends again.
-6. **Log:** every task, note and email in `agent_actions` (admins read it).
+6. **Log:** circle choice, skips, every task, note and email in `agent_actions` (admins read it).
 
-**When it runs:** uploads with a circle → right after Fireflies' webhook (`after()`, a 20 s AI budget, since
-waitUntil lasts about 30 s). Uploads without a circle and direct Fireflies recordings (`needs_review`) → when a
-lead sets the circle on the meeting page ("Save and put tasks on the board"). Leads can also run it again
-("Look for new tasks again"), confirm all drafts, and email again: `POST /api/meetings/[id]` with
-`action: settings | process | email | confirm` (admins, circle leads, project leads).
+Leads (admins, circle leads, project leads) on the meeting page: change the circle or Circle only, let the agent
+read it / look for new tasks again, confirm all drafts, email again: `POST /api/meetings/[id]` with
+`action: settings | process | email | confirm`. Changing the circle later doesn't move tasks already on the board.
 
 **Who reads meetings:** joining members and above, as before, except **Circle only** meetings
 (`visibility='circle'`): only that circle's members (its teams in /org), its leads and admins

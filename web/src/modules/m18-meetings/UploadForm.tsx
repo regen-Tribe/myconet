@@ -74,11 +74,11 @@ export default function UploadForm({ userId }: { userId: string }) {
         <div>
           <label style={label} htmlFor="mt-circle">Circle</label>
           <select id="mt-circle" style={input} value={circle} onChange={e => setCircle(e.target.value)}>
-            <option value="">Not sure yet</option>
+            <option value="">Let the agent choose</option>
             {circles.slugs.map(c => <option key={c} value={c}>{circles.meta(c).emoji} {circles.meta(c).label}</option>)}
           </select>
           <p style={{ fontSize: 12, color: 'color-mix(in srgb, var(--ink) 50%, transparent)', margin: '6px 0 0', lineHeight: 1.5 }}>
-            With a circle, the meeting’s tasks go on the board as drafts as soon as the notes are ready, and the circle’s leads get the notes by email. Without one, a lead sets it later.
+            When the notes are ready, the agent puts the meeting’s tasks on the board as drafts and emails the leads. Without a circle, it chooses one from what was said (a lead can change it).
           </p>
           {circle && (
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--ink-2)', marginTop: 10, cursor: 'pointer' }}>

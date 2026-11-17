@@ -33,11 +33,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (body.action === 'settings') {
     const changes: Record<string, unknown> = {}
     if (body.circle !== undefined) {
-      if (body.circle === null || body.circle === '') changes.circle = null
+      if (body.circle === null || body.circle === '') { changes.circle = null; changes.circle_source = null }
       else {
         const { data: c } = await supabase.from('circles').select('slug').eq('slug', String(body.circle)).is('archived_at', null).maybeSingle()
         if (!c) return NextResponse.json({ error: 'No such circle.' }, { status: 400 })
         changes.circle = c.slug
+        changes.circle_source = 'person'
         changes.needs_review = false
       }
     }

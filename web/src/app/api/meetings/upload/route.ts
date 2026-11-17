@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const title = typeof body.title === 'string' && body.title.trim() ? body.title.trim().slice(0, 300) : 'Untitled meeting'
   const attendees = Array.isArray(body.attendees) ? body.attendees.filter((a): a is string => typeof a === 'string').slice(0, 50) : []
   const meetingDate = typeof body.meeting_date === 'string' && body.meeting_date ? body.meeting_date : null
-  // With a circle, the meeting's tasks go on the board as soon as Fireflies is done
+  // Optional: without one, the agent chooses the circle from what was said
   const circleAsked = typeof body.circle === 'string' && body.circle ? body.circle : null
   const { data: circleRow } = circleAsked
     ? await supabase.from('circles').select('slug').eq('slug', circleAsked).is('archived_at', null).maybeSingle()
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
   const admin = createServiceClient()
   const { data: row, error } = await admin.from('meeting_transcripts')
-    .insert({ title, attendees, audio_path: audioPath, meeting_date: meetingDate, created_by: user.id, status: 'processing', circle, visibility })
+    .insert({ title, attendees, audio_path: audioPath, meeting_date: meetingDate, created_by: user.id, status: 'processing', circle, circle_source: circle ? 'person' : null, visibility })
     .select('id').single()
   if (error || !row) return NextResponse.json({ error: error?.message || 'Insert failed' }, { status: 500 })
 

@@ -8,13 +8,16 @@ import type { ActionItem, MeetingVisibility } from '../types'
 
 export const secondBrainOn = () => Boolean(process.env.KNOWLEDGE_REPO && process.env.SECOND_BRAIN_GITHUB_TOKEN)
 
-export interface NoteTask { title: string; person: string | null; onMyCoNet: boolean; url: string; draft: boolean; when: string | null }
+export interface NoteTask { title: string; person: string | null; onMyCoNet: boolean; url: string; draft: boolean; when: string | null; circle: string | null; circleName: string }
 
 export interface NoteInput {
   id: string
   title: string
   date: string            // local YYYY-MM-DD
+  /** The meeting's main circle; null = community-wide */
   circle: { slug: string; name: string } | null
+  /** Every circle with a task from this meeting (and the main one) */
+  circles: { slug: string; name: string }[]
   visibility: MeetingVisibility
   attendees: string[]
   summary: string | null
@@ -33,7 +36,8 @@ export function buildNote(n: NoteInput): string {
     '---',
     `title: ${JSON.stringify(n.title)}`,
     `date: ${n.date}`,
-    `circle: ${n.circle?.slug ?? ''}`,
+    `circle: ${n.circle?.slug ?? 'community'}`,
+    `circles: [${n.circles.map(c => c.slug).join(', ')}]`,
     // Who may read it: everyone in the community, or only the circle (Circle only in the portal)
     `visibility: ${n.visibility === 'circle' ? 'circle' : 'members'}`,
     'source: myconet-meeting',
@@ -46,16 +50,23 @@ export function buildNote(n: NoteInput): string {
     '',
     `# ${n.title}`,
     '',
-    `*${n.date}${n.circle ? ` · ${n.circle.name} circle` : ''}${n.visibility === 'circle' ? ' · circle only' : ''}. Notes from Fireflies, saved by the MyCoNet agent. [Open in the portal](${meetingUrl}) for the full transcript.*`,
+    `*${n.date} · ${n.circle ? `${n.circle.name} circle` : 'community-wide'}${n.visibility === 'circle' ? ' · circle only' : ''}. Notes from Fireflies, saved by the MyCoNet agent. [Open in the portal](${meetingUrl}) for the full transcript.*`,
     '',
   ]
   if (n.attendees.length) lines.push(`**Who was there:** ${n.attendees.join(', ')}`, '')
   lines.push('## Summary', '', n.summary?.trim() || '_No summary._', '')
   lines.push('## Tasks on the board', '')
   if (n.tasks.length) {
-    for (const t of n.tasks) {
-      const who = t.person ? `**${t.person}**${t.onMyCoNet ? '' : ' (not on MyCoNet yet)'}: ` : ''
-      lines.push(`- ${who}${t.title}${t.when ? ` · ${t.when}` : ''} → [on the board](${t.url})${t.draft ? ' (draft)' : ''}`)
+    // Grouped by circle when the meeting touched several
+    const groups = new Map<string, NoteTask[]>()
+    for (const t of n.tasks) groups.set(t.circleName, [...(groups.get(t.circleName) ?? []), t])
+    for (const [circleName, list] of groups) {
+      if (groups.size > 1) lines.push(`### ${circleName}`, '')
+      for (const t of list) {
+        const who = t.person ? `**${t.person}**${t.onMyCoNet ? '' : ' (not on MyCoNet yet)'}: ` : ''
+        lines.push(`- ${who}${t.title}${t.when ? ` · ${t.when}` : ''} → [on the board](${t.url})${t.draft ? ' (draft)' : ''}`)
+      }
+      if (groups.size > 1) lines.push('')
     }
   } else {
     lines.push('_No tasks came out of this meeting._')

@@ -9,7 +9,7 @@ export default async function MeetingsPage({ searchParams }: { searchParams: Pro
   // RLS: joining members and above; Circle-only meetings only for that circle, its leads and admins
   const [{ data }, { data: profile }, { data: teams }] = await Promise.all([
     supabase.from('meeting_transcripts')
-      .select('id, title, meeting_date, attendees, status, source, needs_review, created_at, circle, visibility, summary, action_items, processed_at')
+      .select('id, title, meeting_date, attendees, status, source, needs_review, created_at, circle, visibility, summary, action_items, processed_at, circle_source, agent_note')
       .order('created_at', { ascending: false }),
     supabase.from('user_profiles').select('role, lead_circles').eq('id', user.id).maybeSingle(),
     supabase.from('org_unit_members').select('org_units(circle)').eq('user_id', user.id),
