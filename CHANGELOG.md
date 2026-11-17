@@ -5,6 +5,25 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.23.0 — 2026-11-17
+
+- **Meeting names:** the agent names each meeting from the title people gave and the content, after the date:
+  `17.11.2026 Kitchen lead handover and stock routines`. `original_title` keeps what they called it.
+- **The whole meeting in the second brain:** the note now has topics, keywords, Fireflies' bullet points, notes and
+  outline as well as the summary, tasks and action items, and links the **transcript**, saved in
+  `transcripts/` beside it (asked for by Oscar; the assistant's library has it leads-only). The folder is a setting,
+  `knowledge.meetingsFolder` (default `operations/meetings`). A renamed meeting or moved folder moves the note: the
+  agent removes its own old files (never a person's).
+- **The sweep:** webhooks' runs could stop before the note (a Worker gets about 30 s after replying; Protopia's
+  first six direct meetings have tasks but no note). `/api/meetings/sweep` (secret `MEETINGS_SWEEP_SECRET`) is
+  called every 10 minutes by the database (pg_cron + pg_net; URL and key in Vault, see the migration) when a
+  meeting is unprocessed or its note is older, refreshes missing Fireflies notes and gives the AI 90 s.
+- A Fireflies heading such as "Kitchen Circle" is no longer taken for a person ("(for Kitchen Circle)").
+- **Migration** `20261126000000_meeting_names_and_sweep.sql`: `original_title`, `notes_version`,
+  `sweep_attempts`; pg_net + pg_cron; `private.meetings_sweep()` and its schedule (does nothing until the
+  Vault secrets exist).
+- Design goal: the second brain is part of the offering, used **through MyCoNet or any agent tool**.
+
 ## v4.22.1 — 2026-11-17
 
 - **Fix (privacy):** `/api/fireflies-events` added any meeting it didn't know, so a Fireflies account that also

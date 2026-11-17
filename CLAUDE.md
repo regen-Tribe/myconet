@@ -8,8 +8,10 @@ Read this first. It gives an AI coding agent (or a fresh contributor) everything
 
 MyCoNet helps the community **keep its second brain organized and up to date** with what comes in from
 **meetings** and from **people using the platform** (projects, tasks, agreements, decisions, governance,
-Blueprint, members and circles). Before designing or changing anything, answer these questions and say
-the answers in the PR:
+Blueprint, members and circles). The second brain is part of what MyCoNet offers: the community works
+with it **through MyCoNet or any agent tool** (Claude, ChatGPT, Cursor, Obsidian…), so it must stay
+readable and well organized on its own, not only inside the portal. Before designing or changing
+anything, answer these questions and say the answers in the PR:
 
 1. **What knowledge does this change create or change?** (A decision, a task, a project, an agreement, a
    person's role, an event, a document.)
@@ -18,13 +20,15 @@ the answers in the PR:
    there yet, say why and add it to the plan as a follow-up.
 3. **Does it stay current?** Update the existing note in place, never add a near-duplicate. When
    something is renamed, finished or archived, the note says so.
-4. **Who may read it?** `visibility: members | circle`, as in the portal. Never transcripts, private
-   messages or personal data.
+4. **Who may read it?** `visibility: members | circle`, as in the portal. Meeting transcripts only in
+   their own file beside the note (leads-only in the assistant's library); never private messages or
+   personal data.
 5. **Can people see and undo what the agent did?** Every write is logged (`agent_actions`) and can be
    reverted (it's git).
 
-Today only meeting notes are written (`web/src/modules/m18-meetings/lib/second-brain.ts`,
-`operations/meetings/`). Each new feature should move the rest of the platform toward the same.
+Today only meetings are written (`web/src/modules/m18-meetings/lib/second-brain.ts`, the community's
+`knowledge.meetingsFolder`: a note per meeting and its transcript). Each new feature should move the rest
+of the platform toward the same, and toward agents reaching it through MyCoNet with the same permissions.
 
 ---
 

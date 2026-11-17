@@ -170,6 +170,9 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
         {meta && <Link href={`/meetings?circle=${m.circle}`} style={{ color: meta.color, textDecoration: 'none' }}>{meta.emoji} {meta.label} meetings</Link>}
       </div>
       <h1 style={{ fontFamily: 'var(--display)', fontSize: 27, color: 'var(--ink)', lineHeight: 1.15, margin: '16px 0 8px' }}>{m.title}</h1>
+      {m.original_title && m.original_title !== m.title && (
+        <div style={{ fontSize: 12, color: 'var(--ink-4)', marginBottom: 6 }}>Recorded as “{m.original_title}”</div>
+      )}
       <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>
         {fmtDay(m.meeting_date ?? m.created_at)}
         {meta ? <> · <span style={{ color: meta.color, fontWeight: 600 }}>{meta.emoji} {meta.label}</span>{m.circle_source === 'agent' && <span title={m.agent_note ?? ''}> (chosen by the agent)</span>}</>

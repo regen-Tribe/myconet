@@ -26,6 +26,8 @@ export interface MeetingListItem {
 }
 
 export interface Meeting extends MeetingListItem {
+  /** What people (or Fireflies) called it, before the agent named it */
+  original_title: string | null
   transcript: string | null
   error: string | null
   created_by: string | null
