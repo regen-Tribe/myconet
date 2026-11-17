@@ -17,6 +17,8 @@ Review of v4.20.0–v4.21.0:
 - Less duplication: one `one()` for PostgREST embeds (`core/lib/rows.ts`), one `DraftBadge`
   (`core/components/DraftBadge.tsx`), one `NotesTask` shape for the note and the email, one `transcriptFields()`
   for both Fireflies routes; the unused `email: 'skip'` is gone.
+- Web/mobile check: the circle's **Meeting notes** button sits under the circle name in Operations › Circles (it
+  squeezed long names), the org chart's steward circle has one too, and both use one `MeetingNotesLink`.
 
 ## v4.21.0 — 2026-11-17
 
