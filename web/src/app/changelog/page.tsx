@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.23.1',
+    date: '2026-11-17',
+    title: 'Long meetings finish',
+    items: [
+      'Meetings with many tasks no longer stop before their second-brain note is written.',
+    ],
+  },
+  {
     version: 'v4.23.0',
     date: '2026-11-17',
     title: 'Meetings named by date and content, all of it in the second brain',

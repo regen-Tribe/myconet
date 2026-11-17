@@ -169,6 +169,15 @@ const gh = () => ({
   },
 })
 
+/** Every file path in the repo, in one call (to find a renamed meeting's old files cheaply) */
+export async function listPaths(): Promise<Set<string>> {
+  const { repo, branch, headers } = gh()
+  const res = await fetch(`https://api.github.com/repos/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`, { headers })
+  if (!res.ok) throw new Error(`GitHub ${res.status}: ${(await res.text()).slice(0, 200)}`)
+  const data = await res.json() as { tree?: { path: string; type: string }[] }
+  return new Set((data.tree ?? []).filter(t => t.type === 'blob').map(t => t.path))
+}
+
 /**
  * Removes a file the agent wrote earlier (a renamed meeting's old note); false if it's gone. Only the
  * agent's own files (source: myconet-meeting…): a note a person wrote is never removed.

@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.23.1 — 2026-11-17
+
+- **Fix:** the real reason meetings stopped before their note: a Worker may make only **50 outside calls per
+  request** (Cloudflare free plan) and the pipeline made about five per task. Tasks, their links and their log
+  entries are now written in one call each; a renamed meeting's old files are found with one repo listing; the
+  sweep does one meeting per request, and the database sends one request per waiting meeting (migration
+  `20261127000000_meetings_sweep_per_meeting.sql`).
+
 ## v4.23.0 — 2026-11-17
 
 - **Meeting names:** the agent names each meeting from the title people gave and the content, after the date:
