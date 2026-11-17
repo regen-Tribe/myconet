@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.22.1 — 2026-11-17
+
+- **Fix (privacy):** `/api/fireflies-events` added any meeting it didn't know, so a Fireflies account that also
+  records other calls (Protopia's: Sonia's account behind her filter) would have sent all of them in, past the
+  filter. It now only updates meetings already in (an upload, or one `/api/fireflies-ingest` let in); anything
+  else gets `skipped` and is never fetched or saved. A malformed `client_reference_id` no longer errors.
+- `/api/fireflies-ingest` also stores Fireflies' extra notes (the tabs), for meetings forwarded after the summary.
+
 ## v4.22.0 — 2026-11-17
 
 - **Meeting documents in tabs** (asked for in Protopia): the meeting page's Transcript box becomes a row of tabs, one

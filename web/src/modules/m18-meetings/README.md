@@ -18,8 +18,9 @@ Built by Sonia for Protopia (Nov 16). Meeting recordings are transcribed and sum
    minutes after the transcript, so the two webhooks above often get the transcript only. Its V2 webhook
    (`app.fireflies.ai/integrations/api/webhook`, events **meeting.transcribed** and **meeting.summarized**,
    URL `/api/fireflies-events`, signing secret = `FIREFLIES_SIGNING_SECRET`) fetches the notes again and runs
-   the pipeline again; a direct recording that isn't in yet is added as in 2. Notes already in are never
-   blanked. Unsigned or wrongly signed calls get a 401.
+   the pipeline again, **only for meetings already in** (an upload, or one the ingest let in). It never adds a
+   meeting: the Fireflies account may record other calls, and what comes in is decided by 1 and 2 alone
+   (Protopia: Sonia's filter in front of the ingest). Notes already in are never blanked. Unsigned or wrongly signed calls get a 401.
 
 **Meeting documents** (v4.22.0): at the bottom of a meeting page, one tab per document there is: Fireflies'
 **Notes**, **Outline**, **Bullet points**, **Topics & keywords** (`fireflies_notes`, fetched by
