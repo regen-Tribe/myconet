@@ -20,7 +20,7 @@ import { one } from '@/core/lib/rows'
 import type { ActionItem, MeetingVisibility } from '../types'
 import { draftTasks, localDay, meetingName } from './draft-tasks'
 import { itemKey, matchPerson, displayName, type PersonProfile } from './people'
-import { buildNote, buildTranscript, deleteFile, legacyNotePaths, notePath, NOTES_VERSION, saveNote, secondBrainOn, transcriptPath } from './second-brain'
+import { buildNote, buildTranscript, deleteFile, legacyNotePaths, listPaths, notePath, NOTES_VERSION, saveNote, secondBrainOn, transcriptPath } from './second-brain'
 import type { FirefliesNotes } from './fireflies'
 import { buildNotesEmail, notesEmailOn, notesRecipients, sendEmails } from './notes-email'
 
@@ -113,42 +113,69 @@ export async function processMeeting(
     if (!fixedCircle) await log('choose_circle', { circle: meetingCircle, reason: read.reason })
     if (title !== m.title) await log('name_meeting', { title, was: m.title })
 
-    // 2. The tasks, each in its circle's project or Chores
+    // 2. The tasks, each in its circle's project or Chores. Written in batches: a Worker may make only
+    // 50 outside calls per request (Cloudflare free plan), so no per-task round trips.
     let added = 0
-    const chores = new Map<string, string>()
-    for (const d of read.tasks) {
-      const key = itemKey(d.title)
-      if (!key) continue
-      const person = matchPerson(d.person, people)
-      // Claim the item first: a re-run (or a second webhook) can't add it twice
-      const { error: claimErr } = await admin.from('meeting_action_links').insert({
-        meeting_id: meetingId, item_key: key, item_index: d.item_index, item_text: d.source_text,
-        person_name: d.person, assignee_id: person?.id ?? null, added_by: opts.requestedBy,
+    const seen = new Set<string>()
+    const wanted = read.tasks.map(d => ({ d, key: itemKey(d.title), person: matchPerson(d.person, people) }))
+      .filter(w => w.key && !seen.has(w.key) && seen.add(w.key))
+    if (wanted.length) {
+      const linkRow = (w: typeof wanted[number], deliverableId: string | null = null) => ({
+        meeting_id: meetingId, item_key: w.key, item_index: w.d.item_index, item_text: w.d.source_text,
+        person_name: w.d.person, assignee_id: w.person?.id ?? null, added_by: opts.requestedBy,
+        ...(deliverableId ? { deliverable_id: deliverableId } : {}),
       })
-      if (claimErr) { if (claimErr.code !== '23505') errors.push(`link: ${claimErr.message}`); continue }
-      const unclaim = () => admin.from('meeting_action_links').delete().eq('meeting_id', meetingId).eq('item_key', key)
+      // Claim the items first: only the ones claimed now are written, so a re-run (or a second
+      // webhook at the same time) can't add a task twice
+      const { data: claimedRows, error: claimErr } = await admin.from('meeting_action_links')
+        .upsert(wanted.map(w => linkRow(w)), { onConflict: 'meeting_id,item_key', ignoreDuplicates: true }).select('item_key')
+      if (claimErr) errors.push(`link: ${claimErr.message}`)
+      const claimedKeys = new Set((claimedRows ?? []).map(r => r.item_key as string))
+      let mine = wanted.filter(w => claimedKeys.has(w.key))
+      const unclaim = (keys: string[]) => keys.length
+        ? admin.from('meeting_action_links').delete().eq('meeting_id', meetingId).in('item_key', keys).is('deliverable_id', null).then(() => {})
+        : Promise.resolve()
 
-      let projectId = d.project_id
-      if (!projectId) {
-        if (!chores.has(d.circle)) {
-          const { data, error } = await admin.rpc('chores_project_for_server', { p_circle: d.circle })
-          if (error || !data) { errors.push(`chores (${d.circle}): ${error?.message ?? 'none'}`); await unclaim(); continue }
-          chores.set(d.circle, data as string)
-        }
-        projectId = chores.get(d.circle)!
+      // Each circle's Chores project, once per circle
+      const chores = new Map<string, string>()
+      for (const c of [...new Set(mine.filter(w => !w.d.project_id).map(w => w.d.circle))]) {
+        const { data, error } = await admin.rpc('chores_project_for_server', { p_circle: c })
+        if (error || !data) errors.push(`chores (${c}): ${error?.message ?? 'none'}`)
+        else chores.set(c, data as string)
       }
+      const noProject = mine.filter(w => !w.d.project_id && !chores.has(w.d.circle))
+      await unclaim(noProject.map(w => w.key))
+      mine = mine.filter(w => w.d.project_id || chores.has(w.d.circle))
+
       // Someone without an account keeps their name in the title, so a lead can pass it on
-      const title = d.person && !person ? `${d.title} (for ${d.person})` : d.title
-      const { data: task, error: taskErr } = await admin.from('deliverables').insert({
-        project_id: projectId, title: title.slice(0, 300), assignee_id: person?.id ?? null, circle: d.circle,
-        due_date: d.due_date, due_time: d.due_date ? d.due_time : null, status: 'backlog', progress: 0,
-        source: 'meeting', source_meeting_id: meetingId, source_item: d.source_text, needs_review: true,
-        created_by: opts.requestedBy,
-      }).select('id').single()
-      if (taskErr || !task) { errors.push(`task: ${taskErr?.message ?? 'not created'}`); await unclaim(); continue }
-      await admin.from('meeting_action_links').update({ deliverable_id: task.id }).eq('meeting_id', meetingId).eq('item_key', key)
-      await log('create_task', { title, circle: d.circle, project_id: projectId, person: d.person, assignee_id: person?.id ?? null, due_date: d.due_date, due_time: d.due_time, by: read.by }, { table: 'deliverables', id: task.id })
-      added++
+      const rows = mine.map(w => {
+        const title = w.d.person && !w.person ? `${w.d.title} (for ${w.d.person})` : w.d.title
+        return {
+          w, title, projectId: w.d.project_id ?? chores.get(w.d.circle)!,
+        }
+      })
+      if (rows.length) {
+        const { data: made, error: taskErr } = await admin.from('deliverables').insert(rows.map(r => ({
+          project_id: r.projectId, title: r.title.slice(0, 300), assignee_id: r.w.person?.id ?? null, circle: r.w.d.circle,
+          due_date: r.w.d.due_date, due_time: r.w.d.due_date ? r.w.d.due_time : null, status: 'backlog', progress: 0,
+          source: 'meeting', source_meeting_id: meetingId, source_item: r.w.d.source_text, needs_review: true,
+          created_by: opts.requestedBy,
+        }))).select('id')
+        if (taskErr || !made || made.length !== rows.length) {
+          errors.push(`tasks: ${taskErr?.message ?? 'not created'}`)
+          await unclaim(rows.map(r => r.w.key))
+        } else {
+          // PostgREST returns inserted rows in the order sent
+          await admin.from('meeting_action_links')
+            .upsert(rows.map((r, i) => linkRow(r.w, made[i].id as string)), { onConflict: 'meeting_id,item_key' })
+          await admin.from('agent_actions').insert(rows.map((r, i) => ({
+            actor: ACTOR, requested_by: opts.requestedBy, action: 'create_task', meeting_id: meetingId,
+            target_table: 'deliverables', target_id: made[i].id,
+            detail: { title: r.title, circle: r.w.d.circle, project_id: r.projectId, person: r.w.d.person, assignee_id: r.w.person?.id ?? null, due_date: r.w.d.due_date, due_time: r.w.d.due_time, by: read.by },
+          })))
+          added = rows.length
+        }
+      }
     }
 
     // Every task this meeting has on the board (this run and earlier ones), for the note and email
@@ -196,8 +223,11 @@ export async function processMeeting(
         const old = [...new Set([m.notes_path as string | null, ...legacyNotePaths(day.date, [m.original_title, m.title])])]
           .filter((p): p is string => !!p && p !== path)
         const removed: string[] = []
-        for (const p of old) {
-          for (const f of [p, transcriptPath(p)]) if (await deleteFile(f, `Meeting renamed: ${title}`)) removed.push(f)
+        if (old.length) {
+          const inRepo = await listPaths()
+          for (const f of old.flatMap(p => [p, transcriptPath(p)]).filter(f => inRepo.has(f))) {
+            if (await deleteFile(f, `Meeting renamed: ${title}`)) removed.push(f)
+          }
         }
         await admin.from('meeting_transcripts').update({ notes_path: path, notes_url: saved.url, notes_version: NOTES_VERSION }).eq('id', meetingId)
         await log('save_note', { path, url: saved.url, transcript: m.transcript ? transcriptPath(path) : null, removed })

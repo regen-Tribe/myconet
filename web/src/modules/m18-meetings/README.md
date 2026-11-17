@@ -83,8 +83,9 @@ work the same way. When the notes are in, `lib/pipeline.ts` (service role) runs 
    **The sweep** (`/api/meetings/sweep`, `MEETINGS_SWEEP_SECRET`): a Worker only gets about 30 s after replying,
    so a webhook's run can stop before the note. Every 10 minutes the database (`private.meetings_sweep()`,
    pg_cron + pg_net, URL + key in Vault: `myconet_url`, `meetings_sweep_secret`) calls it when a meeting is
-   unprocessed or its note is older; it refreshes missing Fireflies notes, runs the pipeline with 90 s for the
-   AI, at most 3 tries a meeting.
+   unprocessed or its note is older, **one request per meeting** (a Worker may make only 50 outside calls per
+   request on the free plan, so the pipeline writes tasks, links and logs in batches); it refreshes missing
+   Fireflies notes, runs the pipeline with 90 s for the AI, at most 3 tries a meeting.
 5. **Email** (`lib/notes-email.ts`, based on Sonia's; `lib/smtp.ts` is hers unchanged): to the **leads of every
    circle involved, at the email on their account**, plus `meetings.notesEmail.alwaysTo` usernames. Not to
    outside attendees. Once automatically; "Email the notes again" sends again.
