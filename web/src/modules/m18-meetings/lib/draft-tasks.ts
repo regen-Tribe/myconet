@@ -73,12 +73,15 @@ export const dottedDate = (ymd: string) => ymd.split('-').reverse().join('.')
 /** "17.11.2026 Kitchen lead handover": the date, then the agent's name for it */
 export const meetingName = (ymd: string, title: string) => `${dottedDate(ymd)} ${title.replace(/^\s*\d{1,2}[./ -]\d{1,2}[./ -]\d{4}\s*[-–·:]?\s*/, '').trim()}`
 
+// Fireflies' headings that aren't people ("Unassigned", "Kitchen Circle")
+const NOT_A_PERSON = /^(unassigned|no one|nobody|everyone|everybody|all|team|the team|group|tbd|n\/a|.+ circle)$/i
+
 const clean = (s: string, max: number) => s.replace(/\s+/g, ' ').replace(/[.;]+$/, '').trim().slice(0, max)
 
 /** Fireflies' action items as tasks, as they are, in a circle a person chose */
 export function fallbackDrafts(items: ActionItem[], circle: string): DraftTask[] {
   return items.slice(0, MAX_TASKS).map((it, i) => ({
-    title: clean(it.text, 120), circle, person: it.speaker, project_id: null, due_date: null, due_time: null,
+    title: clean(it.text, 120), circle, person: it.speaker && !NOT_A_PERSON.test(it.speaker.trim()) ? it.speaker : null, project_id: null, due_date: null, due_time: null,
     item_index: i, source_text: it.text,
   })).filter(t => t.title)
 }
@@ -152,7 +155,7 @@ export function parseDrafts(content: string, input: DraftInput): Omit<DraftResul
   if (!raw.community && !input.fixedCircle) return { isCommunity: false, circle: null, reason, title, tasks: [] }
   // Fireflies groups some items under a circle ("Kitchen Circle"): that's no person
   const circleNames = new Set(input.circles.flatMap(c => [c.slug, c.name]).flatMap(n => { const k = n.toLowerCase().trim(); return [k, `${k} circle`, k.replace(/ circle$/, '')] }))
-  const personOf = (v: string | null) => (v && !circleNames.has(v.toLowerCase().trim()) ? v : null)
+  const personOf = (v: string | null) => (v && !circleNames.has(v.toLowerCase().trim()) && !NOT_A_PERSON.test(v.trim()) ? v : null)
 
   const items = input.meeting.action_items
   const tasks: DraftTask[] = []
