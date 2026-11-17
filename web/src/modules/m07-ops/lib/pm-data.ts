@@ -10,11 +10,12 @@ export async function loadProjectManager(supabase: SupabaseClient): Promise<{ su
   const since = new Date(Date.now() - 14 * 86400_000).toISOString()
   const [{ data: sugs }, { data: acts }] = await Promise.all([
     supabase.from('agent_suggestions').select('id, circle, kind, payload, reason').eq('status', 'open').order('created_at'),
-    createServiceClient().from('agent_actions').select('id, action, detail').like('action', 'pm_%').is('undone_at', null).gte('created_at', since).order('created_at', { ascending: false }).limit(40),
+    createServiceClient().from('agent_actions').select('id, action, detail').or('action.like.pm_%,action.like.do_%').is('undone_at', null).gte('created_at', since).order('created_at', { ascending: false }).limit(40),
   ])
   const actions = (acts ?? []).map(a => {
     const d = a.detail as Record<string, any>
-    const label = a.action === 'pm_merge' ? `${d.kept} ⟵ ${d.dropped?.title ?? ''}`
+    const label = String(a.action).startsWith('do_') ? String(d.summary ?? '')
+      : a.action === 'pm_merge' ? `${d.kept} ⟵ ${d.dropped?.title ?? ''}`
       : a.action === 'pm_move' ? `${d.title} → ${d.project ?? 'a project'}`
       : `${d.title} → ${d.person ?? ''}`
     return { id: a.id as string, action: a.action as string, circle: (d.circle ?? '') as string, label, reason: (d.reason ?? null) as string | null }

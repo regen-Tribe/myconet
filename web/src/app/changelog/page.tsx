@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.26.0',
+    date: '2026-11-17',
+    title: 'Ask / Do: tell the agent what to change',
+    items: [
+      'Signed in, the assistant has a Do tab: say what to change on the board (merge or rename projects, move tasks, give a task to someone, set dates, confirm drafts).',
+      'The agent shows exactly what it will do first; you confirm, it acts with your own rights, and every change can be undone.',
+    ],
+  },
+  {
     version: 'v4.25.0',
     date: '2026-11-17',
     title: 'A project manager for every circle',
