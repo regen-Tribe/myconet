@@ -14,10 +14,16 @@ Built by Sonia for Protopia (Nov 16). Meeting recordings are transcribed and sum
 2. **Recorded in Fireflies directly**: Fireflies' webhook calls
    `/api/fireflies-ingest?key=PROTOPIA_INGEST_SECRET` → a new row with `source: fireflies_direct`,
    `needs_review: true` (skipped if that Fireflies id is already in).
+3. **The summary comes later** (Webhooks V2, v4.21.2): Fireflies writes the summary and action items a few
+   minutes after the transcript, so the two webhooks above often get the transcript only. Its V2 webhook
+   (`app.fireflies.ai/integrations/api/webhook`, events **meeting.transcribed** and **meeting.summarized**,
+   URL `/api/fireflies-events`, signing secret = `FIREFLIES_SIGNING_SECRET`) fetches the notes again and runs
+   the pipeline again; a direct recording that isn't in yet is added as in 2. Notes already in are never
+   blanked. Unsigned or wrongly signed calls get a 401.
 
 ## Secrets (Cloudflare, `npx wrangler secret put …`)
 
-`FIREFLIES_API_KEY`, `FIREFLIES_WEBHOOK_SECRET`, `PROTOPIA_INGEST_SECRET` (the ingest key; the name is
+`FIREFLIES_API_KEY`, `FIREFLIES_WEBHOOK_SECRET`, `FIREFLIES_SIGNING_SECRET` (the V2 webhook's signing secret), `PROTOPIA_INGEST_SECRET` (the ingest key; the name is
 historical), `SUPABASE_SERVICE_ROLE_KEY` (the webhooks write with it: `core/lib/supabase/service.ts`).
 
 ## Files
@@ -27,7 +33,7 @@ historical), `SUPABASE_SERVICE_ROLE_KEY` (the webhooks write with it: `core/lib/
 | `MeetingsList.tsx`, `MeetingDetail.tsx`, `UploadForm.tsx` | The three pages' UI |
 | `lib/fireflies.ts` | Fireflies GraphQL: `uploadAudio`, `fetchTranscript`, transcript text, action-item parsing |
 | `lib/access.ts` | Pages: module on + joining or above |
-| `app/meetings/**`, `app/api/meetings/upload`, `app/api/fireflies-webhook`, `app/api/fireflies-ingest` | Routes |
+| `app/meetings/**`, `app/api/meetings/upload`, `app/api/fireflies-webhook`, `app/api/fireflies-ingest`, `app/api/fireflies-events` | Routes |
 
 ## The meeting pipeline (v4.21.0)
 

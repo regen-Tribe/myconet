@@ -25,7 +25,7 @@
   },
 
   // Optional modules to turn on. "meetings": meeting recordings transcribed by Fireflies
-  // (needs the FIREFLIES_API_KEY, FIREFLIES_WEBHOOK_SECRET and SUPABASE_SERVICE_ROLE_KEY secrets)
+  // (needs the FIREFLIES_API_KEY, FIREFLIES_WEBHOOK_SECRET, FIREFLIES_SIGNING_SECRET and SUPABASE_SERVICE_ROLE_KEY secrets)
   "modules": [],
 
   // Time zone for task times and dates said in meetings ("by Friday")

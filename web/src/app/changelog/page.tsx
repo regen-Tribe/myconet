@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.21.2',
+    date: '2026-11-17',
+    title: 'Meeting summaries arrive when Fireflies has them',
+    items: [
+      'Fireflies writes a meeting’s summary and action items a few minutes after the transcript. MyCoNet now hears when they’re ready, fetches them and lets the agent read the meeting again, without adding tasks twice.',
+    ],
+  },
+  {
     version: 'v4.21.1',
     date: '2026-11-17',
     title: 'Fixes after a review',
