@@ -100,7 +100,7 @@ export default async function OpsPage({ searchParams }: { searchParams: Promise<
   const userProfiles: Record<string, { first_name: string | null; username: string | null }> = Object.fromEntries(
     (userProfilesData ?? []).map((p: any) => [p.id, { first_name: p.first_name ?? null, username: p.username ?? null }])
   )
-  const activeCount = allProjects.filter(p => isActiveProject(p.status)).length
+  const activeCount = allProjects.filter(p => !p.is_chores && isActiveProject(p.status)).length
   const deliverableCount = deliverables.length
   const doneCount = deliverables.filter(d => d.status === 'done').length
 

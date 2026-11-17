@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.24.0 — 2026-11-17
+
+- **Circle tasks on the main board** (asked for in Protopia): the tasks in a circle's Chores project (from meetings
+  or **+ Task**) were hidden inside one "<Circle> Chores" card. Now each is a card of its own on the main board, in
+  its own status column, with its circle's tag, person, date and Draft badge; the circle, My role and At risk
+  filters apply; drag it with the same rights as the project; it opens the task pop-up. Chores projects aren't
+  shown or counted as projects. No database change: the tasks already there show up as cards.
+
 ## v4.23.1 — 2026-11-17
 
 - **Fix:** the real reason meetings stopped before their note: a Worker may make only **50 outside calls per
