@@ -9,7 +9,10 @@ import { processMeeting } from '@/modules/m18-meetings/lib/pipeline'
 // items a few minutes after the transcript, so the first webhooks (/api/fireflies-webhook for uploads,
 // /api/fireflies-ingest for direct recordings) often get the transcript only. meeting.summarized
 // fetches the notes again and runs the meeting pipeline again: tasks already on the board aren't added
-// twice, the second-brain note is updated in place, and the email still goes once.
+// twice, the second-brain note is updated in place, and the email still goes once. It never adds a
+// meeting: what comes in is decided by the upload page and the ingest route alone.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export async function POST(req: NextRequest) {
   const secret = process.env.FIREFLIES_SIGNING_SECRET
   const raw = await req.text()
@@ -24,35 +27,24 @@ export async function POST(req: NextRequest) {
 
   const admin = createServiceClient()
   try {
-    // An upload carries our id as client_reference_id; a direct recording is found by its Fireflies id
-    const byRef = ref ? (await admin.from('meeting_transcripts').select('id').eq('id', ref).maybeSingle()).data : null
+    // Only meetings already in: an upload (our id is its client_reference_id) or one the community's
+    // ingest let in (/api/fireflies-ingest, e.g. Protopia's filter of Sonia's account). The account
+    // may record other people's calls: anything else is ignored, never fetched or saved.
+    const byRef = ref && UUID.test(ref) ? (await admin.from('meeting_transcripts').select('id').eq('id', ref).maybeSingle()).data : null
     const existing = byRef ?? (await admin.from('meeting_transcripts').select('id').eq('fireflies_id', firefliesId).maybeSingle()).data
+    if (!existing) return NextResponse.json({ received: true, skipped: 'not a meeting of this community' })
+    const id = existing.id as string
     const [t, extra] = await Promise.all([fetchTranscript(firefliesId), fetchFirefliesNotes(firefliesId)])
     const fields = transcriptFields(t)
-    // Notes, outline, bullets, topics and keywords: the meeting page's tabs
-    const notes = extra ? { fireflies_notes: extra } : {}
-    let id: string
-    if (existing) {
-      id = existing.id
-      // Never blank notes that are already in (meeting.transcribed can come after meeting.summarized)
-      await admin.from('meeting_transcripts').update({
-        fireflies_id: firefliesId, status: fields.status, transcript: fields.transcript, error: null,
-        ...(fields.summary ? { summary: fields.summary } : {}),
-        ...(fields.action_items.length ? { action_items: fields.action_items } : {}),
-        ...(fields.meeting_date ? { meeting_date: fields.meeting_date } : {}),
-        ...notes,
-      }).eq('id', id)
-    } else {
-      // Recorded in Fireflies and not in yet (as /api/fireflies-ingest)
-      const { data, error } = await admin.from('meeting_transcripts').insert({
-        title: t.title || 'Untitled meeting', meeting_date: null,
-        attendees: (t.speakers ?? []).map(s => s.name).filter(Boolean),
-        fireflies_id: firefliesId, ...fields, ...notes,
-        source: 'fireflies_direct', needs_review: true, circle: null, created_by: null,
-      }).select('id').single()
-      if (error) throw new Error(error.message)
-      id = data.id
-    }
+    // Never blank notes that are already in (meeting.transcribed can come after meeting.summarized)
+    await admin.from('meeting_transcripts').update({
+      fireflies_id: firefliesId, status: fields.status, transcript: fields.transcript, error: null,
+      ...(fields.summary ? { summary: fields.summary } : {}),
+      ...(fields.action_items.length ? { action_items: fields.action_items } : {}),
+      ...(fields.meeting_date ? { meeting_date: fields.meeting_date } : {}),
+      // Notes, outline, bullets, topics and keywords: the meeting page's tabs
+      ...(extra ? { fireflies_notes: extra } : {}),
+    }).eq('id', id)
     // After the reply (Fireflies wants it within 30 s); the AI gets 22 s, as in the other two routes
     after(async () => {
       const { data: m } = await admin.from('meeting_transcripts').select('created_by').eq('id', id).maybeSingle()

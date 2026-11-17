@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.22.1',
+    date: '2026-11-17',
+    title: 'Only this community’s meetings',
+    items: [
+      'Fireflies’ “summary ready” calls only update meetings that are already in MyCoNet. Other calls recorded on the same Fireflies account are ignored.',
+    ],
+  },
+  {
     version: 'v4.22.0',
     date: '2026-11-17',
     title: 'Meeting documents in tabs',
