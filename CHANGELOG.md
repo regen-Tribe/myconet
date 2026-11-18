@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.32.1 — 2026-11-18
+
+- **The meeting agent runs only in the sweep, with its full time** (Sonia; a 40-minute Protopia meeting timed out and
+  waited for a lead). The three Fireflies routes (`/api/fireflies-ingest`, `/api/fireflies-webhook`,
+  `/api/fireflies-events`) no longer run the pipeline in `after()` with 22 s for the AI: they save the notes and the
+  meeting waits (`processed_at` null, `sweep_attempts` 0; `queueForAgent()` in `lib/refresh.ts`). The sweep gives the AI
+  150 s (was 90 s) and runs **every 2 minutes** (was 10). A lead's "let the agent read it" gets 120 s (was 60 s).
+- **A meeting the AI couldn't read is tried again**: when the AI gives no answer (too slow, down, unreadable), the
+  pipeline leaves `processed_at` null instead of parking the meeting, so the sweep tries again, at most 3 times in all.
+  A meeting the agent judged not a community meeting still waits for a lead as before.
+- **`/api/fireflies-ingest` refreshes a meeting it already has** instead of skipping it: an upload (its id as
+  `client_reference_id`) or the same Fireflies id gets the newest notes, and the agent reads it again when the summary is
+  new. A community filter in front of the ingest (Protopia: Sonia's divider) can then be the only webhook Fireflies needs;
+  `/api/fireflies-events` stays for communities that use it.
+- The meetings list shows **Agent reading soon** for a meeting that has just come in. **Migration**
+  `20261202000000_meetings_sweep_every_2_min.sql` (reschedules `myconet-meetings-sweep`).
+
 ## v4.32.0 — 2026-11-18
 
 - **`npm run upstream` no longer corrupts a patch** (Sonia): the script trimmed the diff, which could cut a last

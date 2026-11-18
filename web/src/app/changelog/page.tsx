@@ -3,6 +3,16 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.32.1',
+    date: '2026-11-18',
+    title: 'The meeting agent gets the time it needs',
+    items: [
+      'A new meeting is read by the agent within about 2 minutes, with enough time for long meetings. Before, a long meeting could run out of time and wait for a lead.',
+      'If the AI still can’t read a meeting, the agent tries again by itself, up to 3 times. A lead can also choose its circle meanwhile.',
+      'The meetings list shows “Agent reading soon” for a meeting that has just come in.',
+    ],
+  },
+  {
     version: 'v4.32.0',
     date: '2026-11-18',
     title: 'Task priority, and names without an account',
