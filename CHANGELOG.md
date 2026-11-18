@@ -7,6 +7,8 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
 ## v4.32.0 — 2026-11-18
 
+- **`npm run upstream` no longer corrupts a patch** (Sonia): the script trimmed the diff, which could cut a last
+  context line that is a single space. It now sends the diff as git wrote it, and stops if `git diff` fails.
 - **A priority on each task**: a four-step slider in the task pop-up (None · Low · Med · High; leads set it), shown
   as a badge on the board card, the task list and the project page. The project manager reads it and the circle's
   `board.md` shows it; Ask / Do can set it. `deliverables.priority` (default `none`).

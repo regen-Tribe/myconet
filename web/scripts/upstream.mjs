@@ -45,7 +45,12 @@ if (!files) {
   process.exit(0)
 }
 // Not through run(): its trim() would cut a last context line that is a single space (corrupt patch)
-const patch = spawnSync('git', ['diff', '--binary', base, 'HEAD', ...pathspec], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).stdout
+const diff = spawnSync('git', ['diff', '--binary', base, 'HEAD', ...pathspec], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+if (diff.status !== 0 || !diff.stdout) {
+  console.error(`✗ git diff ${base} HEAD\n${diff.stderr || 'empty patch'}`)
+  process.exit(1)
+}
+const patch = diff.stdout
 
 const tmp = mkdtempSync(join(tmpdir(), 'myconet-upstream-'))
 try {
