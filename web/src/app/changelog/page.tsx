@@ -3,6 +3,13 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.33.0',
+    date: '2026-11-18',
+    title: 'Slide a draft to approve or decline it',
+    items: [
+      'Leads can slide a task’s Draft pill right to approve it or left to decline it, on the board, the task list and the project page. A declined task can be brought back with Undo for a few seconds.',
+      'A task you decline or delete doesn’t come back when its meeting is processed again.',
+      'Signing up with an address that already has an account now says so, with links to sign in or reset your password. If the confirmation email doesn’t arrive, you can have it sent again.',
     version: 'v4.32.1',
     date: '2026-11-18',
     title: 'The meeting agent gets the time it needs',
