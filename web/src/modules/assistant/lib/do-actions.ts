@@ -4,12 +4,14 @@
  * Every change is logged in agent_actions (actor 'agent-do', requested_by the person) with the rows it
  * changed and their values before (detail.rows), or what it created (detail.created), so Undo can put
  * them back. Permissions are the person's own: admins anything; circle leads their circles; a project's
- * lead (or creator) that project; anyone their own task's status and date.
+ * lead (or creator) that project; anyone their own task's status and date; new circles admins and
+ * circle leads.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { CIRCLE_COLORS, emojiFor, slugFor } from '@/modules/m04-blueprint/lib/circle-setup'
 
 export type DoKind =
-  | 'merge_projects' | 'rename_project' | 'create_project' | 'move_tasks'
+  | 'create_circle' | 'merge_projects' | 'rename_project' | 'create_project' | 'move_tasks'
   | 'rename_task' | 'assign_task' | 'set_task_date' | 'set_task_status' | 'confirm_drafts'
 
 export interface DoAction {
@@ -17,6 +19,8 @@ export interface DoAction {
   /** Real ids (the planner's P1/T1 references resolved on the server) */
   project?: string; into?: string; title?: string; description?: string | null; circle?: string
   tasks?: string[]; to?: string | null; person?: string | null; due_date?: string | null; due_time?: string | null; status?: string
+  /** create_circle: its emoji (else one from its name) */
+  emoji?: string
 }
 
 export interface Board {
@@ -55,6 +59,9 @@ export function describe(a: DoAction, b: Board): string | null {
   const list = (ts: Board['tasks']) => ts.length <= 3 ? ts.map(t => q(t.title)).join(', ') : `${ts.length} tasks`
   const circleName = (slug?: string | null) => b.circles.find(c => c.slug === slug)?.name ?? slug ?? '?'
   switch (a.kind) {
+    case 'create_circle':
+      return a.title && a.description && !b.circles.some(c => c.name.toLowerCase() === a.title!.toLowerCase())
+        ? `Create the circle ${a.emoji ?? emojiFor(a.title)} ${q(a.title)}: ${a.description}` : null
     case 'merge_projects': {
       const from = P(a.project), into = P(a.into)
       if (!from || !into || from.id === into.id) return null
@@ -103,6 +110,7 @@ export function blocked(a: DoAction, b: Board, me: Me): string | null {
   const leadsTask = (t: Board['tasks'][number]) => leads(t.circle) || leadsProject(t.project_id)
   const no = (who: string) => `Only ${who} can do this.`
   switch (a.kind) {
+    case 'create_circle': return me.role === 'circle_lead' ? null : no('admins and circle leads')
     case 'merge_projects': return leadsProject(a.project) && leadsProject(a.into) ? null : no('the leads of both projects (or their circle) and admins')
     case 'rename_project': return leadsProject(a.project) ? null : no('the project’s lead, its circle’s leads and admins')
     case 'create_project': return leads(a.circle) && tasks.every(leadsTask) ? null : no('the circle’s leads and admins')
@@ -116,7 +124,7 @@ export function blocked(a: DoAction, b: Board, me: Me): string | null {
   }
 }
 
-type Row = { table: 'deliverables' | 'projects'; id: string; before: Record<string, unknown> }
+type Row = { table: 'deliverables' | 'projects' | 'circles'; id: string; before: Record<string, unknown> }
 
 /** Makes the change and updates the board in memory to match (so one read serves several changes); returns what to log so it can be undone */
 export async function execute(admin: SupabaseClient, a: DoAction, b: Board, me: Me): Promise<{ rows: Row[]; created: Row[]; error?: string }> {
@@ -127,7 +135,7 @@ export async function execute(admin: SupabaseClient, a: DoAction, b: Board, me: 
     const { error } = await admin.from(table).update(changes).eq('id', id)
     if (error) throw new Error(error.message)
     rows.push({ table, id, before })
-    const item = table === 'projects' ? b.projects.find(x => x.id === id) : b.tasks.find(x => x.id === id)
+    const item = table === 'projects' ? b.projects.find(x => x.id === id) : table === 'deliverables' ? b.tasks.find(x => x.id === id) : null
     if (item) Object.assign(item, changes)
   }
   const moveAll = async (ids: string[], to: string) => {
@@ -138,6 +146,24 @@ export async function execute(admin: SupabaseClient, a: DoAction, b: Board, me: 
   }
   try {
     switch (a.kind) {
+      case 'create_circle': {
+        // As + Add circle: a slug no circle had (retired ones included), a free colour, last in order; the
+        // trigger makes its org-chart unit, whose description is the purpose the agents read
+        const { data: all } = await admin.from('circles').select('slug, color, sort_order, archived_at')
+        const taken = new Set((all ?? []).map(r => r.slug as string))
+        const used = new Set((all ?? []).filter(r => !r.archived_at).map(r => r.color as string))
+        const slug = slugFor(a.title!, taken)
+        const { error } = await admin.from('circles').insert({
+          slug, name: a.title!.slice(0, 60), emoji: a.emoji ?? emojiFor(a.title!),
+          color: CIRCLE_COLORS.find(c => !used.has(c)) ?? CIRCLE_COLORS[(all?.length ?? 0) % CIRCLE_COLORS.length],
+          sort_order: Math.max(0, ...(all ?? []).map(r => r.sort_order as number)) + 1,
+        })
+        if (error) throw new Error(error.message)
+        created.push({ table: 'circles', id: slug, before: {} })
+        await admin.from('org_units').update({ description: a.description }).eq('kind', 'circle').eq('circle', slug)
+        b.circles.push({ slug, name: a.title! })
+        break
+      }
       case 'merge_projects': {
         const from = P(a.project)!, into = P(a.into)!
         await moveAll(b.tasks.filter(t => t.project_id === from.id).map(t => t.id), into.id)
@@ -195,6 +221,8 @@ export async function undoRows(admin: SupabaseClient, detail: { rows?: Row[]; cr
     if (error) throw new Error(error.message)
   }
   for (const c of detail.created ?? []) {
+    // A circle is retired, never deleted (its slug stays taken)
+    if (c.table === 'circles') { await admin.from('circles').update({ archived_at: new Date().toISOString() }).eq('slug', c.id); continue }
     if (c.table !== 'projects') continue
     const { count } = await admin.from('deliverables').select('id', { count: 'exact', head: true }).eq('project_id', c.id)
     if (!count) await admin.from('projects').delete().eq('id', c.id)

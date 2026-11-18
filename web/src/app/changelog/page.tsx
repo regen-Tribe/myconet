@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.28.0',
+    date: '2026-11-17',
+    title: 'Ask the agent to create a circle',
+    items: [
+      'Admins and circle leads can ask the agent (Do tab) to create a new circle, e.g. “add an Incubator circle for new ventures until they stand on their own”. Undo retires it.',
+    ],
+  },
+  {
     version: 'v4.27.0',
     date: '2026-11-17',
     title: 'Add a circle from the circle pages',

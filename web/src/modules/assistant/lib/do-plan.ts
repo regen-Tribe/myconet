@@ -8,7 +8,7 @@ import { type Board, type DoAction, type DoKind, TASK_STATUSES } from './do-acti
 
 const MODEL = 'MiniMax-M3.1-Flash'
 const MAX_ACTIONS = 10
-const KINDS: DoKind[] = ['merge_projects', 'rename_project', 'create_project', 'move_tasks', 'rename_task', 'assign_task', 'set_task_date', 'set_task_status', 'confirm_drafts']
+const KINDS: DoKind[] = ['create_circle', 'merge_projects', 'rename_project', 'create_project', 'move_tasks', 'rename_task', 'assign_task', 'set_task_date', 'set_task_status', 'confirm_drafts']
 
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim()
 
@@ -26,6 +26,7 @@ function prompt(instruction: string, history: { role: string; content: string }[
   return `You are the MyCoNet agent of ${community}. ${meName} is signed in and asks you to change something on the community's task board. Turn the request into changes from the list below. People use loose names ("the 4 elements project" can mean "Elemental Community Ceremony"): match by meaning. If the request is unclear, could mean several things, or isn't possible with these changes, make no changes and ask one short question in "reply". Never invent projects, tasks or people. Today is ${weekday} ${date}.
 
 Changes you can make:
+- create_circle {"name":"…","purpose":"one line: what this circle looks after","emoji":"one emoji, or null"}: a new circle of the community, only when asked to create one; if what it looks after isn't clear from the request, ask instead
 - merge_projects {"project":"P2","into":"P1","title":"the merged project's new name, or null to keep P1's"}: P2's tasks move into P1, P2 is set aside
 - rename_project {"project":"P1","title":"…"}
 - create_project {"title":"…","description":"one sentence","circle":"a circle slug","tasks":["T1",…]}
@@ -92,6 +93,11 @@ export async function planChanges(instruction: string, history: { role: string; 
     if (!KINDS.includes(kind)) continue
     const tasks = [...(Array.isArray(r.tasks) ? r.tasks : []), r.task].map(T).filter((x): x is string => !!x)
     const a: DoAction = { kind, tasks }
+    if (kind === 'create_circle') {
+      a.title = s(r.name, 60); a.description = s(r.purpose, 300) ?? null
+      const e = s(r.emoji, 8); if (e && !/[a-z0-9]/i.test(e)) a.emoji = e
+      if (!a.title || !a.description) continue
+    }
     if (kind === 'merge_projects') { a.project = P(r.project); a.into = P(r.into); a.title = s(r.title) }
     if (kind === 'rename_project') { a.project = P(r.project); a.title = s(r.title) }
     if (kind === 'create_project') { a.title = s(r.title); a.description = s(r.description, 400) ?? null; a.circle = s(r.circle, 80) }
