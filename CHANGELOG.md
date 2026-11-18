@@ -5,6 +5,20 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.33.0 — 2026-11-18
+
+- **Approve or decline a draft from its pill** (Oscar: "slide left to decline, slide right to approve"). On the board,
+  the task list and the project page, a lead or admin slides a task's **Draft** pill right to approve it (it stays,
+  no longer a draft) or left to decline it (deleted after 5 seconds, with **Undo**); the arrow keys do the same.
+  Sliding the pill doesn't drag the card or open the task. Everyone else sees the plain pill (`m07-ops/DraftSwipe.tsx`).
+- **A declined or deleted task stays gone**: its meeting link now stays without a task, so running the meeting
+  again (e.g. when Fireflies' summary arrives) doesn't draft it again. **Migration**
+  `20261203000000_declined_drafts_stay_declined.sql` (`meeting_action_links.deliverable_id` → on delete set null).
+- **Sign-up says when an address already has an account** (Sonia, #29; two Protopia people said "the link never came"):
+  instead of "Check your inbox" (Supabase sends nothing then), it offers **Sign in** and **Send me a reset link**.
+  "Check your inbox" gets **Send it again**, and sign-in's "Email not confirmed" offers to resend the link. A resent
+  link (no PKCE code, `#access_token=`) signs in on `/auth/login`, as `/auth/reset-password` does. No migration.
+
 ## v4.32.1 — 2026-11-18
 
 - **The meeting agent runs only in the sweep, with its full time** (Sonia; a 40-minute Protopia meeting timed out and
