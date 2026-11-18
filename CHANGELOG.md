@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.28.0 — 2026-11-17
+
+- **Ask / Do: create a circle** (asked for in Protopia): admins **and circle leads** can tell the agent to create a
+  circle (name, one-line purpose → its org-chart description, emoji). It's made like **+ Add circle** (free slug and
+  colour, org-chart unit by the trigger); the agent asks when the purpose isn't clear; **Undo** retires it
+  (`archived_at`), circles are never deleted. No database change.
+
 ## v4.27.0 — 2026-11-17
 
 - **+ Add circle** for admins on Operations › Circles and the `/org` chart (asked for in Protopia, for an Incubator

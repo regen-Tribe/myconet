@@ -36,6 +36,7 @@ change on the board in plain words ("merge the 4 elements project into the 5 sen
 
 | Change | Who may (besides admins) |
 |---|---|
+| `create_circle` (name, purpose → its org-chart description, emoji; undo retires it) | circle leads |
 | `merge_projects` (tasks move, the other project is set aside as paused), `rename_project` | the projects' leads/creators, the circle's leads |
 | `create_project` (+ its tasks), `move_tasks` (into a project, or onto the main board) | the circle's leads; moves also the projects' leads |
 | `rename_task`, `assign_task`, `confirm_drafts` | the task's circle or project leads |
