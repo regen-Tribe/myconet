@@ -13,7 +13,7 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   Sliding the pill doesn't drag the card or open the task. Everyone else sees the plain pill (`m07-ops/DraftSwipe.tsx`).
 - **A declined or deleted task stays gone**: its meeting link now stays without a task, so running the meeting
   again (e.g. when Fireflies' summary arrives) doesn't draft it again. **Migration**
-  `20261202000000_declined_drafts_stay_declined.sql` (`meeting_action_links.deliverable_id` → on delete set null).
+  `20261203000000_declined_drafts_stay_declined.sql` (`meeting_action_links.deliverable_id` → on delete set null).
 - **Sign-up says when an address already has an account** (Sonia, #29; two Protopia people said "the link never came"):
   instead of "Check your inbox" (Supabase sends nothing then), it offers **Sign in** and **Send me a reset link**.
   "Check your inbox" gets **Send it again**, and sign-in's "Email not confirmed" offers to resend the link. A resent
