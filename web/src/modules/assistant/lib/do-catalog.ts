@@ -43,6 +43,7 @@ export const CATALOG: Record<string, TableDef> = {
       leads_to_assign: { label: 'leads (names, not on MyCoNet yet)', type: { t: 'text', max: 200 } },
       is_steward: { label: 'steward circle', type: { t: 'bool' } },
       archived: { label: 'retired', type: { t: 'archived' }, column: 'archived_at' },
+      brain_folder: { label: 'second-brain folder', type: { t: 'text', max: 120 } },
     },
   },
   unit: {
