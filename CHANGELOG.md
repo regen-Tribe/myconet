@@ -25,6 +25,8 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   recorded in `points_log` (one row per award, undone with `undo_points()`, never deleted); accepting an agreement
   with a `points_value` logs it. With the switch off, no screen mentions points, reputation or the points demo;
   with it on, Achievements shows your total (`points_total()`). **Migration** `20261209000000_points_log.sql`.
+- **Meetings say "the assistant" too** (`LEXICON.md`): the meetings list, a meeting's page, the upload form, the
+  notes email and the "couldn't read this meeting" note. The agent's own prompt and second-brain notes are unchanged.
 
 ## v4.39.0 — 2026-11-19
 
