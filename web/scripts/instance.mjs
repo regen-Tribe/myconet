@@ -87,6 +87,8 @@ function publicEnv(cfg) {
     NEXT_PUBLIC_COMMUNITY_NAME: cfg.displayName,
     // Optional modules that are on, e.g. "meetings" (core/lib/modules.ts)
     NEXT_PUBLIC_MODULES: (cfg.modules ?? []).join(','),
+    // The look: "v4" = the pastel redesign (DESIGN-SYSTEM.md › v4). Empty = the current look.
+    NEXT_PUBLIC_DESIGN: cfg.design ?? '',
     // The community's time zone, for dates said in meetings ("by Friday") and task times
     COMMUNITY_TIME_ZONE: cfg.timeZone ?? 'UTC',
     // The community's second brain on GitHub (meeting notes are saved there); the token is the

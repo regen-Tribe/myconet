@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.39.0',
+    date: '2026-11-19',
+    title: 'A new look you can switch on',
+    items: [
+      'A community can turn on the redesigned look (“v4”): a pale blue page with white cards, Inter type, light capital labels, black main buttons and pastel colours that show status. Nothing changes for communities that don’t turn it on.',
+    ],
+  },
+  {
     version: 'v4.38.4',
     date: '2026-11-19',
     title: 'Clearer suggestions',
