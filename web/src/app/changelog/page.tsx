@@ -7,7 +7,7 @@ const ENTRIES = [
     date: '2026-11-19',
     title: 'Accepted suggestions stay',
     items: [
-      'After you accept a project manager suggestion, it stays on the panel as accepted for two weeks, with a link to open the project it went into.',
+      'After you accept a project manager suggestion, it stays on the panel as accepted, with a link to open the project it went into, until you reload the page.',
     ],
   },
   {

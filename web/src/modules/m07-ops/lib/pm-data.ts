@@ -6,14 +6,11 @@ import type { AgentSuggestion, PmAction } from '../types'
  * The project manager's open suggestions (the person's own session) and its own changes of the last two
  * weeks (agent_actions is admin-only to read, so these few fields come through the server).
  */
-export async function loadProjectManager(supabase: SupabaseClient): Promise<{ suggestions: AgentSuggestion[]; actions: PmAction[]; decided: AgentSuggestion[] }> {
+export async function loadProjectManager(supabase: SupabaseClient): Promise<{ suggestions: AgentSuggestion[]; actions: PmAction[] }> {
   const since = new Date(Date.now() - 14 * 86400_000).toISOString()
-  const [{ data: sugs }, { data: acts }, { data: done }] = await Promise.all([
+  const [{ data: sugs }, { data: acts }] = await Promise.all([
     supabase.from('agent_suggestions').select('id, circle, kind, payload, reason').eq('status', 'open').order('created_at'),
     createServiceClient().from('agent_actions').select('id, action, detail').or('action.like.pm_%,action.like.do_%').is('undone_at', null).gte('created_at', since).order('created_at', { ascending: false }).limit(40),
-    // Accepted, or done another way with the agent (v4.36.1): they stay on the panel for two weeks, with a link
-    supabase.from('agent_suggestions').select('id, circle, kind, payload, reason, status, decided_note, decided_at')
-      .gte('decided_at', since).or('status.eq.accepted,decided_note.not.is.null').order('decided_at', { ascending: false }).limit(30),
   ])
   const actions = (acts ?? []).map(a => {
     const d = a.detail as Record<string, any>
@@ -23,7 +20,7 @@ export async function loadProjectManager(supabase: SupabaseClient): Promise<{ su
       : `${d.title} → ${d.person ?? ''}`
     return { id: a.id as string, action: a.action as string, circle: (d.circle ?? '') as string, label, reason: (d.reason ?? null) as string | null }
   })
-  return { suggestions: (sugs ?? []) as AgentSuggestion[], actions, decided: (done ?? []) as AgentSuggestion[] }
+  return { suggestions: (sugs ?? []) as AgentSuggestion[], actions }
 }
 
 /** Open suggestions per circle, for the circles' "Project manager" buttons */

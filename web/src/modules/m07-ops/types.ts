@@ -103,10 +103,6 @@ export interface AgentSuggestion {
   kind: 'merge' | 'move' | 'new_project' | 'assign'
   payload: Record<string, unknown>
   reason: string | null
-  /** Decided ones (v4.36.1): accepted, or dismissed after the lead told the agent what to do instead */
-  status?: 'open' | 'accepted' | 'dismissed' | 'stale'
-  decided_note?: string | null
-  decided_at?: string | null
 }
 
 /** A change the project manager made itself (agent_actions pm_*), undoable by the circle's leads */

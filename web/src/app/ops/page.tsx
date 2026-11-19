@@ -120,7 +120,7 @@ export default async function OpsPage({ searchParams }: { searchParams: Promise<
 
   const sprintName = allProjects.find(p => p.sprint_name)?.sprint_name ?? null
   const circleDirectory = await fetchCircleDirectory(supabase)
-  const pm = user ? await loadProjectManager(supabase) : { suggestions: [], actions: [], decided: [] }
+  const pm = user ? await loadProjectManager(supabase) : { suggestions: [], actions: [] }
 
   return (
     <OpsClient
@@ -145,7 +145,6 @@ export default async function OpsPage({ searchParams }: { searchParams: Promise<
       initialCircle={circle ?? null}
       pmSuggestions={pm.suggestions}
       pmActions={pm.actions}
-      pmDecided={pm.decided}
       initialTaskId={task ?? null}
       {...await loadCircleMembers(supabase)}
       {...await loadTaskOptions(supabase)}

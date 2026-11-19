@@ -29,7 +29,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   })
   // The tasks must still be this circle's
   const taskIds = [p.keep, p.drop, p.task, ...(p.tasks ?? [])].filter(Boolean) as string[]
-  // Where the change went, kept on the suggestion so the panel can link to it once accepted (v4.36.1)
+  // Where the change went, for the panel's link once accepted (v4.36.1)
   let result: { project_id?: string | null; task_id?: string | null } = {}
   const { data: rows } = await admin.from('deliverables').select('id, title, project_id, assignee_id, due_date, circle').in('id', taskIds)
   const task = (tid: string) => rows?.find(r => r.id === tid && r.circle === s.circle)
@@ -65,7 +65,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await admin.from('agent_actions').insert(logRow('pm_assign', t.id, { title: t.title, from: t.assignee_id, to: p.person_id, person: p.person }))
     result = { task_id: t.id, project_id: t.project_id }
   }
-  await admin.from('agent_suggestions').update({ payload: { ...p, result } }).eq('id', id)
   await close('accepted')
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, result })
 }
