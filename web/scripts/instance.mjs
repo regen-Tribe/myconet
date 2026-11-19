@@ -42,7 +42,7 @@ export function loadInstance() {
   if (!/^[a-z0-9-]+$/.test(cfg.cloudflare?.workerName ?? '')) problems.push('cloudflare.workerName: lowercase letters, numbers and dashes')
   if (!/^https:\/\/[a-z0-9]+\.supabase\.co$/.test(cfg.supabase?.url ?? '')) problems.push('supabase.url: https://<ref>.supabase.co')
   if (!cfg.supabase?.anonKey) problems.push('supabase.anonKey is required')
-  const known = ['meetings']
+  const known = ['meetings', 'points']
   for (const m of cfg.modules ?? []) if (!known.includes(m)) problems.push(`modules: unknown module "${m}" (known: ${known.join(', ')})`)
   if (cfg.timeZone) {
     try { new Intl.DateTimeFormat('en-US', { timeZone: cfg.timeZone }) } catch { problems.push(`timeZone: "${cfg.timeZone}" isn't a time zone (e.g. "America/Costa_Rica")`) }
