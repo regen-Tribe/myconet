@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.37.0',
+    date: '2026-11-19',
+    title: 'Projects and teams',
+    items: [
+      'A project can belong to one of its circle’s teams, or to the whole circle. Pick it when you create the project or in its settings; it shows on the board and on the Circles page.',
+      'In Operations › Circles, open a circle to see its projects, grouped by team.',
+    ],
+  },
+  {
     version: 'v4.36.1',
     date: '2026-11-19',
     title: 'Accepted suggestions stay',
