@@ -19,7 +19,8 @@ module: To do blue, In progress violet, Review red, Done green, Paused yellow, I
 colours (`--m*`) are black in v4. (4) Labels above headings (eyebrows) are light sans capitals, wide letter-spacing,
 `--ink-4`; no mono font. (5) A pale blue page (`--bg`) with white cards, no shadows; three radii: pill, card 20px,
 inner 12px; six text sizes 11/13/15/18/24/40. (6) One hand-drawn icon set (marker line); no emoji in the interface.
-(7) Drawings (cream on cobalt) only for empty screens and page headers.
+(7) Drawings (cream on cobalt) only for empty screens and page headers. (8) The board keeps its Paused column
+(Oscar, 2026-11-19), for projects only, after Done.
 
 **How it ships.** Release 1 (v4.39.0) re-points the tokens, so everything that uses them changes at once. Then,
 one release each, behind the same switch:
