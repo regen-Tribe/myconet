@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.36.1 — 2026-11-19
+
+- **Accepted suggestions stay on the project manager's panel** (Oscar: leave it as accepted so you can click it and
+  open the project). For two weeks the panel lists what was accepted, with **Open project →** (or **Open task →**)
+  to where it went; ones done with "Tell the agent" show the instruction. Accepting now keeps the result on the
+  suggestion (`payload.result`: the project, or the task). Suggestions accepted before this have no link. No migration.
+
 ## v4.36.0 — 2026-11-19
 
 - **Tell the agent what to do instead of a suggestion** (Oscar: on "cacao import and export operations" he wants to

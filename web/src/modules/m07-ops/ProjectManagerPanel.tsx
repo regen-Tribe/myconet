@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCircles } from '@/core/components/CirclesProvider'
 import type { AgentSuggestion, PmAction } from './types'
 import { instructAgent } from '@/core/lib/agent-context'
+import Link from 'next/link'
 
 const KIND: Record<string, string> = { merge: 'Merge duplicates', move: 'Into a project', new_project: 'New project', assign: 'Who could take it' }
 const DONE: Record<string, string> = { pm_merge: 'Merged duplicates', pm_move: 'Filed into a project', pm_assign: 'Assigned' }
@@ -25,8 +26,10 @@ const btn = (primary = false): React.CSSProperties => ({
  * leads and admins decide. Filtered by the board's circle filter. Starts collapsed (v4.33.1), except when the
  * page was opened at #pm.
  */
-export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, canDecide }: {
+export function ProjectManagerPanel({ suggestions, actions, decided = [], taskTitles, circle, canDecide }: {
   suggestions: AgentSuggestion[]; actions: PmAction[]; taskTitles: Record<string, string>
+  /** Accepted, or done with the agent, in the last two weeks: they stay, linked to where they went (v4.36.1) */
+  decided?: AgentSuggestion[]
   circle: string | null; canDecide: (circle: string) => boolean
 }) {
   const circles = useCircles()
@@ -48,7 +51,8 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   const open = toggled ?? linkedHere
   const sugs = suggestions.filter(s => !circle || s.circle === circle)
   const done = actions.filter(a => !circle || a.circle === circle)
-  if (!sugs.length && !done.length) return null
+  const accepted = decided.filter(s => !circle || s.circle === circle)
+  if (!sugs.length && !done.length && !accepted.length) return null
 
   async function post(url: string, action: string, key: string) {
     setBusy(key); setMsg(null)
@@ -68,7 +72,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
     <div id="pm" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderTop: '3px solid var(--m7)', borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>🧭 Project manager</span>
-        <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
+        <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{accepted.length ? ` · ${accepted.length} accepted` : ''}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
         <button onClick={() => setToggled(!open)} style={{ ...btn(), marginLeft: 'auto', padding: '3px 10px' }}>{open ? 'Hide' : 'Show'}</button>
       </div>
       {open && (
@@ -109,6 +113,27 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
               </div>
             )
           })}
+          {accepted.length > 0 && (
+            <div style={{ borderTop: '1px solid var(--rule)', marginTop: 10, paddingTop: 8 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 6 }}>Accepted (last 2 weeks)</div>
+              {accepted.map(s => {
+                const p = s.payload as { label?: string; title?: string; result?: { project_id?: string | null; task_id?: string | null } }
+                const r = p.result ?? {}
+                // Where it went: the project, else the task (opened on the board when it has no project)
+                const href = r.project_id ? `/ops/${r.project_id}${r.task_id ? `?task=${r.task_id}` : ''}` : r.task_id ? `/ops?task=${r.task_id}` : null
+                return (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--ink-2)', padding: '4px 0', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#15803d', fontWeight: 700 }}>✓</span>
+                    <span style={{ color: 'var(--ink-3)' }}>{s.status === 'accepted' ? KIND[s.kind] ?? s.kind : 'Done with the agent'}:</span>
+                    <span style={{ fontWeight: 500 }}>{s.kind === 'new_project' ? p.title : p.label}</span>
+                    {tag(s.circle)}
+                    {s.status !== 'accepted' && s.decided_note && <span style={{ color: 'var(--ink-4)' }}>· “{s.decided_note.slice(0, 140)}”</span>}
+                    {href && <Link href={href} style={{ ...btn(), padding: '2px 9px', marginLeft: 'auto', textDecoration: 'none' }}>Open {r.project_id ? 'project' : 'task'} →</Link>}
+                  </div>
+                )
+              })}
+            </div>
+          )}
           {done.length > 0 && (
             <div style={{ borderTop: '1px solid var(--rule)', marginTop: 10, paddingTop: 8 }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 6 }}>Done by the agent (last 2 weeks)</div>

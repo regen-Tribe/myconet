@@ -53,6 +53,8 @@ interface OpsClientProps {
   initialCircle: string | null
   pmSuggestions: AgentSuggestion[]
   pmActions: PmAction[]
+  /** Suggestions accepted (or done with the agent) in the last two weeks */
+  pmDecided?: AgentSuggestion[]
   /** Open this task's pop-up on arrival (/ops?task=<id>) */
   initialTaskId?: string | null
   /** For the task pop-up */
@@ -269,7 +271,7 @@ export default function OpsClient({
   activeCount, deliverableCount, doneCount, atRiskCount,
   isAdmin, userId, userRole, leadCircles, sprintName,
   projectSubscribers, userProfiles, canPropose, circleDirectory, initialTab, meetingCounts,
-  initialCircle, pmSuggestions, pmActions, initialTaskId = null, people = [], projectOptions = [], teams = [],
+  initialCircle, pmSuggestions, pmActions, pmDecided = [], initialTaskId = null, people = [], projectOptions = [], teams = [],
   circleUnits = [], circleMembers = [],
 }: OpsClientProps) {
   const circles = useCircles()
@@ -577,7 +579,7 @@ export default function OpsClient({
           </div>
 
         <ProjectManagerPanel
-          suggestions={pmSuggestions} actions={pmActions} circle={selectedCircle} canDecide={canDecide}
+          suggestions={pmSuggestions} actions={pmActions} decided={pmDecided} circle={selectedCircle} canDecide={canDecide}
           taskTitles={Object.fromEntries(initialDeliverables.map(d => [d.id, d.title]))}
         />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
