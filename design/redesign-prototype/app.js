@@ -87,7 +87,7 @@ function sampleSeed(){ return {
   ],
   proposals:[
     {id:'tool-shed', title:'Tool shed rules', circle:'places', by:'AI', status:'open', left:'3 days left', body:'Anyone can borrow tools. Return them cleaned the same day, and log anything broken in the book by the door.', yes:16, no:6, of:31, checks:['done','open','wait','done']},
-    {id:'guest-stays', title:'Guest stays up to two weeks', circle:'places', by:'TO', status:'open', left:'6 days left', body:'Friends and family can stay in the barn loft or the yurt for up to two weeks, booked through Our place.', yes:9, no:2, of:31, checks:['open','open','wait','done']},
+    {id:'guest-stays', title:'Guest stays up to two weeks', circle:'places', by:'TO', status:'open', left:'6 days left', body:'Friends and family can stay in the barn loft or the yurt for up to two weeks, booked through Amenities & tools.', yes:9, no:2, of:31, checks:['open','open','wait','done']},
     {id:'quiet-hours', title:'Quiet hours after 22:00', circle:'stewards', by:'LE', status:'approved', left:'Approved 2 Nov', body:'No music or machines outdoors after 22:00.', yes:27, no:2, of:31, checks:['done','done','done','done']},
     {id:'cargo-bike', title:'Buy a second cargo bike', circle:'places', by:'RA', status:'no', left:'Not approved 28 Oct', body:'A second cargo bike for market days.', yes:11, no:15, of:31, checks:['done','no','done','done']}
   ],
