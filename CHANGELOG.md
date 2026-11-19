@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.36.1 — 2026-11-19
+
+- **An accepted suggestion stays until you reload** (Oscar: leave it as accepted so you can click it and open the
+  project; after a refresh it doesn't have to come back). Accepting marks it **✓ Accepted** in place with
+  **Open project →** (or **Open task →**) to where it went; the accept route now returns that (`result`). No migration.
+
 ## v4.36.0 — 2026-11-19
 
 - **Tell the agent what to do instead of a suggestion** (Oscar: on "cacao import and export operations" he wants to
