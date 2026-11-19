@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.39.0 — 2026-11-19
+
+- **A switchable new look, "v4"** (Sonia's redesign; prototype in her UI/UX review). Off by default: a community
+  turns it on with `"design": "v4"` in `instance/config.jsonc` (`NEXT_PUBLIC_DESIGN`, `core/lib/instance.ts › DESIGN`,
+  `data-design="v4"` on `<html>`). It re-points the existing tokens in `globals.css`: a pale blue page with white cards,
+  Inter and Inter Tight (`next/font`), labels in light sans capitals instead of mono, black main buttons, module colours
+  no longer branding modules, pastel primaries for status (`--st-*`), one soft green action colour (`--action`), rounder
+  radii. Pages that hard-code colours and sizes move over module by module in the next releases (DESIGN-SYSTEM.md › v4).
+  Light mode only. No migration.
+
 ## v4.38.4 — 2026-11-19
 
 - **Suggestions say what accepting does** (Oscar: "its not clear to me what the suggested action is"). Each

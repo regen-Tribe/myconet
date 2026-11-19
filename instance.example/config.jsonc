@@ -28,6 +28,9 @@
   // (needs the FIREFLIES_API_KEY, FIREFLIES_WEBHOOK_SECRET, FIREFLIES_SIGNING_SECRET and SUPABASE_SERVICE_ROLE_KEY secrets)
   "modules": [],
 
+  // The look. "v4" = the pastel redesign (DESIGN-SYSTEM.md › v4); leave empty for the current look.
+  "design": "",
+
   // Time zone for task times and dates said in meetings ("by Friday")
   "timeZone": "UTC",
 
