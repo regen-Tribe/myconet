@@ -4,7 +4,7 @@
 
 The visual language used across MyCoNet v2. Modern, sleek, white + grey neutrals with module colors used as accents — think Google Material 3 / Stripe / Linear.
 
-The **canonical reference implementation is `/dashboard`** (M00) — `web/src/modules/m00-dashboard/DashboardPage.tsx`. When in doubt, open that file and match what it does. The **second canonical reference is `/network`** (M01 — "members dashboard") which mirrors M00's pattern with member-specific content.
+The **canonical reference implementation is `/dashboard`** (M00) — `web/src/modules/m00-dashboard/DashboardPage.tsx`. When in doubt, open that file and match what it does. The **second canonical reference is `/members`** (M01 — "members dashboard") which mirrors M00's pattern with member-specific content.
 
 ---
 
@@ -168,7 +168,7 @@ Three rules:
 A single mono number on a white surface. Clickable when there's a relevant destination.
 
 ```tsx
-<Link href="/network" style={{ textDecoration: 'none', display: 'block' }}>
+<Link href="/members" style={{ textDecoration: 'none', display: 'block' }}>
   <div className="dash-stat-card dash-stat-card--link">
     <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700,
                   textTransform: 'uppercase', letterSpacing: '0.08em',
@@ -345,7 +345,7 @@ The standard top-down structure of any module page:
 └──────────────────────────────────────────────────────┘
 ```
 
-**Inside the M01 shell** (`/network/*` and `/u/*`): the inner sidebar and right panel already eat ~440px, so the middle column should be **single-column with sections stacked vertically**, not the two-column split.
+**Inside the M01 shell** (`/members/*` and `/u/*`): the inner sidebar and right panel already eat ~440px, so the middle column should be **single-column with sections stacked vertically**, not the two-column split.
 
 ---
 
@@ -369,7 +369,7 @@ What each `--mNN` color means and when to use it:
 
 | Color | When to use as accent | When NOT to use |
 |---|---|---|
-| `--m1` brown | Anywhere on `/network/*` or `/u/*` | Inside other modules' chrome |
+| `--m1` brown | Anywhere on `/members/*` or `/u/*` | Inside other modules' chrome |
 | `--m4` yellow | Blueprint progress bars, "phase" indicators | As a primary CTA — too pale for white text |
 | `--m5` green | Join CTAs, "live" status, accepted state, success | Generic neutrals — use `--accent-color` |
 | `--m6` blue | Agreements, collaboration flow, "submitted" state | Links inside body text |

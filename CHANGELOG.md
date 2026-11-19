@@ -5,6 +5,27 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## Unreleased — one vocabulary (from Protopia, Sonia)
+
+- **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia
+  on 2026-11-18. `AGENTS.md`, `CLAUDE.md` and `DOCS.md` point to it.
+- **Every module's address matches its name**: `/members`, `/operations`, `/achievements`, `/calendar`,
+  `/accommodation`, `/resources`, `/circles`; `/network/seeks` becomes `/members/requests`. The old addresses
+  redirect permanently (`web/next.config.ts`), so links in second-brain notes and emails keep working. New links
+  from the project manager and meetings use the new addresses. Profiles stay at `/u/{username}`. The assistant's Do still finds the project from either address.
+- **Task**, not deliverable or subtask: the Operations tab and stat, the project page ("Tasks · N", "New task…"),
+  board cards ("no tasks"), the landing page and home. `?tab=deliverables` still opens the Tasks tab. The table
+  keeps its name.
+- **Words**: board column "Backlog" → "To do" (Paused stays); "Seeks" → Requests; "Community Network" / "Network" → Members;
+  "Contributions" → Achievements as the module name; role labels in sentence case ("Circle lead"); "Collaboration
+  proposals" → "Agreements waiting for you"; "+ Propose project" → "+ Suggest a project"; join applications say
+  "Declined" not "Rejected"; "the agent" → "the assistant" ("Tell the assistant", task drafts, project-manager panel; Meetings not yet) and "library" → Documents on screen; "org chart" →
+  Circles; buttons follow the lexicon ("Start joining →", "Create account", "Open {Page} →", "See all … →").
+- **Points log, off by default**: a new `points` switch in `instance/config.jsonc` `modules`. Points are always
+  recorded in `points_log` (one row per award, undone with `undo_points()`, never deleted); accepting an agreement
+  with a `points_value` logs it. With the switch off, no screen mentions points, reputation or the points demo;
+  with it on, Achievements shows your total (`points_total()`). **Migration** `20261209000000_points_log.sql`.
+
 ## v4.39.0 — 2026-11-19
 
 - **A switchable new look, "v4"** (Sonia's redesign; prototype in her UI/UX review). Off by default: a community
