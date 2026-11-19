@@ -314,22 +314,6 @@ function pDashboard(){
   </div>`;
 }
 
-function pMyTasks(){
-  if(S.role==='explorer') return locked('My tasks');
-  const f=S.f.mt||'all';
-  const mine=D.tasks.filter(t=>t.who==='MO');
-  const open=mine.filter(t=>t.status!=='done'&&(f==='all'||t.status===f));
-  const done=mine.filter(t=>t.status==='done'&&(f==='all'||f==='done'));
-  return `<h1 class="hello">You have <em>${mine.filter(t=>t.status!=='done').length} tasks</em><br>this week</h1>
-  <div class="chiprow">${[['all','All'],['todo','To do'],['doing','In progress'],['review','Review'],['done','Done']].map(([k,t])=>`<button class="chip ${f===k?'on':''}" data-f="mt" data-v="${k}">${t}</button>`).join('')}</div>
-  <div style="max-width:760px">
-  ${open.length?`<div class="group-label">Due this week</div><div class="rows">${open.map(taskRow).join('')}</div>`:''}
-  ${done.length?`<div class="group-label">Finished</div><div class="rows">${done.map(taskRow).join('')}</div>`:''}
-  ${!open.length&&!done.length?`<div class="card empty"><b>Nothing here</b><p>No tasks with this status.</p></div>`:''}
-  <p style="text-align:center;margin-top:18px"><a class="btn quiet" href="#/operations">See all tasks on the board →</a></p></div>`;
-}
-
-/* board: cols × items; items carry kind and status */
 function boardHTML(cols, items, opts={}){
   return `<div class="board" data-board="${opts.scope||'main'}">${cols.map(c=>{
     const list=items.filter(x=>x.col===c);
@@ -505,7 +489,7 @@ const BP=[
   ['values','What we value','Care before efficiency. Say it to the person, not about them. Leave things better than you found them. Ask for help early.'],
   ['land','The land','Gardens on the south slope, orchard by the stream, the long barn as our common house. Wild margins stay wild.'],
   ['decide','How we decide','Each proposal gets four checks at once: circle leads give consent, all members vote, admins and advisors review it, and the assistant checks it against this Blueprint. It’s approved when enough checks pass.'],
-  ['money','Money & sharing','Tools, bikes and rooms are shared through Our place. Costs are split by circle budgets, agreed every spring.'],
+  ['money','Money & sharing','Tools, bikes and rooms are shared through Amenities & tools. Costs are split by circle budgets, agreed every spring.'],
   ['joining','Joining & leaving','Anyone invited can explore. You become a joining member when you apply, and a member when your first agreement is accepted. Anyone can leave, with a goodbye dinner.']
 ];
 function pBlueprint(){
@@ -534,18 +518,6 @@ function pCalendar(){
     ${D.events.length>list.length?`<p style="text-align:center;margin-top:14px"><button class="btn quiet" data-f="calAll" data-v="1">See all ${D.events.length} events →</button></p>`:''}</div>
     <div class="card"><div class="h-sec" style="margin-top:0"><h3>${mLong} ${Y}</h3></div><div class="month">${cells}</div></div>
   </div>`;
-}
-
-function pOurPlace(){
-  if(S.role==='explorer') return locked('Our place');
-  const f=S.f.place||'stay';
-  const itemRow=x=>`<div class="row"><span class="ico-soft">${ic(f==='stay'?'bed':'wrench')}</span><div class="main"><b>${x.name}</b><small>${x.note}${x.approval?' · needs a yes from Places':''}</small></div>${x.off?'<span class="st paused">Paused</span>':`<button class="btn primary sm" data-act="book" data-id="${x.id}">Book</button>`}</div>`;
-  let body='';
-  if(f==='stay') body=`<div class="split"><div class="rows">${D.stay.map(itemRow).join('')}</div><div class="scene" data-scene="cabin" style="margin:0;height:240px"></div></div>`;
-  if(f==='borrow') body=`<div class="rows" style="max-width:820px">${D.borrow.map(itemRow).join('')}</div>`;
-  if(f==='mine'){ const l=D.bookings.filter(b=>b.who==='MO'); body=`<div class="rows" style="max-width:820px">${l.map(b=>`<div class="row"><span class="ico-soft">${ic('calendar')}</span><div class="main"><b>${b.item}</b><small>${b.when}</small></div>${b.status==='ok'?'<span class="st done">Booked</span>':b.status==='no'?'<span class="st no">Declined</span>':'<span class="st todo">Booking request</span>'}</div>`).join('')}</div>`; }
-  return `<div class="ph"><div><h1>Our place</h1><p>Rooms for guests and things to borrow. Some need a yes from the Places circle first: that’s a booking request.</p></div></div>
-  <div class="chiprow">${[['stay','Stay'],['borrow','Borrow'],['mine','My bookings']].map(([k,t])=>`<button class="chip ${f===k?'on':''}" data-f="place" data-v="${k}">${t}</button>`).join('')}</div>${body}`;
 }
 
 function pMeetings(sub){
