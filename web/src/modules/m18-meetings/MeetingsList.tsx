@@ -1,5 +1,5 @@
 'use client'
-import { Button, PageHeader } from '@/core/components/v4'
+import { Button, Icon, PageHeader, StatusPill } from '@/core/components/v4'
 import { DESIGN } from '@/core/lib/instance'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -22,6 +22,8 @@ function Pill({ label, color }: { label: string; color: string }) {
     </span>
   )
 }
+
+const V4 = DESIGN === 'v4'
 
 const fmtDay = (iso: string) =>
   (/^\d{4}-\d{2}-\d{2}$/.test(iso) ? taskDate(iso) : new Date(iso)).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
@@ -69,6 +71,11 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
 
   const chip = (key: string, label: string, color = 'var(--m18)') => {
     const on = filter === key
+    if (V4) return (
+      <button key={key} type="button" aria-pressed={on} className={`v4-chip${on ? ' v4-chip--on' : ''}`} onClick={() => setFilter(key)}>
+        {label}{counts[key] ? <span className="v4-chip__count">{counts[key]}</span> : null}
+      </button>
+    )
     return (
       <button key={key} onClick={() => setFilter(key)} style={{
         fontSize: 12.5, fontWeight: on ? 700 : 500, cursor: 'pointer', whiteSpace: 'nowrap',
@@ -81,7 +88,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
   }
 
   return (
-    <div className={DESIGN === 'v4' ? 'v4-page' : undefined} style={DESIGN === 'v4' ? { maxWidth: 900 } : { maxWidth: 860, margin: '0 auto', padding: '48px 20px 80px' }}>
+    <div className={DESIGN === 'v4' ? 'v4-page' : undefined} style={DESIGN === 'v4' ? { maxWidth: 940 } : { maxWidth: 860, margin: '0 auto', padding: '48px 20px 80px' }}>
 {DESIGN === 'v4' ? (
         <PageHeader eyebrow="Working together" title="Meetings"
           subtitle="Every meeting the community has recorded. The assistant reads each one, chooses its circle, and puts its tasks on the board as drafts for the leads to confirm."
@@ -103,15 +110,16 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
       </div>
       </>)}
 
-      <div role="group" aria-label="Show meetings of" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+      <div role="group" aria-label="Show meetings of" className={V4 ? 'v4-chiprow' : undefined} style={V4 ? undefined : { display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
         {myCircles.length > 0 && chip('mine', 'My circles')}
         {chip('all', 'All')}
-        {usedCircles.map(c => chip(c, `${circles.meta(c).emoji} ${circles.meta(c).label}`, circles.meta(c).color))}
+        {usedCircles.map(c => chip(c, V4 ? circles.meta(c).label : `${circles.meta(c).emoji} ${circles.meta(c).label}`, circles.meta(c).color))}
       </div>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
         <input
           type="search" value={q} onChange={e => setQ(e.target.value)} placeholder="Search titles, summaries, people…" aria-label="Search meetings"
-          style={{ flex: '1 1 240px', padding: '8px 12px', borderRadius: 8, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontSize: 13.5 }}
+          className={V4 ? 'v4-input' : undefined}
+          style={V4 ? { flex: '1 1 240px', width: 'auto' } : { flex: '1 1 240px', padding: '8px 12px', borderRadius: 8, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontSize: 13.5 }}
         />
         {canManage && (
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink-2)', cursor: 'pointer' }}>
@@ -128,6 +136,40 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
       ) : shown.length === 0 ? (
         <div style={{ border: '1px dashed var(--rule)', borderRadius: 12, padding: '28px 24px', textAlign: 'center', color: 'var(--ink-3)', fontSize: 14 }}>
           No meetings match. <button onClick={() => { setFilter('all'); setQ(''); setNeedsReview(false) }} style={{ background: 'none', border: 'none', color: 'var(--m18)', fontWeight: 600, cursor: 'pointer', fontSize: 14 }}>Show all</button>
+        </div>
+      ) : V4 ? (
+        <div className="v4-list mt4-list">
+          {shown.map(m => {
+            const meta = m.circle && circles.has(m.circle) ? circles.meta(m.circle) : null
+            const t = taskCounts[m.id]
+            const s = STATUS[m.status] ?? STATUS.processing
+            const pill = m.status !== 'done' ? <StatusPill status={m.status === 'error' ? 'no' : 'doing'} label={s.label} />
+              : m.needs_review && !m.processed_at && !m.agent_note ? <StatusPill status="idea" label="Assistant reading soon" />
+              : m.needs_review && !m.processed_at ? <StatusPill status="review" label="Needs review" />
+              : t?.drafts ? <StatusPill status="review" label={`${t.drafts} to confirm`} />
+              : null
+            const facts = [
+              fmtDay(m.meeting_date ?? m.created_at),
+              meta ? meta.label : m.processed_at ? 'Community-wide' : null,
+              m.status === 'done' ? `${m.action_items.length} action item${m.action_items.length === 1 ? '' : 's'}` : null,
+              t ? `${t.total} task${t.total === 1 ? '' : 's'} on the board` : null,
+            ].filter(Boolean).join(' · ')
+            return (
+              <Link key={m.id} href={`/meetings/${m.id}`} className="v4-row v4-row--click mt4-row" style={{ ['--c' as string]: meta?.color ?? 'var(--ink-4)' }}>
+                <span className="v4-row__lead"><span className="v4-tile mt4-tile"><Icon name="chat" /></span></span>
+                <span className="v4-row__main">
+                  <b>{m.title}</b>
+                  <small>{facts}</small>
+                  {m.summary && <small className="mt4-sum">{m.summary}</small>}
+                </span>
+                <span className="v4-row__trail mt4-trail">
+                  {m.visibility === 'circle' && <span className="v4-tag"><Icon name="lock" size={12} />Circle only</span>}
+                  {pill}
+                  <Icon name="right" size={16} />
+                </span>
+              </Link>
+            )
+          })}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

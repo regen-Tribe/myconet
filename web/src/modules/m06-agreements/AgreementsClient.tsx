@@ -1,5 +1,5 @@
 'use client'
-import { Button, PageHeader } from '@/core/components/v4'
+import { Button, Icon, PageHeader, StatusPill as V4Pill } from '@/core/components/v4'
 import { DESIGN } from '@/core/lib/instance'
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
@@ -304,8 +304,11 @@ export default function AgreementsClient({
 
 {DESIGN === 'v4' ? (
         <PageHeader eyebrow="Working together" title="Agreements"
-          subtitle="Propose exactly what you’ll contribute to a project, and exactly what you expect in return."
-          actions={<Button icon="plus" onClick={() => setShowNewProject(true)}>Propose a new project</Button>} />
+          subtitle="An agreement is an offer to help on a project: what you give, and what you’d like back."
+          actions={<>
+            <Button variant="secondary" icon="plus" onClick={() => setShowNewProject(true)}>Propose a new project</Button>
+            <Button variant="next" onClick={() => setView('browse')}>Find a project</Button>
+          </>} />
       ) : (<>
       {/* Page head */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 24, flexWrap: 'wrap' as const }}>
@@ -330,6 +333,12 @@ export default function AgreementsClient({
       </>)}
 
       {/* Tab row */}
+      {(DESIGN as string) === 'v4' ? (
+        <div className="v4-chiprow" role="tablist">
+          <button type="button" role="tab" aria-selected={view === 'mine'} className={`v4-chip${view === 'mine' ? ' v4-chip--on' : ''}`} onClick={() => setView('mine')}>Yours{myAgreements.length ? <span className="v4-chip__count">{myAgreements.length}</span> : null}</button>
+          <button type="button" role="tab" aria-selected={view === 'browse'} className={`v4-chip${view === 'browse' ? ' v4-chip--on' : ''}`} onClick={() => setView('browse')}>Find a project<span className="v4-chip__count">{openProjects.length}</span></button>
+        </div>
+      ) : (
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid var(--rule)', paddingBottom: 0 }}>
         {([['mine', 'My Agreements'], ['browse', 'Browse & Propose']] as const).map(([v, label]) => (
           <button
@@ -348,9 +357,40 @@ export default function AgreementsClient({
           </button>
         ))}
       </div>
+      )}
+
+      {/* ── MY AGREEMENTS VIEW (the v4 look: rows as in the prototype) ── */}
+      {view === 'mine' && (DESIGN as string) === 'v4' && (
+        myAgreements.length === 0 ? (
+          <div className="v4-empty"><span className="v4-empty__art"><Icon name="handshake" size={30} /></span><b>No agreements yet</b>
+            <p>Find a project you’d like to help on and offer what you can give.</p>
+            <Button onClick={() => setView('browse')}>Find a project →</Button></div>
+        ) : (
+          <div className="ag6-list">
+            <div className="v4-list">
+              {myAgreements.map(a => {
+                const proj = projects.find(p => p.id === a.project_id)
+                const st = a.status === 'accepted' || a.status === 'active' ? 'done' : a.status === 'completed' ? 'idea' : a.status === 'rejected' ? 'no' : a.status === 'draft' ? 'idea' : 'review'
+                const label = ({ accepted: 'Accepted', active: 'Active', completed: 'Completed', rejected: 'Declined', pending: 'Waiting for an answer', draft: 'Draft' } as Record<string, string>)[a.status] ?? a.status
+                return (
+                  <div key={a.id} className="v4-row ag6-row">
+                    <span className="v4-row__lead"><span className="v4-tile v4-tile--yellow"><Icon name="handshake" /></span></span>
+                    <span className="v4-row__main">
+                      <b>{proj?.title ?? 'Project'}: {a.work_description}</b>
+                      <small>You offer{a.expected_reward ? ` · in return: ${a.expected_reward}` : ''} · {new Date(a.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</small>
+                    </span>
+                    <span className="v4-row__trail"><V4Pill status={st} label={label} /></span>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="v4-mt"><Button variant="secondary" icon="plus" onClick={() => setView('browse')}>Offer on another project</Button></p>
+          </div>
+        )
+      )}
 
       {/* ── MY AGREEMENTS VIEW ─────────────────────────────────── */}
-      {view === 'mine' && (
+      {view === 'mine' && (DESIGN as string) !== 'v4' && (
         <div>
           {myAgreements.length === 0 ? (
             <div style={{ background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 12, padding: '48px 28px', textAlign: 'center' as const, maxWidth: 480 }}>
