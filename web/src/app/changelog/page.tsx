@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.43.1',
+    date: '2026-11-20',
+    title: 'A fix for the map',
+    items: ['A safety check on the map pins now holds in every case. Nothing changes on screen.'],
+  },
+  {
     version: 'v4.43.0',
     date: '2026-11-20',
     title: 'A map of the amenities',

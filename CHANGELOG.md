@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.43.1 — 2026-11-20 — fix: the map pin check (from Protopia)
+
+- **Migration `20261210000100_amenities_map_pin_check.sql`**: v4.43.0's pin check let a half pin through (one
+  coordinate set, the other empty), because a CHECK that comes out NULL counts as passed. Now both are set and
+  between 0 and 100, or both are empty. Apply it with the v4.43.0 migration (found in Protopia's dry run, before
+  anything was applied). The app always saves both together, so no data was affected.
+
 ## v4.43.0 — 2026-11-20 — the Amenities map (from Protopia, Sonia)
 
 - **A map on Amenities & tools** (v4 look): the community's picture of the land (an aerial photo or a drawn plan)
