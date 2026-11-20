@@ -62,16 +62,21 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
 
   const usedCircles = useMemo(() => circles.slugs.filter(c => meetings.some(m => m.circle === c)), [circles.slugs, meetings])
   const counts = useMemo(() => {
-    const out: Record<string, number> = { all: meetings.length, mine: meetings.filter(m => m.circle && myCircles.includes(m.circle)).length }
+    // Community-wide meetings (no single circle) concern everyone, so they count towards My circles too
+    const cw = meetings.filter(m => !m.circle && m.processed_at).length
+    const out: Record<string, number> = { all: meetings.length, mine: meetings.filter(m => m.circle && myCircles.includes(m.circle)).length + cw }
     for (const m of meetings) if (m.circle) out[m.circle] = (out[m.circle] ?? 0) + 1
     return out
   }, [meetings, myCircles])
   const needsLead = (m: MeetingListItem) => (m.needs_review && !m.processed_at) || (taskCounts[m.id]?.drafts ?? 0) > 0
   const reviewCount = meetings.filter(needsLead).length
 
+  // A community-wide meeting (the agent found no single circle, e.g. a morning sync) concerns everyone,
+  // so it shows in My circles as well as All — it isn't hidden until you switch to All.
+  const communityWide = (m: MeetingListItem) => !m.circle && !!m.processed_at
   const needle = q.trim().toLowerCase()
   const shown = meetings.filter(m => {
-    if (picked.length && !(m.circle && picked.includes(m.circle))) return false
+    if (picked.length && !((m.circle && picked.includes(m.circle)) || (isMine && communityWide(m)))) return false
     if (needsReview && !needsLead(m)) return false
     if (needle && !`${m.title} ${m.summary ?? ''} ${m.attendees.join(' ')}`.toLowerCase().includes(needle)) return false
     return true
