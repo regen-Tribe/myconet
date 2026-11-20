@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.47.0 — 2026-11-20 — Circles, Agreements, Meetings and Governance headers in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look; release 7 continues (a first pass on these four pages).
+- **Circles** (`m17-org/OrgChartClient.tsx`): the shared page header ("Circles", where you sit, Add circle for
+  admins) and soft white cards for the stewards and every circle, no coloured stripes. Editing is unchanged.
+- **Agreements**, **Meetings** and **Governance**: the shared page header with their main action (Propose a new
+  project, Upload recording, New proposal) as a shared button, inside the v4 page frame.
+- Their lists, tabs and pop-ups keep their current inside for now (next passes).
+
 ## v4.46.0 — 2026-11-20 — Calendar in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look; release 7 continues.

@@ -1,4 +1,6 @@
 'use client'
+import { Button, PageHeader } from '@/core/components/v4'
+import { DESIGN } from '@/core/lib/instance'
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 import { formatDeadline } from '@/core/lib/format'
@@ -298,8 +300,13 @@ export default function AgreementsClient({
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ padding: '26px 32px 60px' }}>
+    <div className={DESIGN === 'v4' ? 'v4-page v4-page--wide' : undefined} style={DESIGN === 'v4' ? undefined : { padding: '26px 32px 60px' }}>
 
+{DESIGN === 'v4' ? (
+        <PageHeader eyebrow="Working together" title="Agreements"
+          subtitle="Propose exactly what you’ll contribute to a project, and exactly what you expect in return."
+          actions={<Button icon="plus" onClick={() => setShowNewProject(true)}>Propose a new project</Button>} />
+      ) : (<>
       {/* Page head */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 24, flexWrap: 'wrap' as const }}>
         <div>
@@ -320,6 +327,7 @@ export default function AgreementsClient({
           + Propose new project
         </button>
       </div>
+      </>)}
 
       {/* Tab row */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid var(--rule)', paddingBottom: 0 }}>
