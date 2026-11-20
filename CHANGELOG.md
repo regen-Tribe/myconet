@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.54.0 — 2026-11-20 — Meetings, Governance and Agreements laid out as the prototype (from Protopia, Sonia)
+
+Only with the v4 look; the classic look is unchanged.
+- **Meetings** (`pMeetings` / `pMeeting`): the list is rows with a chat tile, date, circle, action items and tasks on
+  the board, the summary's first lines and the status (Needs review, to confirm). A meeting's page has circle, date
+  and people tags, the summary in a card, its action items as rows (draft swipe or "On the board"), Fireflies' own
+  list folded, the documents, and on the right the files (notes, transcript), the second-brain link and the leads'
+  tools.
+- **Governance** (`pGovernance` / `pProposal`): proposal cards with their state and a pill per check, then a page
+  per proposal with the description, **Your vote** (yes / no), the discussion, and the **4 checks** as rows with
+  their state, the vote bar, and the same consent and review buttons for circle leads, admins and advisors. The
+  new proposal form opens in the shared pop-up.
+- **Agreements** (`pAgreements`): Yours / Find a project chips; your agreements as rows ("Project: what you give",
+  what you'd like back, status). Finding and offering on a project is unchanged.
+
 ## v4.53.0 — 2026-11-20 — Circles and the Calendar list laid out as the prototype (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: compare every page with the prototype.
