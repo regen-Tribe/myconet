@@ -704,7 +704,7 @@ export default function HomeClient({
                       display: 'grid', placeItems: 'center',
                       color: '#fff', fontSize: 12, fontWeight: 700, overflow: 'hidden',
                     }}>
-                      {m.avatar_url ? <img src={m.avatar_url} alt={fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials(fullName)}
+                      {m.avatar_url ? <img loading="lazy" decoding="async" src={m.avatar_url} alt={fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials(fullName)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6, marginBottom: 2 }}>
