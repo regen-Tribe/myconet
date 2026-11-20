@@ -922,3 +922,17 @@ label.v4-btn { cursor: pointer; }
 @media (max-width: 900px) { .v4-mapedit { grid-template-columns: 1fr; } }
 @media (max-width: 900px) { .v4-mapwrap--list { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { .v4-pin { width: 26px; height: 26px; } .v4-pin .v4-icon { width: 12px; height: 12px; } .v4-map__zoom button { width: 32px; height: 32px; } }
+
+/* ─── v4 Members (modules/m01-network/MembersV4.tsx) ─── */
+.v4-members__tabs { max-width: 1120px; margin: 0 auto; padding: 18px 28px 0; }
+.v4-members__tabs + .v4-page { padding-top: 10px; }
+.v4-subtabs { margin-bottom: 0; }
+.v4-subtabs .v4-chip { text-decoration: none; }
+.v4-grid--people { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.v4-member { display: grid; gap: 10px; align-content: start; }
+.v4-member .v4-card-head { margin: 0; }
+.v4-member__line { display: grid; gap: 4px; }
+.v4-member__line > small { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-4, #9aa0ad); }
+img.v4-avatar { object-fit: cover; padding: 0; }
+.v4-avatar--md { width: 44px; height: 44px; font-size: 16px; }
+@media (max-width: 760px) { .v4-members__tabs { padding: 14px 16px 0; } }

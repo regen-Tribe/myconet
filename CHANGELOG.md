@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.45.0 — 2026-11-20 — Members in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look. Release 7 of DESIGN-SYSTEM.md › v4 starts here: the existing pages move to `core/components/v4`.
+- **Members** (`modules/m01-network/MembersV4.tsx`, `MembersGridV4.tsx`): everyone as cards (avatar, headline, their
+  circles, what they offer and what they're looking for), filtered by circle or searched. The classic page listed
+  only the newest eight. Kept from the classic page: "Finish your profile" (now the green next step), your best
+  matches, and what's new lately; the visitor note with Sign in / Create account.
+- **One row of tabs** for the Members pages (Everyone, Matches for you, My offers, My requests, Search, My profile)
+  instead of their own side menu (`MembersTabsV4.tsx`, in `app/members/layout.tsx`). The sub-pages keep their
+  current inside for now.
+
 ## v4.44.0 — 2026-11-20 — the Amenities map is interactive (from Protopia, Sonia)
 
 - **Zoom and move around** (`AmenitiesMap.tsx`): + / − and a reset button, double click, ⌘/Ctrl + scroll or a

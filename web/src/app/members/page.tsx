@@ -4,6 +4,8 @@ import Link from 'next/link'
 import MemberList from '@/modules/m01-network/MemberList'
 import { computeMatch, type Bio, type MatchResult } from '@/modules/m01-network/lib/match-score'
 import { modLabel } from '@/core/lib/module-label'
+import { DESIGN } from '@/core/lib/instance'
+import MembersV4 from '@/modules/m01-network/MembersV4'
 
 export default async function NetworkDashboard() {
   const supabase = await createClient()
@@ -122,6 +124,14 @@ export default async function NetworkDashboard() {
   ]
     .sort((a, b) => b.ts - a.ts)
     .slice(0, 10)
+
+  // The v4 look: the same data, laid out as Sonia's prototype (MembersV4)
+  if (DESIGN === 'v4') {
+    return (
+      <MembersV4 supabase={supabase} userId={user?.id ?? null} memberCount={memberCount} profileSteps={profileSteps}
+        profileCompleteness={profileCompleteness} topMatches={topMatches as any} activity={memberActivity} hasBio={!!myBio} />
+    )
+  }
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
