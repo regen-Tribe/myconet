@@ -3,6 +3,16 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.57.0',
+    date: '2026-11-20',
+    title: 'The new look on phones',
+    items: [
+      'With the new look on, project boards scroll sideways on a phone, one column at a time, instead of one very long page.',
+      'Buttons and links that read off-centre on a phone are centred, and cards that squeezed their text now stack.',
+      'Tapping a field on an iPhone no longer zooms the page, and pages load a little lighter (fewer fonts, member photos load as you scroll).',
+    ],
+  },
+  {
     version: 'v4.56.0',
     date: '2026-11-20',
     title: 'The calendar opens on the week',

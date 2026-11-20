@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.57.0 — 2026-11-20 — The v4 look on phones (from Protopia, Sonia)
+
+Only with the v4 look, and only at phone widths (a new `web/src/app/v4-mobile.css`, every rule under
+`html[data-design="v4"]` and a max-width media query, imported after `globals.css`).
+- **Kanban boards** (Operations, a project's tasks) scroll sideways inside their own box, one column at a time;
+  each column scrolls on its own.
+- **Off-centre labels** fixed: text-only links stretched to 44px by the tap-size rule get their text centred.
+- **Stacking**: search pills, the project header, Governance's four checks and the Achievements badges.
+- **Fields are 16px** (no iPhone zoom on tap); bottom-sheet modals keep clear of the home bar.
+- **Lighter first load**: the Geist fonts (Blueprint wizard only) are no longer preloaded; avatar lists load lazily.
+
 ## v4.56.0 — 2026-11-20 — the calendar opens on the week (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: the calendar as it was is better than the prototype's list; open on the whole week
