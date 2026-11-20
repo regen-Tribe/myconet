@@ -1061,3 +1061,15 @@ img.v4-avatar { object-fit: cover; padding: 0; }
   .shell-v4 .topbar-v4-menu { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--surface, #fff); color: var(--ink, #111317); cursor: pointer; flex-shrink: 0; }
   .shell-v4 .topbar-v4-title { display: block; font-size: 15px; font-weight: 600; color: var(--ink, #111317); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
 }
+
+/* ─── v4 public pages: the landing page (app/landing.css, .lp-*) and sign in (app/auth/login) ─── */
+[data-design="v4"] .lp h1, [data-design="v4"] .lp h2, [data-design="v4"] .lp .lp-title, [data-design="v4"] .lp-closing-box h2 { font-family: var(--display); font-weight: 400 !important; letter-spacing: -.045em !important; }
+[data-design="v4"] .lp-btn { border-radius: 999px !important; font-weight: 600; }
+[data-design="v4"] .lp-btn-primary { background: var(--ink, #111317) !important; color: #fff !important; }
+[data-design="v4"] .lp-btn-secondary { background: var(--surface, #fff) !important; border-color: transparent !important; box-shadow: inset 0 0 0 1px var(--rule); }
+[data-design="v4"] .lp-eyebrow { font-weight: 400 !important; letter-spacing: .12em !important; color: var(--ink-4) !important; background: none !important; padding-left: 0 !important; }
+[data-design="v4"] .lp-eyebrow .lp-mod-dot { display: none; }
+[data-design="v4"] .lp-demo, [data-design="v4"] .lp-chrome, [data-design="v4"] .lp-closing-box { border: 0 !important; border-radius: 24px !important; }
+[data-design="v4"] .lp-chip { border-radius: 999px !important; }
+[data-design="v4"] .lp .mod-num, [data-design="v4"] .lp-mod-num { display: none !important; }
+[data-design="v4"] .auth-form-panel h1, [data-design="v4"] .auth-form-panel h2 { font-weight: 400 !important; letter-spacing: -.045em !important; font-size: 36px !important; }

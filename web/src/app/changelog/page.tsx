@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.50.0',
+    date: '2026-11-20',
+    title: 'The rest of the way in',
+    items: ['With the new look on, Join, Achievements, the sign-in page and the landing page match the rest of the app.'],
+  },
+  {
     version: 'v4.49.0',
     date: '2026-11-20',
     title: 'Operations, the new way',

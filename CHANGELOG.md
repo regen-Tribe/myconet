@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.50.0 — 2026-11-20 — Join, Achievements, sign in and the landing page in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look.
+- **Join** and **Achievements**: the shared page header in the v4 page frame.
+- **Sign in** (`app/auth/login`): the shared field (white, rounded, hairline) and the black pill button; headings in
+  the v4 type.
+- **The landing page** (`/`, `landing.css`): a scoped layer in `globals.css` (`[data-design="v4"] .lp…`): headings in
+  the v4 type, black and white pill buttons, light-capital eyebrows without module dots, soft cards.
+
 ## v4.49.0 — 2026-11-20 — Operations in the v4 look; the phone top bar as in the prototype (from Protopia, Sonia)
 
 Only with the v4 look.
