@@ -5,6 +5,20 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.69.0 — 2026-11-20 — every Members screen in the v4 look (from Protopia, Sonia)
+
+v4 only; the classic look is unchanged.
+- **Matches** (`/members/matches`): uniform cards (match %, why, skills), chips All / Top / Good / Potential,
+  "How matching works" folded underneath; the visitor view keeps it open.
+- **My offers / My requests**: page header with "+ Add offer / request", calm cards with edit and delete; the same
+  form (now one `form` const, shared by both looks). Urgent and high requests are marked "Urgent" / "Soon".
+- **Discover**: one search box that searches as you type, member types as chips, the same cards. Visitors still see
+  only the public card (no skills, no score).
+- **My profile** (`/members/profile`) goes to your own `/u/<username>` (already v4, with Edit profile on it).
+- **Edit profile**: page header, Save draft, a progress bar, the 8 steps as chips with a tick, a calm card, and
+  "Next: <step>" buttons. Same fields and saving.
+- New `m01-network/PersonCardV4.tsx` (card + "How matching works"), `MatchesV4.tsx`, `lib/match-dimensions.ts`.
+
 ## v4.68.2 — 2026-11-20 — the community's logo in the menu (from Protopia, Sonia)
 
 - The v4 menu (`MenuV4`) showed the first letter of the community's name. It now shows the logo set in the Blueprint
