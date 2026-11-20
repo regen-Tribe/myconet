@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.51.0 — 2026-11-20 — the insides of the older pages in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look. A scoped layer in `globals.css` restyles the inline-styled patterns the older pages share,
+only inside v4 page frames and pop-ups (`.v4-page`, `.v4-members`, `.v4-gov`, `.modal-shell__dialog`): bordered
+cards become soft white cards, underline tabs become chips, module-coloured buttons become black pills, outlined
+buttons become white pills, monospace capital labels become light capitals, fields get the shared field look, and
+thick coloured card edges go. Covers Agreements, Meetings, Governance, Join, Achievements, the Members sub-pages,
+Operations and the pop-ups (task, project, event). Matches React's style text both as server-rendered (`prop:val`)
+and after hydration (`prop: val`). The building blocks are untouched. Pages still get proper rebuilds over time.
+
 ## v4.50.0 — 2026-11-20 — Join, Achievements, sign in and the landing page in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look.

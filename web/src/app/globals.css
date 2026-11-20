@@ -1073,3 +1073,63 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 [data-design="v4"] .lp-chip { border-radius: 999px !important; }
 [data-design="v4"] .lp .mod-num, [data-design="v4"] .lp-mod-num { display: none !important; }
 [data-design="v4"] .auth-form-panel h1, [data-design="v4"] .auth-form-panel h2 { font-weight: 400 !important; letter-spacing: -.045em !important; font-size: 36px !important; }
+
+/* ─── v4 second pass: the insides of the older pages (Agreements, Meetings, Governance, Join, Achievements,
+   Members sub-pages, Operations, pop-ups). Their markup is inline-styled; this layer restyles the shared patterns
+   only inside v4 pages and pop-ups, so other communities and the new building blocks are untouched. ─── */
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background:var(--surface)"][style*="border:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background:var(--surface)"][style*="border: 1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background: var(--surface)"][style*="border:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background: var(--surface)"][style*="border: 1px solid var(--rule)"] {
+  border-color: transparent !important; border-radius: 18px !important; box-shadow: none !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background:var(--bg-2)"][style*="border:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background:var(--bg-2)"][style*="border: 1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background: var(--bg-2)"][style*="border:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="background: var(--bg-2)"][style*="border: 1px solid var(--rule)"] {
+  background: var(--surface) !important; border-color: transparent !important; border-radius: 18px !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border-bottom:2px solid transparent"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border-bottom: 2px solid transparent"] {
+  border-bottom: 0 !important; border-radius: 999px !important; padding: 7px 15px !important; margin: 0 2px 8px 0 !important; background: rgba(255,255,255,.72) !important; color: var(--ink-2) !important; font-weight: 500 !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border-bottom:2px solid var("],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border-bottom: 2px solid var("] {
+  border-bottom: 0 !important; border-radius: 999px !important; padding: 7px 15px !important; margin: 0 2px 8px 0 !important; background: var(--ink) !important; color: #fff !important; font-weight: 600 !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="display:flex"][style*="border-bottom:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="display:flex"][style*="border-bottom: 1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="display: flex"][style*="border-bottom:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="display: flex"][style*="border-bottom: 1px solid var(--rule)"] {
+  border-bottom-color: transparent !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="background:var(--m"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="background: var(--m"] {
+  background: var(--ink) !important; color: #fff !important; border: 0 !important; border-radius: 999px !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) a[style*="background:var(--m"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) a[style*="background: var(--m"] {
+  background: var(--ink) !important; color: #fff !important; border: 0 !important; border-radius: 999px !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border:1px solid var(--rule)"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) button[style*="border: 1px solid var(--rule)"] {
+  border-color: transparent !important; box-shadow: inset 0 0 0 1px var(--rule) !important; border-radius: 999px !important; background: var(--surface) !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) *[style*="font-family:var(--mono)"][style*="text-transform:uppercase"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) *[style*="font-family:var(--mono)"][style*="text-transform: uppercase"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) *[style*="font-family: var(--mono)"][style*="text-transform:uppercase"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) *[style*="font-family: var(--mono)"][style*="text-transform: uppercase"] {
+  font-family: inherit !important; font-weight: 400 !important; letter-spacing: .12em !important; color: var(--ink-4) !important; background: none !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(.v4-input),
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) select:not(.v4-select),
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) textarea:not(.v4-input) {
+  border: 0 !important; box-shadow: inset 0 0 0 1px var(--rule) !important; border-radius: 12px !important; background: var(--surface) !important;
+}
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) .v4-search input { box-shadow: none !important; background: none !important; }
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="border-top:3px solid"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="border-top: 3px solid"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="border-left:3px solid"],
+[data-design="v4"] :is(.v4-page, .v4-members, .v4-gov, .modal-shell__dialog) div[style*="border-left: 3px solid"] {
+  border-top-width: 1px !important; border-left-width: 1px !important;
+}
