@@ -35,8 +35,8 @@ Query params: `tab=browse|mine|manage`, `category=accommodation|tools|spaces`, `
 |------|---------|
 | `BookingsClient.tsx` | Page: tabs, filters, book / cancel / approve, item save and archive |
 | `BookingsV4.tsx` | The v4 look's view of the same page (BookingsClient passes its state and actions as `vm`); Admin › Bookings adds the Calendar (who stays where, two weeks) |
-| `ItemModal.tsx` | Item details, schedule, booking form, manager actions |
-| `ItemFormModal.tsx` | Add/edit item: category, tags, circle, capacity, approval toggle |
+| `ItemModal.tsx` | Item details, schedule, booking form, manager actions (with v4, its own view in the shared building blocks) |
+| `ItemFormModal.tsx` | Add/edit item: category, tags, circle, capacity, approval toggle (with v4, its own view) |
 | `lib/inventory.ts` | Categories, status labels, permission helpers, formatting, error messages |
 | `lib/queries.ts` | `ITEM_SELECT`, `BOOKING_SELECT`, row normalizers |
 
