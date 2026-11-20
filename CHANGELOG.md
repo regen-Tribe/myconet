@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.68.0 — 2026-11-20 — one circle filter everywhere: "Circles ▾" (from Protopia, Sonia)
+
+- New shared `CircleFilter` (`core/components/v4/CircleFilter.tsx`, styles `.v4-cf*` in globals.css): a "Circles ▾"
+  button opens every circle with its colour dot, a count and a search box; pick one or several; the chosen ones show
+  as pills with ✕ and a Clear. A pop-over on a computer, a sheet from the bottom on a phone (on `<body>`, above the
+  assistant button). Nothing scrolls sideways any more. "My circles" at the top when the viewer has circles.
+- v4 pages use it instead of a sideways chip row or a dropdown: Members, the Operations board, Meetings and the
+  Calendar. Each page keeps its choice in the address (`?circle=a,b`); one slug still works as before, and
+  Meetings still takes `mine` / `all` and opens on My circles.
+- Several circles at once: Operations' project manager panel (`circle` prop now takes a list) and the Calendar
+  filter by any of them; new tasks and events start in the circle only when exactly one is chosen.
+- Helpers `parseCircleParam` / `setCircleParam` for pages that want `?circle=` in the URL.
+
 ## v4.67.1 — 2026-11-20 — Operations no longer crashes without the service key; requests show again
 
 - `m07-ops/lib/pm-data.ts`: the project manager's recent changes are read with the service key; a community

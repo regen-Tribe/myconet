@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.68.0',
+    date: '2026-11-20',
+    title: 'One way to filter by circle',
+    items: ['Members, Operations, Meetings and the Calendar filter by circle the same way: a “Circles” button opens every circle with a search, you pick one or several, and the chosen ones show as pills you can remove. On phones the list slides up from the bottom, and nothing scrolls sideways any more.'],
+  },
+  {
     version: 'v4.67.1',
     date: '2026-11-20',
     title: 'Fixes: Operations and requests',
