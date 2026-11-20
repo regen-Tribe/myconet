@@ -243,8 +243,9 @@ export default function HomeClient({
   const democConcern = 3 + (democVote === 'concern' ? 1 : 0)
   const democNo = 2 + (democVote === 'no' ? 1 : 0)
   const democPassed = democYes >= 10
-  const layersPassed = [consentPassed, democPassed, true, true].filter(Boolean).length
-  const proposalLive = layersPassed >= 3
+  // 3 people checks (expert review already approved in this demo); 2 of 3 = approved. The AI check is advice.
+  const layersPassed = [consentPassed, democPassed, true].filter(Boolean).length
+  const proposalLive = layersPassed >= 2
 
   // M04 - animate bars on scroll into view
   const bpRef = useRef<HTMLDivElement>(null)
@@ -1250,12 +1251,12 @@ export default function HomeClient({
           <SectionHead
             mod="09" label="Governance" color="var(--m9)"
             h="Decide together. Four checks, one community."
-            lead="Every proposal gets four checks at once. When enough of them pass, it is approved and becomes a decision, and work can begin."
+            lead="Every proposal gets four checks at once. When two of the three people checks pass, it is approved and becomes a decision, and work can begin."
             href="/dashboard"
             why={[
               '<strong>All four checks run at once</strong> — no waiting for one to finish before the next starts.',
-              '<strong>Approved when enough checks pass</strong> — circle leads, all members, admins and advisors, and the AI Blueprint check.',
-              '<strong>AI facilitator</strong> flags blockers and summarizes concerns in real time.',
+              '<strong>Approved when 2 of the 3 people checks pass</strong> — circle leads, all members, admins and advisors.',
+              '<strong>AI Blueprint check</strong> gives advice: does the proposal fit the Blueprint and goals? It doesn’t vote.',
             ]}
           />
 
@@ -1288,20 +1289,20 @@ export default function HomeClient({
             <div style={{ padding: '12px 22px', background: 'var(--bg-2)', borderBottom: '1px solid var(--rule)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: proposalLive ? '#16a34a' : 'var(--ink-3)' }}>
-                  {layersPassed} / 4 checks passed
+                  {layersPassed} / 3 people checks passed
                 </span>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-4)' }}>
-                  {proposalLive ? '✓ Approved: the proposal is now a decision' : 'Approved when enough checks pass'}
+                  {proposalLive ? '✓ Approved: the proposal is now a decision' : 'Approved when 2 of 3 pass'}
                 </span>
               </div>
               <div style={{ position: 'relative', height: 8, background: 'var(--rule)', borderRadius: 4, overflow: 'visible' }}>
                 <div style={{
                   height: '100%', borderRadius: 4, transition: 'width 600ms ease, background 400ms',
                   background: proposalLive ? '#22c55e' : 'var(--m9)',
-                  width: `${(layersPassed / 4) * 100}%`,
+                  width: `${(layersPassed / 3) * 100}%`,
                 }} />
-                <div style={{ position: 'absolute', top: -3, left: 'calc(75% - 1px)', width: 2, height: 14, background: '#22c55e', borderRadius: 1, opacity: 0.7 }} />
-                <div style={{ position: 'absolute', top: 14, left: 'calc(75% - 18px)', fontFamily: 'var(--mono)', fontSize: 9, color: '#16a34a', whiteSpace: 'nowrap' }}>Approved ↑</div>
+                <div style={{ position: 'absolute', top: -3, left: 'calc(66.667% - 1px)', width: 2, height: 14, background: '#22c55e', borderRadius: 1, opacity: 0.7 }} />
+                <div style={{ position: 'absolute', top: 14, left: 'calc(66.667% - 18px)', fontFamily: 'var(--mono)', fontSize: 9, color: '#16a34a', whiteSpace: 'nowrap' }}>Approved ↑</div>
               </div>
             </div>
 
@@ -1415,12 +1416,12 @@ export default function HomeClient({
                     <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--ink-4)', textTransform: 'uppercase' }}>Check 04</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginTop: 1 }}>AI · Blueprint check</div>
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#16a34a', background: 'color-mix(in srgb, #22c55e 12%, transparent)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>✓ Cleared</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', background: 'var(--bg-2)', border: '1px solid var(--rule)', padding: '2px 8px', borderRadius: 20, flexShrink: 0 }}>Advice</span>
                 </div>
                 <p style={{ fontSize: 11.5, color: 'var(--ink-3)', lineHeight: 1.55, margin: '0 0 8px' }}>
                   No blockers detected. Proposal is well-scoped and consistent with Blueprint Phase 2 goals.
                 </p>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-4)' }}>Confidence: 91%</div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-4)' }}>Fits the Blueprint: 91% · doesn’t count</div>
               </div>
             </div>
 

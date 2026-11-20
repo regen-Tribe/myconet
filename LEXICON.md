@@ -56,8 +56,8 @@ redirect permanently (`web/next.config.ts`), because notes and emails link to th
 
 ## Governance
 
-Every proposal gets **4 checks** at once and is **Approved** when enough pass (the screen states the
-real rule). Name each check **who · how**:
+Every proposal gets **4 checks** at once and is **Approved** when 2 of the 3 people checks pass; the
+AI · Blueprint check is advice and doesn't count (decided by Sonia, 2026-11-19). Name each check **who · how**:
 **Circle leads · consent**, **All members · majority vote**, **Admins & advisors · expert review**,
 **AI · Blueprint check**. Statuses: **Approved** / **Not approved**. Say "checks", not "layers";
 never "L1–L4", "CL", "live" or "threshold". "Sociocracy / Democracy / Meritocracy" only in a short
