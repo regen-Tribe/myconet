@@ -86,7 +86,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, color: 'var(--ink)', lineHeight: 1.1, margin: 0 }}>Meeting notes</h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '8px 0 0', maxWidth: 520, lineHeight: 1.5 }}>
-            Every meeting the community has recorded. The agent reads each one from Fireflies, chooses its circle, and puts its tasks on the board as drafts for the leads to confirm.
+            Every meeting the community has recorded. The assistant reads each one from Fireflies, chooses its circle, and puts its tasks on the board as drafts for the leads to confirm.
           </p>
         </div>
         <Link href="/meetings/upload" style={{ padding: '10px 16px', borderRadius: 8, background: 'var(--m18)', color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
@@ -134,7 +134,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                       {m.visibility === 'circle' && <Pill label="🔒 Circle only" color="#64748b" />}
                       {m.status !== 'done' ? <Pill label={s.label} color={s.color} />
-                        : m.needs_review && !m.processed_at && !m.agent_note ? <Pill label="Agent reading soon" color="#64748b" />
+                        : m.needs_review && !m.processed_at && !m.agent_note ? <Pill label="Assistant reading soon" color="#64748b" />
                         : m.needs_review && !m.processed_at ? <Pill label="Needs review" color="#b45309" />
                         : t?.drafts ? <Pill label={`${t.drafts} to confirm`} color="#b45309" />
                         : null}
