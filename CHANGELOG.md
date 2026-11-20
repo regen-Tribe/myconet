@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.43.0 — 2026-11-20 — the Amenities map (from Protopia, Sonia)
+
+- **A map on Amenities & tools** (v4 look): the community's picture of the land (an aerial photo or a drawn plan)
+  with a pin for each room, tool and space that has one. Map | List switch; a pin opens the item. Items without
+  a pin are listed under the map. `modules/m15-bookings/AmenitiesMap.tsx`.
+- **Admin › Bookings › Map**: admins upload or replace the picture (public `branding` bucket, like the banner);
+  admins and circle leads place, move or remove the pins of the items they manage ("Place", then click on the map).
+- **Migration `20261210000000_amenities_map.sql`**: `community_settings.site_map_url`, `booking_items.map_x` and
+  `map_y` (percent of the picture, 0–100, both or neither). No new policies: the existing ones decide who edits
+  (admins for the picture; the "leads edit items" policy for pins). The page reads pins and the picture on their
+  own, so a community that hasn't applied the migration yet keeps a working bookings page without the map.
+
 ## v4.42.1 — 2026-11-20 — the booking pop-up and item form in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look. Same fields, rules, checks and messages; only the view changed.

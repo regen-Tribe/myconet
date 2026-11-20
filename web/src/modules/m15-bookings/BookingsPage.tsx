@@ -41,7 +41,15 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
       ? supabase.from('bookings').select(BOOKING_SELECT).gte('ends_at', since).order('starts_at')
       : Promise.resolve({ data: [] }),
   ])
-  const items = (itemsRes.data ?? []).map(toItem)
+  // The Amenities map (v4.43.0): read on their own, so a community that hasn't applied the
+  // migration yet still gets its bookings page (just without the map)
+  const [pinsRes, mapRes] = await Promise.all([
+    supabase.from('booking_items').select('id, map_x, map_y').not('map_x', 'is', null),
+    supabase.from('community_settings').select('site_map_url').maybeSingle(),
+  ])
+  const pins = new Map(((pinsRes.error ? [] : pinsRes.data) ?? []).map(p => [p.id as string, p as { map_x: number; map_y: number }]))
+  const siteMapUrl = mapRes.error ? null : ((mapRes.data as { site_map_url: string | null } | null)?.site_map_url ?? null)
+  const items = (itemsRes.data ?? []).map(toItem).map(i => ({ ...i, map_x: pins.get(i.id)?.map_x ?? null, map_y: pins.get(i.id)?.map_y ?? null }))
   const inScope = (id: string | undefined) => items.some(i => i.id === id && SCOPE_META[scope].categories.includes(i.category))
 
   return (
@@ -57,6 +65,7 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
       initialCategory={isCategory(sp.category) && SCOPE_META[scope].categories.includes(sp.category) ? sp.category : null}
       initialItemId={inScope(sp.item) ? sp.item! : null}
       admin={opts.admin}
+      siteMapUrl={siteMapUrl}
     />
   )
 }

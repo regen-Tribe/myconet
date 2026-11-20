@@ -8,6 +8,7 @@ import {
 } from '@/core/components/v4'
 import type { Booking, BookingCategory, BookingItem, BookingsTab } from './types'
 import { CATEGORY_META, STATUS_META, canManageItem, fmtBookingRange, personName } from './lib/inventory'
+import AmenitiesMap from './AmenitiesMap'
 
 /**
  * Amenities & tools and Admin › Bookings in the v4 look (Sonia's prototype, 19 Nov). Same data, rules and
@@ -57,10 +58,16 @@ export type BookingsV4Model = {
   edit: (item: BookingItem) => void
   toggleActive: (item: BookingItem) => void
   setStatus: (b: Booking, status: Booking['status'], okMsg: string) => void
+  /** The Amenities map (v4.43.0) */
+  mapUrl: string | null
+  setPin: (item: BookingItem, x: number | null, y: number | null) => void
+  setMapPicture: (file: File | null) => void
+  isAdmin: boolean
+  canManage: (item: BookingItem) => boolean
 }
 
 export default function BookingsV4({ vm, modals }: { vm: BookingsV4Model; modals: React.ReactNode }) {
-  const [adminView, setAdminView] = useState<'calendar' | 'requests' | 'inventory'>(vm.pending.length ? 'requests' : 'calendar')
+  const [adminView, setAdminView] = useState<'calendar' | 'requests' | 'inventory' | 'map'>(vm.pending.length ? 'requests' : 'calendar')
   const counts = vm.categories.map(c => `${vm.activeItems.filter(i => i.category === c).length} ${CATEGORY_META[c].label.toLowerCase()}`).join(' · ')
 
   return (
@@ -85,10 +92,12 @@ export default function BookingsV4({ vm, modals }: { vm: BookingsV4Model; modals
             <Chip on={adminView === 'calendar'} onClick={() => setAdminView('calendar')}>Calendar</Chip>
             <Chip on={adminView === 'requests'} onClick={() => setAdminView('requests')} count={vm.pending.length || undefined}>Requests</Chip>
             <Chip on={adminView === 'inventory'} onClick={() => setAdminView('inventory')}>Inventory</Chip>
+            <Chip on={adminView === 'map'} onClick={() => setAdminView('map')}>Map</Chip>
           </ChipRow>
           {adminView === 'calendar' && <BookingsCalendar vm={vm} />}
           {adminView === 'requests' && <Requests vm={vm} />}
           {adminView === 'inventory' && <Inventory vm={vm} />}
+          {adminView === 'map' && <MapEditor vm={vm} />}
         </>
       ) : (
         <>
@@ -112,6 +121,8 @@ export default function BookingsV4({ vm, modals }: { vm: BookingsV4Model; modals
 /* ─── Browse ─────────────────────────────────────────────────────── */
 
 function Browse({ vm }: { vm: BookingsV4Model }) {
+  const [view, setView] = useState<'list' | 'map'>(vm.mapUrl ? 'map' : 'list')
+  const unpinned = vm.shown.filter(i => i.map_x == null)
   return (
     <>
       <div className="v4-toolbar">
@@ -124,10 +135,18 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
             ))}
           </ChipRow>
         )}
-        <label className="v4-search">
-          <Icon name="search" size={16} />
-          <input value={vm.query} onChange={e => vm.setQuery(e.target.value)} placeholder="Search" aria-label="Search the inventory" />
-        </label>
+        <span className="v4-toolbar__end">
+          {vm.mapUrl && (
+            <span className="v4-seg" role="group" aria-label="Show as">
+              <button type="button" aria-pressed={view === 'map'} className={view === 'map' ? 'on' : ''} onClick={() => setView('map')}><Icon name="map" size={15} />Map</button>
+              <button type="button" aria-pressed={view === 'list'} className={view === 'list' ? 'on' : ''} onClick={() => setView('list')}><Icon name="grid" size={15} />List</button>
+            </span>
+          )}
+          <label className="v4-search">
+            <Icon name="search" size={16} />
+            <input value={vm.query} onChange={e => vm.setQuery(e.target.value)} placeholder="Search" aria-label="Search the inventory" />
+          </label>
+        </span>
       </div>
       {vm.tagsHere.length > 0 && (
         <div className="v4-tags v4-tags--filter">
@@ -137,7 +156,18 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
         </div>
       )}
 
-      {vm.shown.length === 0 ? (
+      {view === 'map' && vm.mapUrl && vm.shown.length > 0 && (
+        <>
+          <AmenitiesMap url={vm.mapUrl} items={vm.shown} onOpen={vm.open} />
+          {unpinned.length > 0 && (
+            <p className="v4-hint v4-map__rest">
+              Not on the map yet: {unpinned.map((i, k) => <span key={i.id}>{k > 0 && ', '}<button type="button" className="v4-linkbtn" onClick={() => vm.open(i.id)}>{i.name}</button></span>)}
+            </p>
+          )}
+        </>
+      )}
+
+      {view === 'map' && vm.mapUrl && vm.shown.length > 0 ? null : vm.shown.length === 0 ? (
         <EmptyState
           icon="box"
           title={vm.activeItems.length === 0 ? 'The inventory is empty' : 'Nothing matches that filter'}
@@ -343,6 +373,66 @@ function BookingsCalendar({ vm }: { vm: BookingsV4Model }) {
           })}
         </div>
       )}
+    </>
+  )
+}
+
+/* ─── Map editor (Admin › Bookings › Map) ────────────────────────── */
+
+function MapEditor({ vm }: { vm: BookingsV4Model }) {
+  const [placingId, setPlacingId] = useState<string | null>(null)
+  const mine = vm.scopeItems.filter(i => i.is_active && vm.canManage(i))
+    .sort((a, b) => Number(a.map_x != null) - Number(b.map_x != null) || a.name.localeCompare(b.name))
+  const placing = mine.find(i => i.id === placingId) ?? null
+  const upload = (
+    <label className="v4-btn v4-btn--secondary v4-btn--sm">
+      <Icon name="upload" size={14} /><span>{vm.mapUrl ? 'Replace picture' : 'Upload a picture of the land'}</span>
+      <input type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={e => { const f = e.target.files?.[0]; if (f) vm.setMapPicture(f); e.target.value = '' }} />
+    </label>
+  )
+
+  if (!vm.mapUrl) {
+    return vm.isAdmin ? (
+      <Card className="v4-mapempty">
+        <IconTile name="map" tone="green" />
+        <div><b>No map yet</b><p className="v4-hint">Upload an aerial photo or a drawn plan of the land. Then put each room, tool and space on it, and members see where everything is.</p></div>
+        {upload}
+      </Card>
+    ) : <EmptyState icon="map" title="No map yet" text="An admin adds a picture of the land here; then you can put your rooms, tools and spaces on it." />
+  }
+
+  return (
+    <>
+      <div className="v4-sec">
+        <h2>{placing ? <>Click where <em>{placing.name}</em> is</> : `${mine.filter(i => i.map_x != null).length} of ${mine.length} on the map`}</h2>
+        <span className="v4-ph__actions">
+          {placing ? <Button size="sm" variant="secondary" onClick={() => setPlacingId(null)}>Cancel</Button> : vm.isAdmin && (
+            <>{upload}<Button size="sm" variant="quiet" onClick={() => { if (confirm('Remove the map picture? The pins stay saved.')) vm.setMapPicture(null) }}>Remove picture</Button></>
+          )}
+        </span>
+      </div>
+      <div className="v4-mapedit">
+        <AmenitiesMap url={vm.mapUrl} items={vm.scopeItems.filter(i => i.is_active)} onOpen={vm.open} selectedId={placingId}
+          placing={placing} onPlace={(x, y) => { if (placing) { vm.setPin(placing, x, y); setPlacingId(null) } }} />
+        <List>
+          {mine.length === 0 && <ListRow title="Nothing you can place yet" meta="Add rooms, tools and spaces in Inventory." />}
+          {mine.map(i => {
+            const ci = CATEGORY_ICON[i.category]
+            const on = i.map_x != null
+            return (
+              <ListRow key={i.id}
+                lead={<IconTile name={ci.icon} tone={on ? ci.tone : 'grey'} />}
+                title={i.name}
+                meta={on ? 'On the map' : 'Not on the map'}
+                trail={<>
+                  <Button size="sm" variant={placingId === i.id ? 'primary' : 'secondary'} onClick={() => setPlacingId(placingId === i.id ? null : i.id)}>{on ? 'Move' : 'Place'}</Button>
+                  {on && <Button size="sm" variant="quiet" onClick={() => vm.setPin(i, null, null)}>Remove</Button>}
+                </>}
+              />
+            )
+          })}
+        </List>
+      </div>
     </>
   )
 }
