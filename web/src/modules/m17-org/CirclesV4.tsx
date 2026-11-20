@@ -300,7 +300,7 @@ function CirclePage(p: Props & { slug: string }) {
                     <span className="v4-row__lead"><span className="v4-tile v4-tile--grey"><Icon name="users" /></span></span>
                     <span className="v4-row__main">
                       <b>{t.name}</b>
-                      <small>{tm.length ? tm.map(m => `${m.user_id === p.userId ? 'you' : m.person!.name.split(' ')[0]}${m.role === 'lead' ? ' (lead)' : ''}`).join(', ') : 'No one on this team yet'}</small>
+                      <small>{tm.length ? tm.map(m => `${m.user_id === p.userId ? 'you' : m.person!.name.split(' ')[0]}${m.title ? ` (${m.title})` : m.role === 'lead' ? ' (lead)' : ''}`).join(', ') : 'No one on this team yet'}</small>
                       {t.description && <small className="cv4-pre">{t.description}</small>}
                       {tp.length > 0 && <span className="v4-tags cv4-tp">{tp.map(x => <Link key={x.id} href={`/operations/${x.id}`} className="v4-tag">{x.title}</Link>)}</span>}
                     </span>

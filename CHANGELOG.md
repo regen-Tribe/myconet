@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.57.0 — 2026-11-20 — details the prototype layouts had dropped, back (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: keep the app's important features where the prototype is thinner.
+- **Meetings**: the list shows who was there and how many tasks are still drafts; a meeting's action items show
+  the line from the meeting they came from.
+- **Governance**: the proposal page has the "people checks passed" bar with the approval mark again, the members'
+  vote shows yes and no counts, and each card says who proposed it.
+- **Project page**: an overdue deadline shows as overdue.
+- **Circles**: team members' titles show on the team row.
+
 ## v4.56.0 — 2026-11-20 — the calendar opens on the week (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: the calendar as it was is better than the prototype's list; open on the whole week

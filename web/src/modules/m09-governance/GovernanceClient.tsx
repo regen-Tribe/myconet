@@ -335,6 +335,7 @@ export default function GovernanceClient({
                         {voted && <Tag icon="check">You voted</Tag>}
                       </div>
                       <b className="gv4-title">{p.title}</b>
+                      <small className="gv4-by">by {displayName(p.proposer)}</small>
                       {p.description && <p className="gv4-body">{p.description}</p>}
                       <div className="v4-tags gv4-checks">
                         {CHECKS.map((c, i) => <span key={c.key} className={`v4-st v4-st--${st[i] === 'advice' ? 'idea' : st[i]}`} title={c.name}>{c.name.split(' · ')[0]}</span>)}
@@ -354,7 +355,7 @@ export default function GovernanceClient({
           const list = comments[sel.id] ?? []
           const small = [
             s.clTotal === 0 ? 'Waiting for the circle leads' : `${s.clConsent} consent · ${s.clConcern} concern · ${s.clObject} object`,
-            `${d.total}${memberCount ? ` of ${memberCount}` : ''} voted · ${pct}% yes`,
+            `${d.total}${memberCount ? ` of ${memberCount}` : ''} voted · ${d.yes} yes · ${d.no} no${d.total ? ` (${pct}%)` : ''}`,
             m.expertTotal === 0 ? 'Waiting for a review' : `${m.expertApprove} approved · ${m.expertReject} not approved`,
             ai?.loading || !ai ? 'Checking against the Blueprint…' : ai.confidence !== null ? `Fits the Blueprint: ${ai.confidence}%` : 'Couldn’t check right now',
           ]
@@ -368,6 +369,10 @@ export default function GovernanceClient({
                     <Tag>{passed} of {PEOPLE_CHECKS} people checks passed</Tag>
                   </div>
                   <h1 className="v4-ph__title gv4-h1">{sel.title}</h1>
+                  <div className="gv4-progress" aria-label={`${passed} of ${PEOPLE_CHECKS} people checks passed; approved at ${APPROVE_AT}`}>
+                    <span className="gv4-track"><i style={{ width: `${(passed / PEOPLE_CHECKS) * 100}%` }} className={isLive ? 'live' : undefined} /><em style={{ left: `${(APPROVE_AT / PEOPLE_CHECKS) * 100}%` }} /></span>
+                    <small>{isLive ? 'Approved' : `Approved at ${APPROVE_AT} of ${PEOPLE_CHECKS}`}</small>
+                  </div>
                   <p className="gv4-prose">Proposed by {displayName(sel.proposer)} · {new Date(sel.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}.</p>
                   {sel.description && <p className="gv4-prose gv4-desc">{sel.description}</p>}
                   {isLive && <div className="v4-card v4-note gv4-live"><Icon name="check" /><span><b>Approved.</b> This proposal is now a decision. Work can begin.</span></div>}

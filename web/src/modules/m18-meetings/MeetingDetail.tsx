@@ -215,6 +215,7 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
                           <Link href={t.project_id ? `/operations/${t.project_id}?task=${t.deliverable_id}` : `/operations?task=${t.deliverable_id}`} className="v4-row__main mt4-tlink">
                             <b className={t.status === 'done' ? 'mt4-done' : undefined}>{t.title}</b>
                             <small>{who}{t.due_date ? ` · ${fmtTaskWhen(t.due_date, t.due_time)}` : ''}{t.project_title ? ` · ${t.project_title}` : ''}</small>
+                            {t.item_text && t.item_text !== t.title && <small className="mt4-quote">“{t.item_text.slice(0, 120)}”</small>}
                           </Link>
                           <span className="v4-row__trail">
                             {t.needs_review

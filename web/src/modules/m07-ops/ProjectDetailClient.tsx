@@ -384,7 +384,9 @@ export default function ProjectDetailClient({
                   {leadProfile && <V4Tag>Lead · {leadProfile.first_name ?? leadProfile.username ?? 'Unknown'}</V4Tag>}
                   {creatorProfile && creatorProfile.username !== leadProfile?.username && <V4Tag>Proposed by {creatorProfile.first_name ?? creatorProfile.username ?? 'Unknown'}</V4Tag>}
                   <V4Tag>{deliverables.length} {deliverables.length === 1 ? 'task' : 'tasks'}</V4Tag>
-                  {project.deadline && <V4Tag icon="calendar">Due {fmtTaskWhen(project.deadline)}</V4Tag>}
+                  {project.deadline && (!['done', 'review'].includes(project.status) && isTaskOverdue(project.deadline, null, project.status)
+                    ? <V4Pill status="no" label={`Overdue · was due ${fmtTaskWhen(project.deadline)}`} />
+                    : <V4Tag icon="calendar">Due {fmtTaskWhen(project.deadline)}</V4Tag>)}
                 </div>
               </>
             )}
