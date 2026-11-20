@@ -1,126 +1,99 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { isCircleAdmin, isJoiningOrAbove } from '@/core/lib/roles'
+import { isCircleAdmin, isJoiningOrAbove, ROLE_LABELS } from '@/core/lib/roles'
 import { isMenuActive, menuGroups, type MenuItem } from '@/core/lib/nav'
 import { COMMUNITY_NAME } from '@/core/lib/instance'
+import { VERSION } from '@/core/lib/version'
 import type { MenuState } from '@/core/lib/menu-server'
 import { Icon } from '@/core/components/v4'
 
 /**
- * The v4 menu (Sonia, 19 Nov; design/redesign-prototype/app.js › navHTML), used when
- * the community sets "design": "v4". The next step on top, then You, Community,
- * Working together and Admin. Today's AppSideNav stays for everyone else.
+ * The v4 menu (Sonia, 19–20 Nov; design/redesign-prototype/app.js › navHTML), used when the community
+ * sets "design": "v4". Full height, like the prototype: the community's letter mark and name on top, the
+ * next step, You / Community / Working together / Admin, and you at the foot. Collapsed, it becomes a
+ * slim rail of icons (names on hover) instead of disappearing. Today's AppSideNav stays for everyone else.
  */
-
-const LABEL: React.CSSProperties = {
-  fontSize: 10.5, fontWeight: 400, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink-4)',
-}
 
 const JOURNEY = ['Explorer', 'Joining member', 'Member']
 
-function NextStepCard({ state, onClose }: { state: MenuState; onClose?: () => void }) {
+function NextStepCard({ state, onClose, collapsed }: { state: MenuState; onClose?: () => void; collapsed: boolean }) {
   const n = state.next
   if (!n) return null
+  if (collapsed) {
+    return (
+      <Link href={n.href} onClick={onClose} className="mv4-next mv4-next--rail" title={`Your next step: ${n.title}`} aria-label={`Your next step: ${n.title}`}>
+        <Icon name="right" size={16} />
+      </Link>
+    )
+  }
   const showJourney = state.journey === 0 || state.journey === 1
   return (
-    <div style={{ margin: '4px 0 6px' }}>
-      <Link
-        href={n.href}
-        onClick={onClose}
-        className="menu-next"
-        style={{
-          display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none',
-          background: 'var(--action, var(--accent-soft))', color: 'var(--action-ink, var(--ink))',
-          borderRadius: 14, padding: '10px 8px 10px 14px',
-        }}
-      >
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ ...LABEL, display: 'block', color: 'inherit', opacity: 0.7, marginBottom: 2 }}>Your next step</span>
-          <span style={{ display: 'block', fontSize: 14, fontWeight: 600, lineHeight: 1.25 }}>{n.title}</span>
+    <div className="mv4-nextwrap">
+      <Link href={n.href} onClick={onClose} className="mv4-next">
+        <span className="mv4-next__txt">
+          <small>Your next step</small>
+          <b>{n.title}</b>
           {showJourney && (
             // Where you are on the way in (orientation review O3)
-            <span style={{ display: 'block', marginTop: 8 }} aria-label={`Step ${state.journey! + 1} of 3: ${JOURNEY[state.journey!]}`}>
-              <span style={{ display: 'flex', gap: 4 }} aria-hidden="true">
-                {JOURNEY.map((s, i) => (
-                  <span key={s} style={{ flex: 1, height: 4, borderRadius: 4, background: i <= state.journey! ? 'currentColor' : 'color-mix(in srgb, currentColor 22%, transparent)' }} />
-                ))}
-              </span>
-              <span style={{ display: 'block', fontSize: 11, marginTop: 5, opacity: 0.8 }} aria-hidden="true">
-                Step {state.journey! + 1} of 3 · {JOURNEY[state.journey!]}
-              </span>
+            <span className="mv4-journey" aria-label={`Step ${state.journey! + 1} of 3: ${JOURNEY[state.journey!]}`}>
+              <span aria-hidden="true">{JOURNEY.map((s, i) => <i key={s} className={i <= state.journey! ? 'on' : ''} />)}</span>
+              <em aria-hidden="true">Step {state.journey! + 1} of 3 · {JOURNEY[state.journey!]}</em>
             </span>
           )}
-          <span style={{ display: 'block', fontSize: 12, lineHeight: 1.4, marginTop: 4, opacity: 0.8 }}>{n.line}</span>
+          <span className="mv4-next__line">{n.line}</span>
         </span>
-        <span style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--action-ink, var(--ink))', color: '#fff', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-          <Icon name="right" size={15} />
-        </span>
+        <span className="mv4-next__go"><Icon name="right" size={15} /></span>
       </Link>
-      {n.alt && (
-        <div style={{ fontSize: 12, color: 'var(--ink-3)', padding: '6px 4px 0' }}>
-          Have an account? <Link href={n.alt.href} onClick={onClose} style={{ color: 'var(--ink)', fontWeight: 600 }}>{n.alt.label}</Link>
-        </div>
-      )}
+      {n.alt && <div className="mv4-alt">Have an account? <Link href={n.alt.href} onClick={onClose}>{n.alt.label}</Link></div>}
     </div>
   )
 }
 
-function Item({ item, active, locked, count, onClose }: {
-  item: MenuItem; active: boolean; locked: boolean; count?: number; onClose?: () => void
+function Item({ item, active, locked, count, onClose, collapsed }: {
+  item: MenuItem; active: boolean; locked: boolean; count?: number; onClose?: () => void; collapsed: boolean
 }) {
-  const row: React.CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px', borderRadius: 10,
-    fontSize: 13.5, textDecoration: 'none',
-    color: locked ? 'var(--ink-4)' : active ? 'var(--blue-ink, var(--ink))' : 'var(--ink-2)',
-    fontWeight: active ? 600 : 400,
-    background: active ? 'var(--blue, var(--bg-3))' : 'transparent',
-  }
-  const icon = <span style={{ display: 'grid', placeItems: 'center', color: active ? 'inherit' : 'var(--ink-3)' }}><Icon name={item.icon} /></span>
-
+  const cls = `mv4-item${active ? ' on' : ''}${locked ? ' locked' : ''}`
   if (locked) {
     // Locked items say why (O5); they aren't links, since the page would turn the person away
     const why = 'Opens when you’re a joining member'
     return (
-      <span role="link" aria-disabled="true" title={why} style={{ ...row, cursor: 'default' }}>
-        {icon}
-        <span>{item.name}<span className="sr-only"> ({why})</span></span>
-        <span style={{ marginLeft: 'auto', display: 'grid', placeItems: 'center' }}><Icon name="lock" size={14} /></span>
+      <span role="link" aria-disabled="true" title={`${item.name}: ${why}`} className={cls}>
+        <span className="mv4-ic"><Icon name={item.icon} /></span>
+        <span className="mv4-name">{item.name}<span className="sr-only"> ({why})</span></span>
+        <span className="mv4-note"><Icon name="lock" size={13} /></span>
       </span>
     )
   }
-
   return (
     <Link
       href={item.href}
+      title={collapsed ? (count ? `${item.name} · ${count}` : item.name) : undefined}
       onClick={e => {
         onClose?.()
         // The page you're already on: load it fresh, its front page with the latest data (v4.38.2)
         if (active && !e.metaKey && !e.ctrlKey && !e.shiftKey) { e.preventDefault(); window.location.assign(item.href) }
       }}
       aria-current={active ? 'page' : undefined}
-      className="sh-nav-item"
-      style={row}
+      className={cls}
     >
-      {icon}
-      <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</span>
-      {count !== undefined && (
-        <span style={{
-          marginLeft: 'auto', minWidth: 20, height: 20, padding: '0 6px', borderRadius: 999, display: 'grid', placeItems: 'center',
-          fontSize: 11, fontWeight: 600, color: 'var(--ink-2)', background: 'var(--surface)', boxShadow: 'inset 0 0 0 1px var(--rule)',
-        }}>{count}</span>
-      )}
+      <span className="mv4-ic"><Icon name={item.icon} />{collapsed && count ? <i className="mv4-dot" /> : null}</span>
+      <span className="mv4-name">{item.name}</span>
+      {count !== undefined && <span className="mv4-count">{count}</span>}
     </Link>
   )
 }
 
-export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state }: {
+export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, collapsed = false, onToggleCollapse }: {
   mobileOpen?: boolean; onClose?: () => void; role: string; isLoggedIn: boolean; state: MenuState
+  collapsed?: boolean; onToggleCollapse?: () => void
 }) {
   const pathname = usePathname()
   const joined = isLoggedIn && isJoiningOrAbove(role)
   // Explorers, joining members and visitors get a line under each group (O7)
   const newcomer = state.journey !== 2
+  // On a phone the menu opens full, whatever the desktop setting
+  const rail = collapsed && !mobileOpen
 
   const countFor = (key: string): number | undefined => {
     if (key === 'dashboard') return joined ? state.counts.tasks : undefined
@@ -130,39 +103,51 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state }:
   }
 
   return (
-    <nav
-      aria-label="Menu"
-      className={`app-shell-sidenav menu-v4${mobileOpen ? ' mobile-open' : ''}`}
-      style={{ borderRight: '1px solid var(--rule)', background: 'var(--surface)', padding: '14px 12px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 1 }}
-    >
-      <div className="mobile-nav-header" style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={LABEL}>Menu</span>
-        <button onClick={onClose} aria-label="Close the menu" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)', fontSize: 18, lineHeight: 1, padding: '2px 6px' }}>✕</button>
+    <nav aria-label="Menu" className={`app-shell-sidenav menu-v4${mobileOpen ? ' mobile-open' : ''}${rail ? ' mv4--rail' : ''}`}>
+      <div className="mv4-top">
+        <Link href="/home" className="mv4-brand" title={COMMUNITY_NAME} onClick={onClose}>
+          <span className="mv4-mark" aria-hidden="true">{COMMUNITY_NAME.slice(0, 1).toUpperCase()}</span>
+          <span className="mv4-brand__txt"><b>{COMMUNITY_NAME}</b><small>on MyCoNet</small></span>
+        </Link>
+        {onToggleCollapse && (
+          <button type="button" className="mv4-collapse" onClick={onToggleCollapse}
+            aria-label={collapsed ? 'Open the menu' : 'Make the menu slim'} title={collapsed ? 'Open the menu' : 'Make the menu slim'}>
+            <Icon name={collapsed ? 'right' : 'left'} size={15} />
+          </button>
+        )}
+        <button type="button" className="mv4-close" onClick={onClose} aria-label="Close the menu"><Icon name="x" size={16} /></button>
       </div>
 
       {/* My dashboard shows its own next step (DashboardV4), so the menu doesn't repeat it there (O3) */}
-      {pathname !== '/dashboard' && <NextStepCard state={state} onClose={onClose} />}
+      {pathname !== '/dashboard' && <NextStepCard state={state} onClose={onClose} collapsed={rail} />}
 
-      {menuGroups(COMMUNITY_NAME).map(g => {
-        const items = g.items.filter(i => !i.admin || isCircleAdmin(role))
-        if (!items.length) return null
-        return (
-          <div key={g.label} role="group" aria-label={g.label}>
-            <div style={{ ...LABEL, margin: '20px 10px 4px' }}>{g.label}</div>
-            {newcomer && g.line && <div style={{ fontSize: 11, color: 'var(--ink-4)', margin: '0 10px 6px' }}>{g.line}</div>}
-            {items.map(i => (
-              <Item
-                key={i.key}
-                item={i}
-                active={isMenuActive(i.href, pathname)}
-                locked={!!i.joiningUp && !joined}
-                count={countFor(i.key)}
-                onClose={onClose}
-              />
-            ))}
-          </div>
-        )
-      })}
+      <div className="mv4-groups">
+        {menuGroups(COMMUNITY_NAME).map(g => {
+          const items = g.items.filter(i => !i.admin || isCircleAdmin(role))
+          if (!items.length) return null
+          return (
+            <div key={g.label} role="group" aria-label={g.label} className="mv4-group">
+              <div className="mv4-label">{g.label}</div>
+              {newcomer && g.line && !rail && <div className="mv4-line">{g.line}</div>}
+              {items.map(i => (
+                <Item key={i.key} item={i} active={isMenuActive(i.href, pathname)} locked={!!i.joiningUp && !joined}
+                  count={countFor(i.key)} onClose={onClose} collapsed={rail} />
+              ))}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="mv4-foot">
+        {state.me ? (
+          <Link href={state.me.username ? `/u/${state.me.username}` : '/profile/edit'} className="mv4-me" onClick={onClose} title={rail ? state.me.name : undefined}>
+            {state.me.avatar ? <img src={state.me.avatar} alt="" className="mv4-av" /> : <span className="mv4-av">{state.me.name.slice(0, 1).toUpperCase()}</span>}
+            <span className="mv4-me__txt"><b>{state.me.name}</b><small>{ROLE_LABELS[role] ?? 'Explorer'}</small></span>
+            <span className="mv4-me__go"><Icon name="right" size={15} /></span>
+          </Link>
+        ) : null}
+        <Link href="/changelog" className="mv4-version" onClick={onClose}>{VERSION}</Link>
+      </div>
     </nav>
   )
 }

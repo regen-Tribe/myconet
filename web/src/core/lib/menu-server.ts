@@ -22,6 +22,8 @@ export interface MenuState {
   /** 0 explorer · 1 joining member · 2 member; null when signed out (orientation review O3) */
   journey: 0 | 1 | 2 | null
   counts: { tasks: number; applications: number; bookings: number }
+  /** Who's signed in, for the foot of the menu (set in layout.tsx) */
+  me?: { name: string; avatar: string | null; username: string | null } | null
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`

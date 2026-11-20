@@ -33,7 +33,7 @@ export default function AppShell({ children, role, isLoggedIn = false, menu = nu
 
   return (
     <ProfileCompletionProvider>
-      <div className={`app-shell-layout${navCollapsed ? ' nav-collapsed' : ''}`}>
+      <div className={`app-shell-layout${navCollapsed ? ' nav-collapsed' : ''}${menu ? ' shell-v4' : ''}`}>
         <AppTopBar
           onMobileNavToggle={() => setMobileNavOpen(o => !o)}
           mobileNavOpen={mobileNavOpen}
@@ -47,6 +47,8 @@ export default function AppShell({ children, role, isLoggedIn = false, menu = nu
             role={role}
             isLoggedIn={isLoggedIn}
             state={menu}
+            collapsed={navCollapsed}
+            onToggleCollapse={toggleDesktopNav}
           />
         ) : (
           <AppSideNav

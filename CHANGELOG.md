@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.48.0 — 2026-11-20 — the menu as in the prototype, with a slim mode (from Protopia, Sonia)
+
+Only with the v4 look.
+- **Full-height menu** (`MenuV4.tsx`, `AppShell.tsx`), like `design/redesign-prototype`: the community's letter mark
+  and name ("on MyCoNet") on top, the next step, You / Community / Working together / Admin, and you at the foot
+  (photo, name, role → your profile) with the version under it. The top bar sits over the page only, on the page
+  colour, with search, the bell and your account; the logo moves into the menu.
+- **Slim mode** instead of hiding the menu: the arrow beside the name makes it a 76px rail of icons (names on hover,
+  a red dot for counts, the next step as a round green button); the arrow brings it back. Remembered per browser.
+- Active page in the prototype's style (page colour with a hairline). On phones the menu opens full, with a close
+  button.
+- `layout.tsx` passes who's signed in (`MenuState.me`).
+
 ## v4.47.0 — 2026-11-20 — Circles, Agreements, Meetings and Governance headers in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look; release 7 continues (a first pass on these four pages).
