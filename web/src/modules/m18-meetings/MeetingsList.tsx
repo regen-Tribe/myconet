@@ -8,6 +8,7 @@ import { useCircles } from '@/core/components/CirclesProvider'
 import { taskDate } from '@/core/lib/tasks'
 import type { MeetingListItem, MeetingStatus } from './types'
 import { modLabel } from '@/core/lib/module-label'
+import './meetings-v4.css'
 
 const STATUS: Record<MeetingStatus, { label: string; color: string }> = {
   processing: { label: 'Transcribing', color: '#b45309' },
@@ -69,11 +70,11 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
     return true
   })
 
-  const chip = (key: string, label: string, color = 'var(--m18)') => {
+  const chip = (key: string, label: string, color = 'var(--m18)', dot = false) => {
     const on = filter === key
     if (V4) return (
       <button key={key} type="button" aria-pressed={on} className={`v4-chip${on ? ' v4-chip--on' : ''}`} onClick={() => setFilter(key)}>
-        {label}{counts[key] ? <span className="v4-chip__count">{counts[key]}</span> : null}
+        {dot && <i className="mt4-dot" style={{ background: color }} aria-hidden />}{label}{counts[key] ? <span className="v4-chip__count">{counts[key]}</span> : null}
       </button>
     )
     return (
@@ -113,7 +114,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
       <div role="group" aria-label="Show meetings of" className={V4 ? 'v4-chiprow' : undefined} style={V4 ? undefined : { display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
         {myCircles.length > 0 && chip('mine', 'My circles')}
         {chip('all', 'All')}
-        {usedCircles.map(c => chip(c, V4 ? circles.meta(c).label : `${circles.meta(c).emoji} ${circles.meta(c).label}`, circles.meta(c).color))}
+        {usedCircles.map(c => chip(c, V4 ? circles.meta(c).label : `${circles.meta(c).emoji} ${circles.meta(c).label}`, circles.meta(c).color, V4))}
       </div>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
         <input
@@ -121,7 +122,12 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
           className={V4 ? 'v4-input' : undefined}
           style={V4 ? { flex: '1 1 240px', width: 'auto' } : { flex: '1 1 240px', padding: '8px 12px', borderRadius: 8, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontSize: 13.5 }}
         />
-        {canManage && (
+        {canManage && V4 && (
+          <button type="button" aria-pressed={needsReview} className={`v4-chip${needsReview ? ' v4-chip--on' : ''}`} onClick={() => setNeedsReview(v => !v)}>
+            Needs review{reviewCount ? <span className="v4-chip__count">{reviewCount}</span> : null}
+          </button>
+        )}
+        {canManage && !V4 && (
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--ink-2)', cursor: 'pointer' }}>
             <input type="checkbox" checked={needsReview} onChange={e => setNeedsReview(e.target.checked)} />
             Needs review{reviewCount ? ` (${reviewCount})` : ''}
@@ -138,41 +144,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
           No meetings match. <button onClick={() => { setFilter('all'); setQ(''); setNeedsReview(false) }} style={{ background: 'none', border: 'none', color: 'var(--m18)', fontWeight: 600, cursor: 'pointer', fontSize: 14 }}>Show all</button>
         </div>
       ) : V4 ? (
-        <div className="v4-list mt4-list">
-          {shown.map(m => {
-            const meta = m.circle && circles.has(m.circle) ? circles.meta(m.circle) : null
-            const t = taskCounts[m.id]
-            const s = STATUS[m.status] ?? STATUS.processing
-            const pill = m.status !== 'done' ? <StatusPill status={m.status === 'error' ? 'no' : 'doing'} label={s.label} />
-              : m.needs_review && !m.processed_at && !m.agent_note ? <StatusPill status="idea" label="Assistant reading soon" />
-              : m.needs_review && !m.processed_at ? <StatusPill status="review" label="Needs review" />
-              : t?.drafts ? <StatusPill status="review" label={`${t.drafts} to confirm`} />
-              : null
-            const facts = [
-              fmtDay(m.meeting_date ?? m.created_at),
-              meta ? meta.label : m.processed_at ? 'Community-wide' : null,
-              m.status === 'done' ? `${m.action_items.length} action item${m.action_items.length === 1 ? '' : 's'}` : null,
-              t ? `${t.total} task${t.total === 1 ? '' : 's'} on the board${t.drafts ? `, ${t.drafts} draft${t.drafts === 1 ? '' : 's'}` : ''}` : null,
-            ].filter(Boolean).join(' · ')
-            const who = m.attendees.length ? `${m.attendees.slice(0, 6).join(', ')}${m.attendees.length > 6 ? ` +${m.attendees.length - 6}` : ''}` : null
-            return (
-              <Link key={m.id} href={`/meetings/${m.id}`} className="v4-row v4-row--click mt4-row" style={{ ['--c' as string]: meta?.color ?? 'var(--ink-4)' }}>
-                <span className="v4-row__lead"><span className="v4-tile mt4-tile"><Icon name="chat" /></span></span>
-                <span className="v4-row__main">
-                  <b>{m.title}</b>
-                  <small>{facts}</small>
-                  {who && <small>{who}</small>}
-                  {m.summary && <small className="mt4-sum">{m.summary}</small>}
-                </span>
-                <span className="v4-row__trail mt4-trail">
-                  {m.visibility === 'circle' && <span className="v4-tag"><Icon name="lock" size={12} />Circle only</span>}
-                  {pill}
-                  <Icon name="right" size={16} />
-                </span>
-              </Link>
-            )
-          })}
-        </div>
+        <V4Rows shown={shown} taskCounts={taskCounts} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {shown.map(m => {
@@ -214,5 +186,99 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
         </div>
       )}
     </div>
+  )
+}
+
+/** "19.11.2026 Incubator workshop" → "Incubator workshop": the date has its own box */
+const cleanTitle = (t: string) =>
+  t.replace(/^\s*(\d{1,2}[./]\d{1,2}[./]\d{2,4}|\d{4}-\d{2}-\d{2})\s*[-–:·|]?\s*/, '') || t
+
+/** The summary's first point as plain text (no "- **Topic:**" markdown) */
+const firstPoint = (s: string) => {
+  const line = s.split(/\n|(?:^|\s)-\s+(?=\*\*)/).map(l => l.trim()).find(l => l.replace(/[-*#\s]/g, '').length > 0) ?? ''
+  return line.replace(/^[-*#\s]+/, '').replace(/\*\*/g, '').replace(/__/g, '').trim()
+}
+
+const dayOf = (m: MeetingListItem) => {
+  const iso = m.meeting_date ?? m.created_at
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? taskDate(iso) : new Date(iso)
+}
+
+/** "This week", "Last week", then "November 2026" */
+function groupLabel(d: Date, now = new Date()) {
+  const monday = (x: Date) => { const y = new Date(x.getFullYear(), x.getMonth(), x.getDate()); y.setDate(y.getDate() - ((y.getDay() + 6) % 7)); return y.getTime() }
+  const weeks = Math.round((monday(now) - monday(d)) / (7 * 86_400_000))
+  if (weeks <= 0) return 'This week'
+  if (weeks === 1) return 'Last week'
+  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+/** v4 rows: a date box, the circle by name (not only its colour), the title without its date, one line of summary */
+function V4Rows({ shown, taskCounts }: { shown: MeetingListItem[]; taskCounts: Record<string, { total: number; drafts: number }> }) {
+  const circles = useCircles()
+  const groups: { label: string; items: MeetingListItem[] }[] = []
+  for (const m of shown) {
+    const label = groupLabel(dayOf(m))
+    const g = groups[groups.length - 1]
+    if (g && g.label === label) g.items.push(m)
+    else groups.push({ label, items: [m] })
+  }
+  return (
+    <>
+      {groups.map(g => (
+        <section key={g.label} className="mt4-group">
+          <div className="v4-sec"><h2>{g.label}</h2><span className="v4-hint">{g.items.length} meeting{g.items.length === 1 ? '' : 's'}</span></div>
+          <div className="v4-list mt4-list">
+            {g.items.map(m => {
+              const meta = m.circle && circles.has(m.circle) ? circles.meta(m.circle) : null
+              const t = taskCounts[m.id]
+              const s = STATUS[m.status] ?? STATUS.processing
+              const d = dayOf(m)
+              const pill = m.status !== 'done' ? <StatusPill status={m.status === 'error' ? 'no' : 'doing'} label={s.label} />
+                : m.needs_review && !m.processed_at && !m.agent_note ? <StatusPill status="idea" label="Assistant reading soon" />
+                : m.needs_review && !m.processed_at ? <StatusPill status="review" label="Needs review" />
+                : t?.drafts ? <StatusPill status="review" label={`${t.drafts} to confirm`} />
+                : null
+              const facts = [
+                m.status === 'done' ? `${m.action_items.length} action item${m.action_items.length === 1 ? '' : 's'}` : null,
+                t ? `${t.total} task${t.total === 1 ? '' : 's'} on the board` : null,
+                m.attendees.length ? `${m.attendees.length} ${m.attendees.length === 1 ? 'person' : 'people'}` : null,
+              ].filter(Boolean).join(' · ')
+              const point = m.summary ? firstPoint(m.summary) : ''
+              return (
+                <Link key={m.id} href={`/meetings/${m.id}`} className="v4-row v4-row--click mt4-row" style={{ ['--c' as string]: meta?.color ?? 'var(--ink-4)' }}
+                  title={m.attendees.length ? m.attendees.join(', ') : undefined}>
+                  <span className="v4-row__lead">
+                    <span className="mt4-date" aria-label={fmtDay(m.meeting_date ?? m.created_at)}>
+                      <small>{d.toLocaleDateString('en-US', { month: 'short' })}</small>
+                      <b>{d.getDate()}</b>
+                      <small>{d.toLocaleDateString('en-US', { weekday: 'short' })}</small>
+                    </span>
+                  </span>
+                  <span className="v4-row__main">
+                    <span className="mt4-circle">
+                      {meta
+                        ? <span className="mt4-ctag"><i className="mt4-dot" aria-hidden />{cap(meta.label)}</span>
+                        : <span className="mt4-ctag mt4-ctag--none">{m.processed_at ? 'Community-wide' : 'No circle yet'}</span>}
+                      {m.visibility === 'circle' && <span className="mt4-lock"><Icon name="lock" size={12} />Circle only</span>}
+                      {pill && <span className="mt4-pill-phone">{pill}</span>}
+                    </span>
+                    <b className="mt4-title">{cleanTitle(m.title)}</b>
+                    {point && <small className="mt4-sum">{point}</small>}
+                    {facts && <small>{facts}</small>}
+                  </span>
+                  <span className="v4-row__trail mt4-trail">
+                    {pill && <span className="mt4-pill-wide">{pill}</span>}
+                    <Icon name="right" size={16} />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+      ))}
+    </>
   )
 }

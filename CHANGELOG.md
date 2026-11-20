@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.60.0 — 2026-11-20 — Meetings clear at a glance (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: the circle needs more than a colour, and the list should read at first glance.
+- **/meetings**: each row has a date box (month, day, weekday), the circle as a named tag on its colour (or
+  "Community-wide" / "No circle yet"), the title without a leading date ("19.11.2026 …"), the summary's first
+  point as plain text, and a short counts line (action items, tasks on the board, people; names on hover).
+  Meetings are grouped under This week, Last week, then month. Circle chips carry the circle's dot;
+  **Needs review** is a chip with its count. On phones the status pill moves into the circle line.
+- **Meeting page**: the circle tag in the header uses the same named style.
+- The `.mt4-*` rules moved from `globals.css` to `web/src/modules/m18-meetings/meetings-v4.css`.
+- Second brain: unchanged (display only; meeting notes are written as before).
+
 ## v4.59.0 — 2026-11-20 — green actions, soft toggles, and more calendar on the first screen (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: actions stay green and stand out most; tab and filter toggles get a delicate colour,

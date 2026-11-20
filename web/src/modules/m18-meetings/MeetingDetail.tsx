@@ -11,6 +11,7 @@ import SummaryCards from './SummaryCards'
 import type { Meeting, MeetingTask } from './types'
 import { DESIGN } from '@/core/lib/instance'
 import { Icon, StatusPill, Tag } from '@/core/components/v4'
+import './meetings-v4.css'
 
 const V4 = DESIGN === 'v4'
 
@@ -181,7 +182,7 @@ export default function MeetingDetail({ meeting: m, tasks, canManage, emailOn, s
         </div>
         <header className="v4-ph">
           <div className="v4-tags mt4-tags">
-            {meta ? <span className="v4-tag"><i className="mt4-dot" style={{ background: meta.color }} />{meta.label}{m.circle_source === 'agent' ? ' · chosen by the assistant' : ''}</span>
+            {meta ? <span className="mt4-ctag" style={{ ['--c' as string]: meta.color }}><i className="mt4-dot" aria-hidden />{meta.label.charAt(0).toUpperCase() + meta.label.slice(1)}{m.circle_source === 'agent' ? <span className="mt4-by"> · chosen by the assistant</span> : null}</span>
               : m.processed_at ? <Tag>Community-wide</Tag> : null}
             <Tag icon="calendar">{fmtDay(m.meeting_date ?? m.created_at)}</Tag>
             {m.attendees.length > 0 && <span className="v4-tag" title={m.attendees.join(', ')}><Icon name="users" size={13} />{m.attendees.length} {m.attendees.length === 1 ? 'person' : 'people'}</span>}
