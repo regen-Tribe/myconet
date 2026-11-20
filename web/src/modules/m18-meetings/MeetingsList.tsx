@@ -152,14 +152,16 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
               fmtDay(m.meeting_date ?? m.created_at),
               meta ? meta.label : m.processed_at ? 'Community-wide' : null,
               m.status === 'done' ? `${m.action_items.length} action item${m.action_items.length === 1 ? '' : 's'}` : null,
-              t ? `${t.total} task${t.total === 1 ? '' : 's'} on the board` : null,
+              t ? `${t.total} task${t.total === 1 ? '' : 's'} on the board${t.drafts ? `, ${t.drafts} draft${t.drafts === 1 ? '' : 's'}` : ''}` : null,
             ].filter(Boolean).join(' · ')
+            const who = m.attendees.length ? `${m.attendees.slice(0, 6).join(', ')}${m.attendees.length > 6 ? ` +${m.attendees.length - 6}` : ''}` : null
             return (
               <Link key={m.id} href={`/meetings/${m.id}`} className="v4-row v4-row--click mt4-row" style={{ ['--c' as string]: meta?.color ?? 'var(--ink-4)' }}>
                 <span className="v4-row__lead"><span className="v4-tile mt4-tile"><Icon name="chat" /></span></span>
                 <span className="v4-row__main">
                   <b>{m.title}</b>
                   <small>{facts}</small>
+                  {who && <small>{who}</small>}
                   {m.summary && <small className="mt4-sum">{m.summary}</small>}
                 </span>
                 <span className="v4-row__trail mt4-trail">
