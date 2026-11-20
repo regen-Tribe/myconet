@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.55.0 — 2026-11-20 — Profile, Join and the project page laid out as the prototype (from Protopia, Sonia)
+
+Only with the v4 look; the classic look is unchanged.
+- **Profile** (`/u/<name>`, `pProfile`): back to Members, a big avatar and name with their circles (and match, for
+  others) as tags, Edit profile on your own, the headline and public bio in a card, the About / Personality / Offers
+  / Requests / Travel tabs as chips, and their circles on the right (lead or member; on your own, Ask to join).
+  Visitors still see the public card and the sign-up invitation.
+- **Join** (`pJoin`): the application is one card with "Join · step N of 3", a step bar and the step's title, and the
+  three steps listed beside it. Signing values, the buddy step and sending the application work as before.
+- **Project page** (`pProject`): a hero in the circle's colour with the circle (and team), the lead and the
+  calendar at hand, the big title, tags for status, open for helpers, lead, tasks and due date, and the green
+  **Offer to help · start an agreement** button. The board, updates and settings below are unchanged.
+
 ## v4.54.0 — 2026-11-20 — Meetings, Governance and Agreements laid out as the prototype (from Protopia, Sonia)
 
 Only with the v4 look; the classic look is unchanged.

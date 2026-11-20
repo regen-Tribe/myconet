@@ -7,6 +7,10 @@ import { fmtTaskWhen, isTaskOverdue } from '@/core/lib/tasks'
 import { isJoiningOrAbove } from '@/core/lib/roles'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { DESIGN } from '@/core/lib/instance'
+import { Icon as V4Icon, StatusPill as V4Pill, Tag as V4Tag, statusFromDb } from '@/core/components/v4'
+
+const V4 = (DESIGN as string) === 'v4'
 import type { Project, Deliverable, ProjectUpdate, CollaborationAgreement, MyProposal, SubscriberProfile } from './types'
 import { useCircles } from '@/core/components/CirclesProvider'
 import type { CircleSlug } from '@/core/lib/circles'
@@ -344,17 +348,47 @@ export default function ProjectDetailClient({
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="ops-detail-root" style={{ maxWidth: 920, margin: '0 auto', padding: '48px 20px 80px' }}>
+    <div className={V4 ? 'ops-detail-root v4-page pj4' : 'ops-detail-root'} style={V4 ? { maxWidth: 1040 } : { maxWidth: 920, margin: '0 auto', padding: '48px 20px 80px' }}>
 
       {/* Back */}
+      {V4 ? (
+        <>
+          <Link href="/operations" className="v4-back"><V4Icon name="left" size={14} />Operations</Link>
+          {/* The prototype's project hero: the circle's colour, its name, the lead and the calendar at hand */}
+          <div className="pj4-hero" style={{ ['--c' as string]: circles.has(project.circle) ? circles.meta(project.circle).color : '#8a8f9c' }}>
+            {circles.has(project.circle) && (
+              <span className="pj4-pill"><V4Icon name="circles" size={14} />{circles.meta(project.circle).label} circle{teams.find(t => t.id === project.team_id) ? ` · ${teams.find(t => t.id === project.team_id)!.name}` : ''}</span>
+            )}
+            <span className="pj4-round">
+              {leadProfile?.username && <Link href={`/u/${leadProfile.username}`} aria-label="The project lead" className="pj4-rbtn"><V4Icon name="user" /></Link>}
+              <Link href="/calendar" aria-label="Calendar" className="pj4-rbtn"><V4Icon name="calendar" /></Link>
+            </span>
+          </div>
+        </>
+      ) : (
       <Link href="/operations" style={{ fontSize: 13, color: 'var(--ink-4)', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 5, marginBottom: 28 }}>
         ← Operations
       </Link>
+      )}
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
           <div style={{ flex: 1 }}>
+            {V4 && (
+              <>
+                <h1 className="v4-ph__title pj4-title">{project.title}</h1>
+                <div className="v4-tags pj4-tags">
+                  <V4Pill status={statusFromDb(project.status)} label={s.label} />
+                  {project.open_for_collaborators && isActiveProject(project.status) && <V4Tag icon="hand">Open for helpers</V4Tag>}
+                  {leadProfile && <V4Tag>Lead · {leadProfile.first_name ?? leadProfile.username ?? 'Unknown'}</V4Tag>}
+                  {creatorProfile && creatorProfile.username !== leadProfile?.username && <V4Tag>Proposed by {creatorProfile.first_name ?? creatorProfile.username ?? 'Unknown'}</V4Tag>}
+                  <V4Tag>{deliverables.length} {deliverables.length === 1 ? 'task' : 'tasks'}</V4Tag>
+                  {project.deadline && <V4Tag icon="calendar">Due {fmtTaskWhen(project.deadline)}</V4Tag>}
+                </div>
+              </>
+            )}
+            {!V4 && (<>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
               <h1 className="ops-detail-h1" style={{ fontFamily: 'var(--display)', fontSize: 28, color: 'var(--ink)', lineHeight: 1.1, margin: 0 }}>
                 {project.title}
@@ -418,8 +452,9 @@ export default function ProjectDetailClient({
               </div>
             )}
 
+            </>)}
             {project.description && (
-              <p style={{ color: 'var(--ink-2)', fontSize: 15, lineHeight: 1.65, maxWidth: 640, margin: '0 0 12px' }}>
+              <p className={V4 ? 'pj4-about' : undefined} style={V4 ? undefined : { color: 'var(--ink-2)', fontSize: 15, lineHeight: 1.65, maxWidth: 640, margin: '0 0 12px' }}>
                 {project.description}
               </p>
             )}
@@ -456,7 +491,13 @@ export default function ProjectDetailClient({
           </div>
         )}
 
-        {canPropose && !hasBlockingProposal && (
+        {canPropose && !hasBlockingProposal && V4 && (
+          <button type="button" className={`v4-btn ${showProposalForm ? 'v4-btn--secondary' : 'v4-btn--next'} pj4-offer`} onClick={() => setShowProposalForm(v => !v)}>
+            <span>{showProposalForm ? 'Cancel' : 'Offer to help · start an agreement'}</span>
+            {!showProposalForm && <span className="v4-btn__go"><V4Icon name="right" size={14} /></span>}
+          </button>
+        )}
+        {canPropose && !hasBlockingProposal && !V4 && (
           <button
             onClick={() => setShowProposalForm(v => !v)}
             style={{ display: 'block', width: '100%', maxWidth: 260, marginTop: 4, background: showProposalForm ? 'var(--bg-2)' : '#3b82f6', color: showProposalForm ? 'var(--ink-3)' : '#fff', fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: 'var(--radius)', border: showProposalForm ? '1px solid var(--rule)' : 'none', cursor: 'pointer', textAlign: 'center' }}
