@@ -5,8 +5,24 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.41.0 — 2026-11-19
 
-## Unreleased — the lexicon's words on the remaining screens
+- **v4 building blocks** (`core/components/v4`, DESIGN-SYSTEM.md › v4, release 2): `Button` (primary, secondary, quiet,
+  danger, next), `StatusPill` (+ `statusFromDb`, lexicon labels), `Chip`/`ChipRow`, `Card`, `List`/`ListRow`, `IconTile`,
+  `PageHeader` (eyebrow without module numbers, title, line, actions, back link), `NextStep`, `SectionHead`, `EmptyState`,
+  `Tag`, and `Icon` with Sonia's 66 marker-line icons (`core/components/v4/icons.ts`). Styles are the `.v4-*` rules in
+  `globals.css`; they read the v4 tokens with fallbacks, so they work where v4 is off. Nothing uses them yet except
+  `/design`, a reference page with every block (sample words, noindex).
+- **My dashboard in v4** (`m00-dashboard/DashboardV4.tsx`, shown only when v4 is on; DESIGN-SYSTEM.md › v4 release 3):
+  "Hey {name}, welcome home", one next step by role (Start joining / your application / your first agreement / join
+  applications to answer / a proposal to vote on / your next task), your project and the next event, **Your tasks** with
+  status filters (`YourTasks.tsx`; My tasks lives here now), open proposals (with "You voted"), your circles, and a
+  "Start here" list for explorers. Built only from `core/components/v4`; no module numbers.
+- **ModalShell** gets class names; under v4 its backdrop is light and blurred and it opens as a bottom sheet on phones.
+  Unchanged where v4 is off. No migration.
+
+
+### the lexicon's words on the remaining screens
 
 - **Governance** (`LEXICON.md`): every proposal gets **4 checks**, each named who · how (Circle leads · consent, All
   members · majority vote, Admins & advisors · expert review, AI · Blueprint check); **Approved** / **Not approved**
@@ -22,7 +38,7 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 - **Members**: "Your requests", "No requests yet" (were seeks).
 - Text only: no data, address or behaviour changes.
 
-## Unreleased — no module numbers in the v4 look
+### no module numbers in the v4 look
 
 - **The v4 look shows no module numbers** (Sonia, 19 Nov: "only in the new look"). With `"design": "v4"`, labels
   like "M01 · Members" or "Module 07 · Operations" read just "Members" / "Operations", and number badges ("M08") are
@@ -31,6 +47,7 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   rebuild.
 
 - No data or address changes; the only behaviour change is the AI check's failure answer (`confidence: null`).
+
 ## v4.40.0 — 2026-11-19 — one vocabulary (from Protopia, Sonia)
 
 - **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia

@@ -24,12 +24,12 @@ inner 12px; six text sizes 11/13/15/18/24/40. (6) One hand-drawn icon set (marke
 
 **How it ships.** Release 1 (v4.39.0) re-points the tokens, so everything that uses them changes at once. Then,
 one release each, behind the same switch:
-1. Shared components in `core/components/ui/`: Button, StatusPill, Chip, Card, ListRow, Icon, PageHeader, NextStep,
+1. Shared components (done in v4.41.0, `core/components/v4`, see `/design`): Button, StatusPill, Chip, Card, ListRow, Icon, PageHeader, NextStep,
    EmptyState, and `ModalShell` restyled (light blurred backdrop, a bottom sheet on phones).
 2. The shell and menu: You (My dashboard) · Community (About {community}, Members, Calendar, Circles, Amenities &
    tools) · Working together (Operations, Agreements, Meetings, Governance) · Admin (Applications, Bookings,
    Permissions). Needs the lexicon's new addresses first. My tasks moves into My dashboard; Achievements into profiles.
-3. My dashboard; 4. About {community} (the Blueprint as a page); 5. Amenities & tools (Accommodation and Resources
+3. My dashboard (done in v4.41.0, `m00-dashboard/DashboardV4.tsx`); 4. About {community} (the Blueprint as a page); 5. Amenities & tools (Accommodation and Resources
    together, with a map); 6. Admin: Bookings calendar (who stays where) and Permissions; 7. the remaining modules.
 Each release replaces that module's hard-coded colours and sizes with tokens and components.
 
