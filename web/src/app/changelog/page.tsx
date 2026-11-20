@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.63.0',
+    date: '2026-11-20',
+    title: 'Circles at a glance',
+    items: ['With the new look on, each circle card shows its purpose, lead, members with their photos, open tasks and meetings. A circle opens in tabs: Overview, Manuals & guides, People, Subcircles, Tasks and Meetings.'],
+  },
+  {
     version: 'v4.62.0',
     date: '2026-11-20',
     title: 'The Task board',
