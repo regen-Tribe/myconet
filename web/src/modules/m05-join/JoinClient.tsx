@@ -1,4 +1,6 @@
 'use client'
+import { PageHeader } from '@/core/components/v4'
+import { DESIGN } from '@/core/lib/instance'
 import { useState } from 'react'
 import { isJoiningOrAbove } from '@/core/lib/roles'
 import { moduleOn } from '@/core/lib/modules'
@@ -406,8 +408,12 @@ function RoleRoadmap({ currentRole, milestones, applicationStatus, onApply, onRe
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 32px 80px' }}>
+    <div className={DESIGN === 'v4' ? 'v4-page v4-join' : undefined} style={DESIGN === 'v4' ? { maxWidth: 900 } : { maxWidth: 900, margin: '0 auto', padding: '32px 32px 80px' }}>
 
+{DESIGN === 'v4' ? (
+      <PageHeader eyebrow="Joining" title="Community roles and your progress"
+        subtitle="Every role is earned, not assigned. Here’s the full path: where you are now and what opens up as you grow with the community." />
+) : (<>
       {/* Header */}
       <div style={{ marginBottom: 40, maxWidth: 600 }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: M5, background: `color-mix(in srgb, ${M5} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${M5} 25%, transparent)`, padding: '3px 10px', borderRadius: 999, marginBottom: 18 }}>
@@ -420,6 +426,7 @@ function RoleRoadmap({ currentRole, milestones, applicationStatus, onApply, onRe
           Every role is earned, not assigned. Here's the full path — where you are now and what opens up as you grow with the community.
         </p>
       </div>
+</>)}
 
       {/* Role cards */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
