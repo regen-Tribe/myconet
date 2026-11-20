@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.56.0',
+    date: '2026-11-20',
+    title: 'The calendar opens on the week',
+    items: [
+      'The calendar opens on the whole week with its time slots.',
+      'The list shows what’s coming up; what’s already over today stays there, greyed out.',
+    ],
+  },
+  {
     version: 'v4.55.0',
     date: '2026-11-20',
     title: 'Profiles, joining and projects, as designed',
