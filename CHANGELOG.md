@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.67.1 — 2026-11-20 — Operations no longer crashes without the service key; requests show again
+
+- `m07-ops/lib/pm-data.ts`: the project manager's recent changes are read with the service key; a community
+  without `SUPABASE_SERVICE_ROLE_KEY` got "This page couldn't load" on Operations for every signed-in person
+  (RTRN). Now the panel is just empty and the Worker logs `[pm-data] recent agent actions skipped`.
+- `user_requests` has `request_text`, not `title`: Members, Home and Members (v4) asked for `title`, so the
+  latest requests never showed. They now read `title:request_text`. No migration.
+
 ## v4.67.0 — 2026-11-20 — Members in the v4 look: matches first (from Protopia, Sonia)
 
 - `/members` (v4 only): your best 3 matches lead, with your profile progress, your offers and requests and
