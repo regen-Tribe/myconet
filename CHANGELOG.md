@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.68.1 — 2026-11-20 — Members and profile take less room (from Protopia, Sonia)
+
+- `/members` (v4): your best matches are compact rows (avatar, name, reason, %), not tall cards; "Lately" is now
+  "Members activity"; the offers/requests box is gone (the My offers / My requests tabs stay).
+- Your own profile (v4) listed your circles twice. `MyCircles` takes `askOnly`: there it shows only circles you've
+  asked to join (with Withdraw) and "Ask to join a circle".
+
 ## v4.68.0 — 2026-11-20 — one circle filter everywhere: "Circles ▾" (from Protopia, Sonia)
 
 - New shared `CircleFilter` (`core/components/v4/CircleFilter.tsx`, styles `.v4-cf*` in globals.css): a "Circles ▾"
