@@ -7,6 +7,7 @@ import { COMMUNITY_NAME } from '@/core/lib/instance'
 import { VERSION } from '@/core/lib/version'
 import type { MenuState } from '@/core/lib/menu-server'
 import { Icon } from '@/core/components/v4'
+import { useBranding } from '@/core/components/BrandingProvider'
 
 /**
  * The v4 menu (Sonia, 19–20 Nov; design/redesign-prototype/app.js › navHTML), used when the community
@@ -92,6 +93,8 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, c
   const joined = isLoggedIn && isJoiningOrAbove(role)
   // Explorers, joining members and visitors get a line under each group (O7)
   const newcomer = state.journey !== 2
+  // The community's logo (Blueprint › branding) replaces the letter mark when there is one
+  const { logo_url } = useBranding()
   // On a phone the menu opens full, whatever the desktop setting
   const rail = collapsed && !mobileOpen
 
@@ -106,8 +109,10 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, c
     <nav aria-label="Menu" className={`app-shell-sidenav menu-v4${mobileOpen ? ' mobile-open' : ''}${rail ? ' mv4--rail' : ''}`}>
       <div className="mv4-top">
         <Link href="/home" className="mv4-brand" title={COMMUNITY_NAME} onClick={onClose}>
-          <span className="mv4-mark" aria-hidden="true">{COMMUNITY_NAME.slice(0, 1).toUpperCase()}</span>
-          <span className="mv4-brand__txt"><b>{COMMUNITY_NAME}</b><small>on MyCoNet</small></span>
+          {logo_url
+            ? <img className="mv4-mark mv4-mark--logo" src={logo_url} alt="" aria-hidden="true" />
+            : <span className="mv4-mark" aria-hidden="true">{COMMUNITY_NAME.slice(0, 1).toUpperCase()}</span>}
+          <span className="mv4-brand__txt">{logo_url ? <b className="sr-only">{COMMUNITY_NAME}</b> : <b>{COMMUNITY_NAME}</b>}<small>on MyCoNet</small></span>
         </Link>
         {onToggleCollapse && (
           <button type="button" className="mv4-collapse" onClick={onToggleCollapse}

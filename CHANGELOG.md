@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.68.2 — 2026-11-20 — the community's logo in the menu (from Protopia, Sonia)
+
+- The v4 menu (`MenuV4`) showed the first letter of the community's name. It now shows the logo set in the Blueprint
+  (`community_settings.logo_url`, via `useBranding`), up to 56px tall in the open menu and 38px in the slim rail; the
+  name stays for screen readers. Communities without a logo keep the letter.
+
 ## v4.68.1 — 2026-11-20 — Members and profile take less room (from Protopia, Sonia)
 
 - `/members` (v4): your best matches are compact rows (avatar, name, reason, %), not tall cards; "Lately" is now
