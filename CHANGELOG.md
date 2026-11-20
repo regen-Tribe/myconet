@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.56.0 — 2026-11-20 — the calendar opens on the week (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: the calendar as it was is better than the prototype's list; open on the whole week
+with its time slots.
+- The calendar opens on **Week** (Day, Week, Month, List in their usual order). The prototype-style list from
+  v4.53.0 (`AgendaV4`) is removed; List is the calendar's own list again.
+- **List › Upcoming** starts at the beginning of today: events that are already over today stay in place,
+  greyed out. **Past** shows everything over, greyed out.
+- The week title reads "Nov 16 – 22, 2026" (some browsers printed "Nov 16 – 2026 (day: 22)").
+
 ## v4.55.0 — 2026-11-20 — Profile, Join and the project page laid out as the prototype (from Protopia, Sonia)
 
 Only with the v4 look; the classic look is unchanged.

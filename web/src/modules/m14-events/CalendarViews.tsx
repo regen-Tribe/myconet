@@ -450,8 +450,11 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
   events: CalendarEvent[]; rsvps: EventRsvp[]; userId: string | null; now: Date
   showPast: boolean; onOpen: (id: string) => void
 }) {
+  // Upcoming: from the start of today, so today's finished events stay in place, greyed out (Sonia, 20 Nov);
+  // Past: everything already over, newest first, greyed out
+  const today = startOfDay(now).getTime()
   const visible = events
-    .filter(e => showPast ? isPast(e, now) : !isPast(e, now))
+    .filter(e => showPast ? isPast(e, now) : !isPast(e, now) || new Date(e.starts_at).getTime() >= today)
     .sort((a, b) => (showPast ? -1 : 1) * (new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()))
 
   if (visible.length === 0) {
@@ -479,7 +482,7 @@ export function ListView({ events, rsvps, userId, now, showPast, onOpen }: {
             {sameDay(g.day, now) ? 'Today · ' : ''}{fmtDayLong(g.day)}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {g.items.map(e => <EventRow key={e.id} event={e} rsvps={rsvps} userId={userId} onOpen={onOpen} />)}
+            {g.items.map(e => <EventRow key={e.id} event={e} rsvps={rsvps} userId={userId} onOpen={onOpen} dim={isPast(e, now)} />)}
           </div>
         </div>
       ))}

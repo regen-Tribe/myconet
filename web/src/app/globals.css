@@ -945,7 +945,7 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .v4-evday { font-size: 13px; font-weight: 600; color: var(--ink, #111317); margin: 0 0 8px; }
 .v4-evrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer; border: 0; background: var(--surface, #fff); border-radius: 16px; padding: 12px 14px; font: inherit; color: inherit; box-shadow: inset 4px 0 0 var(--ev, var(--ink-4)); }
 .v4-evrow:hover { background: #fff; transform: translateY(-1px); }
-.v4-evrow--dim { opacity: .6; }
+.v4-evrow--dim { opacity: .5; filter: grayscale(1); }
 .v4-evrow__time { width: 58px; flex-shrink: 0; font-size: 12.5px; font-weight: 600; color: var(--ink-2, #3a3f4a); }
 .v4-evrow__main { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .v4-evrow__main b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
@@ -1245,36 +1245,6 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 @media (max-width: 640px) {
   .cv4-wrap .cv4-acts { width: 100%; padding-left: 46px; }
   .cv4 .v4-ph__actions { width: 100%; }
-}
-
-/* ─── Calendar list in v4 (Sonia's prototype pCalendar, v4.53.0) ─────────── */
-.ag4 { display: grid; gap: 18px; }
-@media (min-width: 1000px) { .ag4 { grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); align-items: start; } .ag4-month { position: sticky; top: 84px; } }
-.ag4-row { padding: 6px 8px 6px 6px; gap: 8px; }
-.ag4-open { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; padding: 4px; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 12px; }
-.ag4-open:hover { background: var(--bg-2, #f6f7fa); }
-.ag4-open .v4-row__main small { white-space: normal; }
-.ag4-sub { display: inline-flex !important; align-items: center; gap: 5px; }
-.ag4-date { width: 46px; height: 50px; flex-shrink: 0; border-radius: 12px; background: color-mix(in srgb, var(--ev, #8a8f9c) 16%, #fff); display: grid; place-content: center; text-align: center; line-height: 1; }
-.ag4-date small { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3, #6b7180); }
-.ag4-date b { font-size: 19px; font-weight: 600; margin-top: 3px; }
-.ag4-date--today { background: var(--ink, #111317); color: #fff; }
-.ag4-date--today small { color: rgba(255,255,255,.7); }
-.ag4-more { text-align: center; margin: 14px 0 0; }
-.ag4-month { padding: 16px 16px 18px; }
-.ag4-mhead { margin-top: 0 !important; }
-.ag4-mhead .v4-seg button { padding: 4px 8px; }
-.ag4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-.ag4-dow { font-size: 10.5px; color: var(--ink-4, #9aa0ad); padding-bottom: 4px; }
-.ag4-d { aspect-ratio: 1; border: 0; background: none; border-radius: 10px; font: inherit; font-size: 13px; color: var(--ink, #111317); cursor: pointer; position: relative; display: grid; place-items: center; padding: 0; }
-.ag4-d:hover { background: var(--bg-2, #f6f7fa); }
-.ag4-d.out { color: var(--ink-4, #9aa0ad); }
-.ag4-d.ev::after { content: ''; position: absolute; bottom: 5px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--ink, #111317); }
-.ag4-d.today { background: var(--ink, #111317); color: #fff; font-weight: 600; }
-.ag4-d.today.ev::after { background: #fff; }
-@media (max-width: 640px) {
-  .ag4-row { flex-wrap: wrap; }
-  .ag4-row .v4-row__trail { margin-left: 62px; }
 }
 
 /* ─── Meetings in v4 (Sonia's prototype pMeetings / pMeeting, v4.54.0) ─────────── */
