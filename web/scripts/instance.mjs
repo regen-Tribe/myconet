@@ -48,6 +48,7 @@ export function loadInstance() {
     try { new Intl.DateTimeFormat('en-US', { timeZone: cfg.timeZone }) } catch { problems.push(`timeZone: "${cfg.timeZone}" isn't a time zone (e.g. "America/Costa_Rica")`) }
   }
   if (cfg.knowledge?.repo && !/^[\w.-]+\/[\w.-]+$/.test(cfg.knowledge.repo)) problems.push('knowledge.repo: "owner/repo"')
+  if (cfg.assistant?.secondBrain && !cfg.knowledge?.repo) problems.push('assistant.secondBrain needs knowledge.repo (the second brain)')
   const mail = cfg.meetings?.notesEmail
   if (mail) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.from ?? '')) problems.push('meetings.notesEmail.from: an email address')
@@ -97,6 +98,8 @@ function publicEnv(cfg) {
     // The community's second brain on GitHub (meeting notes are saved there); the token is the
     // SECOND_BRAIN_GITHUB_TOKEN secret
     ...(cfg.knowledge?.repo ? { KNOWLEDGE_REPO: cfg.knowledge.repo, KNOWLEDGE_BRANCH: cfg.knowledge.branch ?? 'main', KNOWLEDGE_MEETINGS_FOLDER: cfg.knowledge.meetingsFolder ?? 'operations/meetings', KNOWLEDGE_BOARD_FOLDER: cfg.knowledge.boardFolder ?? 'operations/board' } : {}),
+    // Ask and Do read the second brain (v4.74.0): "assistant": { "secondBrain": true } + knowledge.repo + the token
+    ...(cfg.assistant?.secondBrain ? { ASSISTANT_SECOND_BRAIN: 'on' } : {}),
     // Meeting notes email (needs the MEETINGS_SMTP_PASSWORD secret)
     ...(cfg.meetings?.notesEmail ? {
       MEETINGS_EMAIL_FROM: cfg.meetings.notesEmail.from,
