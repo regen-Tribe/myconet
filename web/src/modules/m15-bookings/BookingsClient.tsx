@@ -12,6 +12,7 @@ import {
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
 import { ItemModal } from './ItemModal'
 import { ItemFormModal, type ItemPayload } from './ItemFormModal'
+import { modLabel } from '@/core/lib/module-label'
 
 export default function BookingsClient({
   scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId,
@@ -206,7 +207,7 @@ export default function BookingsClient({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--bk-accent) 10%, var(--surface))', color: 'var(--bk-accent)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            Module {scopeMeta.num} · {scopeMeta.label}
+            {modLabel(scopeMeta.num, scopeMeta.label, 'Module')}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
             {scopeMeta.heading}

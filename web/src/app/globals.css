@@ -623,3 +623,7 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
 }
 [data-design="v4"]:not([data-theme="dark"]) h1,
 [data-design="v4"]:not([data-theme="dark"]) h2 { letter-spacing: -.03em; }
+
+/* v4 has no module numbers: number-only badges ("M01") carry .mod-num; text labels use modLabel()
+   (core/lib/module-label.ts). Both themes, like modLabel(). */
+[data-design="v4"] .mod-num { display: none !important; }

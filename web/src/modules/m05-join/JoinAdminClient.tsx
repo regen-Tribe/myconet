@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
+import { modLabel } from '@/core/lib/module-label'
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
   pending:   { label: 'Pending',    color: '#f59e0b' },
@@ -87,7 +88,7 @@ export default function JoinAdminClient({ applications: initial, questions, canD
       {/* Header */}
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', background: 'var(--accent-soft)', padding: '3px 10px', borderRadius: 20, marginBottom: 14 }}>
-          M05 · Join — Admin Review
+          {modLabel('05', 'Join — Admin Review')}
         </div>
         <h1 style={{ fontFamily: 'var(--display)', fontSize: 32, color: 'var(--ink)', marginBottom: 6 }}>
           Join applications

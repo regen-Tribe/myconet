@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/core/lib/supabase/client'
 import { useCircles } from '@/core/components/CirclesProvider'
+import { modLabel } from '@/core/lib/module-label'
 
 const MAX_BYTES = 200 * 1024 * 1024
 
@@ -55,7 +56,7 @@ export default function UploadForm({ userId }: { userId: string }) {
       <Link href="/meetings" style={{ fontSize: 13, color: 'var(--m18)', textDecoration: 'none' }}>← Meetings</Link>
       <div style={{ margin: '16px 0 28px' }}>
         <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--m18)', background: 'color-mix(in srgb, var(--m18) 10%, var(--surface))', padding: '3px 10px', borderRadius: 20, marginBottom: 12 }}>
-          M18 · Meetings
+          {modLabel('18', 'Meetings')}
         </div>
         <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>Upload a recording</h1>
         <p style={{ fontSize: 14, color: 'color-mix(in srgb, var(--ink) 60%, transparent)', margin: 0, lineHeight: 1.5 }}>
