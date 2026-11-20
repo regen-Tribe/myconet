@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.66.0',
+    date: '2026-11-20',
+    title: 'Who edits the Blueprint',
+    items: ['A community can choose that only admins edit its Blueprint. Others keep circle leads and admins as editors.'],
+  },
+  {
     version: 'v4.65.0',
     date: '2026-11-20',
     title: 'The assistant changes events',
