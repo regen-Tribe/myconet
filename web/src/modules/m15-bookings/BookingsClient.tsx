@@ -13,9 +13,11 @@ import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
 import { ItemModal } from './ItemModal'
 import { ItemFormModal, type ItemPayload } from './ItemFormModal'
 import { modLabel } from '@/core/lib/module-label'
+import { DESIGN } from '@/core/lib/instance'
+import BookingsV4 from './BookingsV4'
 
 export default function BookingsClient({
-  scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId,
+  scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId, admin = false,
 }: {
   scope: BookingScope
   initialItems: BookingItem[]
@@ -27,6 +29,8 @@ export default function BookingsClient({
   initialTab: BookingsTab
   initialCategory: BookingCategory | null
   initialItemId: string | null
+  /** Admin › Bookings (v4): only the requests and the inventory, at /admin/bookings */
+  admin?: boolean
 }) {
   const supabase = createClient()
   const [items, setItems] = useState(initialItems)
@@ -34,7 +38,8 @@ export default function BookingsClient({
   const CATEGORIES = scopeMeta.categories
   const [bookings, setBookings] = useState(initialBookings)
   const isManager = canAddItems(role)
-  const [tab, setTab] = useState<BookingsTab>(initialTab === 'manage' && !isManager ? 'browse' : initialTab)
+  const [tab, setTab] = useState<BookingsTab>(admin ? 'manage' : initialTab === 'manage' && !isManager ? 'browse' : initialTab)
+  const path = admin ? '/admin/bookings' : scopeMeta.path
   const [category, setCategory] = useState<BookingCategory | null>(initialCategory)
   const [tag, setTag] = useState<string | null>(null)
   const [query, setQuery] = useState('')
@@ -48,12 +53,12 @@ export default function BookingsClient({
 
   useEffect(() => {
     const params = new URLSearchParams()
-    if (tab !== 'browse') params.set('tab', tab)
+    if (tab !== 'browse' && !admin) params.set('tab', tab)
     if (category) params.set('category', category)
     if (openId) params.set('item', openId)
     const qs = params.toString()
-    window.history.replaceState(null, '', `${scopeMeta.path}${qs ? `?${qs}` : ''}`)
-  }, [tab, category, openId, scopeMeta.path])
+    window.history.replaceState(null, '', `${path}${qs ? `?${qs}` : ''}`)
+  }, [tab, category, openId, path, admin])
 
   useEffect(() => {
     if (!toast) return
@@ -163,6 +168,54 @@ export default function BookingsClient({
     setToast(saved.is_active ? 'Item restored' : 'Item archived — it’s hidden from members')
   }
 
+  // The v4 look: same state and writes, its own view (BookingsV4.tsx)
+  if (DESIGN === 'v4') {
+    const modals = (
+      <>
+        {openItem && now && !form && (
+          <ItemModal
+            key={openItem.id}
+            item={openItem}
+            bookings={bookings.filter(b => b.item_id === openItem.id)}
+            now={now}
+            userId={userId}
+            role={role}
+            canManage={canManageItem(openItem, userId, role, leadCircles)}
+            onClose={() => setOpenId(null)}
+            onBook={(s, e, note) => book(openItem, s, e, note)}
+            onEdit={() => setForm({ existing: openItem })}
+            onToggleActive={() => toggleActive(openItem)}
+          />
+        )}
+        {form && (
+          <ItemFormModal
+            existing={form.existing}
+            defaultCategory={category ?? CATEGORIES[0]}
+            categories={CATEGORIES}
+            role={role}
+            leadCircles={leadCircles}
+            knownTags={knownTags}
+            onClose={() => setForm(null)}
+            onSave={saveItem}
+          />
+        )}
+      </>
+    )
+    return (
+      <BookingsV4
+        modals={modals}
+        vm={{
+          admin, heading: scopeMeta.heading, categories: CATEGORIES, activeItems, scopeItems, shown, bookings, itemById, tagsHere,
+          myUpcoming, myPast, pending, now, userId, role, leadCircles, isManager, canBookHere: canBook(role),
+          tab, category, tag, query, toast, availability,
+          setTab, setCategory, setTag, setQuery,
+          open: setOpenId, add: () => setForm({ existing: null }), edit: i => setForm({ existing: i }),
+          toggleActive, setStatus: (b, st, msg) => { void setStatus(b, st, msg) },
+        }}
+      />
+    )
+  }
+
   const tabStyle = (active: boolean): React.CSSProperties => ({
     fontSize: 13, fontWeight: active ? 600 : 400, color: active ? 'var(--ink)' : 'var(--ink-3)',
     padding: '8px 14px', background: 'none', border: 'none',
@@ -207,10 +260,10 @@ export default function BookingsClient({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--bk-accent) 10%, var(--surface))', color: 'var(--bk-accent)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            {modLabel(scopeMeta.num, scopeMeta.label, 'Module')}
+            {admin ? 'Admin' : scopeMeta.num ? modLabel(scopeMeta.num, scopeMeta.label, 'Module') : scopeMeta.label}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
-            {scopeMeta.heading}
+            {admin ? 'Bookings' : scopeMeta.heading}
           </h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
             {CATEGORIES.map(c => `${activeItems.filter(i => i.category === c).length} ${CATEGORY_META[c].label.toLowerCase()}`).join(' · ')}
@@ -223,18 +276,18 @@ export default function BookingsClient({
         )}
       </div>
 
-      {!userId ? (
+      {admin ? null : !userId ? (
         <div style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
           Browse what the community shares. <Link href="/auth/login" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Sign in</Link> to book.
         </div>
       ) : !canBook(role) && (
         <div style={{ fontSize: 13, color: 'var(--ink-2)', background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-          🔒 Joining members and above can book shared items. <Link href="/join" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Start joining →</Link>
+          🔒 Booking opens when you’re a joining member. <Link href="/join" style={{ color: 'var(--bk-accent)', fontWeight: 600 }}>Start joining →</Link>
         </div>
       )}
 
       {/* ── Tabs ──────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--rule)', marginBottom: 18, overflowX: 'auto' }}>
+      {!admin && <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--rule)', marginBottom: 18, overflowX: 'auto' }}>
         <button onClick={() => setTab('browse')} style={tabStyle(tab === 'browse')}>Browse</button>
         {userId && (
           <button onClick={() => setTab('mine')} style={tabStyle(tab === 'mine')}>
@@ -246,7 +299,7 @@ export default function BookingsClient({
             Manage{pending.length > 0 && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, color: '#fff', background: '#d97706', borderRadius: 20, padding: '1px 7px' }}>{pending.length}</span>}
           </button>
         )}
-      </div>
+      </div>}
 
       {/* ── Browse ────────────────────────────────────────────────────── */}
       {tab === 'browse' && (

@@ -8,6 +8,7 @@ import { CirclesProvider } from '@/core/components/CirclesProvider'
 import { loadBranding } from '@/core/lib/branding-server'
 import { BrandingProvider } from '@/core/components/BrandingProvider'
 import { COMMUNITY_NAME, DESIGN } from '@/core/lib/instance'
+import { loadMenuState } from '@/core/lib/menu-server'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
@@ -48,6 +49,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       .maybeSingle()
     role = profile?.role ?? 'explorer'
   }
+  // The v4 menu's next step and counts (only for the v4 look)
+  const menu = DESIGN === 'v4' ? await loadMenuState(supabase, user?.id ?? null, role) : null
 
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}${DESIGN ? ` ${inter.variable} ${interTight.variable}` : ''}`} data-design={DESIGN || undefined} suppressHydrationWarning>
@@ -59,7 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <BrandingProvider branding={branding}>
           <CirclesProvider rows={circles}>
-            <AppShell role={role} isLoggedIn={!!user}>{children}</AppShell>
+            <AppShell role={role} isLoggedIn={!!user} menu={menu}>{children}</AppShell>
           </CirclesProvider>
         </BrandingProvider>
       </body>

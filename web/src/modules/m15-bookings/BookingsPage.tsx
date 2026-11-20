@@ -1,6 +1,7 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/core/lib/supabase/server'
 import BookingsClient from './BookingsClient'
-import { isCategory, SCOPE_META, type BookingScope } from './lib/inventory'
+import { canAddItems, isCategory, SCOPE_META, type BookingScope } from './lib/inventory'
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
 import type { BookingsTab } from './types'
 
@@ -9,7 +10,7 @@ const TABS: BookingsTab[] = ['browse', 'mine', 'manage']
 export type BookingsSearchParams = { tab?: string; category?: string; item?: string }
 
 /** Shared loader for both booking modules; the scope picks which categories show. */
-export async function renderBookings(scope: BookingScope, sp: BookingsSearchParams) {
+export async function renderBookings(scope: BookingScope, sp: BookingsSearchParams, opts: { admin?: boolean } = {}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -26,6 +27,10 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
     leadCircles = profile?.lead_circles ?? []
     me = { first_name: profile?.first_name ?? null, username: profile?.username ?? null }
   }
+
+  // Admin › Bookings is for the people who answer booking requests
+  if (opts.admin && !user) redirect('/auth/login')
+  if (opts.admin && !canAddItems(role)) redirect('/dashboard')
 
   // RLS: everyone sees active items (leads also see archived); joining+ see the
   // whole schedule, explorers only their own bookings, visitors none
@@ -51,6 +56,7 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
       initialTab={TABS.find(t => t === sp.tab) ?? 'browse'}
       initialCategory={isCategory(sp.category) && SCOPE_META[scope].categories.includes(sp.category) ? sp.category : null}
       initialItemId={inScope(sp.item) ? sp.item! : null}
+      admin={opts.admin}
     />
   )
 }

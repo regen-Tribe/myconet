@@ -5,6 +5,58 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.42.0 — 2026-11-20 — the v4 menu (from Protopia, Sonia)
+
+Only with the v4 look (`"design": "v4"`); every other community keeps today's menu and addresses. Release 2 of
+DESIGN-SYSTEM.md › v4, from the menu Sonia decided on 19 Nov (`design/redesign-prototype/app.js › NAV`), with the
+orientation review's proposals she picked (O3, O5, O7, O8, O9 below).
+
+- **The menu** (`core/components/shell/MenuV4.tsx`; AppShell picks it, `AppSideNav` is unchanged): **Your next step**
+  on top in the action green, then **You** (My dashboard, with your open-task count), **Community** (About
+  {community}, Members, Calendar, Circles, Amenities & tools), **Working together** (Operations, Agreements, Meetings,
+  Governance) and **Admin** for circle leads and admins (Applications and Bookings with their waiting counts,
+  Permissions). Plain names and one icon each (the shared `Icon` from `core/components/v4`). One list feeds the menu,
+  the phone tab bar and search: `core/lib/nav.ts › menuGroups()`.
+- **The next step** (`core/lib/menu-server.ts`, loaded in `layout.tsx` with the viewer's session): signed out,
+  Create account (Sign in beside it); explorer, Start joining (or "Your application is in"); joining member, Your
+  first agreement (or "Waiting for an answer"); admin, booking requests then join applications; circle lead, join
+  applications; then your next task by due date, else "Find a project to help on". For explorers and joining
+  members it shows **Explorer · Joining member · Member** with "Step N of 3" (O3), and each group has a line
+  under its label (O7). It hides on My dashboard, which has its own next step (`DashboardV4`).
+- **Locked items say why** (O5): below joining member, Agreements and Meetings show a lock, aren't links, and say
+  "Opens when you're a joining member" on hover and to screen readers. Amenities & tools isn't locked.
+- **Phone tab bar** (`TabBarV4.tsx`): Dashboard, Operations, Calendar, Members and Menu, each named under its
+  icon (O9). Explorers and joining members get About instead of Operations (O8). Menu shows the name of the
+  page you're on when it isn't one of the four, and opens the menu above the bar. The assistant's dot moves up.
+- **New pages and addresses**: `/about` (the Blueprint page), `/amenities` (all bookable things on one page: a
+  third booking scope, `amenities`; Browse, My bookings, Manage), `/admin/applications` (join applications, moved
+  out of the Join page; circle leads review, admins decide), `/admin/bookings` (booking requests and the
+  inventory) and `/admin/permissions` (`UsersAdminClient` with `readOnly` for circle leads). They exist for every
+  community; with v4, `/blueprint`, `/accommodation`, `/resources`, `/stays`, `/bookings` and `/admin/users`
+  redirect to them permanently (`next.config.ts`, read from `NEXT_PUBLIC_DESIGN`).
+- **The user menu** (under your name) with v4: View my profile, Edit profile, Change password, Achievements, Sign
+  out. Achievements stays here until badges show on profiles; no dark-mode switch (v4 is light only).
+- **The version** under the logo is small plain text with v4 (11px, `--ink-4`), not a pill.
+- Booking for explorers says "Booking opens when you're a joining member" (all communities).
+- **LEXICON.md**: the v4 menu's names and addresses (My dashboard, About {community}, Amenities & tools,
+  Applications, Bookings, Permissions).
+- **About {community} in the v4 look** (`modules/m04-blueprint/AboutV4.tsx`): the Blueprint as a page to read. The
+  banner and logo, the community's name with the working name's sentence as a tagline, short facts, and chapters
+  from the Blueprint answers (why we're here, mission and vision, values with the community values, the land, how we
+  live, decide and share, joining, where we're going). Every other answered field is folded under "The whole
+  Blueprint", so nothing is hidden. `?edit=1` and old `/blueprint?step=…` links open the wizard; everyone gets a
+  link to it (read-only below circle lead).
+- **Amenities & tools and Admin › Bookings in the v4 look** (`modules/m15-bookings/BookingsV4.tsx`, only the view:
+  `BookingsClient` keeps the state, rules and writes). Category filters with counts, search, tag filters, cards with
+  "Free now"; My bookings and Manage as lists. Admin › Bookings has **Calendar** (two weeks of rooms, and any tool or
+  space booked, with who and waiting requests in yellow; earlier/later), Requests and Inventory.
+- **Admin › Permissions in the v4 look** (`UsersAdminClient › PermissionsV4`): filter by role, "What can each role
+  do?", each person's role, the circles they lead and the circles they're in (same saves), and **Community settings**:
+  one list of what only admins change (look and feel, circles, documents, community values, the Blueprint), each
+  opening where it lives.
+- Not yet: the map of amenities (items have no position yet), the booking pop-up's inside, a vote as the menu's next step (My dashboard has it). The counts refresh when a page loads, not as you click
+  around. No migration.
+
 ## v4.41.0 — 2026-11-19
 
 - **v4 building blocks** (`core/components/v4`, DESIGN-SYSTEM.md › v4, release 2): `Button` (primary, secondary, quiet,
