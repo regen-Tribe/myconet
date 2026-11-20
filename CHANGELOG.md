@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.61.0 — 2026-11-20 — subcircles, and tasks with subtasks instead of projects (from Protopia, Sonia)
+
+Words only; no table, column, route or data changes. `LEXICON.md` changed first (Sonia, 20 Nov):
+- **team → subcircle**: a smaller, lasting group inside a circle.
+- **project → task**, and a project's tasks → **subtasks**. Projects are parked in a new "For later" section of the
+  lexicon. In the data, the `projects` table holds tasks (the ones that can have subtasks) and `deliverables`
+  holds subtasks; a deliverable with no project is a task of its own. The role label "Project lead" is "Task lead"
+  (the role value `project_lead` stays).
+- Changed in the shared places: menu and next step, top-bar search, board permission messages, Dashboard, Home and
+  the landing page, sign-in, Agreements ("an offer to help on a task", "Find a task", "Suggest a task"), Join,
+  Achievements, Calendar labels, admin role labels, and the assistant (its Do confirmations, and both prompts now
+  use task, subtask and subcircle). The Operations, Circles, Members, Governance and Meetings screens change in
+  their own module releases. "Project" where it means the whole community (the Blueprint's "project document",
+  "where the project stands") stays.
+
 ## v4.60.0 — 2026-11-20 — Meetings clear at a glance (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: the circle needs more than a colour, and the list should read at first glance.

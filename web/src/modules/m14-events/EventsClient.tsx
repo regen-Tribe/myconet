@@ -147,7 +147,7 @@ export default function EventsClient({
     if (error) {
       return error.code === '42501'
         ? payload.kind === 'core'
-          ? 'Only full members, circle leads and project leads can post core events.'
+          ? 'Only full members, circle leads and task leads can post core events.'
           : 'Only joining members and above can post events.'
         : error.message
     }
