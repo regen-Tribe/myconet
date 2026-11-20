@@ -922,6 +922,34 @@ label.v4-btn { cursor: pointer; }
 @media (max-width: 900px) { .v4-mapedit { grid-template-columns: 1fr; } }
 @media (max-width: 900px) { .v4-mapwrap--list { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { .v4-pin { width: 26px; height: 26px; } .v4-pin .v4-icon { width: 12px; height: 12px; } .v4-map__zoom button { width: 32px; height: 32px; } }
+/* The Map page (M19, v4.69.0): more pin colours, a card with a photo, the place form's photo */
+.v4-pin--green { background: var(--green, #d3f1dc); color: var(--green-ink, #2e7a4a); }
+.v4-pin--red { background: var(--red, #ffd9d6); color: var(--red-ink, #ae3a35); }
+.v4-pin--grey { background: var(--bg-2, #f2f3f7); color: var(--ink-2, #3a3f4a); }
+.v4-mapcard--wide { width: 272px; gap: 6px; }
+.v4-mapcard--wide.v4-mapcard--docked { width: auto; }
+.v4-mapcard__photo { width: calc(100% + 28px); max-width: none; margin: -12px -14px 4px; height: 140px; object-fit: cover; border-radius: 16px 16px 0 0; display: block; }
+.v4-mapcard--docked .v4-mapcard__photo { height: 190px; }
+.v4-mapcard__nophoto { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 2px; }
+.v4-mapcard__text { margin: 2px 0 0; font-size: 13px; color: var(--ink-2, #3a3f4a); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.v4-mapcard--docked .v4-mapcard__text { -webkit-line-clamp: unset; display: block; }
+.v4-mapcard__book { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 13px; }
+.v4-mapcard__book small { width: 100%; }
+.v4-mapcard__actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 4px; }
+.v4-mapcard__actions .v4-btn { margin-top: 0; }
+.v4-placephoto { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.v4-placephoto img, .v4-placephoto__none { width: 120px; height: 80px; border-radius: 12px; object-fit: cover; }
+.v4-placephoto__none { display: grid; place-items: center; background: var(--bg-2, #f6f7fa); font-size: 12px; color: var(--ink-3, #6b7180); }
+.v4-placephoto__btns { display: inline-flex; gap: 8px; align-items: center; }
+.v4-modal__left { margin-right: auto; }
+@media (max-width: 760px) {
+  .v4-mapcard--docked .v4-mapcard__actions .v4-btn { flex: 1 1 auto; justify-content: center; }
+  .v4-maplist { max-height: 340px; overflow-y: auto; }
+  /* Small screens: smaller pins until zoomed in, and the kinds wrap instead of scrolling sideways */
+  .v4-map:not(.v4-map--zoomed) .v4-pin { width: 20px; height: 20px; border-width: 1.5px; }
+  .v4-map:not(.v4-map--zoomed) .v4-pin .v4-icon { width: 10px; height: 10px; }
+  .v4-mapfilter .v4-chiprow { flex-wrap: wrap; overflow: visible; }
+}
 
 /* ─── v4 Members (modules/m01-network/MembersV4.tsx) ─── */
 .v4-members__tabs { max-width: 1120px; margin: 0 auto; padding: 18px 28px 0; }

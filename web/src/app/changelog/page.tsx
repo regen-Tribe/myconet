@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.70.0',
+    date: '2026-11-20',
+    title: 'A map of the land',
+    items: ['New Map page: the picture of the land with a pin for every place, the houses, shared spaces, gardens, water, forest and meeting spots. Tap a pin for its photo, a short description, who looks after it and what you can book there. Filter by kind; works with two fingers on a phone.', 'Admins and circle leads put places on the map and add photos with “Edit places”.'],
+  },
+  {
     version: 'v4.69.0',
     date: '2026-11-20',
     title: 'All of Members in the new look',
