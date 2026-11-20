@@ -107,10 +107,10 @@ const INITIAL_LOG = [
 ]
 
 const LAYERS = [
-  { num: '01', name: 'Consent (Sociocracy)',       desc: 'Move forward if there are no principled objections — not unanimous applause.', mark: '☉' },
-  { num: '02', name: 'Democracy (Majority)',        desc: 'Big shared choices. Open vote, simple majority, public results.',              mark: '☑' },
-  { num: '03', name: 'Meritocracy (Domain expert)', desc: 'Technical calls go to the person with skin in the game.',                    mark: '△' },
-  { num: '04', name: 'AI-mediated facilitation',   desc: 'When things stall, the AI surfaces blockers and finds the next move.',        mark: '◇' },
+  { num: '01', name: 'Circle leads · consent',            desc: 'Move forward if there are no principled objections — not unanimous applause.', mark: '☉' },
+  { num: '02', name: 'All members · majority vote',       desc: 'Big shared choices. Open vote, simple majority, public results.',              mark: '☑' },
+  { num: '03', name: 'Admins & advisors · expert review', desc: 'Technical calls go to the person with skin in the game.',                    mark: '△' },
+  { num: '04', name: 'AI · Blueprint check',              desc: 'Checks that the proposal fits the Blueprint and the community’s goals.',        mark: '◇' },
 ]
 
 /* ── Section header (reused 7×) ── */
@@ -682,14 +682,14 @@ function GovernanceSection() {
     <section className="lp-section" id="governance">
       <SectionHead
         mod="09" label="Governance" color="var(--m9)"
-        h="Decide together. Four layers, one community."
-        lead="Big questions, small calls, technical judgments, and impossible deadlocks — each deserves a different decision tool. The Governance module gives you four layered modes and one AI facilitator that knows when to use which."
+        h="Decide together. Four checks, one community."
+        lead="Big questions, small calls, technical judgments, and impossible deadlocks — each deserves a different decision tool. Every proposal gets four checks at once: circle leads, all members, admins and advisors, and an AI check against the Blueprint."
       />
       <div className="lp-gov-layers" style={{ marginTop: 32 }}>
         {LAYERS.map((l, i) => (
           <div key={i} className={`lp-gov-layer${i === layer ? ' active' : ''}`} onClick={() => setLayer(i)}>
             <span className="lp-layer-mark">{l.mark}</span>
-            <div className="lp-layer-num">LAYER {l.num}</div>
+            <div className="lp-layer-num">CHECK {l.num}</div>
             <div className="lp-layer-name">{l.name}</div>
             <div className="lp-layer-desc">{l.desc}</div>
           </div>
@@ -698,7 +698,7 @@ function GovernanceSection() {
       <div className="lp-proposal">
         <h4>Proposal · &ldquo;Approve $24k for reed-bed wetland materials&rdquo;</h4>
         <div className="lp-pmeta">
-          Decision mode: <strong>{LAYERS[layer].name}</strong> · Opened by @priya · 2 days left · {total} of 19 members have voted
+          Check: <strong>{LAYERS[layer].name}</strong> · Opened by @priya · 2 days left · {total} of 19 members have voted
         </div>
         <div className="lp-vote-bar">
           <div className="lp-vote-seg yes"     style={{ flex: yes }}>{yes} consent</div>

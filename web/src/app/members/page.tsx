@@ -233,7 +233,7 @@ export default async function NetworkDashboard() {
           href={user ? '/members/offers' : '/auth/signup'}
         />
         <StatCard
-          label="Your seeks"
+          label="Your requests"
           value={user ? String(seeksCount) : '—'}
           delta={user ? (seeksCount > 0 ? 'live on your profile' : 'add some') : 'sign in to post'}
           href={user ? '/members/requests' : '/auth/signup'}

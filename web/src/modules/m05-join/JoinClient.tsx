@@ -91,7 +91,7 @@ const ROLE_MAP = [
       'Make binding collaboration agreements',
       'Vote and submit proposals in Governance',
       ...(moduleOn('points') ? ['Earn contribution points'] : []),
-      'Full network access — offers, seeks, and direct matching',
+      'Full Members access — offers, requests and matching',
     ],
   },
   {
