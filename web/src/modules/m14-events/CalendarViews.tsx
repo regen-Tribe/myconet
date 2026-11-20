@@ -186,7 +186,7 @@ function WeekGrid({ anchor, events, now, onOpen }: {
   const scroller = useRef<HTMLDivElement>(null)
   // All-day and multi-day events go in the strip at the top; the rest on the grid
   const isBanner = (e: CalendarEvent) => e.all_day || (!!e.ends_at && new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime() >= 24 * 3600_000)
-  const firstHour = Math.min(7, ...days.flatMap(d => (byDay.get(dayKey(d)) ?? []).filter(e => !isBanner(e) && sameDay(new Date(e.starts_at), d)).map(e => new Date(e.starts_at).getHours())))
+  const firstHour = Math.min(7, ...days.flatMap(d => (byDay.get(dayKey(d)) ?? []).filter(e => !isBanner(e) && sameDay(new Date(e.starts_at), d)).map(e => new Date(e.starts_at).getHours()).filter(h => h >= 5)))
 
   // Open scrolled to the morning (or the week's earliest event)
   useEffect(() => {
@@ -201,7 +201,7 @@ function WeekGrid({ anchor, events, now, onOpen }: {
   return (
     <div ref={scroller} className={V4 ? 'v4-calframe' : undefined} style={{
       border: '1px solid var(--rule)', borderRadius: 10, background: 'var(--surface)',
-      overflow: 'auto', maxHeight: 'min(72vh, 760px)', position: 'relative',
+      overflow: 'auto', maxHeight: V4 ? 'calc(100vh - 300px)' : 'min(72vh, 760px)', minHeight: V4 ? 420 : undefined, position: 'relative',
     }}>
       <div style={{ minWidth: GUTTER_PX + 7 * DAY_MIN_PX }}>
         {/* Day names, and all-day events, stay on top while scrolling */}

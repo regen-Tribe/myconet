@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.59.0',
+    date: '2026-11-20',
+    title: 'Clearer actions, more calendar',
+    items: ['With the new look on, the main action on a page is green and the tabs are softer. The calendar opens on the week at the morning, with tasks off until you want them, and + Add event stands out.'],
+  },
+  {
     version: 'v4.58.0',
     date: '2026-11-20',
     title: 'The new look on phones',

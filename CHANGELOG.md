@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.59.0 — 2026-11-20 — green actions, soft toggles, and more calendar on the first screen (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: actions stay green and stand out most; tab and filter toggles get a delicate colour,
+not black; Tasks off by default; more of the calendar when you land.
+- **Buttons**: the main action button (`v4-btn--primary`) is green. Selected chips and segmented toggles
+  (`v4-chip--on`, `v4-seg .on`) are soft blue instead of black.
+- **Calendar**: Tasks are off until ticked (`?show=` still wins). The header is shorter, **+ Add event** is the
+  green next-step button, the event kinds and categories share one row, and the week fills the screen and opens
+  at the morning (events before 5 am don't pull it to midnight).
+
 ## v4.58.0 — 2026-11-20 — The v4 look on phones (from Protopia, Sonia)
 
 Only with the v4 look, and only at phone widths (a new `web/src/app/v4-mobile.css`, every rule under

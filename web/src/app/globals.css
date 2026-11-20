@@ -1377,3 +1377,16 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .gv4-track i { display: block; height: 100%; border-radius: 999px; background: var(--ink, #111317); }
 .gv4-track i.live { background: var(--green-ink, #2e7a4a); }
 .gv4-track em { position: absolute; top: -4px; width: 2px; height: 16px; margin-left: -1px; border-radius: 1px; background: var(--green-ink, #2e7a4a); }
+
+/* ─── Actions green, toggles soft (Sonia, 20 Nov: "the action should be most prominent") ─────────── */
+.v4-btn--primary { background: #2f6b48; color: #fff; }
+.v4-btn--primary:hover { background: #235c3b; opacity: 1; }
+.v4-chip--on, .v4-chip--on:hover { background: var(--blue, #d6e4ff); color: var(--blue-ink, #2350b0); }
+.v4-chip--on .v4-chip__count { color: var(--blue-ink, #2350b0); opacity: .75; }
+.v4-seg button.on { background: var(--blue, #d6e4ff); color: var(--blue-ink, #2350b0); }
+/* Calendar: one row of filters, the add button stands out, more of the week on the first screen */
+.ev4-filters { margin-bottom: 8px; }
+.ev4-sep { width: 1px; height: 20px; background: var(--rule, rgba(17,19,23,.12)); margin: 0 4px; flex-shrink: 0; }
+.ev4-cat { flex-shrink: 0; cursor: pointer; }
+.ev4-add { height: 46px; padding-left: 20px; font-size: 14px; box-shadow: 0 8px 20px -10px rgba(35,92,59,.55); }
+.v4-page .v4-caltools { margin-top: 0; }
