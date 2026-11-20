@@ -952,3 +952,11 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .v4-evrow__main small { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12px; color: var(--ink-3, #6b7180); }
 .v4-evrow__main small > span { display: inline-flex; align-items: center; gap: 4px; }
 .v4-evrow__trail { flex-shrink: 0; display: grid; justify-items: end; gap: 4px; font-size: 11px; color: var(--ink-3, #6b7180); }
+
+/* ─── v4 Circles (modules/m17-org/OrgChartClient.tsx): soft white cards, no stripes ─── */
+.v4-org .org-circles { border-top: 0 !important; padding-top: 6px !important; }
+.v4-org .org-circles > section, .v4-org .org-stewards > div:first-child { border: 0 !important; border-radius: 20px !important; box-shadow: none !important; }
+.v4-org .org-circles > section > div[style*="dashed"] { border-top-style: solid !important; border-top-color: var(--rule-soft, rgba(17,19,23,.07)) !important; }
+.v4-org .org-circles a[href^="/u/"] { border: 0 !important; border-radius: 999px !important; }
+.v4-govhead { padding: 22px 24px 2px; }
+.v4-govhead .v4-ph { margin-bottom: 8px; }

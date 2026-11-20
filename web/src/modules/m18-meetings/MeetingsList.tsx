@@ -1,4 +1,6 @@
 'use client'
+import { Button, PageHeader } from '@/core/components/v4'
+import { DESIGN } from '@/core/lib/instance'
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -79,7 +81,12 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
   }
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 20px 80px' }}>
+    <div className={DESIGN === 'v4' ? 'v4-page' : undefined} style={DESIGN === 'v4' ? { maxWidth: 900 } : { maxWidth: 860, margin: '0 auto', padding: '48px 20px 80px' }}>
+{DESIGN === 'v4' ? (
+        <PageHeader eyebrow="Working together" title="Meetings"
+          subtitle="Every meeting the community has recorded. The assistant reads each one, chooses its circle, and puts its tasks on the board as drafts for the leads to confirm."
+          actions={<Button href="/meetings/upload" icon="upload">Upload recording</Button>} />
+      ) : (<>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 22, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--m18)', background: 'color-mix(in srgb, var(--m18) 10%, var(--surface))', padding: '3px 10px', borderRadius: 20, marginBottom: 12 }}>
@@ -94,6 +101,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
           Upload recording
         </Link>
       </div>
+      </>)}
 
       <div role="group" aria-label="Show meetings of" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
         {myCircles.length > 0 && chip('mine', 'My circles')}

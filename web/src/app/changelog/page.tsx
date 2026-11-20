@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.47.0',
+    date: '2026-11-20',
+    title: 'More pages in the new look',
+    items: ['With the new look on, Circles, Agreements, Meetings and Governance get the new page headers, and Circles gets soft cards.'],
+  },
+  {
     version: 'v4.46.0',
     date: '2026-11-20',
     title: 'Calendar, the new way',

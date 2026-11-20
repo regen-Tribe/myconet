@@ -1,4 +1,6 @@
 'use client'
+import { Button, PageHeader } from '@/core/components/v4'
+import { DESIGN } from '@/core/lib/instance'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 
@@ -267,6 +269,11 @@ export default function GovernanceClient({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
 
+{DESIGN === 'v4' ? (
+        <div className="v4-govhead"><PageHeader eyebrow="Working together" title="Governance"
+          subtitle={<><b>{proposals.length} proposal{proposals.length !== 1 ? 's' : ''} open</b>{memberCount > 0 && ` · ${memberCount} people can vote`}</>}
+          actions={isFullMember ? <Button icon="plus" onClick={() => setShowNew(true)}>New proposal</Button> : undefined} /></div>
+      ) : (<>
       {/* Page head */}
       <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid var(--rule)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
         <div>
@@ -284,6 +291,7 @@ export default function GovernanceClient({
           <button onClick={() => setShowNew(true)} style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12.5, fontWeight: 600, flexShrink: 0, background: 'var(--m9)', color: '#fff', border: 'none', cursor: 'pointer' }}>+ New proposal</button>
         )}
       </div>
+      </>)}
 
       {/* Layer strip */}
       <div style={{ padding: '10px 24px', borderBottom: '1px solid var(--rule)', flexShrink: 0, background: 'var(--bg-2)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>

@@ -16,6 +16,8 @@ import type { OrgMember, OrgPerson, OrgUnit } from './types'
 import { canEditUnit, canLeadCircle, MEMBER_SELECT, toMember } from './lib/org'
 import { UnitEditModal, type UnitDraft } from './UnitEditModal'
 import { modLabel } from '@/core/lib/module-label'
+import { DESIGN } from '@/core/lib/instance'
+import { PageHeader } from '@/core/components/v4'
 
 function Chip({ name, username, note, isMe, accent }: {
   id: string; name: string; username: string | null; note?: string | null; isMe: boolean; accent?: string
@@ -161,7 +163,15 @@ export default function OrgChartClient({
   )
 
   return (
-    <div className="ev-page" style={{ padding: '26px 32px 60px' }}>
+    <div className={DESIGN === 'v4' ? 'ev-page v4-page v4-page--wide v4-org' : 'ev-page'} style={DESIGN === 'v4' ? undefined : { padding: '26px 32px 60px' }}>
+      {DESIGN === 'v4' ? (
+        <PageHeader
+          eyebrow="Community"
+          title="Circles"
+          subtitle={<>A circle looks after one area of community life; teams are smaller groups inside it.{mySummary && <> <b>{mySummary}</b></>}</>}
+          actions={role === 'admin' ? <AddCircleButton /> : undefined}
+        />
+      ) : (<>
       {/* ── Page head ─────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 22, position: 'relative' }}>
         {role === 'admin' && <div style={{ position: 'absolute', right: 0, top: 0 }}><AddCircleButton /></div>}
@@ -176,6 +186,7 @@ export default function OrgChartClient({
           {mySummary && <> {mySummary}</>}
         </p>
       </div>
+      </>)}
 
       {/* ── Stewards: the steward circle (if any) looks after every circle ─ */}
       <div className="org-stewards" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 6 }}>
