@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.72.0 — 2026-11-20 — About: a calm overview with a sticky chapter heading; the Blueprint editor in the v4 look (from Protopia, Sonia)
+
+- The fact strip under the About photo is for a glance: label on top, the short fact, even rows at every width (one row,
+  two, then pairs on a phone). A tile no longer opens in place; it jumps to the whole answer, which now lives once in its
+  chapter (the land, living here, why we're here) and lights up when you arrive.
+- A sticky chapter heading: the community's name once the photo has scrolled away, the chapters with the one you're
+  reading in soft blue, and Edit for those who may edit the Blueprint.
+- Chapters in the order a visitor asks: why we're here, our story, what we value, the land, a day here, how we decide,
+  people, where we're going, living here ("Join us" for explorers), then the Blueprint.
+- The Blueprint editor (`/about?edit=1`) takes the v4 look when a community uses it (Inter, the pale blue page, green
+  actions; no more missing serif font), and its dashboard shows "<name> — Plan" and short facts instead of whole answers.
+- About's styles move from `globals.css` to `modules/m04-blueprint/about-v4.css`.
+
 ## v4.71.0 — 2026-11-20 — Meetings: the leads' review as numbered steps (from Protopia, Sonia)
 
 - v4 meeting page: the leads' strip under Files is now a "Review this meeting" card at the top of the right column,
