@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.74.0 — 2026-11-20 — Ask and Do read the second brain
+
+Off by default: a community turns it on with `"assistant": { "secondBrain": true }` (needs `knowledge.repo` and
+`SECOND_BRAIN_GITHUB_TOKEN`). Oscar: "give the ask do function access to read the second brain".
+- New `modules/assistant/lib/brain.ts`. Ask answers from the notes this person may read, cited as
+  (Second brain · <title>); Do's planner gets a few matching notes to understand requests ("the tasks from last
+  week's kitchen meeting"). The notes change nothing by themselves.
+- Who reads what (Oscar: tiered): visitors nothing; joining members and up the notes marked `visibility: members`
+  (meeting notes, boards, circle pages MyCoNet writes), `visibility: circle` only for that circle's people and
+  admins; circle leads, project leads and admins also the notes with no visibility (written by hand) and
+  `visibility: leads`; any other value admins only. Never: transcripts, `AGENTS.md`, hidden folders, files over 150 KB.
+- Light for the Workers free plan: one call lists the repo (kept 3 min), at most 10 matching notes are fetched for
+  Ask and 5 for Do (each kept by its git sha). Ask gives the brain up to 90k characters, the documents the rest.
+  A GitHub error just means no brain in that answer. No migration.
+
 ## v4.73.0 — 2026-11-20 — Community-wide meetings show in My circles (from Protopia, Sonia)
 
 - A meeting the assistant judges community-wide (no single circle, e.g. a morning sync) now shows in the
