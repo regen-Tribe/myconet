@@ -1,191 +1,319 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { Button, Card, Icon, Tag, type IconName } from '@/core/components/v4'
+import { Button, Card, Icon, IconTile, Tag, type IconName } from '@/core/components/v4'
 import { loadBranding } from '@/core/lib/branding-server'
 import { roleAtLeast } from '@/core/lib/roles'
+import { fetchCircleDirectory } from '@/core/lib/ops-permissions'
+import { loadCircleRows } from '@/core/lib/circles-server'
 import { FW_DATA } from './lib/wizard-data'
-import { glanceText } from '@/modules/home/lib/at-a-glance'
+import { computeGatesPassed, computeOverallReadiness, computePillarScores } from './lib/blueprint-compute'
+import AskAboutButton from './AskAboutButton'
 
 /**
- * About {community} in the v4 look (Sonia's prototype, 19 Nov): the Blueprint told as a page people
- * read, not a planning form. Everything comes from the community's Blueprint answers, so the page
- * changes when the Blueprint does. Chapters pick the answers a newcomer wants first; every other
- * answered field is still shown under "The whole Blueprint", so nothing the wizard holds is hidden.
- * Editing stays in the wizard (`/about?edit=1`, or any `?step=` link).
+ * About {community} in the v4 look, laid out as Sonia's prototype (design/redesign-prototype/app.js › pAbout):
+ * a full-bleed photo with the name, a strip of facts, chapters (why we're here, our story, the land, a day
+ * here, what we value, how we decide, living here, people, where we're going) and the Blueprint's progress.
+ * Everything comes from the community's Blueprint answers, values, photos and circle leads, so it changes
+ * when they do. Every other answered field stays under "The whole Blueprint". Editing is the wizard
+ * (`/about?edit=1`, or any `?step=` link).
  */
 
-type Chapter = { id: string; title: string; icon: IconName; tone: Tone; fields: [string, string][]; link?: { href: string; label: string } }
-type Tone = 'blue' | 'red' | 'yellow' | 'green' | 'violet'
+const str = (v: unknown) => (typeof v === 'string' && v.trim().length > 1 ? v.trim() : null)
 
-// Reader-friendly headings for the wizard's fields (LEXICON.md words). Order is the reading order.
-const CHAPTERS: Chapter[] = [
-  { id: 'why', title: 'Why we’re here', icon: 'sprout', tone: 'green', fields: [
-    ['purpose', 'Our purpose'], ['why_world', 'What we answer'], ['why_personal', 'Why it matters to us'], ['dream_origin', 'How it started'], ['why_now', 'Why now, why here'],
-  ] },
-  { id: 'mission', title: 'Mission and vision', icon: 'spark', tone: 'yellow', fields: [
-    ['mission_statement', 'Our mission'], ['vision_statement', 'Our vision'],
-  ] },
-  { id: 'values', title: 'What we value', icon: 'heart', tone: 'red', fields: [
-    ['values', 'Our values'], ['community_agreements', 'Our agreements'],
-  ] },
-  { id: 'land', title: 'The land', icon: 'pin', tone: 'green', fields: [
-    ['location_setting', 'The place'], ['ecological_philosophy', 'Living with nature'], ['eco_assessment', 'What the land is like'],
-    ['cultural_land_context', 'The people of this place'], ['climate_emergencies', 'Weather and risks'],
-  ] },
-  { id: 'live', title: 'How we live', icon: 'home', tone: 'blue', link: { href: '/calendar', label: 'Open Calendar →' }, fields: [
-    ['daily_rhythms', 'Days and weeks'], ['rituals', 'Rituals'], ['gatherings_internal', 'Gatherings'], ['shared_lifestyle_stance', 'Living together'],
-    ['food_systems', 'Food'], ['water_fresh', 'Water'], ['energy_source', 'Energy'], ['amenities', 'Shared spaces'], ['personal_regen_practices', 'Looking after ourselves'],
-  ] },
-  { id: 'decide', title: 'How we decide', icon: 'scale', tone: 'violet', link: { href: '/governance', label: 'Open Governance →' }, fields: [
-    ['governance_model', 'How we govern'], ['decision_method', 'How decisions are made'], ['conflict_process', 'When we disagree'], ['scope', 'What we decide together'],
-  ] },
-  { id: 'share', title: 'How we share', icon: 'handshake', tone: 'yellow', fields: [
-    ['economic_philosophy', 'What we believe about money'], ['commons', 'What we share'], ['business_models', 'How we sustain ourselves'],
-    ['resident_finances', 'What living here costs'], ['real_estate_model', 'How people buy in'], ['legal_structure', 'Who owns it'],
-  ] },
-  { id: 'join', title: 'Joining us', icon: 'users', tone: 'red', link: { href: '/join', label: 'Open Join →' }, fields: [
-    ['ideal_archetypes', 'Who we’re looking for'], ['value_exchange', 'What you give and get'], ['onboarding', 'How joining works'], ['screening', 'How we get to know you'],
-  ] },
-  { id: 'next', title: 'Where we’re going', icon: 'flag', tone: 'blue', fields: [
-    ['where_now', 'Where we are now'], ['goals_3yr', 'The next three years'], ['goals_5_10yr', 'Five and ten years'], ['next_horizon', 'What we want to become'], ['build_timeline', 'Building, step by step'],
-  ] },
-]
+/** "First sentence. The rest…" → [first sentence, rest] (for a chapter's headline and its text). */
+function headline(text: string | null, max = 110): [string | null, string | null] {
+  if (!text) return [null, null]
+  const t = text.replace(/\s+/g, ' ').trim()
+  const cut = t.search(/(?<=[a-z0-9)%"”])[.!?]\s/i)
+  if (cut > 20 && cut < max) return [t.slice(0, cut + 1), t.slice(cut + 2).trim() || null]
+  return [null, text]
+}
 
-// Short facts shown as tiles under the hero
+/** A list written as lines, bullets or "a; b; c" → items. */
+function items(text: string | null): string[] {
+  if (!text) return []
+  const lines = text.split(/\n+|(?:^|\s)[•·▪]\s|;\s+/).map(l => l.replace(/^\s*(?:[-*•·]|\d+[.)])\s*/, '').trim()).filter(l => l.length > 1)
+  return lines.length > 1 ? lines : []
+}
+
+/** "Care — we look after…" or "Care: we look after…" → [Care, we look after…]. */
+function titled(line: string): [string, string | null] {
+  const m = line.match(/^(.{2,48}?)\s*(?:[:—–]|\s-\s)\s*(.+)$/)
+  return m ? [m[1], m[2]] : [line, null]
+}
+
+const NUM: Record<string, string> = { one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', eight: '8', nine: '9', ten: '10', eleven: '11', twelve: '12', thirteen: '13', fourteen: '14', fifteen: '15', sixteen: '16', seventeen: '17', eighteen: '18', nineteen: '19', twenty: '20', thirty: '30', forty: '40', fifty: '50', hundred: '100' }
+
+/** A fact for the strip, as short as the prototype's ("14 hectares", "30 people at a time"): the first clause
+ *  without its lead-in ("Our property is…", "We are in…"), number words as digits. */
+function fact(text: string | null): string | null {
+  if (!text) return null
+  const t = text.replace(/\s+/g, ' ').trim()
+  let clause = t.split(/[,;.(]| — | – /)[0].trim()
+  clause = clause.replace(/^(?:our [\w-]+ (?:is|are)|we (?:are|currently have|have)(?: in| a| an)?|about|it is|it's|there (?:is|are))\s+/i, '')
+  clause = clause.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|hundred)\b/gi, w => NUM[w.toLowerCase()])
+  clause = clause.replace(/^\p{Ll}/u, c => c.toUpperCase())
+  return clause.length > 40 ? clause.slice(0, clause.lastIndexOf(' ', 38)) + '…' : clause
+}
+
+/** "…in La Cabanga, Costa Rica, between…" → "La Cabanga, Costa Rica" (the place tag on the photo). */
+function place(...texts: (string | null)[]): string | null {
+  for (const t of texts) {
+    const m = t?.match(/\bin ((?:[A-Z][\p{L}'-]+ ?){1,3}(?:, ?(?:[A-Z][\p{L}'-]+ ?){1,3})?)/u)
+    if (m) return m[1].trim().replace(/,$/, '')
+  }
+  return null
+}
+
+const TIME = /^(\d{1,2}[:.]\d{2}\s*(?:am|pm)?|\d{1,2}\s*(?:am|pm))\s*[–—-]?\s*(.*)$/i
+
 const FACTS: [string, string][] = [
-  ['project_country', 'Country'], ['land_size', 'Land'], ['community_size', 'People'], ['planned_homes', 'Homes'], ['climate', 'Climate'], ['community_type', 'Kind of community'],
+  ['land_size', 'The land'], ['community_size', 'People'], ['planned_homes', 'Homes'], ['climate', 'Climate'], ['project_country', 'Where'], ['community_type', 'What we are'],
 ]
 
-const HERO_LEAD = ['purpose', 'mission_statement', 'vision_statement']
-
-/** The Blueprint's working name is often a sentence ("Protopia — a regenerative farm…"): the part after the name is a tagline. */
 function splitName(projectName: string | null, fallback: string) {
-  if (!projectName) return { name: fallback, tagline: null }
+  if (!projectName) return { name: fallback, tagline: null as string | null }
   const m = projectName.match(/^(.{2,40}?)\s+[—–-]\s+([\s\S]+)$/)
   if (m) return { name: m[1].replace(/\s+Community$/i, '').trim(), tagline: m[2].trim().replace(/^\p{Ll}/u, c => c.toUpperCase()) }
   return projectName.length <= 40 ? { name: projectName, tagline: null } : { name: fallback, tagline: projectName }
 }
 
-const str = (v: unknown) => (typeof v === 'string' && v.trim().length > 1 ? v.trim() : null)
+function Section({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string | null; children: React.ReactNode }) {
+  return (
+    <section className="ab-sec" id={id}>
+      <div className="v4-eyebrow">{eyebrow}</div>
+      {title && <h2 className="ab-h">{title}</h2>}
+      {children}
+    </section>
+  )
+}
+
+const Prose = ({ text, lead }: { text: string | null; lead?: boolean }) => text ? <p className={`v4-prose${lead ? ' ab-lead' : ''}`}>{text}</p> : null
+
+/** Long answers show their first two sentences; the rest opens with "Read more" (nothing is cut). */
+function Short({ text, max = 260 }: { text: string | null; max?: number }) {
+  if (!text) return null
+  const t = text.trim()
+  if (t.length <= max) return <p className="v4-prose">{t}</p>
+  const parts = t.split(/(?<=[.!?])\s+/)
+  let head = ''
+  for (const p of parts) { if ((head + ' ' + p).trim().length > max && head) break; head = (head + ' ' + p).trim() }
+  if (!head || head.length >= t.length) head = t.slice(0, t.lastIndexOf(' ', max)) + '…'
+  return (
+    <details className="ab-more">
+      <summary><span className="v4-prose">{head}</span><span className="ab-more__btn">Read more</span></summary>
+      <p className="v4-prose">{t.slice(head.replace(/…$/, '').length).trim()}</p>
+    </details>
+  )
+}
 
 export default async function AboutV4({ supabase, communityName, role, canEdit }: {
   supabase: SupabaseClient; communityName: string; role: string; canEdit: boolean
 }) {
-  const [{ data: bp }, branding, { data: values }] = await Promise.all([
+  const [{ data: bp }, branding, { data: values }, directory, circles] = await Promise.all([
     supabase.from('blueprints').select('answers').eq('is_community', true).maybeSingle(),
     loadBranding(supabase),
     supabase.from('community_values').select('id, title, description').order('sort_order'),
+    fetchCircleDirectory(supabase).catch(() => ({ leads: {}, admins: [] } as unknown as Awaited<ReturnType<typeof fetchCircleDirectory>>)),
+    loadCircleRows(supabase),
   ])
   const a = ((bp?.answers as Record<string, unknown> | null) ?? {})
-  const { name, tagline } = splitName(str(a.project_name), communityName)
-  const leadKey = HERO_LEAD.find(k => str(a[k]))
-  const lead = leadKey ? glanceText(a[leadKey], 280) : null
-  const facts = FACTS.map(([k, label]) => [label, glanceText(a[k], 110)] as const).filter(([, v]) => v)
-  const chapters = CHAPTERS
-    .map(c => ({ ...c, items: c.fields.map(([k, h]) => [h, str(a[k])] as const).filter(([, v]) => v) as [string, string][] }))
-    .filter(c => c.items.length > 0 || (c.id === 'values' && (values?.length ?? 0) > 0))
+  const { data: mapRow } = await supabase.from('community_settings').select('site_map_url').maybeSingle().then(r => r, () => ({ data: null }))
+  const mapUrl = (mapRow as { site_map_url?: string | null } | null)?.site_map_url ?? null
+  const s = (k: string) => str(a[k])
+  const { name, tagline } = splitName(s('project_name'), communityName)
+  const where = place(s('project_name'), s('project_country'), s('location_setting'))
+  const facts = FACTS.map(([k, label]) => [label, fact(s(k))] as const).filter(([, v]) => v)
+  const explorer = !roleAtLeast(role, 'joining')
 
-  // Every other answered field, by phase and step, so nothing the Blueprint holds is lost here
-  const shown = new Set([...CHAPTERS.flatMap(c => c.fields.map(([k]) => k)), ...FACTS.map(([k]) => k), 'project_name'])
+  // Chapters, each only when the Blueprint has something for it
+  const [whyQuote, whyRest] = headline(s('purpose'), 220)
+  const [storyTitle, storyText] = headline(s('dream_origin') ?? s('why_personal'))
+  const [landTitle, landText] = headline(s('location_setting') ?? s('eco_assessment'))
+  const systems = ([
+    ['sprout', 'Food', s('food_systems')], ['globe', 'Water', s('water_fresh')], ['spark', 'Energy', s('energy_source')], ['building', 'Shared spaces', s('amenities')],
+  ] as [IconName, string, string | null][]).filter(([, , t]) => t)
+  const dayItems = items(s('daily_rhythms'))
+  const rituals = items(s('rituals'))
+  const valueItems: [string, string | null][] = values?.length ? values.map(v => [v.title, v.description] as [string, string | null]) : items(s('values')).map(titled)
+  const decide = ([['How we govern', s('governance_model')], ['How decisions are made', s('decision_method')], ['When we disagree', s('conflict_process')], ['What we decide together', s('scope')]] as [string, string | null][]).filter(([, t]) => t)
+  const ways = ([['Living here', s('resident_finances')], ['Buying in', s('real_estate_model')], ['What you give and get', s('value_exchange')]] as [string, string | null][]).filter(([, t]) => t)
+  const joinSteps = items(s('onboarding')).map(titled)
+  const going = ([['Next three years', s('goals_3yr')], ['Five and ten years', s('goals_5_10yr')], ['What we want to become', s('next_horizon')]] as [string, string | null][]).filter(([, t]) => t)
+  const circleName = new Map(circles.map(c => [c.slug, c.name]))
+  const people = [
+    ...Object.entries(directory.leads ?? {}).flatMap(([c, ps]) => (ps ?? []).map(p => ({ ...p, role: `Lead · ${circleName.get(c) ?? c}` }))),
+    ...(directory.admins ?? []).map(p => ({ ...p, role: 'Admin' })),
+  ].filter((p, i, all) => all.findIndex(q => q.id === p.id) === i).slice(0, 9)
+
+  // Blueprint progress (the wizard's own scoring)
+  const pillarScores = computePillarScores(a)
+  const readiness = computeOverallReadiness(a)
+  const gates = computeGatesPassed(a)
+  const pillars = FW_DATA.pillars.map(p => [p.name, Math.round((pillarScores[p.id] ?? 0) * 10) / 10] as const)
+
+  // Every other answered field, so nothing the Blueprint holds is hidden
+  const used = new Set(['purpose', 'dream_origin', 'why_personal', 'why_now', 'location_setting', 'eco_assessment', 'ecological_philosophy', 'food_systems', 'water_fresh', 'energy_source', 'amenities', 'daily_rhythms', 'rituals', 'values', 'governance_model', 'decision_method', 'conflict_process', 'scope', 'resident_finances', 'real_estate_model', 'value_exchange', 'onboarding', 'goals_3yr', 'goals_5_10yr', 'next_horizon', 'project_name', 'mission_statement', 'vision_statement', 'why_world', 'ideal_archetypes', 'gatherings_internal', 'community_agreements', ...FACTS.map(([k]) => k)])
   const rest = FW_DATA.phases.map(p => ({
     phase: p,
-    steps: p.steps.map(s => ({ step: s, items: (s.fields ?? []).filter(f => !shown.has(f.id) && str(a[f.id])).map(f => [f.label, str(a[f.id])!] as const) }))
-      .filter(s => s.items.length > 0),
-  })).filter(p => p.steps.length > 0)
+    steps: p.steps.map(st => ({ step: st, items: (st.fields ?? []).filter(f => !used.has(f.id) && s(f.id)).map(f => [f.label, s(f.id)!] as const) })).filter(x => x.items.length),
+  })).filter(p => p.steps.length)
 
-  const isJoining = roleAtLeast(role, 'joining')
-  const empty = !lead && chapters.length === 0 && rest.length === 0
+  const nav = ([
+    ['story', 'Our story', !!(storyTitle || storyText)], ['land', 'The land', !!(landTitle || landText || systems.length)],
+    ['day', 'A day here', !!(dayItems.length || s('daily_rhythms') || rituals.length)], ['values', 'What we value', valueItems.length > 0],
+    ['decide', 'How we decide', decide.length > 0], ['live', 'Living here', !!(s('ideal_archetypes') || ways.length || joinSteps.length)],
+    ['people', 'People', people.length > 0], ['next', 'Where we’re going', going.length > 0],
+  ] as [string, string, boolean][]).filter(([, , on]) => on)
 
   return (
     <div className="v4-page v4-about">
-      <header className="v4-about-hero" style={branding.banner_url ? { backgroundImage: `url(${branding.banner_url})` } : undefined}>
-        <div className="v4-about-hero__card">
-          {branding.logo_url && <img src={branding.logo_url} alt="" className="v4-about-hero__logo" />}
-          <div className="v4-eyebrow">About</div>
-          <h1 className="v4-ph__title">{name}</h1>
-          {tagline && <p className="v4-about-hero__tag">{tagline}</p>}
-          {lead && <p className="v4-about-hero__lead">{lead}</p>}
-          <div className="v4-ph__actions">
-            {!isJoining && <Button variant="next" href="/join">Start joining</Button>}
-            <Button variant="secondary" href="/members" icon="users">Meet the members</Button>
-            {canEdit && <Button variant="secondary" href="/about?edit=1" icon="pencil">Edit the Blueprint</Button>}
+      <header className="ab-hero" style={branding.banner_url ? { backgroundImage: `url(${branding.banner_url})` } : undefined}>
+        <div className="ab-hero-in">
+          {where && <span className="ab-place"><Icon name="pin" size={14} />{where}</span>}
+          <h1>{name}</h1>
+          {tagline && <p>{tagline}</p>}
+          <div className="ab-hero-acts">
+            {explorer && <Button variant="next" href="/join">Start joining</Button>}
+            <AskAboutButton name={name} />
+            {canEdit && <Button variant="secondary" href="/about?edit=1" icon="pencil">Edit Blueprint</Button>}
           </div>
         </div>
       </header>
 
       {facts.length > 0 && (
-        <div className="v4-facts">
-          {facts.map(([label, v]) => <div key={label} className="v4-fact"><small>{label}</small><b>{v}</b></div>)}
-        </div>
+        <div className="ab-facts">{facts.map(([label, v]) => <div key={label}><b>{v}</b><span>{label}</span></div>)}</div>
       )}
 
-      {empty && (
-        <Card className="v4-mt">
-          <b>The Blueprint is still empty.</b>
-          <p className="v4-prose">{canEdit ? 'Fill in the Blueprint and this page tells your story.' : 'Check back soon: the circle leads are writing it.'}</p>
-          {canEdit && <Button href="/about?edit=1" icon="pencil">Edit the Blueprint</Button>}
-        </Card>
-      )}
-
-      {chapters.length > 1 && (
-        <nav className="v4-chiprow v4-about-toc" aria-label="Chapters">
-          {chapters.map(c => <a key={c.id} href={`#${c.id}`} className="v4-chip">{c.title}</a>)}
-          {rest.length > 0 && <a href="#blueprint" className="v4-chip">The whole Blueprint</a>}
+      {nav.length > 1 && (
+        <nav className="v4-chiprow ab-nav" aria-label="Chapters">
+          {nav.map(([id, label]) => <a key={id} href={`#${id}`} className="v4-chip">{label}</a>)}
         </nav>
       )}
 
-      {chapters.map(c => (
-        <section key={c.id} id={c.id} className="v4-chapter">
-          <div className="v4-chapter__head">
-            <span className={`v4-tile v4-tile--${c.tone}`}><Icon name={c.icon} /></span>
-            <h2>{c.title}</h2>
-            {c.link && <a href={c.link.href} className="v4-chapter__link">{c.link.label}</a>}
-          </div>
-          <div className="v4-chapter__body">
-            {c.id === 'values' && (values?.length ?? 0) > 0 && (
-              <div className="v4-values">
-                {values!.map(v => (
-                  <Card key={v.id}><b>{v.title}</b>{v.description && <p className="v4-prose">{v.description}</p>}</Card>
-                ))}
-              </div>
-            )}
-            {c.items.map(([h, text]) => (
-              <div key={h} className="v4-answer">
-                <h3>{h}</h3>
-                <p className="v4-prose">{text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-
-      {rest.length > 0 && (
-        <section id="blueprint" className="v4-chapter">
-          <div className="v4-chapter__head">
-            <span className="v4-tile v4-tile--grey"><Icon name="book" /></span>
-            <h2>The whole Blueprint</h2>
-          </div>
-          <div className="v4-chapter__body">
-            <p className="v4-prose v4-muted">Everything else in our plan, phase by phase.</p>
-            {rest.map(({ phase, steps }) => (
-              <details key={phase.id} className="v4-fold">
-                <summary><Tag>{phase.name}</Tag> {phase.subtitle}</summary>
-                {steps.map(({ step, items }) => (
-                  <div key={step.id} className="v4-fold__step">
-                    <h3>{step.title}</h3>
-                    {items.map(([label, text]) => (
-                      <div key={label} className="v4-answer"><h4>{label}</h4><p className="v4-prose">{text}</p></div>
-                    ))}
-                  </div>
-                ))}
-              </details>
-            ))}
-          </div>
+      {(whyQuote || whyRest || s('mission_statement') || s('vision_statement')) && (
+        <section className="ab-why">
+          <div className="v4-eyebrow">Why we’re here</div>
+          {whyQuote && <blockquote>{whyQuote}</blockquote>}
+          <Prose text={whyRest ?? s('why_world')} />
+          {(s('mission_statement') || s('vision_statement')) && (
+            <div className="ab-two">
+              {s('mission_statement') && <Card><div className="v4-eyebrow">Mission</div><Prose text={s('mission_statement')} /></Card>}
+              {s('vision_statement') && <Card><div className="v4-eyebrow">Vision</div><Prose text={s('vision_statement')} /></Card>}
+            </div>
+          )}
         </section>
       )}
 
-      <p className="v4-more">
-        <a className="v4-btn v4-btn--quiet" href="/about?edit=1">{canEdit ? 'Edit the Blueprint' : 'See the Blueprint as a plan: phases, steps and readiness'} →</a>
-      </p>
+      {(storyTitle || storyText) && (
+        <Section id="story" eyebrow="Our story" title={storyTitle}>
+          <div>
+            <div><Prose text={storyText} lead /><Short text={s('why_now')} max={360} /></div>
+
+          </div>
+        </Section>
+      )}
+
+      {(landTitle || landText || systems.length > 0) && (
+        <Section id="land" eyebrow="The land" title={landTitle}>
+          <div className={mapUrl ? 'ab-split' : undefined}>
+            <div><Prose text={landText} lead /><Short text={s('ecological_philosophy')} max={360} /></div>
+            {mapUrl && <a href="/amenities" className="ab-photo ab-photo--map" style={{ backgroundImage: `url(${mapUrl})` }} aria-label="Open the map of the land" />}
+          </div>
+          {systems.length > 0 && (
+            <div className="ab-two">
+              {systems.map(([icon, t, d]) => (
+                <Card key={t}><div className="v4-card-head"><IconTile name={icon} tone="green" /><div><b>{t}</b></div></div><Short text={d} /></Card>
+              ))}
+            </div>
+          )}
+        </Section>
+      )}
+
+      {(dayItems.length > 0 || s('daily_rhythms') || rituals.length > 0) && (
+        <Section id="day" eyebrow="A day here" title="A weekday has a rhythm">
+          <div className="ab-split">
+            {dayItems.length > 0 && dayItems.every(l => TIME.test(l))
+              ? <ol className="ab-day">{dayItems.map((line, i) => { const m = line.match(TIME)!; return <li key={i}><span className="t">{m[1]}</span><b>{m[2]}</b></li> })}</ol>
+              : <ul className="ab-day ab-day--plain">{(dayItems.length ? dayItems : [s('daily_rhythms')!]).map((line, i) => <li key={i}><p className="v4-prose">{line}</p></li>)}</ul>}
+            <div className="ab-stack">
+              {(rituals.length > 0 || s('rituals')) && <Card><div className="v4-eyebrow">Rituals</div>{rituals.length && rituals.every(r => r.length <= 40) ? <div className="v4-tags">{rituals.map(r => <Tag key={r} icon="star">{r}</Tag>)}</div> : rituals.length ? <ul className="ab-list">{rituals.map(r => <li key={r}>{r}</li>)}</ul> : <Short text={s('rituals')} />}</Card>}
+              {s('gatherings_internal') && <Card><div className="v4-eyebrow">Gatherings</div><Short text={s('gatherings_internal')} /><p className="v4-mt"><Button variant="quiet" href="/calendar">Open Calendar →</Button></p></Card>}
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {valueItems.length > 0 && (
+        <Section id="values" eyebrow="What we value" title={valueItems.length <= 6 ? `${['', 'One thing', 'Two things', 'Three things', 'Four things', 'Five things', 'Six things'][valueItems.length]} we hold to` : 'What we hold to'}>
+          <div className="ab-two">
+            {valueItems.map(([t, d], i) => <div key={t + i} className="ab-val"><span className="n">{i + 1}</span><b>{t}</b>{d && <p className="v4-prose">{d}</p>}</div>)}
+          </div>
+          {s('community_agreements') && <Card className="ab-banner"><IconTile name="handshake" tone="yellow" /><div><b>Our community agreements</b><Prose text={s('community_agreements')} /></div></Card>}
+        </Section>
+      )}
+
+      {decide.length > 0 && (
+        <Section id="decide" eyebrow="How we decide" title="Decisions sit with the people they affect">
+          <div className="ab-two">{decide.map(([t, d]) => <Card key={t}><b className="ab-cardtitle">{t}</b><Short text={d} /></Card>)}</div>
+          <p className="ab-links"><Button variant="quiet" href="/circles">Open Circles →</Button><Button variant="quiet" href="/governance">Open Governance →</Button></p>
+        </Section>
+      )}
+
+      {(s('ideal_archetypes') || ways.length > 0 || joinSteps.length > 0) && (
+        <Section id="live" eyebrow="Living here" title="Who we’re looking for, and how to stay">
+          <Prose text={s('ideal_archetypes')} lead />
+          {ways.length > 0 && <div className="ab-ways">{ways.map(([t, d]) => <Card key={t}><small className="v4-eyebrow">{t}</small><Short text={d} /></Card>)}</div>}
+          {joinSteps.length > 0 && (
+            <>
+              <h3 className="ab-h3">How joining works</h3>
+              <ol className="ab-steps">{joinSteps.map(([t, d], i) => <li key={i}><span>{i + 1}</span><b>{t}</b>{d && <small>{d}</small>}</li>)}</ol>
+            </>
+          )}
+          {explorer && <div className="v4-mt"><Button variant="next" href="/join">Start joining</Button></div>}
+        </Section>
+      )}
+
+      {people.length > 0 && (
+        <Section id="people" eyebrow="People" title="Who carries the culture">
+          <div className="ab-three">
+            {people.map(p => (
+              <Card key={p.id} href={p.username ? `/u/${p.username}` : undefined}>
+                <div className="v4-card-head" style={{ margin: 0 }}><span className="v4-avatar v4-avatar--md">{p.name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase()}</span><div><b>{p.name}</b><small>{p.role}</small></div></div>
+              </Card>
+            ))}
+          </div>
+          <p className="ab-links"><Button variant="quiet" href="/members">See all members →</Button></p>
+        </Section>
+      )}
+
+      {going.length > 0 && (
+        <Section id="next" eyebrow="Where we’re going" title="Still evolving">
+          <div className="ab-three">{going.map(([t, d]) => <Card key={t}><div className="v4-eyebrow">{t}</div><Short text={d} /></Card>)}</div>
+        </Section>
+      )}
+
+      <section className="ab-sec">
+        <div className="ab-split ab-split--even">
+          <Card>
+            <div className="v4-sec" style={{ marginTop: 0 }}><h2>Blueprint progress</h2><a href="/about?edit=1">{canEdit ? 'Open the steps →' : 'See the plan →'}</a></div>
+            <div className="ab-score"><b>{readiness.toFixed(1)}</b><span>/ 10 ready · {gates} of 4 gates</span></div>
+            <div className="ab-bars">{pillars.map(([t, v]) => <div key={t}><div className="ab-bars__row"><span>{t}</span><span>{v}/10</span></div><div className="ab-bar"><i style={{ width: `${Math.min(100, v * 10)}%` }} /></div></div>)}</div>
+          </Card>
+          {rest.length > 0 && (
+            <Card>
+              <div className="v4-sec" style={{ marginTop: 0 }}><h2>The whole Blueprint</h2></div>
+              {rest.map(({ phase, steps }) => (
+                <details key={phase.id} className="v4-fold">
+                  <summary><Tag>{phase.name}</Tag> {phase.subtitle}</summary>
+                  {steps.map(({ step, items: its }) => (
+                    <div key={step.id} className="v4-fold__step"><h3>{step.title}</h3>{its.map(([l, t]) => <div key={l} className="v4-answer"><h4>{l}</h4><p className="v4-prose">{t}</p></div>)}</div>
+                  ))}
+                </details>
+              ))}
+            </Card>
+          )}
+        </div>
+      </section>
     </div>
   )
 }

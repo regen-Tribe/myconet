@@ -5,6 +5,22 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.52.0 — 2026-11-20 — About {community} laid out as the prototype (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: "this is not the design". `AboutV4.tsx` now follows
+`design/redesign-prototype/app.js › pAbout`, filled from the community's own data:
+- **Hero**: the banner full-bleed with a dark fade, a place tag (from the Blueprint's working name or country), the
+  name very large in white, the tagline, Start joining (explorers), **Ask about {community}** (opens the assistant)
+  and Edit Blueprint (circle leads).
+- **Facts strip** with short facts (lead-ins dropped, number words as digits), chapter chips that stay on top.
+- **Chapters**: Why we're here (the purpose as a big quote, mission and vision cards), Our story, The land (with the
+  Amenities map picture when there is one, and food / water / energy / shared-spaces cards), A day here (times when
+  the rhythm has them), What we value (numbered pastel cards from the community values, agreements banner), How we
+  decide, Living here (ways to stay, how joining works as numbered steps), People (circle leads and admins), Where
+  we're going, and **Blueprint progress** (readiness, gates and the five pillars, from the wizard's own scoring).
+- Long answers show their first sentences with **Read more**; every other answered field stays under "The whole
+  Blueprint". Uses `community_settings.site_map_url` when present (read forgivingly).
+
 ## v4.51.0 — 2026-11-20 — the insides of the older pages in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look. A scoped layer in `globals.css` restyles the inline-styled patterns the older pages share,
