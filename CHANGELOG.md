@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.62.0 — 2026-11-20 — Circles at a glance, and a circle in tabs (from Protopia, Sonia)
+
+Only with the v4 look; the classic org chart keeps working (its words now say subcircle).
+- **/circles**: a card per circle with what matters first: its purpose in one sentence, its lead, its members'
+  photos, and (signed in) its open tasks and meetings with the next date.
+- **A circle's page** (`/circles?c=<slug>&tab=…`) has tabs: **Overview** (lead, members, open tasks, next
+  meeting; its subcircles, first tasks and coming meetings), **Manuals & guides**, **People** (cards with photos
+  and the subcircles each person is in; join requests on top for leads), **Subcircles** (each one a small circle:
+  purpose, lead, people, tasks, Edit), **Tasks** (tasks with their open subtasks, tasks of their own, subtasks due
+  first) and **Meetings** (coming calendar events tagged with the circle, meeting notes).
+- **Manuals & guides** are the notes in the circle's folder of the second brain (`circles.brain_folder`, else the
+  slug; not its README, board or meetings), read inside MyCoNet at `/circles/guide` by joining members and up.
+  Front matter `visibility: circle` / `leads` limits who can open one.
+- Everything stays: Edit, + Add subcircle, + Add member, ask to join / withdraw, accept / decline, the lead name,
+  meeting notes, the project manager, admins.
+- The Circles CSS moves from `globals.css` to `web/src/modules/m17-org/circles-v4.css`.
+
 ## v4.61.0 — 2026-11-20 — subcircles, and tasks with subtasks instead of projects (from Protopia, Sonia)
 
 Words only; no table, column, route or data changes. `LEXICON.md` changed first (Sonia, 20 Nov):

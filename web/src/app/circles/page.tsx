@@ -8,9 +8,12 @@ import { fetchCircleDirectory } from '@/core/lib/ops-permissions'
 import { MEMBER_SELECT, toMember, toPerson } from '@/modules/m17-org/lib/org'
 import type { OrgPerson, OrgUnit } from '@/modules/m17-org/types'
 import type { JoinRequest } from '@/modules/m17-org/JoinRequests'
+import { isJoiningOrAbove } from '@/core/lib/roles'
+import { loadCircleExtras } from '@/modules/m17-org/lib/circle-extras'
 
 /** M17 Org chart — public; admins, circle leads and team leads edit their parts. */
-export default async function OrgPage() {
+export default async function OrgPage({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
+  const { c: openCircle } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -53,6 +56,10 @@ export default async function OrgPage() {
     }))
   }
 
+  // The v4 look also shows photos, each circle's open tasks, meetings and guides (v4.62.0)
+  const peopleIds = [...new Set([...members.map(m => m.user_id), ...Object.values(directory.leads).flat().map(l => l.id), ...directory.admins.map(a => a.id)])]
+  const extras = DESIGN === 'v4' ? await loadCircleExtras(supabase, { signedIn: !!user, canReadGuides: !!user && isJoiningOrAbove(role), peopleIds, openCircle: openCircle ?? null }) : undefined
+
   return (
     <Suspense>
     <OrgChartClient
@@ -68,6 +75,7 @@ export default async function OrgPage() {
       leadCircles={leadCircles}
       meetingCounts={meetingCounts}
       pmCounts={pmCounts}
+      extras={extras}
     />
     </Suspense>
   )
