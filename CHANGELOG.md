@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.67.0 — 2026-11-20 — Members in the v4 look: matches first (from Protopia, Sonia)
+
+- `/members` (v4 only): your best 3 matches lead, with your profile progress, your offers and requests and
+  "Lately" beside them; then everyone as uniform compact cards with your match % on each. One search box
+  with a clear button and a result count; circle chips filter. Visitors still see only the public card.
+- The Members "Search" tab is called "Discover". "Project leads" reads "task leads" on the profile editor.
+- New `m01-network/members-v4.css` (`.mb4-*`); `MembersV4` takes `offersCount`, `requestsCount`, `matchScores`.
+
 ## v4.66.0 — 2026-11-20 — a community can make the Blueprint admins-only (from Protopia, Sonia)
 
 Off by default: nothing changes unless a community turns it on.
