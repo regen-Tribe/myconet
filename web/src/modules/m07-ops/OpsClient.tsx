@@ -363,7 +363,7 @@ export default function OpsClient({
     }
   }
 
-  const sprintLabel = sprintName ?? 'Community Projects'
+  const sprintLabel = sprintName ?? 'Operations'
   const onTrackCount = initialDeliverables.filter(d => d.status === 'in_progress').length
   const totalProjects = boardProjects.filter(p => !p.is_chores && ['backlog', 'in_progress', 'review'].includes(p.status)).length
 
@@ -451,7 +451,7 @@ export default function OpsClient({
             {sprintLabel}
           </h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
-            {activeCount} active · {deliverableCount} deliverable{deliverableCount !== 1 ? 's' : ''} · {doneCount} done
+            {activeCount} active · {deliverableCount} task{deliverableCount !== 1 ? 's' : ''} · {doneCount} done
           </p>
         </div>
 

@@ -344,7 +344,7 @@ export default function AuthPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {[
               { icon: '👤', title: 'Deep profiles', desc: 'Share your values, skills, and goals. Get matched with people who align.' },
-              { icon: '🗳️', title: '4-layer governance', desc: 'Every proposal is evaluated by Sociocracy, Democracy, Meritocracy, and AI.' },
+              { icon: '🗳️', title: 'Four checks on every proposal', desc: 'Circle leads, all members, admins and advisors, and an AI Blueprint check.' },
               { icon: '⚙️', title: 'Real project ops', desc: 'Suggest projects, make agreements, track tasks together.' },
             ].map(f => (
               <div key={f.title} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>

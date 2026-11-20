@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+
+## Unreleased — the lexicon's words on the remaining screens
+
+- **Governance** (`LEXICON.md`): every proposal gets **4 checks**, each named who · how (Circle leads · consent, All
+  members · majority vote, Admins & advisors · expert review, AI · Blueprint check); **Approved** / **Not approved**
+  instead of "live" / "Rejected"; "Waiting for circle leads" instead of "Awaiting CL"; no "layers", "L01–L04" or
+  "threshold". The rule reads "Approved when enough checks pass" until the AI-check decision is made (the code still
+  counts 3 of 4). Same words in the home and landing demos and the sign-in page.
+- **Operations**: the board title is "Operations" when no sprint is set (was "Community Projects"); "27 active ·
+  262 tasks" (was deliverables); home "Latest tasks".
+- **Members**: "Your requests", "No requests yet" (were seeks).
+- Text only: no data, address or behaviour changes.
 ## v4.40.0 — 2026-11-19 — one vocabulary (from Protopia, Sonia)
 
 - **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia

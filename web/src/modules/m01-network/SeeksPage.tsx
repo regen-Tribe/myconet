@@ -165,7 +165,7 @@ export default function SeeksPage() {
       {requests.length === 0 ? (
         <div style={{ background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 10, padding: '40px 24px', textAlign: 'center' }}>
           <HelpCircle style={{ width: 36, height: 36, color: 'var(--ink-4)', margin: '0 auto 12px' }} />
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>No seeks yet</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>No requests yet</div>
           <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 14 }}>Let the community know what you need.</div>
           <button onClick={openNew} style={{
             fontSize: 13, fontWeight: 700, color: '#fff', background: 'var(--m1)',
