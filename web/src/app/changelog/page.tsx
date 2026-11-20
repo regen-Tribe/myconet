@@ -3,6 +3,16 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.40.0',
+    date: '2026-11-19',
+    title: 'One vocabulary',
+    items: [
+      'The same words everywhere, from the new word list (LEXICON.md): tasks, To do, Requests, Members, Achievements, Agreements, and the assistant.',
+      'Every module’s address matches its name: /operations, /members, /calendar, /circles, /accommodation, /resources, /achievements. Old links still work.',
+      'A points log for agreements and awards, behind a switch that is off by default.',
+    ],
+  },
+  {
     version: 'v4.39.0',
     date: '2026-11-19',
     title: 'A new look you can switch on',

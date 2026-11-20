@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## Unreleased — one vocabulary (from Protopia, Sonia)
+## v4.40.0 — 2026-11-19 — one vocabulary (from Protopia, Sonia)
 
 - **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia
   on 2026-11-18. `AGENTS.md`, `CLAUDE.md` and `DOCS.md` point to it.
