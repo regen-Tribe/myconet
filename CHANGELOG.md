@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.44.0 — 2026-11-20 — the Amenities map is interactive (from Protopia, Sonia)
+
+- **Zoom and move around** (`AmenitiesMap.tsx`): + / − and a reset button, double click, ⌘/Ctrl + scroll or a
+  trackpad pinch, drag to pan, two fingers on a phone. A plain scroll still scrolls the page. Pins keep their size.
+- **A card for each pin**: what it is, where, how many people, "Free now" or "In use until…", whether it needs
+  approval, and **See and book** (opens the booking pop-up). Beside its pin on wide screens, kept inside the map;
+  under the map on phones. Escape or a click on the map closes it.
+- **The list beside the map**: hovering a name lights up its pin; clicking it flies there and opens its card.
+- Pins opt out of the phone 44px button minimum (`no-min-height`) with a larger invisible tap area.
+
 ## v4.43.1 — 2026-11-20 — fix: the map pin check (from Protopia)
 
 - **Migration `20261210000100_amenities_map_pin_check.sql`**: v4.43.0's pin check let a half pin through (one

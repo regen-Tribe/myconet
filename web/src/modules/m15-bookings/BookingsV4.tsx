@@ -158,7 +158,7 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
 
       {view === 'map' && vm.mapUrl && vm.shown.length > 0 && (
         <>
-          <AmenitiesMap url={vm.mapUrl} items={vm.shown} onOpen={vm.open} />
+          <AmenitiesMap url={vm.mapUrl} items={vm.shown} onOpen={vm.open} availability={vm.availability} showList />
           {unpinned.length > 0 && (
             <p className="v4-hint v4-map__rest">
               Not on the map yet: {unpinned.map((i, k) => <span key={i.id}>{k > 0 && ', '}<button type="button" className="v4-linkbtn" onClick={() => vm.open(i.id)}>{i.name}</button></span>)}
