@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.73.0',
+    date: '2026-11-20',
+    title: 'Community-wide meetings in “My circles”',
+    items: ['A meeting that spans several circles — like a morning sync — now shows in “My circles” as well as “All”, so it no longer looks missing.'],
+  },
+  {
     version: 'v4.72.0',
     date: '2026-11-20',
     title: 'About: a calm overview with a sticky heading',
