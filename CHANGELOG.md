@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.70.0 — 2026-11-20 — Map: the land with every place on it (from Protopia, Sonia)
+
+- New module **M19 Map** at `/map` (v4 menu › Community, after Amenities & tools): the community's picture of the
+  land (`community_settings.site_map_url`, the Amenities map's picture) with a pin per place. A place has a kind
+  (accommodation, shared space, amenity, food & gardens, water, forest & trails, gathering spot, other), a photo,
+  a description, a circle that looks after it and a task. Its card opens beside the pin, or under the map on a phone,
+  with "Book …" for the bookable things whose pin sits on it, the circle and the task. Filter by kind;
+  `/map?place=<slug>` opens a card. Admins and circle leads (their circles) add and move places with "Edit places".
+- **Migration** `20261211000000_places.sql`: table `places` (slug, name, kind, map_x/map_y, photo_url, description,
+  circle, project_id). Signed-in people read; admins, and circle leads for their circles, write. Without it the
+  page still shows the bookable things.
+- The Amenities map's engine is now the shared `core/components/v4/SiteMap.tsx` (same behaviour). On phones, pins
+  are smaller until you zoom in. New icons `drop` and `tree`.
+- Second brain: places aren't written there yet (follow-up in `m19-map/README.md`).
+
 ## v4.69.0 — 2026-11-20 — every Members screen in the v4 look (from Protopia, Sonia)
 
 v4 only; the classic look is unchanged.
