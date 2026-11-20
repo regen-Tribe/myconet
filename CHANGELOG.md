@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.65.0 — 2026-11-20 — a community can make the Blueprint admins-only (from Protopia, Sonia)
+## v4.66.0 — 2026-11-20 — a community can make the Blueprint admins-only (from Protopia, Sonia)
 
 Off by default: nothing changes unless a community turns it on.
 - New `"blueprintEditors": "admins"` in `instance/config.jsonc` (`NEXT_PUBLIC_BLUEPRINT_EDITORS`). With it, only
@@ -15,6 +15,16 @@ Off by default: nothing changes unless a community turns it on.
   leads edit these") replace `isCircleAdmin` on About and `/blueprint`.
 - The database still allows circle leads unless the community narrows the policies in its own
   `instance/migrations/` (Protopia: `20261210100000_blueprint_admins_only.sql`).
+
+## v4.65.0 — 2026-11-20
+
+- **The assistant changes calendar events** (Oscar: "we want the agent to be able to change events on the calendar -
+  update time, date, notes in it"). Do gets `change_event` (`modules/assistant/lib/do-events.ts`): date, start, end,
+  all day, title, description (notes), place, online link, in the community's time zone; "move this to 7" works on
+  an event open on the Calendar. Same rules as the Calendar, with the person's own session: anyone joining and up may
+  move an event (`event_set_times`); its details only its host, an admin or a lead of its circle; events from the
+  linked Google calendar take only a new time and notes (`event_set_notes`). Google follows: the push code moved from
+  `/api/calendar-push` to `m14-events/lib/google-push.ts`, shared by both. Undo puts it back, in Google too. No migration.
 
 ## v4.64.0 — 2026-11-20 — About shows the whole Blueprint (from Protopia, Sonia)
 
