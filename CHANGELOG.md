@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.49.0 — 2026-11-20 — Operations in the v4 look; the phone top bar as in the prototype (from Protopia, Sonia)
+
+Only with the v4 look.
+- **Operations** (`m07-ops/OpsClient.tsx`): the shared page header (Suggest a project, Task, Project), the numbers as
+  soft cards (At risk and Drafts still filter when clicked), Board · Tasks · Updates · Circles as chips, and the
+  filters as one row (Projects | All tasks, circles with their colour dot, Everything | I lead | I'm in | I watch).
+- **The board and the project page**: columns on a soft panel, cards as white rounded cards without the coloured
+  edge; the project title in the v4 type (`ops-col`, `ops-card`, `ops-detail-*` hooks in `globals.css`). Dragging,
+  permissions, drafts and pop-ups are unchanged.
+- **Phone top bar** (`AppTopBar.tsx`): a menu button and the name of the page you're on, on the page colour, then the
+  bell and your account (the logo is in the menu).
+- Slim menu mode applies on desktop only.
+
 ## v4.48.0 — 2026-11-20 — the menu as in the prototype, with a slim mode (from Protopia, Sonia)
 
 Only with the v4 look.
