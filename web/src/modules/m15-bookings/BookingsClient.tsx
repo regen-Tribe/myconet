@@ -17,7 +17,7 @@ import { DESIGN } from '@/core/lib/instance'
 import BookingsV4 from './BookingsV4'
 
 export default function BookingsClient({
-  scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId, admin = false,
+  scope, initialItems, initialBookings, userId, me, role, leadCircles, initialTab, initialCategory, initialItemId, admin = false, siteMapUrl = null,
 }: {
   scope: BookingScope
   initialItems: BookingItem[]
@@ -31,6 +31,8 @@ export default function BookingsClient({
   initialItemId: string | null
   /** Admin › Bookings (v4): only the requests and the inventory, at /admin/bookings */
   admin?: boolean
+  /** The picture of the land for the Amenities map (v4.43.0) */
+  siteMapUrl?: string | null
 }) {
   const supabase = createClient()
   const [items, setItems] = useState(initialItems)
@@ -46,6 +48,7 @@ export default function BookingsClient({
   const [openId, setOpenId] = useState<string | null>(initialItemId)
   const [form, setForm] = useState<{ existing: BookingItem | null } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [mapUrl, setMapUrl] = useState<string | null>(siteMapUrl)
 
   // Times render in the viewer's zone, so wait for mount
   const [now, setNow] = useState<Date | null>(null)
@@ -157,6 +160,37 @@ export default function BookingsClient({
     return null
   }
 
+  /** Places (or removes) an item's pin on the Amenities map. RLS: whoever may edit the item. */
+  async function setPin(item: BookingItem, x: number | null, y: number | null) {
+    const pin = x === null || y === null ? { map_x: null, map_y: null } : { map_x: Math.round(x * 10) / 10, map_y: Math.round(y * 10) / 10 }
+    const { data, error } = await supabase.from('booking_items').update(pin).eq('id', item.id).select('id')
+    if (error || !data?.length) {
+      setToast(error ? bookingErrorMessage(error) : 'You can’t move this one. Admins, and circle leads of its circle, can.')
+      return
+    }
+    setItems(list => list.map(i => (i.id === item.id ? { ...i, ...pin } : i)))
+    setToast(pin.map_x === null ? `${item.name} is off the map` : `${item.name} is on the map`)
+  }
+
+  /** Uploads or removes the picture of the land. Admins only (RLS on community_settings). */
+  async function setMapPicture(file: File | null) {
+    try {
+      const { setBrandingImage, clearBrandingImage } = await import('@/modules/m04-blueprint/lib/branding-upload')
+      if (file) {
+        await setBrandingImage('site_map', file, mapUrl)
+        const { data } = await supabase.from('community_settings').select('site_map_url').maybeSingle()
+        setMapUrl((data as { site_map_url: string | null } | null)?.site_map_url ?? null)
+        setToast('Map picture saved')
+      } else {
+        await clearBrandingImage('site_map', mapUrl)
+        setMapUrl(null)
+        setToast('Map picture removed')
+      }
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : 'That didn’t save.')
+    }
+  }
+
   async function toggleActive(item: BookingItem) {
     const { data, error } = await supabase.from('booking_items').update({ is_active: !item.is_active }).eq('id', item.id).select(ITEM_SELECT)
     if (error || !data?.length) {
@@ -211,6 +245,8 @@ export default function BookingsClient({
           setTab, setCategory, setTag, setQuery,
           open: setOpenId, add: () => setForm({ existing: null }), edit: i => setForm({ existing: i }),
           toggleActive, setStatus: (b, st, msg) => { void setStatus(b, st, msg) },
+          mapUrl, setPin: (i, x, y) => { void setPin(i, x, y) }, setMapPicture: f => { void setMapPicture(f) },
+          isAdmin: role === 'admin', canManage: i => canManageItem(i, userId, role, leadCircles),
         }}
       />
     )

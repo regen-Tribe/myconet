@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.43.0',
+    date: '2026-11-20',
+    title: 'A map of the amenities',
+    items: [
+      'With the new look on, Amenities & tools shows a map of the land with a pin for each room, tool and space. Tap a pin to see it and book it.',
+      'Admins upload the picture of the land in Admin › Bookings › Map; admins and circle leads put their rooms, tools and spaces on it.',
+    ],
+  },
+  {
     version: 'v4.42.1',
     date: '2026-11-20',
     title: 'Booking in the new look',
