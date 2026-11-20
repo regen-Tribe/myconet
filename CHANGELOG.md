@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.73.0 — 2026-11-20 — Community-wide meetings show in My circles (from Protopia, Sonia)
+
+- A meeting the assistant judges community-wide (no single circle, e.g. a morning sync) now shows in the
+  “My circles” view as well as “All”, and counts in the My circles chip, so it no longer looks missing.
+  A meeting still being classified (“No circle yet”) is unaffected, and single-circle filters are unchanged.
+
 ## v4.72.0 — 2026-11-20 — About: a calm overview with a sticky chapter heading; the Blueprint editor in the v4 look (from Protopia, Sonia)
 
 - The fact strip under the About photo is for a glance: label on top, the short fact, even rows at every width (one row,
