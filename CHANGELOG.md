@@ -11,8 +11,12 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 - **Governance** (`LEXICON.md`): every proposal gets **4 checks**, each named who · how (Circle leads · consent, All
   members · majority vote, Admins & advisors · expert review, AI · Blueprint check); **Approved** / **Not approved**
   instead of "live" / "Rejected"; "Waiting for circle leads" instead of "Awaiting CL"; no "layers", "L01–L04" or
-  "threshold". The rule reads "Approved when enough checks pass" until the AI-check decision is made (the code still
-  counts 3 of 4). Same words in the home and landing demos and the sign-in page.
+  "threshold". Same words in the home and landing demos and the sign-in page.
+- **Governance: the AI · Blueprint check is advice** (Sonia, 2026-11-19). It always counted as passed and was never
+  saved, so "3 of 4" really meant 2 of the 3 people checks. The rule now says so: **Approved when 2 of the 3 people
+  checks pass** (circle leads, all members, admins & advisors); the screen counts "N / 3 people checks passed". The AI
+  panel says "Advice" and, when the check fails, "Couldn't check" instead of a made-up 75% "✓ Cleared". No proposal
+  changes status. `LEXICON.md` and the M09 README state the rule.
 - **Operations**: the board title is "Operations" when no sprint is set (was "Community Projects"); "27 active ·
   262 tasks" (was deliverables); home "Latest tasks".
 - **Members**: "Your requests", "No requests yet" (were seeks).
@@ -25,6 +29,8 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   hidden. The current look is unchanged. Text labels go through `modLabel()` (`core/lib/module-label.ts`); number-only
   badges carry the `mod-num` class, hidden under v4 in `globals.css`. The sidebar's own numbers are left to the menu
   rebuild.
+
+- No data or address changes; the only behaviour change is the AI check's failure answer (`confidence: null`).
 ## v4.40.0 — 2026-11-19 — one vocabulary (from Protopia, Sonia)
 
 - **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia
