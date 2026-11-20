@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.70.1 — 2026-11-20 — a small mark beside the community's name in the menu (from Protopia, Sonia)
+
+- v4.68.2 put the whole logo in the v4 menu, which hid the name. The menu is back to the mark plus "<name> on MyCoNet",
+  and the mark can now be an image: `brandMark` in `instance/config.jsonc` (a square image URL, passed as
+  `NEXT_PUBLIC_BRAND_MARK`). Without it, the first letter as before.
+
 ## v4.70.0 — 2026-11-20 — Map: the land with every place on it (from Protopia, Sonia)
 
 - New module **M19 Map** at `/map` (v4 menu › Community, after Amenities & tools): the community's picture of the
