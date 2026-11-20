@@ -3,6 +3,14 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.42.1',
+    date: '2026-11-20',
+    title: 'Booking in the new look',
+    items: [
+      'With the new look on, the booking pop-up and the form to add or edit a room, tool or space match the rest of the app. Booking works as before.',
+    ],
+  },
+  {
     version: 'v4.42.0',
     date: '2026-11-20',
     title: 'The new menu, with the new look',

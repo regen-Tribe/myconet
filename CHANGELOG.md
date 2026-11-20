@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.42.1 — 2026-11-20 — the booking pop-up and item form in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look. Same fields, rules, checks and messages; only the view changed.
+- **Booking pop-up** (`m15-bookings/ItemModal.tsx`): the item's icon tile in the title, tags and circle as tags,
+  location, capacity and approval as an icon list, booked times as soft rows ("You" in the action green), the
+  booking form with the shared fields, the overlap warning, and Archive / Edit item at the bottom.
+- **Add or edit an item** (`ItemFormModal.tsx`): category and circle as chips, tags you can remove, suggested tags,
+  the approval checkbox, Cancel / Save.
+- **Shared form styles** for any v4 pop-up (`globals.css`): `.v4-modal`, `.v4-form`, `.v4-field`, `.v4-input`,
+  `.v4-check`, `.v4-done`, `.v4-warn`, `.v4-error-box`, `.v4-hint`. No migration.
+
 ## v4.42.0 — 2026-11-20 — the v4 menu (from Protopia, Sonia)
 
 Only with the v4 look (`"design": "v4"`); every other community keeps today's menu and addresses. Release 2 of
