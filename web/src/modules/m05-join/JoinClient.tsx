@@ -69,7 +69,7 @@ const ROLE_MAP = [
     color: '#0ea5e9',
     how: 'Sign up for a free account — takes under a minute.',
     access: [
-      'Browse open projects and community members',
+      'Browse open tasks and community members',
       'Read the community blueprint and values',
       'Explore the full platform before committing',
     ],
@@ -80,7 +80,7 @@ const ROLE_MAP = [
     color: '#f59e0b',
     how: 'Complete the M05 Join application: sign the community values, get matched with a buddy, and submit.',
     access: [
-      'Submit collaboration proposals on open projects',
+      'Offer help on open tasks',
       'View the Operations board and sprint progress',
       'Appear in community network matching',
     ],
@@ -89,7 +89,7 @@ const ROLE_MAP = [
     role: 'member',
     label: 'Full Member',
     color: M5,
-    how: 'Application accepted. Activate by completing your first agreement or launching an active project.',
+    how: 'Application accepted. Activate by completing your first agreement or leading an active task.',
     access: [
       'Make binding collaboration agreements',
       'Vote and submit proposals in Governance',
@@ -99,13 +99,13 @@ const ROLE_MAP = [
   },
   {
     role: 'project_lead',
-    label: 'Project Lead',
+    label: 'Task lead',
     color: '#8b5cf6',
-    how: 'Appointed by an admin based on sustained project contributions.',
+    how: 'Appointed by an admin based on sustained contributions.',
     access: [
       'Everything a Member can do',
       'Manage the full Operations panel',
-      'Create and lead community projects',
+      'Create and lead community tasks',
       'Review and update tasks',
     ],
   },
@@ -115,7 +115,7 @@ const ROLE_MAP = [
     color: '#ec4899',
     how: 'Appointed by an admin to steward a key area of the community.',
     access: [
-      'Everything a project lead can do',
+      'Everything a task lead can do',
       'Manage the Blueprint and community values',
       'Review and accept Join applications',
       'Manage collaboration agreements and their status',
@@ -128,7 +128,7 @@ const ROLE_MAP = [
     how: 'Appointed by existing admins. Responsible for the overall health of the community.',
     access: [
       'Full edit access to every module',
-      'Activate, pause, or archive projects',
+      'Activate, pause, or archive tasks',
       'Manage all member roles and permissions',
       'Access all admin panels across the platform',
     ],
@@ -153,13 +153,13 @@ const EXPLORER_BADGES = [
   {
     id: 'contribution',
     label: 'Collaborator',
-    desc: 'Contribute to a community project',
+    desc: 'Contribute to a community task',
     icon: '🤝',
   },
   {
     id: 'ownProject',
-    label: 'Project Lead',
-    desc: 'Propose and lead your own project',
+    label: 'Task lead',
+    desc: 'Suggest and lead your own task',
     icon: '🚀',
   },
 ]

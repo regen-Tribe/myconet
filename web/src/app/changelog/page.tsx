@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.61.0',
+    date: '2026-11-20',
+    title: 'Subcircles, tasks and subtasks',
+    items: ['Teams are now called subcircles, and projects are tasks with subtasks. Only the words changed: everything you made is still there.'],
+  },
+  {
     version: 'v4.60.0',
     date: '2026-11-20',
     title: 'Meetings clear at a glance',
