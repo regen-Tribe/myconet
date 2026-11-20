@@ -9,6 +9,12 @@ const ENTRIES = [
     items: ['The facts under the About photo are a quick overview; tap one to jump to its whole answer in the right chapter.', 'The chapter bar stays at the top as you scroll and shows where you are; the chapters follow the questions a visitor asks.', 'Editing the Blueprint looks like the rest of MyCoNet.'],
   },
   {
+    version: 'v4.71.0',
+    date: '2026-11-20',
+    title: 'Reviewing a meeting, step by step',
+    items: ['Leads see a “Review this meeting” box at the top of a meeting: choose the circle, put the tasks on the board, email the notes, and see where the notes were saved. Done steps are ticked; the green button is always the next thing to do.', 'Meetings no longer show a day early.'],
+  },
+  {
     version: 'v4.70.1',
     date: '2026-11-20',
     title: 'The community’s mark beside its name',

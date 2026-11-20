@@ -18,6 +18,16 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   actions; no more missing serif font), and its dashboard shows "<name> — Plan" and short facts instead of whole answers.
 - About's styles move from `globals.css` to `modules/m04-blueprint/about-v4.css`.
 
+## v4.71.0 — 2026-11-20 — Meetings: the leads' review as numbered steps (from Protopia, Sonia)
+
+- v4 meeting page: the leads' strip under Files is now a "Review this meeting" card at the top of the right column,
+  with four numbered steps: Circle (circle and Circle only), Tasks on the board (confirm drafts / put tasks on the
+  board / look again), Email the notes (to the leads of the meeting's circle, when last sent) and Second brain (the
+  note's path and who can read it; the transcript sits beside it, leads only). A finished step is ticked, and only
+  the first unfinished one gets the green button. Same actions and permissions as before; the old design is unchanged.
+- Meetings words: a meeting's task inside a bigger one reads "subtask of “…”"; the leads-only error names task leads.
+- Fix: the meeting page showed a date-only meeting a day early (read as UTC); it now reads it as a local day.
+
 ## v4.70.1 — 2026-11-20 — a small mark beside the community's name in the menu (from Protopia, Sonia)
 
 - v4.68.2 put the whole logo in the v4 menu, which hid the name. The menu is back to the mark plus "<name> on MyCoNet",
