@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.68.1',
+    date: '2026-11-20',
+    title: 'Members takes less room',
+    items: ['Your best matches on Members are short rows, and “Lately” is now “Members activity”. Your profile no longer lists your circles twice.'],
+  },
+  {
     version: 'v4.68.0',
     date: '2026-11-20',
     title: 'One way to filter by circle',
