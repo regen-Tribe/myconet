@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.44.0',
+    date: '2026-11-20',
+    title: 'Explore the map',
+    items: [
+      'Zoom into the Amenities map and move around it. Tap a pin to see what it is, whether it’s free, and book it.',
+      'The list beside the map shows each pin when you point at a name, and takes you there when you click it.',
+    ],
+  },
+  {
     version: 'v4.43.1',
     date: '2026-11-20',
     title: 'A fix for the map',
