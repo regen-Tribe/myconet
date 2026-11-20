@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.64.0 — 2026-11-20 — About shows the whole Blueprint (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: is all the Blueprint on About, and is it the clearest overview?
+- **Nothing hidden any more.** The Blueprint's checklist notes now show: the land's **Day to day** (getting here,
+  internet and work, waste, when the weather turns), the food / water / energy / buildings notes under each
+  system, **How we decide › In practice** (how we meet, how we talk, deciding day to day, when we disagree) and
+  **Living here** (before you join, money, when someone leaves). Answers that only showed when their partner was
+  empty now show beside it (why the world needs it, the personal why, the ecological assessment). The values
+  answer shows in full when the values list is short.
+- **Fact tiles**: the label sits on top, the facts read cleaner ("2 dorms with 4 bunk beds each", "Regenerative
+  farm and co-living laboratory"), and each tile opens to the whole answer.
+- Long mission, vision and why texts open with Read more.
+
 ## v4.63.0 — 2026-11-20 — Circles at a glance, and a circle in tabs (from Protopia, Sonia)
 
 Only with the v4 look; the classic org chart keeps working (its words now say subcircle).
