@@ -712,3 +712,18 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
   [data-design="v4"] .modal-shell__backdrop { align-items: flex-end !important; padding: 0 !important; }
   [data-design="v4"] .modal-shell__dialog { max-width: 100% !important; border-radius: 24px 24px 0 0 !important; max-height: 88vh !important; }
 }
+/* v4 page layout (My dashboard and the pages that move over) */
+.v4-page { max-width: 1120px; margin: 0 auto; padding: 24px 28px 80px; }
+@media (max-width: 640px) { .v4-page { padding: 16px 16px 100px; } }
+.v4-hello { font-family: var(--display); font-size: clamp(36px, 5vw, 48px); font-weight: 400; letter-spacing: -.045em; line-height: 1.02; margin: 6px 0 22px; color: var(--ink, #111317); }
+.v4-hello em { font-weight: 500; }
+.v4-split { display: grid; gap: 18px; }
+@media (min-width: 900px) { .v4-split { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } }
+.v4-split > div > .v4-sec:first-child { margin-top: 0; }
+.v4-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.v4-card-head b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.v4-card-head small { display: block; font-size: 11px; color: var(--ink-3, #6b7180); }
+.v4-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.v4-mt { margin-top: 12px; }
+.v4-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.v4-more { text-align: center; margin: 10px 0 0; }

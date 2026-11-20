@@ -13,6 +13,11 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   `Tag`, and `Icon` with Sonia's 66 marker-line icons (`core/components/v4/icons.ts`). Styles are the `.v4-*` rules in
   `globals.css`; they read the v4 tokens with fallbacks, so they work where v4 is off. Nothing uses them yet except
   `/design`, a reference page with every block (sample words, noindex).
+- **My dashboard in v4** (`m00-dashboard/DashboardV4.tsx`, shown only when v4 is on; DESIGN-SYSTEM.md › v4 release 3):
+  "Hey {name}, welcome home", one next step by role (Start joining / your application / your first agreement / join
+  applications to answer / a proposal to vote on / your next task), your project and the next event, **Your tasks** with
+  status filters (`YourTasks.tsx`; My tasks lives here now), open proposals (with "You voted"), your circles, and a
+  "Start here" list for explorers. Built only from `core/components/v4`; no module numbers.
 - **ModalShell** gets class names; under v4 its backdrop is light and blurred and it opens as a bottom sheet on phones.
   Unchanged where v4 is off. No migration.
 

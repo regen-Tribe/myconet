@@ -29,7 +29,7 @@ one release each, behind the same switch:
 2. The shell and menu: You (My dashboard) · Community (About {community}, Members, Calendar, Circles, Amenities &
    tools) · Working together (Operations, Agreements, Meetings, Governance) · Admin (Applications, Bookings,
    Permissions). Needs the lexicon's new addresses first. My tasks moves into My dashboard; Achievements into profiles.
-3. My dashboard; 4. About {community} (the Blueprint as a page); 5. Amenities & tools (Accommodation and Resources
+3. My dashboard (done in v4.41.0, `m00-dashboard/DashboardV4.tsx`); 4. About {community} (the Blueprint as a page); 5. Amenities & tools (Accommodation and Resources
    together, with a map); 6. Admin: Bookings calendar (who stays where) and Permissions; 7. the remaining modules.
 Each release replaces that module's hard-coded colours and sizes with tokens and components.
 

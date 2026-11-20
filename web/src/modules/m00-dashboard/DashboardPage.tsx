@@ -5,6 +5,8 @@ import { ROLE_LABELS, roleAtLeast } from '@/core/lib/roles'
 import { LinkedEventsList } from '@/modules/m14-events/LinkedEventsList'
 import BannerImage from '@/core/components/BannerImage'
 import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
+import { DESIGN } from '@/core/lib/instance'
+import DashboardV4 from './DashboardV4'
 import { computeOverallReadiness, computeGatesPassed, computePhaseProgress, type Values } from '@/modules/m04-blueprint/lib/blueprint-compute'
 import { modLabel } from '@/core/lib/module-label'
 
@@ -103,6 +105,12 @@ export default async function DashboardPage() {
   const phaseProgress = blueprint ? computePhaseProgress(bpAnswers) : null
   const currentPhase = phaseProgress?.find(p => p.ratio < 1)?.name ?? 'SPARK'
   const projectName = (bpAnswers.project_name as string) || 'Our Community'
+
+  // The v4 look has its own dashboard (DESIGN-SYSTEM.md › v4)
+  if (DESIGN === 'v4') {
+    return <DashboardV4 supabase={supabase} userId={user?.id ?? null} role={role} firstName={profile?.first_name || 'there'}
+      communityName={projectName.split(' — ')[0]} application={application} events={upcomingEvents as any} />
+  }
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'

@@ -5,9 +5,10 @@ const ENTRIES = [
   {
     version: 'v4.41.0',
     date: '2026-11-19',
-    title: 'Building blocks for the new look',
+    title: 'Building blocks and a new My dashboard',
     items: [
       'Shared buttons, status labels, filters, cards, lists, page headers, the next-step box, empty states and one hand-drawn icon set, so every page can move to the new look the same way. See them all at /design.',
+      'With the new look on, My dashboard is redesigned: one next step on top, your tasks with filters, your project, the next event, open proposals and your circles.',
       'With the new look on, pop-ups get a light blurred backdrop and open from the bottom on phones.',
     ],
   },
