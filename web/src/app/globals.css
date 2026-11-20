@@ -1247,34 +1247,6 @@ img.v4-avatar { object-fit: cover; padding: 0; }
   .cv4 .v4-ph__actions { width: 100%; }
 }
 
-/* ─── Meetings in v4 (Sonia's prototype pMeetings / pMeeting, v4.54.0) ─────────── */
-.mt4-list .mt4-row { align-items: flex-start; }
-.mt4-tile { background: color-mix(in srgb, var(--c, #8a8f9c) 20%, #fff); color: var(--ink, #111317); }
-.mt4-sum { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; color: var(--ink-2, #3a3f4a) !important; margin-top: 3px; }
-.mt4-trail { display: inline-flex !important; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; color: var(--ink-4, #9aa0ad); }
-.mt4-back { display: flex; gap: 16px; flex-wrap: wrap; }
-.mt4-tags { margin-bottom: 10px; }
-.mt4-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-.mt4-people { margin-top: 6px; }
-.mt4-split { display: grid; gap: 18px; }
-@media (min-width: 960px) { .mt4-split { grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); align-items: start; } }
-.mt4-split > div > .v4-sec:first-child { margin-top: 0; }
-.mt4-sumcard { padding: 18px; }
-.mt4-h { font-size: 17px; font-weight: 600; margin: 0 0 10px; }
-.mt4-task { align-items: center; }
-.mt4-tlink { color: inherit; text-decoration: none; }
-.mt4-tlink:hover b { text-decoration: underline; }
-.mt4-done { text-decoration: line-through; color: var(--ink-3, #6b7180); }
-.mt4-ff { margin-top: 14px; }
-.mt4-ff summary { cursor: pointer; font-weight: 600; font-size: 14px; }
-.mt4-ffp { margin-top: 12px; }
-.mt4-ffp b { font-size: 13.5px; }
-.mt4-ffp ul { margin: 4px 0 0; padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2, #3a3f4a); }
-.mt4-off { opacity: .55; }
-.mt4-brain { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: var(--violet, #e5dcff); color: var(--violet-ink, #5b3fb0); font-size: 13px; font-weight: 600; text-decoration: none; }
-.mt4-brain span { flex: 1; }
-@media (max-width: 640px) { .mt4-trail .v4-tag { display: none; } }
-
 /* ─── Governance in v4 (Sonia's prototype pGovernance / pProposal, v4.54.0) ─────────── */
 .gv4 { height: auto !important; overflow: visible !important; display: block !important; }
 .gv4-cards { display: grid; gap: 14px; }
@@ -1369,7 +1341,6 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .pj4-about { font-size: 15px; line-height: 1.65; color: var(--ink-2, #3a3f4a); max-width: 680px; margin: 0 0 12px; white-space: pre-line; }
 @media (max-width: 640px) { .pj4-hero { height: 130px; border-radius: 20px; } }
 .pj4-offer { margin-top: 4px; height: 48px; padding: 0 8px 0 20px; }
-.mt4-quote { color: var(--ink-4, #9aa0ad) !important; }
 .gv4-by { display: block; font-size: 12px; color: var(--ink-3, #6b7180); margin-top: 3px; }
 .gv4-progress { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; max-width: 420px; }
 .gv4-progress small { font-size: 12px; color: var(--ink-3, #6b7180); white-space: nowrap; }
