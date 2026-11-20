@@ -25,9 +25,11 @@ interface Props {
   applications: Application[]
   questions: string[]
   canDecide: boolean
+  /** Admin › Applications (v4 menu) has its own name; the Join page keeps the old one */
+  standalone?: boolean
 }
 
-export default function JoinAdminClient({ applications: initial, questions, canDecide }: Props) {
+export default function JoinAdminClient({ applications: initial, questions, canDecide, standalone = false }: Props) {
   const supabase = createClient()
   const [apps, setApps] = useState(initial)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -88,10 +90,10 @@ export default function JoinAdminClient({ applications: initial, questions, canD
       {/* Header */}
       <div style={{ marginBottom: 36 }}>
         <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', background: 'var(--accent-soft)', padding: '3px 10px', borderRadius: 20, marginBottom: 14 }}>
-          {modLabel('05', 'Join — Admin Review')}
+          {standalone ? 'Admin' : modLabel('05', 'Join — Admin Review')}
         </div>
         <h1 style={{ fontFamily: 'var(--display)', fontSize: 32, color: 'var(--ink)', marginBottom: 6 }}>
-          Join applications
+          {standalone ? 'Applications' : 'Join applications'}
         </h1>
         <p style={{ color: 'var(--ink-3)', fontSize: 14 }}>
           Review, accept, or decline membership applications.

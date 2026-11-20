@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { useProfileCompletion } from '@/core/contexts/ProfileCompletion'
 import { VERSION } from '@/core/lib/version'
-import { COMMUNITY_NAME } from '@/core/lib/instance'
+import { COMMUNITY_NAME, DESIGN } from '@/core/lib/instance'
 import { useBranding } from '@/core/components/BrandingProvider'
 import TopBarSearch from '@/core/components/shell/TopBarSearch'
 
@@ -138,7 +138,16 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
 
   const showBar = user && profilePct !== null && profilePct < 100
 
-  const menuItems = [
+  // The v4 look: the menu has every page, so this is only about you. Badges stay here until
+  // profiles show them; v4 is light mode only (DESIGN-SYSTEM.md › v4).
+  const menuItems = DESIGN === 'v4' ? [
+    username ? { label: 'View my profile', href: `/u/${username}`, icon: '' } : null,
+    { label: 'Edit profile', href: '/profile/edit', icon: '' },
+    { label: 'Change password', href: '/account/password', icon: '' },
+    { label: 'Achievements', href: '/achievements', icon: '' },
+    'divider',
+    { label: 'Sign out', action: signOut, icon: '', danger: true },
+  ].filter(Boolean) as (string | { label: string; href?: string; action?: () => void; icon: string; danger?: boolean })[] : [
     username ? { label: 'View my profile', href: `/u/${username}`, icon: '👤' } : null,
     { label: 'Edit profile', href: '/profile/edit', icon: '✏️' },
     { label: 'Change password', href: '/account/password', icon: '🔒' },
@@ -228,6 +237,12 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
             <span className="topbar-brand-sub" style={{ color: 'var(--ink-4)', fontWeight: 400, fontSize: 15 }}>·</span>
             <span className="topbar-name" style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{COMMUNITY_NAME}</span>
           </Link>
+          {DESIGN === 'v4' ? (
+            // v4: the version as small plain text, no pill (Sonia, 20 Nov)
+            <Link href="/changelog" className="topbar-version" style={{ textDecoration: 'none', fontSize: 11, color: 'var(--ink-4)', fontWeight: 400 }}>
+              {VERSION}
+            </Link>
+          ) : (
           <Link href="/changelog" style={{ textDecoration: 'none' }}
             onMouseEnter={e => (e.currentTarget.querySelector('span')!.style.background = 'color-mix(in srgb, var(--accent-color) 18%, var(--bg-2))')}
             onMouseLeave={e => (e.currentTarget.querySelector('span')!.style.background = 'var(--bg-2)')}>
@@ -242,6 +257,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
               {VERSION}
             </span>
           </Link>
+          )}
         </div>
       </div>
 
@@ -333,7 +349,7 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
                     background: 'none', border: 'none', textDecoration: 'none',
                     transition: 'background 100ms',
                   }
-                  const iconEl = <span style={{ fontSize: 13, width: 18, textAlign: 'center', flexShrink: 0 }}>{it.icon}</span>
+                  const iconEl = it.icon ? <span style={{ fontSize: 13, width: 18, textAlign: 'center', flexShrink: 0 }}>{it.icon}</span> : null
                   const labelEl = <span>{it.label}</span>
 
                   if (it.action) {

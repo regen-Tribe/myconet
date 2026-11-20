@@ -3,6 +3,21 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.42.0',
+    date: '2026-11-20',
+    title: 'The new menu, with the new look',
+    items: [
+      'For communities that use the new look: your next step on top of the menu, then You, Community, Working together and Admin. Plain names, one icon each, and a count of your open tasks beside My dashboard.',
+      'Newcomers see where they are (Explorer, Joining member, Member) inside the next step, a line under each group, and why a locked page is locked.',
+      'Accommodation and Resources become one page, Amenities & tools, that explorers can look around. Booking opens when you’re a joining member.',
+      'Admin has Applications, Bookings and Permissions. Circle leads see Permissions without changing it.',
+      'On a phone, a bar at the bottom with Dashboard, Operations (About for newcomers), Calendar, Members and Menu, each with its name.',
+      'About {community} tells the Blueprint as a page to read: the photo, short facts and chapters (why we’re here, how we live, how we decide, joining…), with the whole plan still one click away.',
+      'Amenities & tools and Admin › Bookings in the new look, and a calendar in Admin › Bookings that shows who stays where, day by day.',
+      'Permissions lists each person’s role and circles, explains what each role can do, and gathers the settings only admins change.',
+    ],
+  },
+  {
     version: 'v4.41.0',
     date: '2026-11-19',
     title: 'Building blocks and a new My dashboard',
