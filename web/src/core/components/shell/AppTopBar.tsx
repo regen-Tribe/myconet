@@ -1,6 +1,8 @@
 'use client'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { isMenuActive, menuGroups } from '@/core/lib/nav'
+import { Icon } from '@/core/components/v4'
 import { createClient } from '@/core/lib/supabase/client'
 import { useEffect, useRef, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
@@ -39,6 +41,10 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
   navCollapsed?: boolean
 }) {
   const router = useRouter()
+  const pathname = usePathname()
+  const pageTitle = DESIGN === 'v4'
+    ? menuGroups(COMMUNITY_NAME).flatMap(g => g.items).find(i => isMenuActive(i.href, pathname))?.name ?? COMMUNITY_NAME
+    : ''
   const { logo_url } = useBranding()
   const [user, setUser] = useState<User | null>(null)
   const [displayName, setDisplayName] = useState('')
@@ -217,6 +223,16 @@ export default function AppTopBar({ onMobileNavToggle, mobileNavOpen, onDesktopN
         </svg>
         <span className="topbar-modules-label">Modules</span>
       </button>
+
+      {/* The v4 look on phones (as in the prototype): the menu button and the page you're on */}
+      {DESIGN === 'v4' && (
+        <>
+          <button type="button" className="topbar-v4-menu" onClick={onMobileNavToggle} aria-label="Open the menu" aria-expanded={mobileNavOpen}>
+            <Icon name="menu" size={18} />
+          </button>
+          <span className="topbar-v4-title">{pageTitle}</span>
+        </>
+      )}
 
       {/* Brand — logo/name and the version badge are sibling links (links can't nest) */}
       <div className="topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>

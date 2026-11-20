@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.49.0',
+    date: '2026-11-20',
+    title: 'Operations, the new way',
+    items: ['With the new look on, Operations, its board and project pages match the rest of the app.', 'On a phone, the top bar shows a menu button and the page you’re on.'],
+  },
+  {
     version: 'v4.48.0',
     date: '2026-11-20',
     title: 'The menu, as designed',
