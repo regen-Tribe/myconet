@@ -17,6 +17,14 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   262 tasks" (was deliverables); home "Latest tasks".
 - **Members**: "Your requests", "No requests yet" (were seeks).
 - Text only: no data, address or behaviour changes.
+
+## Unreleased — no module numbers in the v4 look
+
+- **The v4 look shows no module numbers** (Sonia, 19 Nov: "only in the new look"). With `"design": "v4"`, labels
+  like "M01 · Members" or "Module 07 · Operations" read just "Members" / "Operations", and number badges ("M08") are
+  hidden. The current look is unchanged. Text labels go through `modLabel()` (`core/lib/module-label.ts`); number-only
+  badges carry the `mod-num` class, hidden under v4 in `globals.css`. The sidebar's own numbers are left to the menu
+  rebuild.
 ## v4.40.0 — 2026-11-19 — one vocabulary (from Protopia, Sonia)
 
 - **`LEXICON.md`**: one word per idea, for screens, emails, agent prompts and the second brain. Approved by Sonia

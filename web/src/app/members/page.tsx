@@ -3,6 +3,7 @@ import { profileColumns } from '@/core/lib/public-profile'
 import Link from 'next/link'
 import MemberList from '@/modules/m01-network/MemberList'
 import { computeMatch, type Bio, type MatchResult } from '@/modules/m01-network/lib/match-score'
+import { modLabel } from '@/core/lib/module-label'
 
 export default async function NetworkDashboard() {
   const supabase = await createClient()
@@ -131,7 +132,7 @@ export default async function NetworkDashboard() {
       {/* ── Page header ── */}
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 8 }}>
-          M01 · Members
+          {modLabel('01', 'Members')}
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div>
@@ -281,7 +282,7 @@ export default async function NetworkDashboard() {
         <section style={{ marginBottom: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>
-              M01 · Network activity
+              {modLabel('01', 'Network activity')}
             </span>
             <Link href="/members/discover" style={{ fontSize: 12.5, color: 'var(--m1)', fontWeight: 600, textDecoration: 'none' }}>
               Search network →

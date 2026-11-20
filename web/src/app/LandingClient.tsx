@@ -14,6 +14,7 @@ import ModuleOverview from '@/modules/home/ModuleOverview'
 import AskSection from '@/modules/home/AskSection'
 import type { GlanceTile } from '@/modules/home/lib/at-a-glance'
 import './landing.css'
+import { modLabel } from '@/core/lib/module-label'
 
 interface Props {
   firstName: string | null; communityPurpose?: string | null; upcomingEvents?: CalendarEvent[]; stats: LandingStats
@@ -119,7 +120,7 @@ function SectionHead({ mod, label, color, h, lead }: { mod: string; label: strin
     <div>
       <span className="lp-eyebrow" style={{ background: `color-mix(in srgb, ${color} 8%, transparent)`, color }}>
         <span className="lp-mod-dot" style={{ background: color }} />
-        Module {mod} · {label}
+        {modLabel(mod, label, 'Module')}
       </span>
       <h2 className="lp-section-h">{h}</h2>
       <p className="lp-section-lead">{lead}</p>
@@ -208,14 +209,14 @@ function ClubhousePreview({ name, stats }: { name: string | null; stats: Landing
               {CLUBHOUSE.map(m => (
                 <div key={m.num} className={`lp-ch-nav-item${m.num === '00' ? ' is-active' : ''}`}>
                   <span className="lp-swatch" style={{ background: m.color }} />
-                  <span className="lp-mnum">M{m.num}</span> {m.name}
+                  <span className="lp-mnum mod-num">M{m.num}</span> {m.name}
                 </div>
               ))}
               <div className="lp-ch-nav-label">Once you&apos;re in</div>
               {MEMBER_MODULES.map(m => (
                 <div key={m.num} className="lp-ch-nav-item" style={{ opacity: 0.5 }}>
                   <span className="lp-swatch" style={{ background: m.color }} />
-                  <span className="lp-mnum">M{m.num}</span> {m.name}
+                  <span className="lp-mnum mod-num">M{m.num}</span> {m.name}
                 </div>
               ))}
             </div>
@@ -232,7 +233,7 @@ function ClubhousePreview({ name, stats }: { name: string | null; stats: Landing
                   <div className="lp-ch-card" style={{ cursor: 'pointer' }}>
                     <div className="lp-accent-bar" style={{ background: c.color }} />
                     <div className="lp-ch-card-row1">
-                      <span className="lp-mtag" style={{ color: c.color }}>M{c.num}</span>
+                      <span className="lp-mtag mod-num" style={{ color: c.color }}>M{c.num}</span>
                       {c.cta
                         ? <span className="lp-badge" style={{ background: c.color }}>Start</span>
                         : <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-4)' }}>↗</span>}
@@ -277,7 +278,7 @@ function MeetSection() {
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m1)' }}>M01</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m1)' }}>M01</span>
               <strong>Residents · Top matches for you</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>Example profiles</span>
@@ -326,7 +327,7 @@ function BlueprintSection() {
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m4)' }}>M04</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m4)' }}>M04</span>
               <strong>Blueprint · {COMMUNITY_NAME}</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>v3.2 · Living doc</span>
@@ -412,7 +413,7 @@ function JoinSection({ values }: { values: { title: string; description: string 
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m5)' }}>M05</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m5)' }}>M05</span>
               <strong>{values.length ? `${COMMUNITY_NAME}'s values` : 'Example values'}</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: allChecked ? 'var(--m5)' : 'var(--ink-3)' }}>
@@ -458,7 +459,7 @@ function AgreementsSection() {
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m6)' }}>M06</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m6)' }}>M06</span>
               <strong>Open projects · Propose how you&apos;ll help</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>3 open</span>
@@ -553,7 +554,7 @@ function OpsSection() {
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m7)' }}>M07</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m7)' }}>M07</span>
               <strong>{COMMUNITY_NAME} · This sprint</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>May→Jun</span>
@@ -601,7 +602,7 @@ function ContributionsSection() {
         <div className="lp-demo">
           <div className="lp-demo-head">
             <div className="lp-demo-title">
-              <span className="lp-mod-pill" style={{ background: 'var(--m8)' }}>M08</span>
+              <span className="lp-mod-pill mod-num" style={{ background: 'var(--m8)' }}>M08</span>
               <strong>Your contribution log</strong>
             </div>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>Top 25% · Sprint 12</span>

@@ -58,7 +58,7 @@ export default async function ContributionsPage() {
     <div style={{ padding: '32px 28px', maxWidth: 720 }}>
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-          <span style={{
+          <span className="mod-num" style={{
             fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700,
             letterSpacing: '0.12em', textTransform: 'uppercase',
             color: 'var(--m8)', background: 'color-mix(in srgb, var(--m8) 10%, transparent)',

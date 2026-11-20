@@ -15,6 +15,7 @@ import type { CircleDirectory, PersonRef } from '@/core/lib/ops-permissions'
 import type { OrgMember, OrgPerson, OrgUnit } from './types'
 import { canEditUnit, canLeadCircle, MEMBER_SELECT, toMember } from './lib/org'
 import { UnitEditModal, type UnitDraft } from './UnitEditModal'
+import { modLabel } from '@/core/lib/module-label'
 
 function Chip({ name, username, note, isMe, accent }: {
   id: string; name: string; username: string | null; note?: string | null; isMe: boolean; accent?: string
@@ -165,7 +166,7 @@ export default function OrgChartClient({
       <div style={{ marginBottom: 22, position: 'relative' }}>
         {role === 'admin' && <div style={{ position: 'absolute', right: 0, top: 0 }}><AddCircleButton /></div>}
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m17) 10%, var(--surface))', color: 'var(--m17)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-          Module 17 · Circles
+          {modLabel('17', 'Circles', 'Module')}
         </div>
         <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
           Who does what

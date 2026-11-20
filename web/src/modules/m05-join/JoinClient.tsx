@@ -4,6 +4,7 @@ import { isJoiningOrAbove } from '@/core/lib/roles'
 import { moduleOn } from '@/core/lib/modules'
 import { createClient } from '@/core/lib/supabase/client'
 import Link from 'next/link'
+import { modLabel } from '@/core/lib/module-label'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -410,7 +411,7 @@ function RoleRoadmap({ currentRole, milestones, applicationStatus, onApply, onRe
       {/* Header */}
       <div style={{ marginBottom: 40, maxWidth: 600 }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: M5, background: `color-mix(in srgb, ${M5} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${M5} 25%, transparent)`, padding: '3px 10px', borderRadius: 999, marginBottom: 18 }}>
-          Module 05 · Join
+          {modLabel('05', 'Join', 'Module')}
         </span>
         <h1 style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.025em', color: 'var(--ink)', marginBottom: 14 }}>
           Community roles & your progress
@@ -660,7 +661,7 @@ export default function JoinClient({
           ← Back to overview
         </button>
         <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: M5, background: `color-mix(in srgb, ${M5} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${M5} 25%, transparent)`, padding: '3px 10px', borderRadius: 999, marginBottom: 14 }}>
-          Module 05 · Join
+          {modLabel('05', 'Join', 'Module')}
         </span>
         <h1 style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', color: 'var(--ink)', marginBottom: 6 }}>
           {reapplying ? 'Reapply to the community' : 'Become a joining member'}

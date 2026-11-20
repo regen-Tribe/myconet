@@ -26,6 +26,7 @@ import { ProjectManagerPanel } from './ProjectManagerPanel'
 import { NameTag } from './NameTag'
 import { TaskModal, type TaskPerson, type TaskProjectOption, type TaskTeamOption } from './TaskModal'
 import { PriorityBadge } from './Priority'
+import { modLabel } from '@/core/lib/module-label'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -445,7 +446,7 @@ export default function OpsClient({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, gap: 16, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m7) 10%, var(--surface))', color: 'var(--m7)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            Module 07 · Operations
+            {modLabel('07', 'Operations', 'Module')}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
             {sprintLabel}

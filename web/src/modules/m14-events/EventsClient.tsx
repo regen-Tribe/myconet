@@ -17,6 +17,7 @@ import { EventDetailModal } from './EventDetailModal'
 import { EventFormModal, type EventDraft, type EventPayload } from './EventFormModal'
 import { CalendarFeedsModal } from './CalendarFeedsModal'
 import { PhotoImportModal } from './PhotoImportModal'
+import { modLabel } from '@/core/lib/module-label'
 
 const VIEWS: { id: EventsView; label: string }[] = [
   { id: 'day', label: 'Day' },
@@ -239,7 +240,7 @@ export default function EventsClient({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 16, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'color-mix(in srgb, var(--m14) 10%, var(--surface))', color: 'var(--m14)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20, marginBottom: 10 }}>
-            Module 14 · Calendar
+            {modLabel('14', 'Calendar', 'Module')}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1, margin: '0 0 8px' }}>
             Community calendar

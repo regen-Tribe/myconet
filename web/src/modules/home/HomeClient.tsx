@@ -14,6 +14,7 @@ import BannerImage from '@/core/components/BannerImage'
 import ModuleOverview from '@/modules/home/ModuleOverview'
 import AskSection from '@/modules/home/AskSection'
 import type { GlanceTile } from './lib/at-a-glance'
+import { modLabel } from '@/core/lib/module-label'
 
 type PhaseP = { id: string; name: string; answered: number; total: number; ratio: number }
 type Member = { id: string; first_name: string | null; last_name: string | null; headline: string | null; city: string | null; country: string | null; avatar_url: string | null; username: string | null }
@@ -98,7 +99,7 @@ function ModulePill({ mod, icon, text, target, color }: {
         whiteSpace: 'nowrap', flexShrink: 0,
       }}
     >
-      <span style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: hovered ? color : 'var(--ink-4)', letterSpacing: '0.04em', flexShrink: 0 }}>M{mod}</span>
+      <span className="mod-num" style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: hovered ? color : 'var(--ink-4)', letterSpacing: '0.04em', flexShrink: 0 }}>M{mod}</span>
       <span style={{ fontSize: 13 }}>{icon}</span>
       <span>{text}</span>
     </button>
@@ -111,7 +112,7 @@ function initials(name: string) {
 
 function ModTag({ color, label }: { color: string; label: string }) {
   return (
-    <span style={{
+    <span className="mod-num" style={{
       fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700,
       background: `color-mix(in srgb, ${color} 14%, transparent)`,
       color, padding: '2px 8px', borderRadius: 20,
@@ -165,7 +166,7 @@ function SectionHead({ color, mod, label, h, lead, why, href }: {
           cursor: 'pointer',
         }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />
-          Module {mod} · {label} ↗
+          {modLabel(mod, label, 'Module')} ↗
         </span>
       </Link>
       <h2 style={{
@@ -491,7 +492,7 @@ export default function HomeClient({
                 cursor: 'pointer',
               }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--ink-2)' }} />
-                Module 00 · Dashboard ↗
+                {modLabel('00', 'Dashboard ↗', 'Module')}
               </span>
             </Link>
             <h2 style={{
@@ -563,7 +564,7 @@ export default function HomeClient({
                   fontWeight: m.active ? 600 : 400,
                 }}>
                   <span style={{ width: 3, height: 14, borderRadius: 2, background: m.color, flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: m.active ? 'var(--ink-3)' : 'var(--ink-4)', width: 22 }}>M{m.num}</span>
+                  <span className="mod-num" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: m.active ? 'var(--ink-3)' : 'var(--ink-4)', width: 22 }}>M{m.num}</span>
                   <span style={{ fontSize: 11.5 }}>{m.name}</span>
                 </div>
               ))}
@@ -575,7 +576,7 @@ export default function HomeClient({
                   color: 'var(--ink-2)', fontSize: 11.5,
                 }}>
                   <span style={{ width: 3, height: 14, borderRadius: 2, background: m.color, flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ink-4)', width: 22 }}>M{m.num}</span>
+                  <span className="mod-num" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ink-4)', width: 22 }}>M{m.num}</span>
                   <span>{m.name}</span>
                 </div>
               ))}
@@ -611,7 +612,7 @@ export default function HomeClient({
                 <Link href="/blueprint" style={{ textDecoration: 'none', display: 'block', marginBottom: 14 }}>
                   <div style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderRadius: 8, padding: '10px 12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, color: 'var(--m4)' }}>M04 · Blueprint</span>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, color: 'var(--m4)' }}>{modLabel('04', 'Blueprint')}</span>
                       <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-3)' }}>{overall.toFixed(1)} / 10</span>
                     </div>
                     <div style={{ height: 4, borderRadius: 99, background: 'var(--bg-3)', overflow: 'hidden' }}>

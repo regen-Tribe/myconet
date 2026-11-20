@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useCircles } from '@/core/components/CirclesProvider'
 import { taskDate } from '@/core/lib/tasks'
 import type { MeetingListItem, MeetingStatus } from './types'
+import { modLabel } from '@/core/lib/module-label'
 
 const STATUS: Record<MeetingStatus, { label: string; color: string }> = {
   processing: { label: 'Transcribing', color: '#b45309' },
@@ -82,7 +83,7 @@ export default function MeetingsList({ meetings, taskCounts, myCircles, canManag
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 22, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--m18)', background: 'color-mix(in srgb, var(--m18) 10%, var(--surface))', padding: '3px 10px', borderRadius: 20, marginBottom: 12 }}>
-            M18 · Meetings
+            {modLabel('18', 'Meetings')}
           </div>
           <h1 style={{ fontFamily: 'var(--display)', fontSize: 28, color: 'var(--ink)', lineHeight: 1.1, margin: 0 }}>Meeting notes</h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '8px 0 0', maxWidth: 520, lineHeight: 1.5 }}>
