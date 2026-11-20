@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.72.0',
+    date: '2026-11-20',
+    title: 'About: a calm overview with a sticky heading',
+    items: ['The facts under the About photo are a quick overview; tap one to jump to its whole answer in the right chapter.', 'The chapter bar stays at the top as you scroll and shows where you are; the chapters follow the questions a visitor asks.', 'Editing the Blueprint looks like the rest of MyCoNet.'],
+  },
+  {
     version: 'v4.70.1',
     date: '2026-11-20',
     title: 'The community’s mark beside its name',
