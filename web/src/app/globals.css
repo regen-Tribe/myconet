@@ -936,3 +936,19 @@ label.v4-btn { cursor: pointer; }
 img.v4-avatar { object-fit: cover; padding: 0; }
 .v4-avatar--md { width: 44px; height: 44px; font-size: 16px; }
 @media (max-width: 760px) { .v4-members__tabs { padding: 14px 16px 0; } }
+
+/* ─── v4 Calendar (modules/m14-events: EventsClient, CalendarViews) ─── */
+.v4-page--wide { max-width: 1280px; }
+.v4-caltools { margin-top: 6px; }
+.v4-caltools__title { font-size: 16px; font-weight: 600; margin-left: 4px; }
+.v4-calframe { border: 0 !important; border-radius: 20px !important; }
+.v4-evday { font-size: 13px; font-weight: 600; color: var(--ink, #111317); margin: 0 0 8px; }
+.v4-evrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer; border: 0; background: var(--surface, #fff); border-radius: 16px; padding: 12px 14px; font: inherit; color: inherit; box-shadow: inset 4px 0 0 var(--ev, var(--ink-4)); }
+.v4-evrow:hover { background: #fff; transform: translateY(-1px); }
+.v4-evrow--dim { opacity: .6; }
+.v4-evrow__time { width: 58px; flex-shrink: 0; font-size: 12.5px; font-weight: 600; color: var(--ink-2, #3a3f4a); }
+.v4-evrow__main { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.v4-evrow__main b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.v4-evrow__main small { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12px; color: var(--ink-3, #6b7180); }
+.v4-evrow__main small > span { display: inline-flex; align-items: center; gap: 4px; }
+.v4-evrow__trail { flex-shrink: 0; display: grid; justify-items: end; gap: 4px; font-size: 11px; color: var(--ink-3, #6b7180); }
