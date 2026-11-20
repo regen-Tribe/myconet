@@ -5,6 +5,22 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.62.0 — 2026-11-20 — Operations is the Task board (from Protopia, Sonia)
+
+Only with the v4 look, except the words. Sonia picked option A, "calm Kanban", from three mock-ups.
+- **/operations** is titled **Task board**. One summary line ("N tasks on the go · N open subtasks · N done")
+  replaces the six stat boxes; **Late** and **Drafts to confirm** are chips. One chip row picks what the page shows:
+  Tasks (the board), All subtasks (the board of every subtask), List, Updates, Circles. The circle filter is a
+  dropdown; Everything / I lead / I'm in / I watch stays.
+- **Cards as the prototype**: name, circle dot and subcircle, a progress bar of subtasks, the due date (red when
+  late), the lead and the people with a subtask as avatars, how many watch it. A task of its own says so.
+  Buttons: "New task" (green) and "Task of its own" for admins and leads, "Suggest a task" for others.
+- **Phones**: the board scrolls sideways one column at a time.
+- **Words across Operations** (every look): task, subtask, task of its own, subcircle and "offer to help" on the
+  board, the task page, the pop-up, the suggest form, the List, Circles and the project manager's suggestions.
+- Unchanged: drag-and-drop and its permissions, offers to help → agreements → subtasks, drafts from meetings,
+  the project manager, watching, events, subcircles and deadlines. Styles in `m07-ops/ops-v4.css`.
+
 ## v4.61.0 — 2026-11-20 — subcircles, and tasks with subtasks instead of projects (from Protopia, Sonia)
 
 Words only; no table, column, route or data changes. `LEXICON.md` changed first (Sonia, 20 Nov):

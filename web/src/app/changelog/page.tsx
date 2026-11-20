@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.62.0',
+    date: '2026-11-20',
+    title: 'The Task board',
+    items: ['Operations is now the Task board. With the new look on, it opens with one clear summary line, each task card shows how far along its subtasks are and who is on it, and late tasks and drafts are one tap away. On a phone the board scrolls one column at a time.'],
+  },
+  {
     version: 'v4.61.0',
     date: '2026-11-20',
     title: 'Subcircles, tasks and subtasks',

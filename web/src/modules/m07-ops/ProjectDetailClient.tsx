@@ -31,11 +31,11 @@ import { circleChangeBlock, projectEditBlock, type CircleDirectory, type Permiss
 
 const BLOCKING_STATUSES = ['pending', 'accepted', 'active', 'completed']
 const PROPOSAL_STATUS_INFO: Record<string, { label: string; color: string; note: string }> = {
-  pending:   { label: 'Pending review', color: '#f59e0b', note: 'Your proposal is waiting for admin review.' },
-  accepted:  { label: 'Accepted',       color: '#22c55e', note: 'Your proposal was accepted. Start your contribution!' },
+  pending:   { label: 'Pending review', color: '#f59e0b', note: 'Your offer to help is waiting for the task lead.' },
+  accepted:  { label: 'Accepted',       color: '#22c55e', note: 'Your offer to help was accepted. It’s on the board as a subtask.' },
   active:    { label: 'Active',         color: '#3b82f6', note: 'Your collaboration is underway.' },
   completed: { label: 'Completed',      color: '#94a3b8', note: 'This collaboration has been marked complete.' },
-  rejected:  { label: 'Not accepted',   color: '#ef4444', note: 'Your previous proposal was not accepted. You can submit a new one.' },
+  rejected:  { label: 'Not accepted',   color: '#ef4444', note: 'Your last offer to help wasn’t accepted. You can send a new one.' },
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -360,7 +360,7 @@ export default function ProjectDetailClient({
               <span className="pj4-pill"><V4Icon name="circles" size={14} />{circles.meta(project.circle).label} circle{teams.find(t => t.id === project.team_id) ? ` · ${teams.find(t => t.id === project.team_id)!.name}` : ''}</span>
             )}
             <span className="pj4-round">
-              {leadProfile?.username && <Link href={`/u/${leadProfile.username}`} aria-label="The project lead" className="pj4-rbtn"><V4Icon name="user" /></Link>}
+              {leadProfile?.username && <Link href={`/u/${leadProfile.username}`} aria-label="The task lead" className="pj4-rbtn"><V4Icon name="user" /></Link>}
               <Link href="/calendar" aria-label="Calendar" className="pj4-rbtn"><V4Icon name="calendar" /></Link>
             </span>
           </div>
@@ -383,7 +383,7 @@ export default function ProjectDetailClient({
                   {project.open_for_collaborators && isActiveProject(project.status) && <V4Tag icon="hand">Open for helpers</V4Tag>}
                   {leadProfile && <V4Tag>Lead · {leadProfile.first_name ?? leadProfile.username ?? 'Unknown'}</V4Tag>}
                   {creatorProfile && creatorProfile.username !== leadProfile?.username && <V4Tag>Proposed by {creatorProfile.first_name ?? creatorProfile.username ?? 'Unknown'}</V4Tag>}
-                  <V4Tag>{deliverables.length} {deliverables.length === 1 ? 'task' : 'tasks'}</V4Tag>
+                  <V4Tag>{deliverables.length} {deliverables.length === 1 ? 'subtask' : 'subtasks'}</V4Tag>
                   {project.deadline && (!['done', 'review'].includes(project.status) && isTaskOverdue(project.deadline, null, project.status)
                     ? <V4Pill status="no" label={`Overdue · was due ${fmtTaskWhen(project.deadline)}`} />
                     : <V4Tag icon="calendar">Due {fmtTaskWhen(project.deadline)}</V4Tag>)}
@@ -466,7 +466,7 @@ export default function ProjectDetailClient({
           <button
             onClick={toggleProjectSubscription}
             disabled={togglingProjectSub}
-            title={subscribedToProject ? 'Unsubscribe from project' : 'Subscribe to project'}
+            title={subscribedToProject ? 'Stop watching this task' : 'Watch this task'}
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '7px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600,
@@ -504,7 +504,7 @@ export default function ProjectDetailClient({
             onClick={() => setShowProposalForm(v => !v)}
             style={{ display: 'block', width: '100%', maxWidth: 260, marginTop: 4, background: showProposalForm ? 'var(--bg-2)' : '#3b82f6', color: showProposalForm ? 'var(--ink-3)' : '#fff', fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: 'var(--radius)', border: showProposalForm ? '1px solid var(--rule)' : 'none', cursor: 'pointer', textAlign: 'center' }}
           >
-            {showProposalForm ? 'Cancel' : 'Propose collaboration →'}
+            {showProposalForm ? 'Cancel' : 'Offer to help →'}
           </button>
         )}
         {canPropose && hasBlockingProposal && myProposal && (() => {
@@ -526,7 +526,7 @@ export default function ProjectDetailClient({
           borderRadius: 12, padding: '22px 24px', marginBottom: 32,
         }}>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#3b82f6', marginBottom: 18 }}>
-            Propose collaboration
+            Offer to help
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
@@ -536,7 +536,7 @@ export default function ProjectDetailClient({
               <textarea
                 value={workDesc}
                 onChange={e => setWorkDesc(e.target.value)}
-                placeholder="Describe what you'll do, deliver, or create for this project…"
+                placeholder="Describe what you'll do, deliver, or create for this task…"
                 rows={3}
                 style={{ width: '100%', boxSizing: 'border-box', padding: '10px 14px', borderRadius: 'var(--radius)', border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontSize: 14, resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', outline: 'none' }}
               />
@@ -574,7 +574,7 @@ export default function ProjectDetailClient({
                 disabled={submitting || !workDesc.trim() || !reward.trim()}
                 style={{ background: '#3b82f6', color: '#fff', fontSize: 13, fontWeight: 600, padding: '9px 22px', borderRadius: 'var(--radius)', border: 'none', cursor: submitting || !workDesc.trim() || !reward.trim() ? 'not-allowed' : 'pointer', opacity: submitting || !workDesc.trim() || !reward.trim() ? 0.6 : 1 }}
               >
-                {submitting ? 'Submitting…' : 'Submit proposal'}
+                {submitting ? 'Sending…' : 'Send offer to help'}
               </button>
               <button
                 onClick={() => setShowProposalForm(false)}
@@ -596,8 +596,8 @@ export default function ProjectDetailClient({
           <div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 14, display: 'flex', justifyContent: 'space-between' }}>
               <span>
-                Tasks · {deliverables.length}
-                {canManage && pendingProposals.length > 0 && ` · ${pendingProposals.length} idea${pendingProposals.length === 1 ? '' : 's'}`}
+                Subtasks · {deliverables.length}
+                {canManage && pendingProposals.length > 0 && ` · ${pendingProposals.length} offer${pendingProposals.length === 1 ? '' : 's'} to help`}
               </span>
             </div>
 
@@ -609,7 +609,7 @@ export default function ProjectDetailClient({
                     value={newTaskTitle}
                     onChange={e => setNewTaskTitle(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && addSubtask()}
-                    placeholder="New task…"
+                    placeholder="New subtask…"
                     style={{ ...inputStyle, flex: '1 1 200px', padding: '8px 12px', fontSize: 13 }}
                   />
                   <div style={{ flexShrink: 0 }}>
@@ -843,7 +843,7 @@ export default function ProjectDetailClient({
                 <textarea
                   value={updateText}
                   onChange={e => setUpdateText(e.target.value)}
-                  placeholder="Post an update for this project…"
+                  placeholder="Post an update on this task…"
                   rows={3}
                   style={{ ...inputStyle, background: 'var(--surface)', resize: 'vertical', lineHeight: 1.6, marginBottom: 10 }}
                 />
@@ -886,7 +886,7 @@ export default function ProjectDetailClient({
         {isAdmin && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ background: 'var(--bg-2)', border: '1px solid var(--rule)', borderRadius: 'var(--radius)', padding: '16px' }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 12 }}>Project settings</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 12 }}>Task settings</div>
 
               {settingsBlock && (
                 <div style={{ fontSize: 12, lineHeight: 1.5, color: '#b45309', background: 'color-mix(in srgb, #f59e0b 10%, var(--surface))', border: '1px solid #f59e0b', borderRadius: 8, padding: '8px 10px', marginBottom: 12 }}>
@@ -947,14 +947,14 @@ export default function ProjectDetailClient({
 
               {editCircle && teams.some(t => t.circle === editCircle) && (
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--ink-3)', marginBottom: 6 }}>Team</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--ink-3)', marginBottom: 6 }}>Subcircle</label>
                   <TeamPicker circle={editCircle} teams={teams} value={editTeam} onChange={setEditTeam} color={circles.meta(editCircle).color} size="sm" />
                 </div>
               )}
 
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginBottom: 14 }}>
                 <input type="checkbox" checked={editOpenCollab} onChange={e => setEditOpenCollab(e.target.checked)} style={{ accentColor: '#4338ca' }} />
-                <span style={{ fontSize: 12, color: 'var(--ink-2)' }}>Open for collaborators</span>
+                <span style={{ fontSize: 12, color: 'var(--ink-2)' }}>Open for offers to help</span>
               </label>
 
               <button
