@@ -267,7 +267,7 @@ export default function GovernanceClient({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div className={DESIGN === 'v4' ? 'v4-gov' : undefined} style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
 
 {DESIGN === 'v4' ? (
         <div className="v4-govhead"><PageHeader eyebrow="Working together" title="Governance"
