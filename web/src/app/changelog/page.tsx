@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.68.2',
+    date: '2026-11-20',
+    title: 'Your community’s logo in the menu',
+    items: ['The menu shows the community’s logo, set in the Blueprint, instead of a letter.'],
+  },
+  {
     version: 'v4.68.1',
     date: '2026-11-20',
     title: 'Members takes less room',
