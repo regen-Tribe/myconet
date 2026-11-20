@@ -1,6 +1,8 @@
 import { meetingCountsByCircle } from '@/modules/m18-meetings/lib/counts'
 import { suggestionCountsByCircle } from '@/modules/m07-ops/lib/pm-data'
 import { createClient } from '@/core/lib/supabase/server'
+import { DESIGN } from '@/core/lib/instance'
+import { Suspense } from 'react'
 import OrgChartClient from '@/modules/m17-org/OrgChartClient'
 import { fetchCircleDirectory } from '@/core/lib/ops-permissions'
 import { MEMBER_SELECT, toMember, toPerson } from '@/modules/m17-org/lib/org'
@@ -52,12 +54,14 @@ export default async function OrgPage() {
   }
 
   return (
+    <Suspense>
     <OrgChartClient
       initialUnits={(unitsRes.data ?? []) as OrgUnit[]}
       initialMembers={members}
       directory={directory}
       people={people}
       joinRequests={joinRequests}
+      projects={DESIGN === 'v4' ? (((await supabase.from('projects').select('id, title, status, circle').in('status', ['pending', 'backlog', 'in_progress', 'review', 'paused']).order('title')).data ?? []) as { id: string; title: string; status: string; circle: string | null }[]) : []}
       teamProjects={((await supabase.from('projects').select('id, title, team_id').not('team_id', 'is', null).in('status', ['pending', 'backlog', 'in_progress', 'review'])).data ?? []) as { id: string; title: string; team_id: string }[]}
       userId={user?.id ?? null}
       role={role}
@@ -65,5 +69,6 @@ export default async function OrgPage() {
       meetingCounts={meetingCounts}
       pmCounts={pmCounts}
     />
+    </Suspense>
   )
 }

@@ -3,6 +3,15 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.53.0',
+    date: '2026-11-20',
+    title: 'Circles and the calendar, as designed',
+    items: [
+      'With the new look on, Circles shows a card per circle, and each opens its own page with its members, teams, projects and who’s asking to join. Members can ask to join from there.',
+      'The calendar opens on a list of what’s coming, with a date box and a one-tap RSVP for each event, and a small month beside it.',
+    ],
+  },
+  {
     version: 'v4.52.0',
     date: '2026-11-20',
     title: 'About, as designed',
