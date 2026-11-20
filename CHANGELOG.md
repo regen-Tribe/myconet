@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.46.0 — 2026-11-20 — Calendar in the v4 look (from Protopia, Sonia)
+
+Only with the v4 look; release 7 continues.
+- **Calendar** (`m14-events/EventsClient.tsx`): the page header (Linked calendars, Add from a photo, New event as
+  shared buttons), the event kinds and categories as chips you switch on and off, and one toolbar (previous /
+  Today / next, the circle filter, Day · Week · Month · List).
+- **Event rows** (List and Day views, `CalendarViews.tsx`): time, title, where, online, circle, project and Public
+  with icons, who's going, and your answer as a status label. Month and week grids get the soft frame.
+- Same events, filters, links (`?show=`, `?view=`), RSVPs, pop-ups and permissions as before.
+
 ## v4.45.0 — 2026-11-20 — Members in the v4 look (from Protopia, Sonia)
 
 Only with the v4 look. Release 7 of DESIGN-SYSTEM.md › v4 starts here: the existing pages move to `core/components/v4`.
