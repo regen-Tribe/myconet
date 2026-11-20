@@ -13,6 +13,7 @@ import { canCreateKind, canEditEvent, EVENT_KINDS, KIND_META } from './lib/permi
 import { isFullMember } from '@/core/lib/roles'
 import { EVENT_SELECT, toEvent } from './lib/queries'
 import { categoryColor, DayView, ListView, MonthView, WeekView } from './CalendarViews'
+import { AgendaV4 } from './AgendaV4'
 import { EventDetailModal } from './EventDetailModal'
 import { EventFormModal, type EventDraft, type EventPayload } from './EventFormModal'
 import { CalendarFeedsModal } from './CalendarFeedsModal'
@@ -308,7 +309,7 @@ export default function EventsClient({
                 {circles.slugs.map(p => <option key={p} value={p}>{circles.meta(p).label}</option>)}
               </select>
               <span className="v4-seg" role="group" aria-label="View">
-                {VIEWS.map(v => <button key={v.id} type="button" className={view === v.id ? 'on' : ''} aria-pressed={view === v.id} onClick={() => setView(v.id)}>{v.label}</button>)}
+                {[...VIEWS.slice(3), ...VIEWS.slice(0, 3)].map(v => <button key={v.id} type="button" className={view === v.id ? 'on' : ''} aria-pressed={view === v.id} onClick={() => setView(v.id)}>{v.label}</button>)}
               </span>
             </span>
           </div>
@@ -453,6 +454,9 @@ export default function EventsClient({
         />
       ) : view === 'week' ? (
         <WeekView anchor={anchor} events={visible} now={now} onOpen={open} />
+      ) : DESIGN === 'v4' ? (
+        <AgendaV4 events={visible} rsvps={rsvps} userId={userId} now={now} showPast={showPast} onOpen={open}
+          onRsvp={(id, status) => rsvp(id, status)} onPickDay={d => { setAnchor(d); setView('day') }} />
       ) : (
         <ListView events={visible} rsvps={rsvps} userId={userId} now={now} showPast={showPast} onOpen={open} />
       )}

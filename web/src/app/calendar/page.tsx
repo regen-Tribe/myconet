@@ -1,3 +1,4 @@
+import { DESIGN } from '@/core/lib/instance'
 import { after } from 'next/server'
 import { createClient } from '@/core/lib/supabase/server'
 import EventsClient from '@/modules/m14-events/EventsClient'
@@ -86,7 +87,8 @@ export default async function EventsPage({ searchParams }: {
   const initialKinds = asked.length ? asked : [...EVENT_KINDS]
   if (linked && !initialKinds.includes(linked.kind)) initialKinds.push(linked.kind)
   const draftKind = isEventKind(sp.tab) ? sp.tab : asked[0] ?? 'core'
-  const initialView = VIEWS.find(v => v === sp.view) ?? 'day'
+  // The v4 look opens on the list with a small month beside it (Sonia's prototype); the classic look on today
+  const initialView = VIEWS.find(v => v === sp.view) ?? (DESIGN === 'v4' ? 'list' : 'day')
   const initialDraft: EventDraft | null = sp.new && isJoiningOrAbove(role)
     ? {
         kind: draftKind,

@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.53.0 — 2026-11-20 — Circles and the Calendar list laid out as the prototype (from Protopia, Sonia)
+
+Only with the v4 look. Sonia: compare every page with the prototype.
+- **Circles** (`m17-org/CirclesV4.tsx`, `design/redesign-prototype/app.js › pCircles / pCircle`): a card per circle
+  (its emoji, leads, member and team counts, purpose, avatars, "You're in it", how many are asking to join; the
+  stewards circle first with "Looks after every circle"), the admins below. Each card opens the circle's own page
+  (`/circles?c=slug`): its purpose, Edit, **Ask to join** / withdraw (members), who's asking (Accept / Decline for
+  its leads), members with leads first, + Add member, the lead name, teams (+ Add team, Edit, their projects),
+  the circle's open projects with their status, meeting notes and the project manager. The classic org chart stays
+  for everyone else.
+- **Calendar** (`m14-events/AgendaV4.tsx`, `pCalendar`): opens on the List view. Each event gets a date box, its
+  day, time, place, how many are going and its circle, with a one-tap **RSVP** (tap again to undo). A small month
+  sits beside it with dots on the days that have something; picking a day opens the Day view. Shows 12 at first,
+  "See all" for the rest. Day, Week and Month are unchanged.
+
 ## v4.52.0 — 2026-11-20 — About {community} laid out as the prototype (from Protopia, Sonia)
 
 Only with the v4 look. Sonia: "this is not the design". `AboutV4.tsx` now follows

@@ -18,6 +18,7 @@ import { UnitEditModal, type UnitDraft } from './UnitEditModal'
 import { modLabel } from '@/core/lib/module-label'
 import { DESIGN } from '@/core/lib/instance'
 import { PageHeader } from '@/core/components/v4'
+import CirclesV4, { type CircleProject } from './CirclesV4'
 
 function Chip({ name, username, note, isMe, accent }: {
   id: string; name: string; username: string | null; note?: string | null; isMe: boolean; accent?: string
@@ -46,7 +47,7 @@ const label: React.CSSProperties = {
 }
 
 export default function OrgChartClient({
-  initialUnits, initialMembers, directory, people, userId, role, leadCircles, meetingCounts, pmCounts, joinRequests = [], teamProjects = [],
+  initialUnits, initialMembers, directory, people, userId, role, leadCircles, meetingCounts, pmCounts, joinRequests = [], teamProjects = [], projects = [],
 }: {
   initialUnits: OrgUnit[]
   initialMembers: OrgMember[]
@@ -64,6 +65,8 @@ export default function OrgChartClient({
   joinRequests?: JoinRequest[]
   /** Open projects that belong to a team (v4.37.0), listed on the team's card */
   teamProjects?: { id: string; title: string; team_id: string }[]
+  /** Open projects with their circle, for each circle's page in the v4 look */
+  projects?: CircleProject[]
 }) {
   const circles = useCircles()
   const supabase = createClient()
@@ -150,6 +153,57 @@ export default function OrgChartClient({
     setEditing(null)
     setToast('Team deleted')
     return null
+  }
+
+  const modals = (
+    <>
+      {editing && (
+        <UnitEditModal
+          unit={editing.unit}
+          circle={editing.circle}
+          members={editing.unit ? membersOf(editing.unit.id) : []}
+          people={people}
+          canDelete={canLeadCircle(editing.circle, role, leadCircles)}
+          onClose={() => setEditing(null)}
+          onSave={saveUnit}
+          onDelete={deleteUnit}
+        />
+      )}
+      {toast && (
+        <div role="status" style={{
+          position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10000,
+          background: 'var(--ink)', color: 'var(--surface)', fontSize: 13, fontWeight: 600,
+          padding: '10px 18px', borderRadius: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+        }}>
+          {toast}
+        </div>
+      )}
+    </>
+  )
+
+  // The v4 look: circle cards and a page per circle (Sonia's prototype)
+  if ((DESIGN as string) === 'v4') {
+    return (
+      <>
+        <CirclesV4
+          units={units} members={members} directory={directory} people={people} userId={userId} role={role}
+          leadCircles={leadCircles} meetingCounts={meetingCounts} pmCounts={pmCounts} requests={requests}
+          teamProjects={teamProjects} projects={projects}
+          onEdit={(unit, circle) => setEditing({ unit, circle })}
+          onMemberAdded={(m, label) => { setMembers(prev => [...prev, m]); setToast(`${m.person?.name ?? 'They'} joined ${label}`) }}
+          onDecided={(id, approved) => {
+            const r = requests.find(x => x.id === id)
+            setRequests(prev => prev.filter(x => x.id !== id))
+            const cu = r ? circleUnit(r.circle) : undefined
+            if (approved && r && cu) {
+              setMembers(prev => [...prev, { unit_id: cu.id, user_id: r.user_id, role: 'member', title: null, person: people.find(p => p.id === r.user_id) ?? { id: r.user_id, name: r.name, username: null } }])
+              setToast(`${r.name} joined ${circles.meta(r.circle).label}`)
+            }
+          }}
+        />
+        {modals}
+      </>
+    )
   }
 
   const editBtn: React.CSSProperties = {

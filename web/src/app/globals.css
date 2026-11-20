@@ -1207,3 +1207,72 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .ab-photo--map { display: block; min-height: 260px; aspect-ratio: 1500 / 892; }
 .ab-day--plain li { display: block; }
 .ab-list { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2, #3a3f4a); }
+
+/* ─── Circles in v4 (Sonia's prototype pCircles / pCircle, v4.53.0) ─────────── */
+.cv4-cards { display: grid; gap: 14px; }
+@media (min-width: 760px) { .cv4-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cv4-card { display: flex; flex-direction: column; padding: 18px; }
+.cv4-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; font-size: 19px; background: color-mix(in srgb, var(--c, #8a8f9c) 22%, #fff); color: var(--ink, #111317); }
+.cv4-about { font-size: 13.5px; line-height: 1.55; color: var(--ink-2, #3a3f4a); margin: 0 0 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
+.cv4-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.cv4-avs { display: inline-flex; }
+.cv4-avs .cv4-av { width: 30px; height: 30px; font-size: 12px; box-shadow: 0 0 0 2px var(--surface, #fff); }
+.cv4-avs .cv4-av + .cv4-av { margin-left: -8px; }
+.cv4-more { background: var(--bg-2, #f2f3f7) !important; color: var(--ink-3, #6b7180) !important; font-size: 11px !important; }
+.cv4-gap { margin-bottom: 10px; }
+.cv4-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c, #8a8f9c); display: inline-block; }
+.cv4-pre { white-space: pre-line; }
+.cv4-links { margin: -4px 0 6px; }
+.cv4-split { display: grid; gap: 18px; }
+@media (min-width: 900px) { .cv4-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+.cv4-split > div > .v4-sec:first-child { margin-top: 0; }
+.cv4-leadname { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: -4px 0 8px; }
+.cv4-leadname:empty { display: none; }
+.cv4-small, .cv4-link { font-size: 12.5px; font-weight: 600; color: var(--ink, #111317); text-decoration: none; background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; }
+.cv4-link:hover, .cv4-small:hover { text-decoration: underline; }
+.cv4-add { margin-top: 10px; }
+.cv4-acts { display: inline-flex; gap: 6px; }
+.cv4-wrap { flex-wrap: wrap; }
+.cv4-team { align-items: flex-start; }
+.cv4-team .v4-row__main small + small { margin-top: 2px; }
+.cv4-tp { margin-top: 6px; }
+.cv4-tp .v4-tag { text-decoration: none; }
+.cv4-ask { margin-bottom: 14px; display: grid; gap: 8px; }
+.cv4-askrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.cv4-askrow .v4-input { flex: 1 1 220px; width: auto; }
+.cv4-err { color: #b91c1c; font-size: 12.5px; margin: 0 0 10px; }
+.cv4-admins { max-width: 640px; }
+@media (max-width: 640px) {
+  .cv4-wrap .cv4-acts { width: 100%; padding-left: 46px; }
+  .cv4 .v4-ph__actions { width: 100%; }
+}
+
+/* ─── Calendar list in v4 (Sonia's prototype pCalendar, v4.53.0) ─────────── */
+.ag4 { display: grid; gap: 18px; }
+@media (min-width: 1000px) { .ag4 { grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); align-items: start; } .ag4-month { position: sticky; top: 84px; } }
+.ag4-row { padding: 6px 8px 6px 6px; gap: 8px; }
+.ag4-open { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; padding: 4px; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 12px; }
+.ag4-open:hover { background: var(--bg-2, #f6f7fa); }
+.ag4-open .v4-row__main small { white-space: normal; }
+.ag4-sub { display: inline-flex !important; align-items: center; gap: 5px; }
+.ag4-date { width: 46px; height: 50px; flex-shrink: 0; border-radius: 12px; background: color-mix(in srgb, var(--ev, #8a8f9c) 16%, #fff); display: grid; place-content: center; text-align: center; line-height: 1; }
+.ag4-date small { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3, #6b7180); }
+.ag4-date b { font-size: 19px; font-weight: 600; margin-top: 3px; }
+.ag4-date--today { background: var(--ink, #111317); color: #fff; }
+.ag4-date--today small { color: rgba(255,255,255,.7); }
+.ag4-more { text-align: center; margin: 14px 0 0; }
+.ag4-month { padding: 16px 16px 18px; }
+.ag4-mhead { margin-top: 0 !important; }
+.ag4-mhead .v4-seg button { padding: 4px 8px; }
+.ag4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.ag4-dow { font-size: 10.5px; color: var(--ink-4, #9aa0ad); padding-bottom: 4px; }
+.ag4-d { aspect-ratio: 1; border: 0; background: none; border-radius: 10px; font: inherit; font-size: 13px; color: var(--ink, #111317); cursor: pointer; position: relative; display: grid; place-items: center; padding: 0; }
+.ag4-d:hover { background: var(--bg-2, #f6f7fa); }
+.ag4-d.out { color: var(--ink-4, #9aa0ad); }
+.ag4-d.ev::after { content: ''; position: absolute; bottom: 5px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--ink, #111317); }
+.ag4-d.today { background: var(--ink, #111317); color: #fff; font-weight: 600; }
+.ag4-d.today.ev::after { background: #fff; }
+@media (max-width: 640px) {
+  .ag4-row { flex-wrap: wrap; }
+  .ag4-row .v4-row__trail { margin-left: 62px; }
+}
