@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.87.0 — 2026-11-21 — A clearer menu: no look-alike arrows
+## v4.90.0 — 2026-11-21 — A clearer menu: no look-alike arrows
 
 Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSideNav` is unchanged.
 - The open/slim switch is a `sidebar` icon (new in `v4/icons.ts`), the same in both states, with `aria-expanded`.
@@ -22,6 +22,22 @@ Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSid
 - No migration, no new setting, no new secret.
 - Second brain: this changes no knowledge (no decision, task, project, agreement, role, event or document), so
   nothing lands there.
+
+## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
+
+Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
+`AGENTS.md` now open with **Session start: handoff notes**. Every session first reads the community's
+`instance/handoff/open/`, and the agent's first reply tells the person who each note is from, quoting every line
+addressed to them, before anything else. Notes it has dealt with move to `done/`. Docs only.
+
+## v4.87.0 — 2026-11-21 — A tidier circle page
+
+Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
+- Overview: Tasks and Coming up side by side; Purpose (when longer than its first line) and Subcircles (small cards)
+  below. The meeting-notes and project-manager links left the Overview (Meetings has "All notes →", Tasks the PM link).
+- Manuals & guides: a line saying they are the circle's notes in the second brain, grouped by topic (first subfolder)
+  with readable names ("running-at-100" → "Running at 100"); a topic's README is its "About …" entry.
+- A guide's page takes its title from the note's first heading and doesn't repeat it.
 
 ## v4.84.0 — 2026-11-21 — Sort drafts right in the list
 

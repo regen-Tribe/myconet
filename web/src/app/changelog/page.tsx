@@ -3,10 +3,22 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.87.0',
+    version: 'v4.90.0',
     date: '2026-11-21',
     title: 'A clearer menu: no more look-alike arrows',
     items: ['In the new look, the button that makes the menu slim or opens it again is now a sidebar icon. Open, it sits top right; slim, it sits at the bottom. Your next step in the slim menu is a green flag. Before, two arrows sat one above the other and did different things.', 'In the slim menu, a page’s name shows beside its icon as soon as you point at it. The slim menu scrolls when the window is short instead of squeezing its buttons, and it no longer opens wide for a moment each time a page loads.', 'On a phone, the menu closes with Escape and when you go back a page.'],
+  },
+  {
+    version: 'v4.88.0',
+    date: '2026-11-21',
+    title: 'Notes between teammates reach you',
+    items: ['When a teammate or their assistant leaves a note in the community’s handoff folder, the next coding assistant to open the project tells you about it in its first reply, before anything else.'],
+  },
+  {
+    version: 'v4.87.0',
+    date: '2026-11-21',
+    title: 'A tidier circle page',
+    items: ['A circle’s Overview shows its tasks and what’s coming up side by side, with its purpose and subcircles below, instead of a half-empty column.', 'Manuals & guides says what they are (the notes the circle keeps in the second brain), groups them by topic and gives them readable names; a topic’s README shows as its introduction.'],
   },
   {
     version: 'v4.84.0',
