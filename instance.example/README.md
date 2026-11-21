@@ -4,7 +4,7 @@ The starting point for a new MyCoNet community. Copy this folder to `instance/`
 (in that community's repo) and fill in `config.jsonc`.
 
 What lives in `instance/`, and only there: this community's settings, theme, seed
-content, extra migrations and history. Everything else is MyCoNet core: don't edit
+content, extra migrations and history (`log/`: one file per entry, see `log/README.md`). Everything else is MyCoNet core: don't edit
 it in a community repo; make the change in core and pull the release.
 See `INSTANCES.md` and `CORE-EXTRACTION.md` at the repo root.
 
