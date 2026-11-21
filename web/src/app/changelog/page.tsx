@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.79.1',
+    date: '2026-11-21',
+    title: 'A bigger Draft pill to slide',
+    items: ['The Draft pill on a task the agent drafted is bigger, so it’s easier to grab and slide on a phone or with a mouse. Slide it right to approve, left to decline, as before.'],
+  },
+  {
     version: 'v4.79.0',
     date: '2026-11-20',
     title: 'Open a suggestion’s task, and accepting confirms a draft',
