@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.83.0',
+    date: '2026-11-21',
+    title: 'A clearer menu: no more look-alike arrows',
+    items: ['In the new look, the button that makes the menu slim or opens it again is now a sidebar icon. Open, it sits top right; slim, it sits at the bottom. Your next step in the slim menu is a green flag. Before, two arrows sat one above the other and did different things.', 'In the slim menu, a page’s name shows beside its icon as soon as you point at it. The slim menu scrolls when the window is short instead of squeezing its buttons, and it no longer opens wide for a moment each time a page loads.', 'On a phone, the menu closes with Escape and when you go back a page.'],
+  },
+  {
     version: 'v4.82.0',
     date: '2026-11-21',
     title: 'A calmer page colour',
