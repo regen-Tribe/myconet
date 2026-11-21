@@ -5,8 +5,8 @@ const ENTRIES = [
   {
     version: 'v4.104.0',
     date: '2026-11-21',
-    title: 'Each circle shows its number of subcircles',
-    items: ['On the Circles page, every circle’s card shows how many subcircles it has, next to its open tasks and meetings.'],
+    title: 'Subcircles, one click away',
+    items: ['On the Circles page, every circle’s card shows how many subcircles it has.', 'Click the count to see them, then pick one to go straight to it. Circle leads and admins can add a subcircle from there too.'],
   },
   {
     version: 'v4.103.0',
