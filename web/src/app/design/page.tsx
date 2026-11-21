@@ -5,6 +5,7 @@ import {
 } from '@/core/components/v4'
 import { ICONS } from '@/core/components/v4/icons'
 import { Seal } from '@/core/components/v4/CircleSeal'
+import { GlyphPickerDemo } from './GlyphPickerDemo'
 import { CIRCLE_GLYPHS, CIRCLE_GLYPH_LABEL, type CircleGlyph } from '@/core/components/v4/circle-glyphs'
 
 export const metadata: Metadata = { title: 'Design · MyCoNet', robots: { index: false } }
@@ -98,6 +99,12 @@ export default function DesignPage() {
           </div>
         </div>
       </Card>
+
+      <SectionHead title="Seal picker" />
+      <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--ink-3)', maxWidth: 720 }}>
+        How an admin chooses a circle&apos;s seal (Blueprint › Circles › Edit, and the circle&apos;s Edit window): every stamp in the circle&apos;s colour, or its first letter.
+      </p>
+      <Card><GlyphPickerDemo color="#BD4238" name="Kitchen" /></Card>
 
       <SectionHead title={`Icons · ${Object.keys(ICONS).length}`} />
       <p style={{ margin: '0 0 10px', fontSize: 13, color: 'var(--ink-3)', maxWidth: 720 }}>

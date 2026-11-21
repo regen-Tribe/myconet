@@ -53,3 +53,26 @@ export const CIRCLE_GLYPH_LABEL: Record<CircleGlyph, string> = {
 export function isCircleGlyph(v: unknown): v is CircleGlyph {
   return typeof v === 'string' && Object.prototype.hasOwnProperty.call(CIRCLE_GLYPHS, v)
 }
+
+// First match wins, so the more specific words come first
+const GLYPH_HINTS: [RegExp, CircleGlyph][] = [
+  [/kitchen|cook|meal|food prep/, 'pot'],
+  [/farm|food|garden|agri|land|ecolog|forest/, 'wheat'],
+  [/build|infra|construct|repair|mainten|energy|water|workshop/, 'hammer'],
+  [/hospital|guest|accommod|arrival|room|welcome|housing/, 'key'],
+  [/host|gather|ceremon|ritual|space.?hold|event|culture/, 'fire'],
+  [/shop|store|market.?place|trade|sales/, 'bag'],
+  [/market|comm(unication)?s\b|communication|media|story|outreach/, 'megaphone'],
+  [/financ|money|budget|econom|treasur|legal|fund/, 'coins'],
+  [/clean|care.?tak|housekeep/, 'broom'],
+  [/\bart|craft|creativ|design|music/, 'brush'],
+  [/incubat|innovat|idea|learn|educat|school|research/, 'egg'],
+  [/communit|member|people|wellbeing|care|social|governance/, 'ring'],
+  [/vision|strateg|steward|core|council/, 'spiral'],
+]
+
+/** A fitting glyph for a new circle, from its name ("Kitchen" → pot); null when nothing fits (the initial shows). */
+export function glyphFor(name: string): CircleGlyph | null {
+  const n = name.toLowerCase()
+  return GLYPH_HINTS.find(([re]) => re.test(n))?.[1] ?? null
+}
