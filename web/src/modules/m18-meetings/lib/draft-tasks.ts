@@ -76,7 +76,7 @@ export const dottedDate = (ymd: string) => ymd.split('-').reverse().join('.')
 
 export { withoutDate } from './title'
 
-/** "Kitchen lead handover": the agent's name for the meeting, without a date (v4.85.0; before, the date went in front) */
+/** "Kitchen lead handover": the agent's name for the meeting, without a date (v4.91.0; before, the date went in front) */
 export const meetingName = (title: string) => withoutDate(title)
 
 // Fireflies' headings that aren't people ("Unassigned", "Kitchen Circle")

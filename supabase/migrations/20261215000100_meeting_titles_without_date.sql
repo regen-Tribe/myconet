@@ -1,4 +1,4 @@
--- v4.85.0: a meeting's name no longer carries its date (the date is shown beside it).
+-- v4.91.0: a meeting's name no longer carries its date (the date is shown beside it).
 -- Before, the assistant named meetings "17.11.2026 Kitchen lead handover". Take the date off the
 -- front of existing names; the name the recording had stays in original_title. Runs once; safe to rerun.
 update public.meeting_transcripts

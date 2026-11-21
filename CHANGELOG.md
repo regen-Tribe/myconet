@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.85.0 — 2026-11-21 — Meetings: names without the date; only real tasks (from Protopia, Sonia)
+## v4.91.0 — 2026-11-21 — Meetings: names without the date; only real tasks (from Protopia, Sonia)
 
 - The assistant names a meeting without its date ("Kitchen lead handover", not "17.11.2026 Kitchen lead handover"):
   the date is shown beside it. `lib/title.ts` (`withoutDate`) takes a date off the start or end of older or typed
@@ -14,6 +14,52 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 - The assistant keeps a task only when it has a visible result, someone agreed to it, it is still to do, it is the
   community's work and it isn't on the board yet. Fireflies' action items are checked against the transcript; when in
   doubt, it's left out. The quote kept with a task is where it was agreed.
+
+## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
+
+Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
+`AGENTS.md` now open with **Session start: handoff notes**. Every session first reads the community's
+`instance/handoff/open/`, and the agent's first reply tells the person who each note is from, quoting every line
+addressed to them, before anything else. Notes it has dealt with move to `done/`. Docs only.
+
+## v4.87.0 — 2026-11-21 — A tidier circle page
+
+Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
+- Overview: Tasks and Coming up side by side; Purpose (when longer than its first line) and Subcircles (small cards)
+  below. The meeting-notes and project-manager links left the Overview (Meetings has "All notes →", Tasks the PM link).
+- Manuals & guides: a line saying they are the circle's notes in the second brain, grouped by topic (first subfolder)
+  with readable names ("running-at-100" → "Running at 100"); a topic's README is its "About …" entry.
+- A guide's page takes its title from the note's first heading and doesn't repeat it.
+
+## v4.84.0 — 2026-11-21 — Sort drafts right in the list
+
+Oscar: "on the drafts to confirm task board… set the status… talk with an ai in the bar… see circle, sub circle,
+task… and be able to change any of those. when user changes any of those, it is no longer a draft… leave the ones
+that are there showing the new status until a refresh".
+- In Operations › Tasks (M07), the list has **Circle**, **Subcircle** and **Part of** columns. For anyone who may
+  edit the task, those and **Status** are pickers right in the row. They follow the task pop-up's rules: a
+  subcircle or task brings its circle, and what no longer fits the new circle is cleared.
+- **✦ Tell the assistant** on each row sends a request to the assistant bar about that task.
+- Changing a draft confirms it. That covers the row's pickers, and changes the assistant makes to a draft task
+  (Do: rename, assign, date, status, move). Undoing a Do change makes it a draft again.
+- With **Only drafts to confirm** on, a confirmed or changed draft stays in the list, marked ✓ Confirmed with its new
+  values, until the page is reloaded. No migration.
+
+## v4.83.0 — 2026-11-21 — About reads as chapters
+
+Only for communities with `"design": "v4"` (`AboutV4`). No migration.
+- **Chapters.** Each chapter of About has its heading, a short intro and a photo of a place from the Map in a column
+  that stays in view on a computer, beside its topics: tidy rows (icon, title, first sentence) that open to the
+  whole answer. They replace the grids of text cards and "Read more". A day here is a timeline read from the
+  daily-rhythm answer; values are a numbered list. Place photos show to signed-in people only, as on the Map.
+- **At a glance.** The tiles under the photo each lead with a figure and say what it means in a line, read from
+  the Blueprint (`glance()` in `lib/about-text.ts`): the land, people, places to sleep, climate, since, off-grid.
+  A tile without a figure shows the answer's short form; each has a faint colour of its own and jumps to its
+  whole answer, which opens and lights up.
+- **The heading.** The photo is a fixed wide frame (at most 460px or 58% of the screen; taller on phones), the name
+  is sized to the frame, and a shade sits only behind the words so the place stays visible. Under the name, the
+  Project name's tagline, else the start of What we are. The place tag prefers a place with its country. On narrow
+  phones Ask is a round icon beside Start joining. The chapter bar fades at its edge.
 
 ## v4.82.0 — 2026-11-21 — A calmer page colour (v4)
 
