@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.96.0 — 2026-11-21 — The last emoji on screens become icons
+
+v4.78.0 replaced emoji with the marker-line icons on most screens; these are the files it skipped. Every community.
+- **Screens:** the Blueprint editor (`BlueprintClient.tsx`: import buttons, warnings, fact tiles, side list, phone tabs,
+  light/dark switch), the older Home (`HomeClient.tsx`: module pills, access steps, badges, facts, the governance demo),
+  the older Governance body (`GovernanceClient.tsx`), the older Bookings screens (`BookingsClient`, `ItemModal`,
+  `ItemFormModal`), the older account menu (`AppTopBar.tsx`), the older dashboard's lock, the landing page's four
+  checks, and "Change time" on an event.
+- **The four governance checks** have one icon each everywhere: circles (consent), vote (majority), shield (expert
+  review), spark (AI check). They were ☉ ☑ △ ◇.
+- `CATEGORY_META` (`m15-bookings/lib/inventory.ts`): `emoji` is now `icon`, a name from the icon set (bed, wrench, building).
+- **Match reasons** on Members (`m01-network/lib/match-score.ts`) are words only ("Shared skill: carpentry").
+- **`InlineIcon` stays in its line of text:** `.v4-inl` is `inline-block`. The CSS reset makes every svg a block, so
+  outside a flex row the icon sat on a line of its own (place names in the calendar, among others).
+- Kept: text marks (✓ ✗ ☐ → ←), and circle emoji from the database for communities without the v4 look
+  (`circle-setup.ts`). No content, setting or permission changed. No migration.
+
 ## v4.95.0 — 2026-11-21 — Admins choose a circle's seal
 
 The picker v4.81.0 left open ("set `circles.icon` in a community migration for now"). v4 only.
