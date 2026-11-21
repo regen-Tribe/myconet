@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.97.0 — 2026-11-21 — icon-check: one icon set, kept that way
+
+- **`cd web && npm run icon-check`** (`web/scripts/icon-check.mjs`): fails when a `.ts` or `.tsx` file under `web/src`
+  has an emoji outside a comment, or imports `lucide-react`. Allow list, with reasons, at the top of the script: the
+  changelog page (quotes old button names) and `m04-blueprint/lib/circle-setup.ts` (circle emoji for communities
+  without the v4 look). Text marks and arrows (✓ ✗ ☐ → ↕) pass.
+- Runs in the **Lint workflow** (step "Icons") and is part of the `verify` skill.
+- **`lucide-react` removed** from `web/package.json`: nothing imported it since v4.78.0 (`v4/lucide-compat.tsx` draws
+  the old names from the marker-line set).
+- New icon `info`; the two ℹ notes in Agreements use it. DESIGN-SYSTEM.md › v4 names the check. No migration.
+
 ## v4.96.0 — 2026-11-21 — The last emoji on screens become icons
 
 v4.78.0 replaced emoji with the marker-line icons on most screens; these are the files it skipped. Every community.

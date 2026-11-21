@@ -37,7 +37,9 @@ Each release replaces that module's hard-coded colours and sizes with tokens and
 
 **Three visual layers, never mixed (v4.78.0–v4.79.0).** Each look means one thing:
 - **Interface icons:** the marker-line set in ink (`Icon`, `InlineIcon` in a line of text). Never coloured, never
-  an emoji. Older code that imported `lucide-react` gets the same icons through `v4/lucide-compat.tsx`.
+  an emoji. Older code that used lucide names gets the same icons through `v4/lucide-compat.tsx`; the
+  `lucide-react` package is gone. `cd web && npm run icon-check` (also in the Lint workflow) fails on an emoji in
+  `web/src` or a `lucide-react` import; its short allow list is at the top of `web/scripts/icon-check.mjs`.
 - **Circles:** the circle seal (`CircleSeal`; `Seal` when you already have a colour and a glyph): the circle's
   colour as a hand-drawn round with its glyph stamped on it in cream (`v4/circle-glyphs.ts`, `circles.icon`; no
   glyph shows the initial). The glyphs are **stamps, not line icons**: solid cream shapes with details cut out in

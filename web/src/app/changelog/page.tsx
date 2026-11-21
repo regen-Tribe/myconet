@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.97.0',
+    date: '2026-11-21',
+    title: 'One icon set, kept that way',
+    items: ['Behind the scenes: a check now stops emoji and other icon sets from coming back onto screens, so the portal keeps one set of line icons, with coloured seals only for circles.'],
+  },
+  {
     version: 'v4.96.0',
     date: '2026-11-21',
     title: 'One icon set everywhere',
