@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.85.0',
+    date: '2026-11-21',
+    title: 'Meeting names without the date',
+    items: ['A meeting’s name no longer repeats its date; the date is shown beside it.', 'The assistant is stricter about tasks from meetings: only work someone agreed to do, still to be done, and not on the board yet.'],
+  },
+  {
     version: 'v4.82.0',
     date: '2026-11-21',
     title: 'A calmer page colour',

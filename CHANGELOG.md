@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.85.0 — 2026-11-21 — Meetings: names without the date; only real tasks (from Protopia, Sonia)
+
+- The assistant names a meeting without its date ("Kitchen lead handover", not "17.11.2026 Kitchen lead handover"):
+  the date is shown beside it. `lib/title.ts` (`withoutDate`) takes a date off the start or end of older or typed
+  names on the list, the meeting page and the second-brain note.
+- **Migration** `20261215000100_meeting_titles_without_date.sql`: takes the leading date off existing meeting names.
+- The assistant keeps a task only when it has a visible result, someone agreed to it, it is still to do, it is the
+  community's work and it isn't on the board yet. Fireflies' action items are checked against the transcript; when in
+  doubt, it's left out. The quote kept with a task is where it was agreed.
+
 ## v4.82.0 — 2026-11-21 — A calmer page colour (v4)
 
 Sonia picked "Half the wash" from the cobalt study: the v4 page was tinted blue all over, so the cobalt drawings
