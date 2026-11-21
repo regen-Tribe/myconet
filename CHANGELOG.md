@@ -5,6 +5,18 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.93.0 — 2026-11-21 — Circle seals are stamps; the whole icon set on /design
+
+Sonia: "custom cool icons for each circle in the right colour … distinct from the nav bar icons".
+- **Circle glyphs redrawn as stamps** (`core/components/v4/circle-glyphs.ts`): solid cream shapes with details cut
+  out in the circle's colour, instead of the thin line the interface icons use. Same 13 keys (spiral, wheat, hammer,
+  pot, key, fire, megaphone, coins, broom, brush, ring, egg, bag), so nothing stored changes. `CIRCLE_GLYPH_LABEL`
+  names them for the pickers to come.
+- `Seal` (`CircleSeal.tsx`): the seal for a colour and a glyph you already have; `CircleSeal` uses it.
+- **`/design` shows every icon** at 16, 24 and 40px with its name, and every seal at 16, 24, 40 and 64px.
+- Icon review: `moon` redrawn (it was a thin sliver). The other twelve added in v4.78.0 hold up beside the originals.
+- DESIGN-SYSTEM.md › v4 › three layers: seals are stamps. No migration.
+
 ## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
 
 Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
