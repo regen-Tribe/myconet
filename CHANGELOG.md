@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.76.0 — 2026-11-20 — A photo of its own for each bookable thing
+
+Sonia: "these photos should actually represent the accommodation".
+- Migration `20261214000000_booking_item_photos.sql`: `booking_items.photo_url` (https only). Who may change it:
+  the existing item policies. Read separately, so a community that hasn't applied it keeps its bookings page.
+- Admins add, replace or remove an item's photo in its edit form (the public `branding` bucket, which only
+  admins upload to; the file is `item-<id>-<time>.<ext>`, the old one is removed).
+- Cards and the item's window show its own photo first, else the place's photo (v4.75.0). In the list each
+  picture shows once, on the first card that has it (the 20 dorm beds share one).
+
 ## v4.75.1 — 2026-11-20 — A place's photo shows once
 
 Sonia: "show the photo once per place". In Amenities & tools (M15) Browse, a place's photo shows on the first card
