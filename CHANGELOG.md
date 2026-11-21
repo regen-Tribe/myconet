@@ -5,6 +5,30 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.108.0 — 2026-11-21 — Subcircles have their own page, and their own meetings
+
+Oscar: "sub circles should have a subpage the same abilities as a circle subpage… like a russian doll effect so it's
+familiar… and a bread crumb on top so users can see their way back", and "set subcircles for meetings also so
+subcircles get their transcripts in their section".
+- **A subcircle's page** (M17, v4 look), at `/circles?c=<circle>&t=<subcircle>`, works like its circle's page one
+  level in. Its tabs:
+  - **Overview:** lead, people, open tasks, meeting notes and purpose.
+  - **People:** leads and members. Those who may manage it add people here.
+  - **Tasks:** the tasks and projects given to it.
+  - **Meetings:** the meeting notes set to it.
+
+  **Edit** is for those who may manage it. Every link to a subcircle now opens its page: the circle's Overview and
+  Subcircles tabs, and the subcircle list on each card (v4.104.0).
+- **A breadcrumb** on a circle's page (Circles › Kitchen) and on a subcircle's (Circles › Kitchen › Bakery) replaces
+  the "← Circles" link.
+- **Meetings can belong to a subcircle.** On a meeting's page, under Review this meeting, the leads now have a
+  **Subcircle** picker next to the circle, offering the chosen circle's subcircles or the whole circle. The meeting
+  then shows on that subcircle's page.
+- Migration `20261216000000_meeting_teams.sql` adds `meeting_transcripts.team_id` (subcircles only). Like a project's
+  subcircle, it sets the meeting's circle, and moving the meeting to another circle takes it off its subcircle
+  (`private.meeting_team_circle`). It's read on its own, so a community that hasn't applied it keeps its meeting and
+  circle pages.
+
 ## v4.107.0 — 2026-11-21 — A meeting's page has the project manager too
 
 Oscar: "a privileged user [should] see project manager suggestions for all the things pending and have the same
