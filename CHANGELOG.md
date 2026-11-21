@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.80.0 — 2026-11-21 — Circle seals
+## v4.81.0 — 2026-11-21 — Circle seals
 
 Sonia: "redo icons for circles in colours so they are distinct from the rest of icons". v4 only.
 - Migration `20261215000000_circle_icons.sql`: `circles.icon` (a glyph key, checked format; null shows the

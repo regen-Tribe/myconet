@@ -3,7 +3,7 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.80.0',
+    version: 'v4.81.0',
     date: '2026-11-21',
     title: 'Circle seals',
     items: ['In the v4 look each circle has a seal: its colour as a hand-drawn round with a small drawing in a cream line (a wheat stalk for farming, a pot for the kitchen). It shows on the circle cards, in the Circles filter, on board cards, on a task’s page and in the calendar.', 'Circles are now the only coloured icons, so a coloured seal always means a circle. Circle names no longer carry an emoji. A circle without a drawing shows its first letter.'],
