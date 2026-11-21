@@ -635,6 +635,10 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
 .v4-inl { vertical-align: -.18em; margin-right: .28em; }
 /* Circle seals (CircleSeal): the only coloured icons; a circle's colour round with its cream glyph */
 .v4-seal { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+/* The glyph is a stamp: solid cream shapes; .l a cream line, .c a line cut in the circle's colour, .h a hole */
+.v4-seal__art .l { fill: none; }
+.v4-seal__art .c { fill: none; stroke: var(--seal); stroke-width: 1.5; }
+.v4-seal__art .h { fill: var(--seal); stroke: none; }
 .v4-cf__pill .v4-seal, .ops4-circ .v4-seal, .pj4-pill .v4-seal { margin-right: 6px; }
 .v4-spin { animation: v4-spin 0.9s linear infinite; }
 @keyframes v4-spin { to { transform: rotate(360deg); } }
