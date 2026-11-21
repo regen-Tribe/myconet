@@ -633,6 +633,9 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
    fallbacks, so they also work where v4 is off. */
 .v4-icon { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; overflow: visible; }
 .v4-inl { vertical-align: -.18em; margin-right: .28em; }
+/* Circle seals (CircleSeal): the only coloured icons; a circle's colour round with its cream glyph */
+.v4-seal { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+.v4-cf__pill .v4-seal, .ops4-circ .v4-seal, .pj4-pill .v4-seal { margin-right: 6px; }
 .v4-spin { animation: v4-spin 0.9s linear infinite; }
 @keyframes v4-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .v4-spin { animation-duration: 2.4s; } }

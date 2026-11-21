@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.81.0 — 2026-11-21 — Circle seals
+
+Sonia: "redo icons for circles in colours so they are distinct from the rest of icons". v4 only.
+- Migration `20261215000000_circle_icons.sql`: `circles.icon` (a glyph key, checked format; null shows the
+  initial). Who may change it: the existing "admins edit circles" policy. `loadCircleRows` falls back to the old
+  select, so a community that hasn't applied it keeps its circles.
+- `CircleSeal` (`core/components/v4/CircleSeal.tsx`) and 13 glyphs (`circle-glyphs.ts`: spiral, wheat, hammer,
+  pot, key, fire, megaphone, coins, broom, brush, ring, egg, bag). Shown on circle cards and the circle page,
+  in `CircleFilter` (list and pills), on project cards on the board, on a project page and in the calendar.
+- In v4 `circles.meta().emoji` is empty and `label()` is the name: no emoji in text.
+- DESIGN-SYSTEM.md › v4: the three visual layers (ink icons, circle seals, status pills).
+- Not yet: a glyph picker for admins (set `circles.icon` in a community migration for now).
+
 ## v4.80.0 — 2026-11-21 — A calm Home (v4 look), for everyone
 
 Sonia: "it should be clear giving a nice orientation to the app: purpose of Protopia MyCoNet, what can be found,
