@@ -5,6 +5,27 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.80.0 — 2026-11-21 — A calm Home (v4 look), for everyone
+
+Sonia: "it should be clear giving a nice orientation to the app: purpose of Protopia MyCoNet, what can be found,
+how to use it… because now it is overwhelming", then "shouldn't be long", "too little background", "seems a little
+flat" and "it should say this is your portal". With `design: "v4"`, `/home` is now `HomeV4`
+(`web/src/modules/home/HomeV4.tsx`), about two screens instead of twelve:
+- A photo hero (the community banner): "Welcome to {community}" (or "Welcome, {name}"), the first clause of the
+  Blueprint's description, and two ways in.
+- **Start here** on the hero's edge: three steps for where you are (visitor, explorer, joining), ticked as they're
+  done. Members don't see it; on phones they get their next step instead.
+- **About {community}** (the Blueprint's what and why) beside **Your portal** (cobalt): what MyCoNet is, the ask
+  bar, the menu, and that looking around breaks nothing.
+- **What we do on MyCoNet**: the menu's own pages as tiles with live numbers (people, events, circles, projects,
+  open proposals), locked ones saying when they open.
+- **Happening now**: the next events and the open vote.
+
+**Everyone lands on Home again** (Sonia: "everyone sees Home"). This undoes v4.78.0's "Home is the dashboard": `/home`
+renders `HomeV4` instead of redirecting, a signed-in `/` goes to `/home`, and the v4 menu's logo links to `/home`.
+My dashboard stays in the menu. The old module-by-module tour stays at `/home?tour=1`. Communities without v4 keep
+the old Home. No migration.
+
 ## v4.79.1 — 2026-11-21 — A bigger Draft pill to slide
 
 Sonia: "make slideable draft buttons slightly bigger so it is easier to drag both on mobile and desktop". The

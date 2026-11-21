@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.80.0',
+    date: '2026-11-21',
+    title: 'A calm Home that tells you where you are',
+    items: ['In the new look, Home is short and everyone lands there again. It welcomes you with a photo and says in one line what the community is, then shows Start here: three steps for your way in, with what you’ve already done ticked.', 'Below are About the community, in its own words, and Your portal: what MyCoNet is, how to ask it anything and where every page is. Then what we do here as tiles with live numbers, and what’s happening this week.', 'The logo takes you to Home; My dashboard is in the menu. The long tour of every page is still there, linked at the bottom.'],
+  },
+  {
     version: 'v4.79.1',
     date: '2026-11-21',
     title: 'A bigger Draft pill to slide',
