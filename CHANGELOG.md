@@ -5,6 +5,22 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.83.0 — 2026-11-21 — About reads as chapters
+
+Only for communities with `"design": "v4"` (`AboutV4`). No migration.
+- **Chapters.** Each chapter of About has its heading, a short intro and a photo of a place from the Map in a column
+  that stays in view on a computer, beside its topics: tidy rows (icon, title, first sentence) that open to the
+  whole answer. They replace the grids of text cards and "Read more". A day here is a timeline read from the
+  daily-rhythm answer; values are a numbered list. Place photos show to signed-in people only, as on the Map.
+- **At a glance.** The tiles under the photo each lead with a figure and say what it means in a line, read from
+  the Blueprint (`glance()` in `lib/about-text.ts`): the land, people, places to sleep, climate, since, off-grid.
+  A tile without a figure shows the answer's short form; each has a faint colour of its own and jumps to its
+  whole answer, which opens and lights up.
+- **The heading.** The photo is a fixed wide frame (at most 460px or 58% of the screen; taller on phones), the name
+  is sized to the frame, and a shade sits only behind the words so the place stays visible. Under the name, the
+  Project name's tagline, else the start of What we are. The place tag prefers a place with its country. On narrow
+  phones Ask is a round icon beside Start joining. The chapter bar fades at its edge.
+
 ## v4.82.0 — 2026-11-21 — A calmer page colour (v4)
 
 Sonia picked "Half the wash" from the cobalt study: the v4 page was tinted blue all over, so the cobalt drawings

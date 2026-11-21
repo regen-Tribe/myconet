@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.83.0',
+    date: '2026-11-21',
+    title: 'About reads as chapters',
+    items: ['About is easier to read through: each chapter keeps its heading, a short intro and a photo of the place in view while you read its topics, and each topic opens to the whole answer. A day here is a timeline.', 'The tiles under the photo each show a figure and what it means: the size of the land, how many people, places to sleep, the climate, the year it began, and off-grid power and water. Click one to read the whole answer.', 'The photo at the top fits the screen better, and the name and the line under it stay readable without covering the place.'],
+  },
+  {
     version: 'v4.82.0',
     date: '2026-11-21',
     title: 'A calmer page colour',
