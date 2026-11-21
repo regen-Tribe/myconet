@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.77.0 — 2026-11-20 — Where the project manager's suggestion comes from
+
+Oscar: "click something that shows me where the project manager is pulling this info from… what meeting it came
+from, date, who said it, any other facts about it". Each suggestion in the 🧭 Project manager panel (M07) has
+**Where this comes from**. For each task it's about, that shows:
+- The task's status, its project, who's on it, the due date and the priority.
+- Where it came from. For a meeting, that's the meeting's name (a link), its date, its circle, the line that was
+  said and who said it (Fireflies' speaker on that action item), and who was there. Otherwise, who added it by
+  hand and when.
+- The task's notes.
+- When the project manager reviewed the board.
+
+It's read with the person's own session, so a meeting they may not open shows as "a meeting you can't open". No
+migration.
+
 ## v4.76.0 — 2026-11-20 — A photo of its own for each bookable thing
 
 Sonia: "these photos should actually represent the accommodation".

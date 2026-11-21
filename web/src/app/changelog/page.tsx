@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.77.0',
+    date: '2026-11-20',
+    title: 'See where a project manager suggestion comes from',
+    items: ['Every suggestion in the project manager panel has “Where this comes from”. For each task it’s about, you see the meeting it came from with its date, what was said, who said it and who was there. A task added by hand shows who added it and when.', 'You also see the task’s status, project, person, due date and notes, and when the project manager last looked at the board.'],
+  },
+  {
     version: 'v4.76.0',
     date: '2026-11-20',
     title: 'Rooms, beds and tools have their own photos',
