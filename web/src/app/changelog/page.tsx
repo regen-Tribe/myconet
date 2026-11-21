@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.107.0',
+    date: '2026-11-21',
+    title: 'A meeting’s page has the project manager too',
+    items: ['A meeting’s page shows the project manager’s suggestions about its action items, with the same buttons as on the board.', 'The project manager panel in Operations now also lists every meeting’s drafts waiting to be confirmed, by meeting, with the same rows and controls as the meeting’s page.', 'Under a task’s fields there’s “✦ What should the assistant do?”. Type it, like “give it to Ana, high priority, due Friday”, and the assistant changes it right there. The changed fields are marked, and you keep it or undo it.'],
+  },
+  {
     version: 'v4.106.0',
     date: '2026-11-21',
     title: 'Project manager: tasks you can edit at a glance',

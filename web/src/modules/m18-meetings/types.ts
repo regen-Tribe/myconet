@@ -78,4 +78,6 @@ export interface MeetingTask {
   assignee_id: string | null
   assignee_name: string | null
   priority: string | null
+  /** The meeting it came from (v4.107.0: the board's project manager lists drafts by meeting); title null when the viewer can't open it */
+  meeting?: { id: string; title: string | null; date: string | null; circle: string | null }
 }
