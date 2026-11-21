@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.79.0 — 2026-11-20 — Open a suggestion's task, and deciding confirms a draft
+
+Oscar: "i should be able to click the name of the task and open the card… make the task stop showing draft".
+- In the 🧭 Project manager panel (M07), a task's name in a suggestion opens its card on the board, and so does
+  "Open task →" in Where this comes from. Saving the card confirms a draft, as before.
+- Accepting a suggestion confirms the drafts it touches: the task given to someone, the tasks moved or put in a new
+  task, and the one kept in a merge. The change is logged with `confirmed`, and **Undo** makes them drafts again.
+  No migration.
+
 ## v4.78.0 — 2026-11-21 — The v4 look on every screen
 
 Sonia: "let's fix all the changes so v4 reaches all screens". Only for communities with `"design": "v4"`; others

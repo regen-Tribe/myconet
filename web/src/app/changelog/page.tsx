@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.79.0',
+    date: '2026-11-20',
+    title: 'Open a suggestion’s task, and accepting confirms a draft',
+    items: ['In the project manager panel, click a task’s name to open its card. You can edit it there, and saving confirms a draft.', 'When you accept a suggestion, such as “Give it to…”, its draft tasks are confirmed and stop showing as drafts. Undo makes them drafts again.'],
+  },
+  {
     version: 'v4.78.0',
     date: '2026-11-21',
     title: 'The v4 look on every screen',

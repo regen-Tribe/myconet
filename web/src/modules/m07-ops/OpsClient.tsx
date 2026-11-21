@@ -790,6 +790,7 @@ export default function OpsClient({
           suggestions={pmSuggestions} actions={pmActions} circle={selectedCircles} canDecide={canDecide}
           projects={projectOptions} teams={teams}
           taskTitles={Object.fromEntries(initialDeliverables.map(d => [d.id, d.title]))}
+          onOpenTask={id => { const t = boardTasks.find(x => x.id === id) ?? initialDeliverables.find(x => x.id === id); if (t) setOpenTask(t) }}
         />
         <div className={DESIGN === 'v4' ? 'ops4-board' : undefined} style={DESIGN === 'v4' ? undefined : { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
           {columns.map(col => {
