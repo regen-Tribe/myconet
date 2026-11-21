@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
+
+Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
+`AGENTS.md` now open with **Session start: handoff notes**. Every session first reads the community's
+`instance/handoff/open/`, and the agent's first reply tells the person who each note is from, quoting every line
+addressed to them, before anything else. Notes it has dealt with move to `done/`. Docs only.
+
 ## v4.87.0 — 2026-11-21 — A tidier circle page
 
 Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
