@@ -1,5 +1,6 @@
 'use client'
 
+import { InlineIcon } from '@/core/components/v4'
 import { useState, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCircles } from '@/core/components/CirclesProvider'
@@ -10,7 +11,7 @@ import Link from 'next/link'
 const KIND: Record<string, string> = { merge: 'Same task twice', move: 'Belongs in a task', new_project: 'Start a task', assign: 'Who could take it' }
 const DONE: Record<string, string> = { pm_merge: 'Merged duplicates', pm_move: 'Filed into a task', pm_assign: 'Assigned' }
 
-// Arriving from a circle page's "🧭 Project manager" button (/operations?circle=…#pm) opens the panel
+// Arriving from a circle page's "Project manager" button (/operations?circle=…#pm) opens the panel
 const onHash = (cb: () => void) => { window.addEventListener('hashchange', cb); return () => window.removeEventListener('hashchange', cb) }
 const atPm = () => window.location.hash === '#pm'
 
@@ -175,7 +176,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   return (
     <div id="pm" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderTop: '3px solid var(--m7)', borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>🧭 Project manager</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}><InlineIcon name="compass" />Project manager</span>
         <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{acceptedShown.length ? ` · ${acceptedShown.length} accepted` : ''}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
         <button onClick={() => setToggled(!open)} style={{ ...btn(), marginLeft: 'auto', padding: '3px 10px' }}>{open ? 'Hide' : 'Show'}</button>
       </div>
@@ -238,7 +239,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
                       {busy === s.id ? '…' : where[s.id]?.startsWith('p:') ? 'Move them in' : plain.button}
                     </button>
                     <button disabled={!!busy} onClick={() => post(`/api/ops/suggestions/${s.id}`, 'dismiss', s.id)} style={btn()}>Dismiss</button>
-                    <button disabled={!!busy} onClick={() => { setTelling(telling === s.id ? null : s.id); setTold('') }} style={btn()}>✦ Tell the assistant…</button>
+                    <button disabled={!!busy} onClick={() => { setTelling(telling === s.id ? null : s.id); setTold('') }} style={btn()}><InlineIcon name="spark" />Tell the assistant…</button>
                   </div>
                 )}
                 {mayDecide && telling === s.id && (
@@ -256,7 +257,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
             const p = s.payload as { label?: string; title?: string }
             return (
               <div key={s.id} style={{ borderTop: '1px solid var(--rule)', padding: '10px 0 2px', marginTop: 10, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#15803d' }}>✓ Accepted</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#15803d' }}><InlineIcon name="check" />Accepted</span>
                 <span style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 500 }}>{s.kind === 'new_project' ? p.title : p.label}</span>
                 {tag(s.circle)}
                 {href && <Link href={href} style={{ ...btn(true), marginLeft: 'auto', textDecoration: 'none' }}>Open {href.startsWith('/operations/') ? 'task' : 'it'} →</Link>}

@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.78.0',
+    date: '2026-11-21',
+    title: 'The v4 look on every screen',
+    items: ['In the v4 look, the logo and signing in take you to your dashboard: the older home page stays for communities that haven’t turned v4 on.', 'Every remaining page and pop-up gets the v4 look: quiet labels above the title, the light heading, borderless cards, pill buttons and the soft veil behind pop-ups. That includes Changelog, Change password, Applications, Questions, the agreement form, New task and Upload a recording.', 'Emoji and the second icon set are gone from the screens: places, links, locks, warnings and ticks use the same line icons as the menu, sized to the text.'],
+  },
+  {
     version: 'v4.77.0',
     date: '2026-11-20',
     title: 'See where a project manager suggestion comes from',
