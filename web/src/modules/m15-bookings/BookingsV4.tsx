@@ -160,12 +160,14 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
         />
       ) : (
         <div className="v4-grid">
-          {vm.shown.map(item => {
+          {vm.shown.map((item, k) => {
+            // A place's photo shows once, on its first card (20 dorm beds share one picture)
+            const photo = item.place?.photo_url && vm.shown.findIndex(o => o.place?.slug === item.place?.slug) === k ? item.place.photo_url : null
             const ci = CATEGORY_ICON[item.category]
             const avail = vm.availability(item)
             return (
-              <button key={item.id} type="button" className={`v4-card v4-card--link v4-item${item.place?.photo_url ? ' v4-item--photo' : ''}`} onClick={() => vm.open(item.id)}>
-                {item.place?.photo_url && <img className="v4-item__photo" src={item.place.photo_url} alt="" loading="lazy" />}
+              <button key={item.id} type="button" className={`v4-card v4-card--link v4-item${photo ? ' v4-item--photo' : ''}`} onClick={() => vm.open(item.id)}>
+                {photo && <img className="v4-item__photo" src={photo} alt="" loading="lazy" />}
                 <div className="v4-card-head">
                   <IconTile name={ci.icon} tone={ci.tone} />
                   <div>

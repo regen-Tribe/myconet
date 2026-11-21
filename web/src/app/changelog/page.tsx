@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.75.1',
+    date: '2026-11-20',
+    title: 'A place’s photo shows once',
+    items: ['In Amenities & tools, a place’s photo shows on its first card only, so the 20 dorm beds don’t repeat the same picture. Each item’s window still shows it.'],
+  },
+  {
     version: 'v4.75.0',
     date: '2026-11-20',
     title: 'One map, and photos on rooms and tools',
