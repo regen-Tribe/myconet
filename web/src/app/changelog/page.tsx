@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.103.0',
+    date: '2026-11-21',
+    title: 'Merged tasks are deleted, not paused',
+    items: ['When the assistant merges two tasks, everything moves into the one you keep, and the other is deleted. It no longer sits in Paused. Undo brings it back.'],
+  },
+  {
     version: 'v4.102.0',
     date: '2026-11-21',
     title: 'The space: amenities and the map behind one menu item',

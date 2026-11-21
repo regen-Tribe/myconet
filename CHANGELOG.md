@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.103.0 — 2026-11-21 — A merged task is deleted, not paused
+
+Oscar: "why are merged tasks in the pause column, lets just delete them". When the assistant merges one task into
+another (Do: `merge_projects`), the merged-away task used to be set to Paused with "(merged into …)" in its title.
+Now:
+- Its subtasks move into the other task, along with its updates, agreements, events and places.
+- Then it's deleted.
+- **Undo** puts it back whole, with everything that came from it.
+
+No migration. Protopia's two leftover merged tasks were empty and have been deleted by hand.
+
 ## v4.102.0 — 2026-11-21 — The space: Amenities & tools and the Map behind one menu item
 
 Sonia: "we should also put the map and amenities and tools into 'the space' so we have less things on the side".
