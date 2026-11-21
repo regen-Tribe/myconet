@@ -15,6 +15,8 @@ export interface MeetingListItem {
   needs_review: boolean
   created_at: string
   circle: string | null
+  /** The subcircle it belongs to (v4.108.0), within its circle; read on its own so a community without the column keeps its pages */
+  team_id?: string | null
   visibility: MeetingVisibility
   summary: string | null
   action_items: ActionItem[]

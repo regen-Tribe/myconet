@@ -19,6 +19,10 @@ export default async function MeetingPage({ params }: { params: Promise<{ id: st
     supabase.from('user_profiles').select('role, lead_circles').eq('id', user.id).maybeSingle(),
   ])
   if (!data) notFound()
+  // Its subcircle (v4.108.0), read on its own: a community that hasn't applied 20261216000000_meeting_teams keeps the page
+  const teamRead = await supabase.from('meeting_transcripts').select('team_id').eq('id', id).maybeSingle()
+  const hasTeams = !teamRead.error
+  const meeting = { ...(data as Meeting), team_id: hasTeams ? ((teamRead.data?.team_id as string | null) ?? null) : null }
   // The second-brain note for its tab, read from the repo (only after the page's own access check)
   const brainNote = data.notes_path ? await readNote(data.notes_path) : null
 
@@ -36,7 +40,8 @@ export default async function MeetingPage({ params }: { params: Promise<{ id: st
 
   return (
     <MeetingDetail
-      meeting={data as Meeting}
+      meeting={meeting}
+      teams={hasTeams && isOpsAdmin(profile?.role ?? '') ? (taskOptions?.teams ?? (((await supabase.from('org_units').select('id, name, circle').eq('kind', 'team').order('sort_order')).data ?? []) as { id: string; name: string; circle: string }[])) : null}
       tasks={tasks}
       taskOptions={taskOptions}
       pm={{ suggestions: pmSuggestions, role, leadCircles }}

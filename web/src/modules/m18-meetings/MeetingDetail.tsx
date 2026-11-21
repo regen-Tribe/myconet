@@ -34,11 +34,15 @@ const fmtDay = (iso: string) => (/^\d{4}-\d{2}-\d{2}$/.test(iso) ? taskDate(iso)
 const ago = (iso: string) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 
 /** The leads' bar: circle, Circle only, run the pipeline, confirm drafts, email again */
-function LeadBar({ m, drafts, onBoard = 0, emailOn, secondBrainOn }: { m: Meeting; drafts: number; onBoard?: number; emailOn: boolean; secondBrainOn: boolean }) {
+function LeadBar({ m, drafts, onBoard = 0, emailOn, secondBrainOn, teams = null }: { m: Meeting; drafts: number; onBoard?: number; emailOn: boolean; secondBrainOn: boolean; teams?: TaskTeamOption[] | null }) {
   const circles = useCircles()
   const router = useRouter()
   const [circle, setCircle] = useState(m.circle ?? '')
   const [circleOnly, setCircleOnly] = useState(m.visibility === 'circle')
+  // Its subcircle (v4.108.0): one of the chosen circle's, or the whole circle
+  const [team, setTeam] = useState(m.team_id ?? '')
+  const circleTeams = (teams ?? []).filter(t => t.circle === circle)
+  const pickCircle = (c: string) => { setCircle(c); if (team && !(teams ?? []).some(t => t.id === team && t.circle === c)) setTeam('') }
   const [busy, setBusy] = useState<string | null>(null)
   const [msg, setMsg] = useState<string | null>(null)
   const ready = m.status === 'done'
@@ -66,9 +70,10 @@ function LeadBar({ m, drafts, onBoard = 0, emailOn, secondBrainOn }: { m: Meetin
     } finally { setBusy(null) }
   }
 
+  const teamChanged = !!teams && (team || null) !== (m.team_id ?? null)
   const saveSettings = (process: boolean) =>
-    act('settings', { circle: circle || null, visibility: circle && circleOnly ? 'circle' : 'community', process }, process ? 'settings+process' : 'settings')
-  const changed = (circle || null) !== m.circle || (circleOnly ? 'circle' : 'community') !== m.visibility
+    act('settings', { circle: circle || null, ...(teamChanged ? { team_id: team || null } : {}), visibility: circle && circleOnly ? 'circle' : 'community', process }, process ? 'settings+process' : 'settings')
+  const changed = (circle || null) !== m.circle || (circleOnly ? 'circle' : 'community') !== m.visibility || teamChanged
 
   if (V4) {
     // v4: the leads' review as numbered steps. The first step not done yet gets the one green next button.
@@ -106,10 +111,16 @@ function LeadBar({ m, drafts, onBoard = 0, emailOn, secondBrainOn }: { m: Meetin
           {step(1, 'Circle', circleDone && !changed, (
             <>
               <div className="mt4-step__row">
-                <select className="v4-select" value={circle} onChange={e => setCircle(e.target.value)} aria-label="Circle">
+                <select className="v4-select" value={circle} onChange={e => pickCircle(e.target.value)} aria-label="Circle">
                   <option value="">No circle yet</option>
                   {circles.slugs.map(c => <option key={c} value={c}>{circles.meta(c).label}</option>)}
                 </select>
+                {teams && circleTeams.length > 0 && (
+                  <select className="v4-select" value={team} onChange={e => setTeam(e.target.value)} aria-label="Subcircle">
+                    <option value="">The whole circle</option>
+                    {circleTeams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                  </select>
+                )}
                 <label className="v4-check mt4-only">
                   <input type="checkbox" checked={circleOnly && !!circle} disabled={!circle} onChange={e => setCircleOnly(e.target.checked)} />
                   <span><b>Circle only</b> · only this circle’s members can read it</span>
@@ -252,12 +263,14 @@ function DocTabs({ m, brainNote }: { m: Meeting; brainNote: string | null }) {
   )
 }
 
-export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions = null, pm, canManage, emailOn, secondBrainOn, brainNote }: {
+export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions = null, pm, teams = null, canManage, emailOn, secondBrainOn, brainNote }: {
   meeting: Meeting; tasks: MeetingTask[]; canManage: boolean; emailOn: boolean; secondBrainOn: boolean; brainNote: string | null
   /** For changing an action item right here (v4.105.0); null when the viewer may change none */
   taskOptions?: { people: TaskPerson[]; projectOptions: TaskProjectOption[]; teams: TaskTeamOption[] } | null
   /** The project manager's open suggestions about this meeting's tasks, and who decides them (v4.107.0) */
   pm?: { suggestions: AgentSuggestion[]; role: string; leadCircles: string[] }
+  /** The circles' subcircles, for the leads' Subcircle picker (v4.108.0); null when the community hasn't the column */
+  teams?: TaskTeamOption[] | null
 }) {
   const router = useRouter()
   const circles = useCircles()
@@ -337,7 +350,7 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
           </div>
 
           <div>
-            {canManage && <LeadBar m={m} drafts={drafts} onBoard={tasks.length} emailOn={emailOn} secondBrainOn={secondBrainOn} />}
+            {canManage && <LeadBar m={m} drafts={drafts} onBoard={tasks.length} emailOn={emailOn} secondBrainOn={secondBrainOn} teams={teams} />}
             <div className="v4-sec"><h2>Files</h2></div>
             <div className="v4-list">
               <div className="v4-row"><span className="v4-row__lead"><span className="v4-tile v4-tile--grey"><Icon name="file" /></span></span><span className="v4-row__main"><b>Meeting notes</b><small>{m.visibility === 'circle' ? 'This circle can read' : 'Members can read'}</small></span></div>

@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.108.0',
+    date: '2026-11-21',
+    title: 'Subcircles have their own page',
+    items: ['Each subcircle has its own page, like a circle’s, with its people, tasks and meeting notes. A breadcrumb at the top shows the way back: Circles › the circle › the subcircle.', 'Leads can set a meeting’s subcircle on the meeting’s page, and the meeting then shows on that subcircle’s page.'],
+  },
+  {
     version: 'v4.107.0',
     date: '2026-11-21',
     title: 'A meeting’s page has the project manager too',
