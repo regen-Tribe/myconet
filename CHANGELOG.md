@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.87.0 — 2026-11-21 — A tidier circle page
+
+Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
+- Overview: Tasks and Coming up side by side; Purpose (when longer than its first line) and Subcircles (small cards)
+  below. The meeting-notes and project-manager links left the Overview (Meetings has "All notes →", Tasks the PM link).
+- Manuals & guides: a line saying they are the circle's notes in the second brain, grouped by topic (first subfolder)
+  with readable names ("running-at-100" → "Running at 100"); a topic's README is its "About …" entry.
+- A guide's page takes its title from the note's first heading and doesn't repeat it.
+
 ## v4.84.0 — 2026-11-21 — Sort drafts right in the list
 
 Oscar: "on the drafts to confirm task board… set the status… talk with an ai in the bar… see circle, sub circle,
