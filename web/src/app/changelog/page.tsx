@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.86.0',
+    date: '2026-11-20',
+    title: 'Amenities & tools as a gallery',
+    items: ['Every card leads with a large photo, with what’s free right on it.', 'Numbered things of one kind are one card: Dorm 1 with its 10 beds, Rooms 1–9. Pick a bed or room on the card to see it and book it.'],
+  },
+  {
     version: 'v4.83.0',
     date: '2026-11-21',
     title: 'About reads as chapters',

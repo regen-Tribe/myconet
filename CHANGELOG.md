@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.86.0 — 2026-11-20 — Amenities & tools as a gallery
+
+Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gallery needs to look amazing".
+- Browse cards lead with a 4:3 photo (the item's own, else its place's; without either a tinted tile with the
+  category's icon), with the availability as a badge on it and the name, facts and tags under it (`ItemMedia`).
+- Three or more items of one category whose names differ only in their last number show as one card
+  (`groupItems` in `BookingsV4.tsx`): "Dorm 1 – bed 1…10" is **Dorm 1** with 10 beds, "Room 1…9" is **Rooms 1–9**,
+  with "n of m free now" and a button per bed or room that opens it to book. No data changes.
+
 ## v4.83.0 — 2026-11-21 — About reads as chapters
 
 Only for communities with `"design": "v4"` (`AboutV4`). No migration.
