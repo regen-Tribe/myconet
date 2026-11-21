@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.95.0',
+    date: '2026-11-21',
+    title: 'Choose a circle’s seal',
+    items: ['Admins can now choose the drawing on a circle’s seal: in About › setup › Circles › Edit, and in the circle’s Edit window on the Circles page. Pick one of the stamps, or keep the circle’s first letter.', 'A new circle gets a fitting seal from its name (a pot for Kitchen, a wheat ear for Farming); you can change it any time.'],
+  },
+  {
     version: 'v4.93.0',
     date: '2026-11-21',
     title: 'Circle seals you can tell from the menu icons',

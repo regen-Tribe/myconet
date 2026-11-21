@@ -44,7 +44,9 @@ Each release replaces that module's hard-coded colours and sizes with tokens and
   the circle's colour, so a seal never looks like an interface icon (v4.93.0). The only coloured icons in the app,
   so colour plus seal always means "a circle". Sizes 16 (pills, filters, cards), 24, 40 (circle cards), 64.
   Circle colours are evenly spaced and at least 3:1 against the page; the cream is at least 3:1 on every seal.
-  The whole set, at every size, is on `/design`.
+  The whole set, at every size, is on `/design`. Admins choose a circle's glyph with `GlyphPicker` (Blueprint ›
+  Circles › Edit, and the circle's Edit window on the Circles page); a new circle gets a first guess from its name
+  (`glyphFor`).
 - **Status:** the pastel pills (`StatusPill`). Never a dot in a circle's colour.
 
 Older screens without v4 components still get the look: the bridge in `globals.css` restyles their common inline

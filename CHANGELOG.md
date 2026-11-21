@@ -5,6 +5,20 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.95.0 — 2026-11-21 — Admins choose a circle's seal
+
+The picker v4.81.0 left open ("set `circles.icon` in a community migration for now"). v4 only.
+- **`GlyphPicker`** (`core/components/v4/GlyphPicker.tsx`): every stamp as a seal in the circle's colour, or its first
+  letter. In **Blueprint › Circles › Edit** (`CirclesStep.tsx`, where v4 showed an emoji picker that no screen used)
+  and in the **circle's Edit window** on the Circles page (`UnitEditModal.tsx`, admins only: the `circles` table is
+  theirs to edit). The shared list is patched (`usePatchCircle`), so every screen shows the new seal at once.
+- **A new circle gets a first guess** from its name (`glyphFor`: "Kitchen" → pot, "Farming" → wheat); null shows the initial.
+- **Without the migration nothing breaks:** where `circles.icon` isn't there yet (`20261215000000_circle_icons.sql` not
+  applied) the picker doesn't show and `icon` is never sent; a failed write for that reason is skipped quietly
+  (`isMissingIconColumn`), and the rest of the circle still saves.
+- Blueprint › Circles shows each circle's seal in the list (v4); other communities keep the emoji and its picker.
+- `/design`: the picker with sample values. No migration, no new setting.
+
 ## v4.93.0 — 2026-11-21 — Circle seals are stamps; the whole icon set on /design
 
 Sonia: "custom cool icons for each circle in the right colour … distinct from the nav bar icons".
