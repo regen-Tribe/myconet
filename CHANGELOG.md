@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.86.0 — 2026-11-20 — Amenities & tools as a gallery
+## v4.92.0 — 2026-11-20 — Amenities & tools as a gallery
 
 Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gallery needs to look amazing".
 - Browse cards lead with a 4:3 photo (the item's own, else its place's; without either a tinted tile with the
@@ -13,6 +13,36 @@ Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gal
 - Three or more items of one category whose names differ only in their last number show as one card
   (`groupItems` in `BookingsV4.tsx`): "Dorm 1 – bed 1…10" is **Dorm 1** with 10 beds, "Room 1…9" is **Rooms 1–9**,
   with "n of m free now" and a button per bed or room that opens it to book. No data changes.
+
+## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
+
+Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
+`AGENTS.md` now open with **Session start: handoff notes**. Every session first reads the community's
+`instance/handoff/open/`, and the agent's first reply tells the person who each note is from, quoting every line
+addressed to them, before anything else. Notes it has dealt with move to `done/`. Docs only.
+
+## v4.87.0 — 2026-11-21 — A tidier circle page
+
+Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
+- Overview: Tasks and Coming up side by side; Purpose (when longer than its first line) and Subcircles (small cards)
+  below. The meeting-notes and project-manager links left the Overview (Meetings has "All notes →", Tasks the PM link).
+- Manuals & guides: a line saying they are the circle's notes in the second brain, grouped by topic (first subfolder)
+  with readable names ("running-at-100" → "Running at 100"); a topic's README is its "About …" entry.
+- A guide's page takes its title from the note's first heading and doesn't repeat it.
+
+## v4.84.0 — 2026-11-21 — Sort drafts right in the list
+
+Oscar: "on the drafts to confirm task board… set the status… talk with an ai in the bar… see circle, sub circle,
+task… and be able to change any of those. when user changes any of those, it is no longer a draft… leave the ones
+that are there showing the new status until a refresh".
+- In Operations › Tasks (M07), the list has **Circle**, **Subcircle** and **Part of** columns. For anyone who may
+  edit the task, those and **Status** are pickers right in the row. They follow the task pop-up's rules: a
+  subcircle or task brings its circle, and what no longer fits the new circle is cleared.
+- **✦ Tell the assistant** on each row sends a request to the assistant bar about that task.
+- Changing a draft confirms it. That covers the row's pickers, and changes the assistant makes to a draft task
+  (Do: rename, assign, date, status, move). Undoing a Do change makes it a draft again.
+- With **Only drafts to confirm** on, a confirmed or changed draft stays in the list, marked ✓ Confirmed with its new
+  values, until the page is reloaded. No migration.
 
 ## v4.83.0 — 2026-11-21 — About reads as chapters
 

@@ -3,10 +3,28 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.86.0',
+    version: 'v4.92.0',
     date: '2026-11-20',
     title: 'Amenities & tools as a gallery',
     items: ['Every card leads with a large photo, with what’s free right on it.', 'Numbered things of one kind are one card: Dorm 1 with its 10 beds, Rooms 1–9. Pick a bed or room on the card to see it and book it.'],
+  },
+  {
+    version: 'v4.88.0',
+    date: '2026-11-21',
+    title: 'Notes between teammates reach you',
+    items: ['When a teammate or their assistant leaves a note in the community’s handoff folder, the next coding assistant to open the project tells you about it in its first reply, before anything else.'],
+  },
+  {
+    version: 'v4.87.0',
+    date: '2026-11-21',
+    title: 'A tidier circle page',
+    items: ['A circle’s Overview shows its tasks and what’s coming up side by side, with its purpose and subcircles below, instead of a half-empty column.', 'Manuals & guides says what they are (the notes the circle keeps in the second brain), groups them by topic and gives them readable names; a topic’s README shows as its introduction.'],
+  },
+  {
+    version: 'v4.84.0',
+    date: '2026-11-21',
+    title: 'Sort drafts right in the list',
+    items: ['In Operations › Tasks you can change a task’s status, circle, subcircle and the task it’s part of right in the list. Changing a draft confirms it.', '“✦ Tell the assistant” on each row asks the assistant to do something with that task.', 'Drafts you change or confirm stay in the drafts list with their new values until you reload the page.'],
   },
   {
     version: 'v4.83.0',
