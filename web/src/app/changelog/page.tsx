@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.84.0',
+    date: '2026-11-21',
+    title: 'Sort drafts right in the list',
+    items: ['In Operations › Tasks you can change a task’s status, circle, subcircle and the task it’s part of right in the list. Changing a draft confirms it.', '“✦ Tell the assistant” on each row asks the assistant to do something with that task.', 'Drafts you change or confirm stay in the drafts list with their new values until you reload the page.'],
+  },
+  {
     version: 'v4.83.0',
     date: '2026-11-21',
     title: 'About reads as chapters',
