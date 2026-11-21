@@ -13,6 +13,11 @@ agent should be able to understand… circle, sub circle, person assigned, prior
 - **A meeting's page** (M18, v4 look) shows **Project manager · about these action items**, open, above the action
   items. These are the board's open suggestions about this meeting's tasks, with the same Accept, Dismiss, Put it in,
   field editing and Tell the assistant. Circle leads (for their circles) and admins decide; everyone else sees them.
+- **The board's project manager panel lists meetings' drafts too.** Under its suggestions, **Drafts to confirm** groups
+  every draft still waiting by meeting, newest first, with the meeting's circle and a count. Opening a meeting shows its
+  action items as the same rows as on its page (`ActionItemList`, shared), with the same fields, assistant line and
+  draft pill, plus a link to the meeting. They're loaded by one helper, `m18-meetings/lib/action-items.ts`, for both
+  pages, and only the drafts the viewer may change are listed.
 - **✦ What should the assistant do?** sits under a task's fields wherever they can be changed: in the project manager
   panel and in a meeting's action items. Type what to do, like "give it to Ana, high priority, due Friday". The assistant
   makes the change right there, with no chat pop-up. The fields reload with what changed marked, and a short list says

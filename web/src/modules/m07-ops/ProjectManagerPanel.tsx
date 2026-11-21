@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useCircles } from '@/core/components/CirclesProvider'
 import type { AgentSuggestion, PmAction, SuggestionSource } from './types'
 import { TaskQuickEdit } from './TaskQuickEdit'
+import { ActionItemList } from '@/modules/m18-meetings/ActionItemList'
+import type { MeetingTask } from '@/modules/m18-meetings/types'
 import type { TaskPerson, TaskProjectOption, TaskTeamOption } from './TaskModal'
 import { instructAgent } from '@/core/lib/agent-context'
 import Link from 'next/link'
@@ -119,7 +121,7 @@ const btn = (primary = false): React.CSSProperties => ({
  * leads and admins decide. Filtered by the board's circle filter. Starts collapsed (v4.33.1), except when the
  * page was opened at #pm.
  */
-export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, canDecide, projects = [], teams = [], onOpenTask, editOptions, title = 'Project manager', defaultOpen = false }: {
+export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, canDecide, projects = [], teams = [], onOpenTask, editOptions, title = 'Project manager', defaultOpen = false, meetingDrafts = [] }: {
   suggestions: AgentSuggestion[]; actions: PmAction[]; taskTitles: Record<string, string>
   /** The board's circle filter: one circle, several, or null / [] for all */
   circle: string | string[] | null; canDecide: (circle: string) => boolean
@@ -134,6 +136,8 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   /** Elsewhere than the board (v4.107.0: a meeting's page shows the suggestions about its tasks): its heading, and open from the start */
   title?: string
   defaultOpen?: boolean
+  /** Meetings' drafts waiting to be confirmed, shown by meeting with the same rows as a meeting's page (v4.107.0) */
+  meetingDrafts?: MeetingTask[]
 }) {
   const circles = useCircles()
   const router = useRouter()
@@ -147,6 +151,8 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   // "Tell the agent…" on a suggestion: what the lead wants instead (v4.36.0)
   // "Where this comes from", open per suggestion (v4.77.0)
   const [showing, setShowing] = useState<string | null>(null)
+  // The meetings whose drafts are open in the panel (v4.107.0)
+  const [openMeetings, setOpenMeetings] = useState<Set<string>>(() => new Set())
   const [telling, setTelling] = useState<string | null>(null)
   const [told, setTold] = useState('')
   function tell(s: AgentSuggestion) {
@@ -164,7 +170,15 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   const sugs = suggestions.filter(s => inFilter(s.circle) && !acceptedIds.has(s.id))
   const acceptedShown = accepted.filter(a => inFilter(a.s.circle))
   const done = actions.filter(a => inFilter(a.circle))
-  if (!sugs.length && !done.length && !acceptedShown.length) return null
+  // Drafts by meeting, newest meeting first; a meeting's rows are only drawn once it's opened (there can be hundreds)
+  const drafts = meetingDrafts.filter(t => inFilter(t.circle))
+  const groups = [...drafts.reduce((m, t) => {
+    const k = t.meeting?.id ?? 'none'
+    m.set(k, [...(m.get(k) ?? []), t])
+    return m
+  }, new Map<string, MeetingTask[]>())].map(([id, tasks]) => ({ id, meeting: tasks[0].meeting, tasks }))
+    .sort((a, b) => (b.meeting?.date ?? '').localeCompare(a.meeting?.date ?? ''))
+  if (!sugs.length && !done.length && !acceptedShown.length && !drafts.length) return null
 
   const overrides = (v: string | undefined) => {
     if (!v) return {}
@@ -198,7 +212,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
     <div id="pm" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderTop: '3px solid var(--m7)', borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}><InlineIcon name="compass" />{title}</span>
-        <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{acceptedShown.length ? ` · ${acceptedShown.length} accepted` : ''}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
+        <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{drafts.length ? ` · ${drafts.length} draft${drafts.length === 1 ? '' : 's'} to confirm` : ''}{acceptedShown.length ? ` · ${acceptedShown.length} accepted` : ''}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
         <button onClick={() => setToggled(!open)} style={{ ...btn(), marginLeft: 'auto', padding: '3px 10px' }}>{open ? 'Hide' : 'Show'}</button>
       </div>
       {open && (
@@ -288,6 +302,32 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
               </div>
             )
           })}
+          {groups.length > 0 && (
+            <div className="pm4-drafts">
+              <div className="v4-sec"><h2>Drafts to confirm · {drafts.length}</h2><span className="v4-hint">From meetings: the same as on each meeting’s page</span></div>
+              {groups.map(g => {
+                const isOpen = openMeetings.has(g.id)
+                return (
+                  <div key={g.id} className="v4-card pm4-meeting">
+                    <button type="button" className="pm4-meeting__head" aria-expanded={isOpen}
+                      onClick={() => setOpenMeetings(prev => { const n = new Set(prev); if (n.has(g.id)) n.delete(g.id); else n.add(g.id); return n })}>
+                      <span className="pm4-meeting__name"><b>{g.meeting?.title ?? 'A meeting'}</b>
+                        <small suppressHydrationWarning>{[g.meeting?.date ? new Date(g.meeting.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : null, `${g.tasks.length} to confirm`].filter(Boolean).join(' · ')}</small>
+                      </span>
+                      {g.meeting?.circle && tag(g.meeting.circle)}
+                      <span className="pm4-meeting__chev" aria-hidden="true">{isOpen ? '▾' : '▸'}</span>
+                    </button>
+                    {isOpen && (
+                      <>
+                        <ActionItemList tasks={g.tasks} taskOptions={editOptions ?? null} />
+                        {g.meeting && <Link href={`/meetings/${g.meeting.id}`} className="pm4-meeting__open">Open the meeting →</Link>}
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
           {acceptedShown.map(({ s, href }) => {
             const p = s.payload as { label?: string; title?: string }
             return (
