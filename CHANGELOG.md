@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.79.1 — 2026-11-21 — A bigger Draft pill to slide
+
+Sonia: "make slideable draft buttons slightly bigger so it is easier to drag both on mobile and desktop". The
+Draft pill (`DraftSwipe`, M07, also on M18 meeting pages) is 11px text instead of 9px with 5×11px padding instead
+of 1×5px (about 23px tall instead of 13px), rounder, and centred on the title's line. "Declined · Undo" matches.
+The slide distance (36px) is unchanged. No migration.
+
 ## v4.79.0 — 2026-11-20 — Open a suggestion's task, and deciding confirms a draft
 
 Oscar: "i should be able to click the name of the task and open the card… make the task stop showing draft".
