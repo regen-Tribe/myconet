@@ -3,10 +3,16 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.88.0',
+    version: 'v4.90.0',
     date: '2026-11-21',
     title: 'Home follows the menu',
     items: ['Home shows the pages in the menu’s own two groups, Community and then Working together, with the same names and icons.', 'Members and Calendar come first and large, with faces and the next events. Operations and Governance show the projects under way and the open proposals. The other pages are small rows.', 'Everything is one quiet colour. “Happening now” moved into the Calendar and Governance tiles.'],
+  },
+  {
+    version: 'v4.88.0',
+    date: '2026-11-21',
+    title: 'Notes between teammates reach you',
+    items: ['When a teammate or their assistant leaves a note in the community’s handoff folder, the next coding assistant to open the project tells you about it in its first reply, before anything else.'],
   },
   {
     version: 'v4.87.0',

@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.88.0 — 2026-11-21 — Home follows the menu (v4)
+## v4.90.0 — 2026-11-21 — Home follows the menu (v4)
 
 Sonia: "this should be organized by the nav bar: community, then working together, and be less busy visually with
 different sizes but same colors; start from most attractive: meet members, calendar of events". In `HomeV4`
@@ -19,6 +19,13 @@ different sizes but same colors; start from most attractive: meet members, calen
 - "Happening now" is gone as a block; its events and votes live in the Calendar and Governance tiles.
 
 No migration.
+
+## v4.88.0 — 2026-11-21 — Agents read the handoff notes first
+
+Oscar: "make sure sonias agent receives our messages and tells her so she cant miss it". `CLAUDE.md` and
+`AGENTS.md` now open with **Session start: handoff notes**. Every session first reads the community's
+`instance/handoff/open/`, and the agent's first reply tells the person who each note is from, quoting every line
+addressed to them, before anything else. Notes it has dealt with move to `done/`. Docs only.
 
 ## v4.87.0 — 2026-11-21 — A tidier circle page
 
