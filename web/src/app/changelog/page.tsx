@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.107.0',
+    date: '2026-11-21',
+    title: 'A meeting’s page has the project manager too',
+    items: ['A meeting’s page shows the project manager’s suggestions about its action items, with the same buttons as on the board.', 'Each action item has “✦ Tell the assistant”. Say what to do with it, like the person, circle, subcircle, priority, date or status, and the assistant changes it. A draft it changes is confirmed.'],
+  },
+  {
     version: 'v4.106.0',
     date: '2026-11-21',
     title: 'Project manager: tasks you can edit at a glance',

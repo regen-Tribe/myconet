@@ -119,7 +119,7 @@ const btn = (primary = false): React.CSSProperties => ({
  * leads and admins decide. Filtered by the board's circle filter. Starts collapsed (v4.33.1), except when the
  * page was opened at #pm.
  */
-export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, canDecide, projects = [], teams = [], onOpenTask, editOptions }: {
+export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, canDecide, projects = [], teams = [], onOpenTask, editOptions, title = 'Project manager', defaultOpen = false }: {
   suggestions: AgentSuggestion[]; actions: PmAction[]; taskTitles: Record<string, string>
   /** The board's circle filter: one circle, several, or null / [] for all */
   circle: string | string[] | null; canDecide: (circle: string) => boolean
@@ -131,6 +131,9 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   onOpenTask?: (id: string) => void
   /** Lets leads change the suggestion's tasks right here (v4.105.0): circle, subcircle, person, priority… */
   editOptions?: EditOptions
+  /** Elsewhere than the board (v4.107.0: a meeting's page shows the suggestions about its tasks): its heading, and open from the start */
+  title?: string
+  defaultOpen?: boolean
 }) {
   const circles = useCircles()
   const router = useRouter()
@@ -155,7 +158,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   // null until the person toggles it: collapsed, unless the page was opened at #pm
   const [toggled, setToggled] = useState<boolean | null>(null)
   const linkedHere = useSyncExternalStore(onHash, atPm, () => false)
-  const open = toggled ?? linkedHere
+  const open = toggled ?? (defaultOpen || linkedHere)
   const acceptedIds = new Set(accepted.map(a => a.s.id))
   const inFilter = (c: string | null) => !circle || circle.length === 0 || (Array.isArray(circle) ? !!c && circle.includes(c) : c === circle)
   const sugs = suggestions.filter(s => inFilter(s.circle) && !acceptedIds.has(s.id))
@@ -194,7 +197,7 @@ export function ProjectManagerPanel({ suggestions, actions, taskTitles, circle, 
   return (
     <div id="pm" style={{ background: 'var(--surface)', border: '1px solid var(--rule)', borderTop: '3px solid var(--m7)', borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}><InlineIcon name="compass" />Project manager</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}><InlineIcon name="compass" />{title}</span>
         <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>{sugs.length} suggestion{sugs.length === 1 ? '' : 's'}{acceptedShown.length ? ` · ${acceptedShown.length} accepted` : ''}{done.length ? ` · ${done.length} change${done.length === 1 ? '' : 's'} made` : ''}</span>
         <button onClick={() => setToggled(!open)} style={{ ...btn(), marginLeft: 'auto', padding: '3px 10px' }}>{open ? 'Hide' : 'Show'}</button>
       </div>

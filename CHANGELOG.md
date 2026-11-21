@@ -5,6 +5,22 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.107.0 — 2026-11-21 — A meeting's page has the project manager too
+
+Oscar: "a privileged user [should] see project manager suggestions for all the things pending and have the same
+functionality in the meetings section, there should also be the ability to type to the agent what to do with it… that
+agent should be able to understand… circle, sub circle, person assigned, priority, date, status etc and change it".
+- **A meeting's page** (M18, v4 look) shows **Project manager · about these action items**, open, above the action
+  items. These are the board's open suggestions about this meeting's tasks, with the same Accept, Dismiss, Put it in,
+  field editing and Tell the assistant. Circle leads (for their circles) and admins decide; everyone else sees them.
+- **✦ Tell the assistant** on each action item, for those who may change it: say what to do with it in words, and it
+  goes to the assistant bar knowing which task you mean.
+- **The assistant (Do)** already changes a task's circle, subcircle, person, priority, due date and time, status and the
+  task it's part of. Now a change to a draft confirms it there too (Undo makes it a draft again), and on its cards a
+  team reads "subcircle".
+
+No migration.
+
 ## v4.106.0 — 2026-11-21 — The project manager's tasks are editable at a glance
 
 Oscar didn't find the fields from v4.105.0 in the project manager panel: they were behind the "✎ Edit its tasks ·

@@ -2,6 +2,9 @@
 
 import { DraftSwipe } from '@/modules/m07-ops/DraftSwipe'
 import { TaskQuickEdit } from '@/modules/m07-ops/TaskQuickEdit'
+import { ProjectManagerPanel } from '@/modules/m07-ops/ProjectManagerPanel'
+import type { AgentSuggestion } from '@/modules/m07-ops/types'
+import { instructAgent } from '@/core/lib/agent-context'
 import type { TaskPerson, TaskProjectOption, TaskTeamOption } from '@/modules/m07-ops/TaskModal'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -250,10 +253,12 @@ function DocTabs({ m, brainNote }: { m: Meeting; brainNote: string | null }) {
   )
 }
 
-export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions = null, canManage, emailOn, secondBrainOn, brainNote }: {
+export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions = null, pm, canManage, emailOn, secondBrainOn, brainNote }: {
   meeting: Meeting; tasks: MeetingTask[]; canManage: boolean; emailOn: boolean; secondBrainOn: boolean; brainNote: string | null
   /** For changing an action item right here (v4.105.0); null when the viewer may change none */
   taskOptions?: { people: TaskPerson[]; projectOptions: TaskProjectOption[]; teams: TaskTeamOption[] } | null
+  /** The project manager's open suggestions about this meeting's tasks, and who decides them (v4.107.0) */
+  pm?: { suggestions: AgentSuggestion[]; role: string; leadCircles: string[] }
 }) {
   const router = useRouter()
   const circles = useCircles()
@@ -264,6 +269,15 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
   const [editing, setEditing] = useState<Set<string>>(() => new Set(loaded.filter(t => t.needs_review && t.can_edit).map(t => t.deliverable_id)))
   const tasks = loaded.map(t => ({ ...t, ...patch[t.deliverable_id] }))
   const drafts = tasks.filter(t => t.needs_review).length
+  // "✦ Tell the assistant" on an action item (v4.107.0): what to do with it, in words
+  const [telling, setTelling] = useState<string | null>(null)
+  const [told, setTold] = useState('')
+  function tell(t: MeetingTask) {
+    if (!told.trim()) return
+    instructAgent(told.trim(), { task_id: t.deliverable_id, ...(t.project_id ? { project_id: t.project_id } : {}) })
+    setTelling(null); setTold('')
+  }
+  const canDecide = (c: string) => pm?.role === 'admin' || (pm?.role === 'circle_lead' && pm.leadCircles.includes(c))
   const toggleEdit = (id: string) => setEditing(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n })
 
   const byPerson: Record<string, string[]> = {}
@@ -302,6 +316,16 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
               <>
                 {m.summary && <div className="v4-card mt4-sumcard"><h2 className="mt4-h">Summary</h2><SummaryCards text={m.summary} accent={meta?.color} /></div>}
 
+                {pm && pm.suggestions.length > 0 && (
+                  <ProjectManagerPanel
+                    title="Project manager · about these action items" defaultOpen
+                    suggestions={pm.suggestions} actions={[]} circle={null} canDecide={canDecide}
+                    taskTitles={Object.fromEntries(tasks.map(t => [t.deliverable_id, t.title]))}
+                    projects={taskOptions?.projectOptions ?? []} teams={taskOptions?.teams ?? []}
+                    editOptions={taskOptions ?? undefined}
+                    onOpenTask={id => { const t = tasks.find(x => x.deliverable_id === id); router.push(t?.project_id ? `/operations/${t.project_id}?task=${id}` : `/operations?task=${id}`) }}
+                  />
+                )}
                 <div className="v4-sec"><h2>Action items{drafts ? ` · ${drafts} to confirm` : ''}</h2><span className="v4-hint">They become tasks on the board</span></div>
                 {tasks.length === 0 ? (
                   <p className="v4-hint">{m.processed_at ? 'No tasks came out of this meeting.' : m.needs_review ? 'Nothing on the board: this meeting is waiting for a lead.' : 'The assistant hasn’t read this meeting yet.'}</p>
@@ -328,8 +352,21 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
                                 <Icon name="pencil" size={13} />{editing.has(t.deliverable_id) ? 'Done' : 'Edit'}
                               </button>
                             )}
+                            {canEdit && (
+                              <button type="button" className="mt4-editbtn" aria-expanded={telling === t.deliverable_id} onClick={() => { setTelling(telling === t.deliverable_id ? null : t.deliverable_id); setTold('') }}>
+                                ✦ Tell the assistant
+                              </button>
+                            )}
                           </span>
                         </div>
+                        {telling === t.deliverable_id && (
+                          <form className="mt4-taskedit" onSubmit={e => { e.preventDefault(); tell(t) }} style={{ display: 'flex', gap: 6 }}>
+                            <input autoFocus value={told} onChange={e => setTold(e.target.value)} maxLength={2000}
+                              placeholder="e.g. give it to Ana, high priority, due Friday, in the Kitchen circle"
+                              style={{ flex: 1, minWidth: 0, fontSize: 13, padding: '7px 10px', borderRadius: 8, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontFamily: 'inherit' }} />
+                            <Button size="sm" variant="primary" disabled={!told.trim()} type="submit">Send</Button>
+                          </form>
+                        )}
                         {canEdit && editing.has(t.deliverable_id) && (
                           <div className="mt4-taskedit">
                             <TaskQuickEdit
