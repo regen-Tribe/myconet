@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.98.0 — 2026-11-21 — Home follows the menu (v4)
+## v4.101.0 — 2026-11-21 — Home follows the menu (v4)
 
 Sonia: "this should be organized by the nav bar: community, then working together, and be less busy visually with
 different sizes but same colors; start from most attractive: meet members, calendar of events". In `HomeV4`
@@ -19,6 +19,43 @@ different sizes but same colors; start from most attractive: meet members, calen
 - "Happening now" is gone as a block; its events and votes live in the Calendar and Governance tiles.
 
 No migration.
+
+## v4.100.0 — 2026-11-21 — Meetings: names without the date; only real tasks (from Protopia, Sonia)
+
+- The assistant names a meeting without its date ("Kitchen lead handover", not "17.11.2026 Kitchen lead handover"):
+  the date is shown beside it. `lib/title.ts` (`withoutDate`) takes a date off the start or end of older or typed
+  names on the list, the meeting page and the second-brain note.
+- **Migration** `20261215000100_meeting_titles_without_date.sql`: takes the leading date off existing meeting names.
+- The assistant keeps a task only when it has a visible result, someone agreed to it, it is still to do, it is the
+  community's work and it isn't on the board yet. Fireflies' action items are checked against the transcript; when in
+  doubt, it's left out. The quote kept with a task is where it was agreed.
+
+## v4.99.0 — 2026-11-21 — A clearer menu: no look-alike arrows
+
+Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSideNav` is unchanged.
+- The open/slim switch is a `sidebar` icon (new in `v4/icons.ts`), the same in both states, with `aria-expanded`.
+  Open, it sits top right; in the rail it sits at the foot, above your photo. The rail's next step is a round
+  light-green `flag` button. Arrows now only mean "go there" (the next-step card, your name).
+- `.menu-v4 > * { flex-shrink: 0 }`: a rail taller than the window scrolls instead of flattening the next-step
+  button into an oval. Slightly tighter rail spacing.
+- The rail's names: one fixed label beside the hovered or focused icon (`.mv4-tip`, placed by `MenuV4`), instead
+  of the browser's slow `title` tooltip. Rail links carry `aria-label`, since their text is hidden.
+- The slim/open choice moved from `localStorage` to a `navCollapsed` cookie that `layout.tsx` reads, so the page
+  arrives slim instead of opening wide and shrinking. An older choice is moved over once.
+- Phone drawer (both menus): closes on Escape and when the page changes (back and forward too); in v4 the
+  keyboard focus moves to its close button when it opens.
+- No migration, no new setting, no new secret.
+- Second brain: this changes no knowledge (no decision, task, project, agreement, role, event or document), so
+  nothing lands there.
+
+## v4.98.0 — 2026-11-21 — Amenities & tools as a gallery
+
+Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gallery needs to look amazing".
+- Browse cards lead with a 4:3 photo (the item's own, else its place's; without either a tinted tile with the
+  category's icon), with the availability as a badge on it and the name, facts and tags under it (`ItemMedia`).
+- Three or more items of one category whose names differ only in their last number show as one card
+  (`groupItems` in `BookingsV4.tsx`): "Dorm 1 – bed 1…10" is **Dorm 1** with 10 beds, "Room 1…9" is **Rooms 1–9**,
+  with "n of m free now" and a button per bed or room that opens it to book. No data changes.
 
 ## v4.97.0 — 2026-11-21 — icon-check: one icon set, kept that way
 
