@@ -632,10 +632,22 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
    Styles for the shared building blocks. They read the v4 tokens with
    fallbacks, so they also work where v4 is off. */
 .v4-icon { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; overflow: visible; }
-.v4-inl { vertical-align: -.18em; margin-right: .28em; }
+/* inline-block: the CSS reset makes every svg a block, which put the icon on its own line outside a flex row */
+.v4-inl { display: inline-block; vertical-align: -.18em; margin-right: .28em; }
 /* Circle seals (CircleSeal): the only coloured icons; a circle's colour round with its cream glyph */
 .v4-seal { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+/* The glyph is a stamp: solid cream shapes; .l a cream line, .c a line cut in the circle's colour, .h a hole */
+.v4-seal__art .l { fill: none; }
+.v4-seal__art .c { fill: none; stroke: var(--seal); stroke-width: 1.5; }
+.v4-seal__art .h { fill: var(--seal); stroke: none; }
 .v4-cf__pill .v4-seal, .ops4-circ .v4-seal, .pj4-pill .v4-seal { margin-right: 6px; }
+/* GlyphPicker: the seals to choose from; the chosen one has an ink ring */
+.v4-glyphs { display: flex; flex-wrap: wrap; gap: 4px; }
+.v4-glyphs__opt { width: 46px; height: 46px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 2px solid transparent; background: none; cursor: pointer; }
+.v4-glyphs__opt:hover { background: var(--bg-2, #f5f7fd); }
+.v4-glyphs__opt--on { border-color: var(--ink, #14161c); }
+.v4-glyphs__opt:focus-visible { outline: 2px solid var(--ink, #14161c); outline-offset: 2px; }
+.v4-glyphs__opt:disabled { cursor: default; opacity: .6; }
 .v4-spin { animation: v4-spin 0.9s linear infinite; }
 @keyframes v4-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .v4-spin { animation-duration: 2.4s; } }
