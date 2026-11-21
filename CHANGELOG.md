@@ -5,6 +5,24 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.99.0 — 2026-11-21 — A clearer menu: no look-alike arrows
+
+Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSideNav` is unchanged.
+- The open/slim switch is a `sidebar` icon (new in `v4/icons.ts`), the same in both states, with `aria-expanded`.
+  Open, it sits top right; in the rail it sits at the foot, above your photo. The rail's next step is a round
+  light-green `flag` button. Arrows now only mean "go there" (the next-step card, your name).
+- `.menu-v4 > * { flex-shrink: 0 }`: a rail taller than the window scrolls instead of flattening the next-step
+  button into an oval. Slightly tighter rail spacing.
+- The rail's names: one fixed label beside the hovered or focused icon (`.mv4-tip`, placed by `MenuV4`), instead
+  of the browser's slow `title` tooltip. Rail links carry `aria-label`, since their text is hidden.
+- The slim/open choice moved from `localStorage` to a `navCollapsed` cookie that `layout.tsx` reads, so the page
+  arrives slim instead of opening wide and shrinking. An older choice is moved over once.
+- Phone drawer (both menus): closes on Escape and when the page changes (back and forward too); in v4 the
+  keyboard focus moves to its close button when it opens.
+- No migration, no new setting, no new secret.
+- Second brain: this changes no knowledge (no decision, task, project, agreement, role, event or document), so
+  nothing lands there.
+
 ## v4.98.0 — 2026-11-21 — Amenities & tools as a gallery
 
 Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gallery needs to look amazing".
