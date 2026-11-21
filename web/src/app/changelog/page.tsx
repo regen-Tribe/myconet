@@ -9,6 +9,12 @@ const ENTRIES = [
     items: ['In the new look, the button that makes the menu slim or opens it again is now a sidebar icon. Open, it sits top right; slim, it sits at the bottom. Your next step in the slim menu is a green flag. Before, two arrows sat one above the other and did different things.', 'In the slim menu, a page’s name shows beside its icon as soon as you point at it. The slim menu scrolls when the window is short instead of squeezing its buttons, and it no longer opens wide for a moment each time a page loads.', 'On a phone, the menu closes with Escape and when you go back a page.'],
   },
   {
+    version: 'v4.98.0',
+    date: '2026-11-21',
+    title: 'Amenities & tools as a gallery',
+    items: ['Every card leads with a large photo, with what’s free right on it.', 'Numbered things of one kind are one card: Dorm 1 with its 10 beds, Rooms 1–9. Pick a bed or room on the card to see it and book it.'],
+  },
+  {
     version: 'v4.97.0',
     date: '2026-11-21',
     title: 'One icon set, kept that way',
