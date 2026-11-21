@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.82.0',
+    date: '2026-11-21',
+    title: 'A calmer page colour',
+    items: ['In the v4 look the page behind the cards is half as blue, and the thin lines between things are a soft grey instead of blue. Cobalt stays for the drawings, so they stand out more.'],
+  },
+  {
     version: 'v4.81.0',
     date: '2026-11-21',
     title: 'Circle seals',
