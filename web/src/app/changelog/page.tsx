@@ -3,10 +3,34 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.90.0',
+    version: 'v4.98.0',
     date: '2026-11-21',
     title: 'Home follows the menu',
     items: ['Home shows the pages in the menu’s own two groups, Community and then Working together, with the same names and icons.', 'Members and Calendar come first and large, with faces and the next events. Operations and Governance show the projects under way and the open proposals. The other pages are small rows.', 'Everything is one quiet colour. “Happening now” moved into the Calendar and Governance tiles.'],
+  },
+  {
+    version: 'v4.97.0',
+    date: '2026-11-21',
+    title: 'One icon set, kept that way',
+    items: ['Behind the scenes: a check now stops emoji and other icon sets from coming back onto screens, so the portal keeps one set of line icons, with coloured seals only for circles.'],
+  },
+  {
+    version: 'v4.96.0',
+    date: '2026-11-21',
+    title: 'One icon set everywhere',
+    items: ['The last emoji on screens are now the same line icons as the rest of the portal: in the Blueprint editor, the older Home, Governance and Bookings screens, the account menu and the landing page.', 'Small icons inside a line of text (the pin before a place name) now sit in the line instead of above it.', 'Why two members match is written in words only, without emoji.'],
+  },
+  {
+    version: 'v4.95.0',
+    date: '2026-11-21',
+    title: 'Choose a circle’s seal',
+    items: ['Admins can now choose the drawing on a circle’s seal: in About › setup › Circles › Edit, and in the circle’s Edit window on the Circles page. Pick one of the stamps, or keep the circle’s first letter.', 'A new circle gets a fitting seal from its name (a pot for Kitchen, a wheat ear for Farming); you can change it any time.'],
+  },
+  {
+    version: 'v4.93.0',
+    date: '2026-11-21',
+    title: 'Circle seals you can tell from the menu icons',
+    items: ['In the v4 look the drawing on each circle’s seal is now a solid cream stamp (a pot, a flame, a wheat ear) instead of a thin line, so a circle’s seal never looks like one of the menu icons.', 'The Design page (/design) shows every icon and every circle seal at each size, with its name.'],
   },
   {
     version: 'v4.88.0',
