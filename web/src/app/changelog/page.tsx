@@ -5,6 +5,12 @@ const ENTRIES = [
   {
     version: 'v4.80.0',
     date: '2026-11-21',
+    title: 'Circle seals',
+    items: ['In the v4 look each circle has a seal: its colour as a hand-drawn round with a small drawing in a cream line (a wheat stalk for farming, a pot for the kitchen). It shows on the circle cards, in the Circles filter, on board cards, on a task’s page and in the calendar.', 'Circles are now the only coloured icons, so a coloured seal always means a circle. Circle names no longer carry an emoji. A circle without a drawing shows its first letter.'],
+  },
+  {
+    version: 'v4.80.0',
+    date: '2026-11-21',
     title: 'A calm Home that tells you where you are',
     items: ['In the new look, Home is short and everyone lands there again. It welcomes you with a photo and says in one line what the community is, then shows Start here: three steps for your way in, with what you’ve already done ticked.', 'Below are About the community, in its own words, and Your portal: what MyCoNet is, how to ask it anything and where every page is. Then what we do here as tiles with live numbers, and what’s happening this week.', 'The logo takes you to Home; My dashboard is in the menu. The long tour of every page is still there, linked at the bottom.'],
   },

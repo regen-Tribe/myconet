@@ -35,6 +35,18 @@ one release each, behind the same switch:
    together, with a map); 6. Admin: Bookings calendar (who stays where) and Permissions; 7. the remaining modules.
 Each release replaces that module's hard-coded colours and sizes with tokens and components.
 
+**Three visual layers, never mixed (v4.78.0–v4.79.0).** Each look means one thing:
+- **Interface icons:** the marker-line set in ink (`Icon`, `InlineIcon` in a line of text). Never coloured, never
+  an emoji. Older code that imported `lucide-react` gets the same icons through `v4/lucide-compat.tsx`.
+- **Circles:** the circle seal (`CircleSeal`): the circle's colour as a hand-drawn round with its glyph in a cream
+  line (`v4/circle-glyphs.ts`, `circles.icon`; no glyph shows the initial). The only coloured icons in the app,
+  so colour plus seal always means "a circle". Sizes 16 (pills, filters, cards), 24, 40 (circle cards), 64.
+  Circle colours are evenly spaced and at least 3:1 against the page; the cream line is at least 3:1 on every seal.
+- **Status:** the pastel pills (`StatusPill`). Never a dot in a circle's colour.
+
+Older screens without v4 components still get the look: the bridge in `globals.css` restyles their common inline
+patterns everywhere inside the shell (`main.v4-main`). New screens use the components, not the bridge.
+
 The prototype these come from: `design/redesign-prototype/app.html` (open it in a browser; sample data, with a "View as" role switch). `index.html` beside it has the rules, colours, icons and drawings.
 
 ---
