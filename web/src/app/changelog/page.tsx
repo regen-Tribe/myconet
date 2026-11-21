@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.96.0',
+    date: '2026-11-21',
+    title: 'One icon set everywhere',
+    items: ['The last emoji on screens are now the same line icons as the rest of the portal: in the Blueprint editor, the older Home, Governance and Bookings screens, the account menu and the landing page.', 'Small icons inside a line of text (the pin before a place name) now sit in the line instead of above it.', 'Why two members match is written in words only, without emoji.'],
+  },
+  {
     version: 'v4.95.0',
     date: '2026-11-21',
     title: 'Choose a circle’s seal',

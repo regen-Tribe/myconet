@@ -632,7 +632,8 @@ a:has(.dash-stat-card--link):hover .dash-stat-card--link {
    Styles for the shared building blocks. They read the v4 tokens with
    fallbacks, so they also work where v4 is off. */
 .v4-icon { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; overflow: visible; }
-.v4-inl { vertical-align: -.18em; margin-right: .28em; }
+/* inline-block: the CSS reset makes every svg a block, which put the icon on its own line outside a flex row */
+.v4-inl { display: inline-block; vertical-align: -.18em; margin-right: .28em; }
 /* Circle seals (CircleSeal): the only coloured icons; a circle's colour round with its cream glyph */
 .v4-seal { flex-shrink: 0; display: inline-block; vertical-align: middle; }
 /* The glyph is a stamp: solid cream shapes; .l a cream line, .c a line cut in the circle's colour, .h a hole */
