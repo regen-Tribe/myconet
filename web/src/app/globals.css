@@ -917,6 +917,10 @@ textarea.v4-input { resize: vertical; line-height: 1.55; }
 .v4-seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface, #fff); }
 .v4-seg button { height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: none; font: inherit; font-size: 13px; font-weight: 500; color: var(--ink-3, #6b7180); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
 .v4-seg button.on { background: var(--ink, #111317); color: #fff; }
+/* The same switch made of links: The space (Amenities & tools | Map) */
+.v4-seg--links a { height: 32px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--ink-3, #6b7180); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.v4-seg--links a.on { background: var(--blue, #d6e4ff); color: var(--blue-ink, #2350b0); }
+.v4-spacetabs { margin: -4px 0 14px; }
 .v4-mapwrap { display: grid; gap: 12px; }
 .v4-mapwrap--list { grid-template-columns: minmax(0, 1fr) 240px; align-items: start; }
 .v4-map { position: relative; border-radius: 22px; overflow: hidden; background: var(--green, #d3f1dc); line-height: 0; user-select: none; touch-action: pan-y; cursor: grab; }

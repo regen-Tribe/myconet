@@ -9,6 +9,7 @@ import {
 import type { Booking, BookingCategory, BookingItem, BookingsTab } from './types'
 import { CATEGORY_META, STATUS_META, canManageItem, fmtBookingRange, personName } from './lib/inventory'
 import AmenitiesMap from './AmenitiesMap'
+import { SpaceTabs } from '@/core/components/SpaceTabs'
 
 /**
  * Amenities & tools and Admin › Bookings in the v4 look (Sonia's prototype, 19 Nov). Same data, rules and
@@ -78,6 +79,7 @@ export default function BookingsV4({ vm, modals }: { vm: BookingsV4Model; modals
         subtitle={vm.admin ? 'Who stays where, the requests waiting for you, and the inventory.' : counts}
         actions={vm.isManager ? <Button icon="plus" onClick={vm.add}>Add item</Button> : undefined}
       />
+      {!vm.admin && <SpaceTabs on="amenities" />}
 
       {!vm.admin && !vm.userId && (
         <Card className="v4-note"><Icon name="lock" /><span>Browse what the community shares. <Link href="/auth/login">Sign in</Link> to book.</span></Card>
@@ -214,8 +216,6 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
           </ChipRow>
         )}
         <span className="v4-toolbar__end">
-          {/* One map for the whole land: the Map page (v4.74.0) shows where each of these is */}
-          {vm.mapUrl && <Link href="/map" className="v4-btn v4-btn--secondary v4-btn--sm"><Icon name="map" size={15} />See the map</Link>}
           <label className="v4-search">
             <Icon name="search" size={16} />
             <input value={vm.query} onChange={e => vm.setQuery(e.target.value)} placeholder="Search" aria-label="Search the inventory" />
