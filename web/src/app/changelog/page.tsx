@@ -6,7 +6,7 @@ const ENTRIES = [
     version: 'v4.107.0',
     date: '2026-11-21',
     title: 'A meeting’s page has the project manager too',
-    items: ['A meeting’s page shows the project manager’s suggestions about its action items, with the same buttons as on the board.', 'Each action item has “✦ Tell the assistant”. Say what to do with it, like the person, circle, subcircle, priority, date or status, and the assistant changes it. A draft it changes is confirmed.'],
+    items: ['A meeting’s page shows the project manager’s suggestions about its action items, with the same buttons as on the board.', 'Under a task’s fields there’s “✦ What should the assistant do?”. Type it, like “give it to Ana, high priority, due Friday”, and the assistant changes it right there. The changed fields are marked, and you keep it or undo it.'],
   },
   {
     version: 'v4.106.0',

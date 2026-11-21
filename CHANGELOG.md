@@ -13,8 +13,10 @@ agent should be able to understand… circle, sub circle, person assigned, prior
 - **A meeting's page** (M18, v4 look) shows **Project manager · about these action items**, open, above the action
   items. These are the board's open suggestions about this meeting's tasks, with the same Accept, Dismiss, Put it in,
   field editing and Tell the assistant. Circle leads (for their circles) and admins decide; everyone else sees them.
-- **✦ Tell the assistant** on each action item, for those who may change it: say what to do with it in words, and it
-  goes to the assistant bar knowing which task you mean.
+- **✦ What should the assistant do?** sits under a task's fields wherever they can be changed: in the project manager
+  panel and in a meeting's action items. Type what to do, like "give it to Ana, high priority, due Friday". The assistant
+  makes the change right there, with no chat pop-up. The fields reload with what changed marked, and a short list says
+  what it did. **Keep** it, or **Undo** puts it all back.
 - **The assistant (Do)** already changes a task's circle, subcircle, person, priority, due date and time, status and the
   task it's part of. Now a change to a draft confirms it there too (Undo makes it a draft again), and on its cards a
   team reads "subcircle".

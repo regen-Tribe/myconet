@@ -4,7 +4,6 @@ import { DraftSwipe } from '@/modules/m07-ops/DraftSwipe'
 import { TaskQuickEdit } from '@/modules/m07-ops/TaskQuickEdit'
 import { ProjectManagerPanel } from '@/modules/m07-ops/ProjectManagerPanel'
 import type { AgentSuggestion } from '@/modules/m07-ops/types'
-import { instructAgent } from '@/core/lib/agent-context'
 import type { TaskPerson, TaskProjectOption, TaskTeamOption } from '@/modules/m07-ops/TaskModal'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -269,14 +268,6 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
   const [editing, setEditing] = useState<Set<string>>(() => new Set(loaded.filter(t => t.needs_review && t.can_edit).map(t => t.deliverable_id)))
   const tasks = loaded.map(t => ({ ...t, ...patch[t.deliverable_id] }))
   const drafts = tasks.filter(t => t.needs_review).length
-  // "✦ Tell the assistant" on an action item (v4.107.0): what to do with it, in words
-  const [telling, setTelling] = useState<string | null>(null)
-  const [told, setTold] = useState('')
-  function tell(t: MeetingTask) {
-    if (!told.trim()) return
-    instructAgent(told.trim(), { task_id: t.deliverable_id, ...(t.project_id ? { project_id: t.project_id } : {}) })
-    setTelling(null); setTold('')
-  }
   const canDecide = (c: string) => pm?.role === 'admin' || (pm?.role === 'circle_lead' && pm.leadCircles.includes(c))
   const toggleEdit = (id: string) => setEditing(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n })
 
@@ -352,21 +343,9 @@ export default function MeetingDetail({ meeting: m, tasks: loaded, taskOptions =
                                 <Icon name="pencil" size={13} />{editing.has(t.deliverable_id) ? 'Done' : 'Edit'}
                               </button>
                             )}
-                            {canEdit && (
-                              <button type="button" className="mt4-editbtn" aria-expanded={telling === t.deliverable_id} onClick={() => { setTelling(telling === t.deliverable_id ? null : t.deliverable_id); setTold('') }}>
-                                ✦ Tell the assistant
-                              </button>
-                            )}
+
                           </span>
                         </div>
-                        {telling === t.deliverable_id && (
-                          <form className="mt4-taskedit" onSubmit={e => { e.preventDefault(); tell(t) }} style={{ display: 'flex', gap: 6 }}>
-                            <input autoFocus value={told} onChange={e => setTold(e.target.value)} maxLength={2000}
-                              placeholder="e.g. give it to Ana, high priority, due Friday, in the Kitchen circle"
-                              style={{ flex: 1, minWidth: 0, fontSize: 13, padding: '7px 10px', borderRadius: 8, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--ink)', fontFamily: 'inherit' }} />
-                            <Button size="sm" variant="primary" disabled={!told.trim()} type="submit">Send</Button>
-                          </form>
-                        )}
                         {canEdit && editing.has(t.deliverable_id) && (
                           <div className="mt4-taskedit">
                             <TaskQuickEdit
