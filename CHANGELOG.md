@@ -5,6 +5,21 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.88.0 — 2026-11-21 — Home follows the menu (v4)
+
+Sonia: "this should be organized by the nav bar: community, then working together, and be less busy visually with
+different sizes but same colors; start from most attractive: meet members, calendar of events". In `HomeV4`
+(`web/src/modules/home/HomeV4.tsx`):
+- The pages come straight from `menuGroups` (`core/lib/nav.ts`), in its two groups with their labels and lines, and
+  with the menu's names and icons. A page added to the menu needs one line in `LINE` to show on Home.
+- Two sizes. Large first: Members (faces, head count), Calendar (the next three events), Operations (three projects
+  under way) and Governance (the open proposals and when they close). The rest are small rows; pages that open on
+  joining show a lock.
+- One colour: every icon tile and date block is the same grey.
+- "Happening now" is gone as a block; its events and votes live in the Calendar and Governance tiles.
+
+No migration.
+
 ## v4.87.0 — 2026-11-21 — A tidier circle page
 
 Sonia, on the live v4.63.0 circle page: "this is messed up" (Overview) and "what are these" (Manuals & guides). v4 only.
