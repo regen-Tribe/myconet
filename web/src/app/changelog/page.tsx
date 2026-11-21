@@ -3,10 +3,22 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.83.0',
+    version: 'v4.87.0',
     date: '2026-11-21',
     title: 'A clearer menu: no more look-alike arrows',
     items: ['In the new look, the button that makes the menu slim or opens it again is now a sidebar icon. Open, it sits top right; slim, it sits at the bottom. Your next step in the slim menu is a green flag. Before, two arrows sat one above the other and did different things.', 'In the slim menu, a page’s name shows beside its icon as soon as you point at it. The slim menu scrolls when the window is short instead of squeezing its buttons, and it no longer opens wide for a moment each time a page loads.', 'On a phone, the menu closes with Escape and when you go back a page.'],
+  },
+  {
+    version: 'v4.84.0',
+    date: '2026-11-21',
+    title: 'Sort drafts right in the list',
+    items: ['In Operations › Tasks you can change a task’s status, circle, subcircle and the task it’s part of right in the list. Changing a draft confirms it.', '“✦ Tell the assistant” on each row asks the assistant to do something with that task.', 'Drafts you change or confirm stay in the drafts list with their new values until you reload the page.'],
+  },
+  {
+    version: 'v4.83.0',
+    date: '2026-11-21',
+    title: 'About reads as chapters',
+    items: ['About is easier to read through: each chapter keeps its heading, a short intro and a photo of the place in view while you read its topics, and each topic opens to the whole answer. A day here is a timeline.', 'The tiles under the photo each show a figure and what it means: the size of the land, how many people, places to sleep, the climate, the year it began, and off-grid power and water. Click one to read the whole answer.', 'The photo at the top fits the screen better, and the name and the line under it stay readable without covering the place.'],
   },
   {
     version: 'v4.82.0',

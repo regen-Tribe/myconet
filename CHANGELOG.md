@@ -5,7 +5,7 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
-## v4.83.0 — 2026-11-21 — A clearer menu: no look-alike arrows
+## v4.87.0 — 2026-11-21 — A clearer menu: no look-alike arrows
 
 Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSideNav` is unchanged.
 - The open/slim switch is a `sidebar` icon (new in `v4/icons.ts`), the same in both states, with `aria-expanded`.
@@ -22,6 +22,36 @@ Sonia, on the slim menu: "the arrows are confusing". v4 only (`MenuV4`); `AppSid
 - No migration, no new setting, no new secret.
 - Second brain: this changes no knowledge (no decision, task, project, agreement, role, event or document), so
   nothing lands there.
+
+## v4.84.0 — 2026-11-21 — Sort drafts right in the list
+
+Oscar: "on the drafts to confirm task board… set the status… talk with an ai in the bar… see circle, sub circle,
+task… and be able to change any of those. when user changes any of those, it is no longer a draft… leave the ones
+that are there showing the new status until a refresh".
+- In Operations › Tasks (M07), the list has **Circle**, **Subcircle** and **Part of** columns. For anyone who may
+  edit the task, those and **Status** are pickers right in the row. They follow the task pop-up's rules: a
+  subcircle or task brings its circle, and what no longer fits the new circle is cleared.
+- **✦ Tell the assistant** on each row sends a request to the assistant bar about that task.
+- Changing a draft confirms it. That covers the row's pickers, and changes the assistant makes to a draft task
+  (Do: rename, assign, date, status, move). Undoing a Do change makes it a draft again.
+- With **Only drafts to confirm** on, a confirmed or changed draft stays in the list, marked ✓ Confirmed with its new
+  values, until the page is reloaded. No migration.
+
+## v4.83.0 — 2026-11-21 — About reads as chapters
+
+Only for communities with `"design": "v4"` (`AboutV4`). No migration.
+- **Chapters.** Each chapter of About has its heading, a short intro and a photo of a place from the Map in a column
+  that stays in view on a computer, beside its topics: tidy rows (icon, title, first sentence) that open to the
+  whole answer. They replace the grids of text cards and "Read more". A day here is a timeline read from the
+  daily-rhythm answer; values are a numbered list. Place photos show to signed-in people only, as on the Map.
+- **At a glance.** The tiles under the photo each lead with a figure and say what it means in a line, read from
+  the Blueprint (`glance()` in `lib/about-text.ts`): the land, people, places to sleep, climate, since, off-grid.
+  A tile without a figure shows the answer's short form; each has a faint colour of its own and jumps to its
+  whole answer, which opens and lights up.
+- **The heading.** The photo is a fixed wide frame (at most 460px or 58% of the screen; taller on phones), the name
+  is sized to the frame, and a shade sits only behind the words so the place stays visible. Under the name, the
+  Project name's tagline, else the start of What we are. The place tag prefers a place with its country. On narrow
+  phones Ask is a round icon beside Start joining. The chapter bar fades at its edge.
 
 ## v4.82.0 — 2026-11-21 — A calmer page colour (v4)
 

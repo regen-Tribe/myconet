@@ -17,7 +17,7 @@ import { Icon } from '@/core/components/v4'
  *
  * Arrows mean "go somewhere" only on the next-step card. The open/slim switch is a sidebar icon (top right
  * when open, at the foot of the rail), and the rail's next step is a green flag, so no two arrows sit side
- * by side (v4.83.0). The rail's names show in a quick label beside the icon, on hover and keyboard focus.
+ * by side (v4.87.0). The rail's names show in a quick label beside the icon, on hover and keyboard focus.
  */
 
 // The community's small square mark (instance config "brandMark", e.g. Protopia's spiral); the letter otherwise

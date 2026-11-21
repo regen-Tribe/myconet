@@ -918,6 +918,7 @@ export default function OpsClient({
           deliverables={initialDeliverables} projects={boardProjects} draftsOnly={draftsOnly} onDraftsOnly={setDraftsOnly}
           canDecide={canEditTask}
           onOpen={setOpenTask}
+          projectOptions={projectOptions} teams={teams}
           onDecided={() => router.refresh()}
         />
       )}
