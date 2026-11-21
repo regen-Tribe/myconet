@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.75.1 — 2026-11-20 — A place's photo shows once
+
+Sonia: "show the photo once per place". In Amenities & tools (M15) Browse, a place's photo shows on the first card
+of that place in the list only (items sharing a place, like 20 dorm beds, no longer repeat it). The item's window
+still shows the photo.
+
 ## v4.75.0 — 2026-11-20 — One map, and place photos on bookable things
 
 Sonia: "I don't see accommodation photos, also map in both places is redundant".
