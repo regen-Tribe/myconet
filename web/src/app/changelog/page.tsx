@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.102.0',
+    date: '2026-11-21',
+    title: 'The space: amenities and the map behind one menu item',
+    items: ['The menu has one item, “The space”, instead of “Amenities & tools” and “Map”. Both pages have a switch under the heading to go from one to the other.'],
+  },
+  {
     version: 'v4.101.0',
     date: '2026-11-21',
     title: 'Home follows the menu',

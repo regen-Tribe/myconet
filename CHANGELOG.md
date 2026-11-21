@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.102.0 — 2026-11-21 — The space: Amenities & tools and the Map behind one menu item
+
+Sonia: "we should also put the map and amenities and tools into 'the space' so we have less things on the side".
+- `nav.ts`: one item **The space** (`/amenities`, highlighted on `/map` too) replaces "Amenities & tools" and "Map".
+- New `core/components/SpaceTabs.tsx`: a switch under the heading of both pages (Amenities & tools | Map). It
+  replaces the "See the map" button in Browse. The pages keep their own headings and addresses.
+
 ## v4.101.0 — 2026-11-21 — Home follows the menu (v4)
 
 Sonia: "this should be organized by the nav bar: community, then working together, and be less busy visually with
