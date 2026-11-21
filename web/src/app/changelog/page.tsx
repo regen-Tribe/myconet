@@ -9,6 +9,12 @@ const ENTRIES = [
     items: ['A meeting’s name no longer repeats its date; the date is shown beside it.', 'The assistant is stricter about tasks from meetings: only work someone agreed to do, still to be done, and not on the board yet.'],
   },
   {
+    version: 'v4.98.0',
+    date: '2026-11-21',
+    title: 'Amenities & tools as a gallery',
+    items: ['Every card leads with a large photo, with what’s free right on it.', 'Numbered things of one kind are one card: Dorm 1 with its 10 beds, Rooms 1–9. Pick a bed or room on the card to see it and book it.'],
+  },
+  {
     version: 'v4.97.0',
     date: '2026-11-21',
     title: 'One icon set, kept that way',

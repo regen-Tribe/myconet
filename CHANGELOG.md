@@ -15,6 +15,15 @@ are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
   community's work and it isn't on the board yet. Fireflies' action items are checked against the transcript; when in
   doubt, it's left out. The quote kept with a task is where it was agreed.
 
+## v4.98.0 — 2026-11-21 — Amenities & tools as a gallery
+
+Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad… the gallery needs to look amazing".
+- Browse cards lead with a 4:3 photo (the item's own, else its place's; without either a tinted tile with the
+  category's icon), with the availability as a badge on it and the name, facts and tags under it (`ItemMedia`).
+- Three or more items of one category whose names differ only in their last number show as one card
+  (`groupItems` in `BookingsV4.tsx`): "Dorm 1 – bed 1…10" is **Dorm 1** with 10 beds, "Room 1…9" is **Rooms 1–9**,
+  with "n of m free now" and a button per bed or room that opens it to book. No data changes.
+
 ## v4.97.0 — 2026-11-21 — icon-check: one icon set, kept that way
 
 - **`cd web && npm run icon-check`** (`web/scripts/icon-check.mjs`): fails when a `.ts` or `.tsx` file under `web/src`
