@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.80.0 — 2026-11-20 — Beds and rooms grouped in Amenities & tools
+
+Sonia, on a page of 20 near-identical dorm-bed cards: "this looks bad". In Browse, three or more items of one
+category whose names differ only in their last number show as one card (`groupItems` in `BookingsV4.tsx`):
+"Dorm 1 – bed 1…10" is **Dorm 1** with 10 beds, "Room 1…9" is **Rooms 1–9**. The card shows the photo, how many,
+the capacity and "n of m free now", and a button per bed or room that opens it to book. Nothing changes in the
+data; items without a number, or fewer than three, show as before.
+
 ## v4.79.0 — 2026-11-20 — Open a suggestion's task, and deciding confirms a draft
 
 Oscar: "i should be able to click the name of the task and open the card… make the task stop showing draft".

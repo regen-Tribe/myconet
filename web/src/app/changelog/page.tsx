@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.80.0',
+    date: '2026-11-20',
+    title: 'Beds and rooms grouped',
+    items: ['In Amenities & tools, numbered things of one kind show as one card: Dorm 1 with its 10 beds, Rooms 1–9. The card has the photo and how many are free now; pick a bed or room to see it and book it.'],
+  },
+  {
     version: 'v4.79.0',
     date: '2026-11-20',
     title: 'Open a suggestion’s task, and accepting confirms a draft',
