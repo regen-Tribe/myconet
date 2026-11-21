@@ -17,7 +17,7 @@ in the rest of this file until v4 is finished and becomes the default. Words fol
 (2) Main buttons are black pills; secondary buttons are white with a hairline. (3) Colour shows status, never a
 module: To do blue, In progress violet, Review red, Done green, Paused yellow, Ideas grey (`--st-*`). The module
 colours (`--m*`) are black in v4. (4) Labels above headings (eyebrows) are light sans capitals, wide letter-spacing,
-`--ink-4`; no mono font. (5) A pale blue page (`--bg`) with white cards, no shadows; three radii: pill, card 20px,
+`--ink-4`; no mono font. (5) A faintly blue page (`--bg`, half the first v4 wash; hairlines neutral grey) with white cards, no shadows; three radii: pill, card 20px,
 inner 12px; six text sizes 11/13/15/18/24/40. (6) One hand-drawn icon set (marker line); no emoji in the interface.
 (7) Drawings (cream on cobalt) only for empty screens and page headers. (8) The board keeps its Paused column
 (Oscar, 2026-11-19), for projects only, after Done.

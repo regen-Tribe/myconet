@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.80.0 — 2026-11-21 — A calmer page colour (v4)
+
+Sonia picked "Half the wash" from the cobalt study: the v4 page was tinted blue all over, so the cobalt drawings
+blended into it. Only for communities with `"design": "v4"`.
+- **Page half as blue:** `--bg` `#E9EFFD` → `#F1F4FC`, `--bg-2` `#EEF3FF` → `#F5F7FD`, `--bg-3` `#E2E9FA` → `#E8ECF5`
+  (and `--background`, the Blueprint editor's copy, and the CSS fallbacks).
+- **Neutral hairlines:** `--rule` `rgba(35,80,176,.13)` → `rgba(17,19,23,.09)`, `--rule-soft` → `rgba(17,19,23,.05)`;
+  the circle-filter pill buttons lose their blue tint too.
+- Unchanged: cobalt and cream for drawings, black main buttons, the green next step, status colours. No migration.
+
 ## v4.78.0 — 2026-11-21 — The v4 look on every screen
 
 Sonia: "let's fix all the changes so v4 reaches all screens". Only for communities with `"design": "v4"`; others
