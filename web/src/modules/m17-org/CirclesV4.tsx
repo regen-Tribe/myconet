@@ -151,7 +151,7 @@ function CircleCards(p: Props) {
                 <CircleSeal slug={c} size={40} className="cv4-seal" />
                 <div className="cv4-card__name">
                   <b>{meta.label}</b>
-                  <small>{[c === steward?.slug ? 'Looks after every circle' : null, teams.length ? plural(teams.length, 'subcircle') : null].filter(Boolean).join(' · ') || 'Circle'}</small>
+                  <small>{c === steward?.slug ? 'Looks after every circle' : 'Circle'}</small>
                 </div>
                 <span className="v4-tags cv4-card__tags">
                   {asking > 0 && <Tag icon="hand">{asking} asking</Tag>}
@@ -185,12 +185,14 @@ function CircleCards(p: Props) {
                 </div>
               </div>
 
-              {signedIn && (
-                <div className="cv4-stats">
+              {/* How many subcircles, for everyone (v4.104.0: Oscar wanted the number on each circle); tasks and meetings when signed in */}
+              <div className="cv4-stats">
+                <span className="cv4-stat"><Icon name="circles" size={15} /><b>{teams.length}</b> {teams.length === 1 ? 'subcircle' : 'subcircles'}</span>
+                {signedIn && <>
                   <span className="cv4-stat"><Icon name="tasks" size={15} /><b>{tasks}</b> open {tasks === 1 ? 'task' : 'tasks'}</span>
                   <span className="cv4-stat"><Icon name="calendar" size={15} /><b>{notes}</b> {notes === 1 ? 'meeting' : 'meetings'}{next && <em suppressHydrationWarning> · next {day(next.starts_at)}</em>}</span>
-                </div>
-              )}
+                </>}
+              </div>
             </Link>
           )
         })}
