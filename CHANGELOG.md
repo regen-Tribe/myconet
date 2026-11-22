@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.111.1 — 2026-11-21 — Grouped cards: just the number when the title says what they are
+
+Amenities & tools (M15): a group named from its stem ("Private Room 1…9" → "Private Rooms 1–9") shows buttons
+1, 2, 3 instead of "Private room 1". Groups split at a dash ("Male dorm – bed 3") keep "Bed 3". It was tied to
+the word "room" before.
+
 ## v4.111.0 — 2026-11-21 — Core and community migrations never take the same number
 
 Oscar: "add instructions in the places they need to be so the numbering issue doesn't happen - it's important we stay
