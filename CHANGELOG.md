@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.118.0 — 2026-11-22 — Approve people before they show in Members
+
+Sonia, after placeholder profiles were added on Protopia for guests with a stay: "leave them in calendar and the
+bookings - we should approve them before they show up on members though".
+- `user_profiles.approved` (boolean, default true; migration `20261223000000_profiles_awaiting_approval.sql`). False
+  means an admin added the profile and it is waiting. Nothing changes for a community that never sets it.
+- Left out while waiting: Members (list, newest, count), Discover, Matches, top-bar search, the people on Home, the
+  dashboard and the landing page, and the "buddies" on Join. Each of those queries adds `.eq('approved', true)`.
+- Unchanged: bookings and the bookings calendar, pickers (task assignee, circle members), and the profile page at
+  its own address. It is a listing switch, not a security boundary: the row stays readable.
+- Admin › Permissions: a "Waiting for approval" chip when anyone is waiting, "Not in Members yet" on the card, and
+  an Approve button (saved straight away). Only admins: `guard_profile_privileges` refuses the change from anyone
+  else, and visitors get read access to this one column so the public pages can filter on it.
+- There is no screen yet to set someone back to waiting or to add a waiting profile; that is done in the database.
+- **Apply the migration before deploying**: the lists filter on the new column.
+- Not checked: the guard change on a local database (the repo has no boundary harness yet), and the screens signed in.
+
 ## v4.117.0 — 2026-11-22 — The bell opens
 
 Sonia: "i cannot click the notifications center". The bell in the top bar was a picture with a red dot that was always
