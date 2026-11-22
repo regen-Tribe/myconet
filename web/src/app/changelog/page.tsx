@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.117.0',
+    date: '2026-11-22',
+    title: 'The bell opens',
+    items: ['The bell in the top bar opens a card. Needs you: votes you haven’t cast, your tasks that are late or due within 3 days, offers of help on projects you lead, and, for leads, join applications and booking requests. The number on the bell counts these.', 'Activity: the last week’s news for you: proposals you voted on that were approved, answers to your offers of help, meeting notes from your circles, and events you’re going to in the next 2 days. Each item opens its page.'],
+  },
+  {
     version: 'v4.116.0',
     date: '2026-11-22',
     title: 'Photos first in Amenities & tools',
