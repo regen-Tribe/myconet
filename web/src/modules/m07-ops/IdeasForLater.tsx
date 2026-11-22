@@ -7,7 +7,7 @@ import type { Deliverable, ProjectSummary } from './types'
 import '@/modules/m18-meetings/meetings-v4.css'
 
 /**
- * Ideas for later (v4.114.0: Oscar, from the To decide list): tasks set aside with 💡 Later. They're off the board and
+ * Ideas for later (v4.114.0: Oscar, from the To decide list): tasks set aside with Later. They're off the board and
  * out of the project manager's review until someone with the right to change the task brings one back.
  */
 export function IdeasForLater({ ideas, projects, canEdit, onBack }: {
