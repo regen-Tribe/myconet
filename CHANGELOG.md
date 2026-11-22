@@ -5,6 +5,23 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.117.0 — 2026-11-22 — The bell opens
+
+Sonia: "i cannot click the notifications center". The bell in the top bar was a picture with a red dot that was always
+on; the redesign prototype's bell card (`design/redesign-prototype/app.js`, `bell()`) never reached the app.
+- The bell opens a card (`core/components/shell/BellPanel.tsx`, items from `core/lib/bell.ts`) with two sections:
+  - **Needs you** (the number on the bell): open proposals you haven't voted on, your tasks late or due within 3 days,
+    pending offers of help on projects you lead or started, join applications (leads) and booking requests (admins).
+  - **Activity** (last 7 days): proposals you voted on that were approved, your offers accepted or declined, meeting
+    notes from your circles (the newest two, then "N more"), and events you're going to in the next 2 days.
+- Nothing is stored for the bell: every item is read from the pages' own tables with the viewer's session (RLS).
+  Approval isn't stored either, so its time is the proposal's latest vote.
+- Governance's approval rule moved to `core/lib/proposal-checks.ts`, used by the Governance page and the bell.
+- `/governance?p=<id>` opens one proposal (the bell's vote links).
+- On phones the card spans the screen under the top bar.
+
+Second brain: no knowledge changes; it reads what the pages already hold. No migration.
+
 ## v4.116.0 — 2026-11-22 — Photos first in Amenities & tools
 
 Sonia: "move the ones with generated images to the bottom". A community can fill a card with an illustration until
