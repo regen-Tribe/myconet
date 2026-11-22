@@ -19,7 +19,7 @@ action items section".
   - its fields, changed right there, and "✦ What should the assistant do?"
   - the **Draft** pill: slide right to approve, left to decline. It then reads **Approved** (with Undo) or **Declined**.
     A row with only a suggestion has no pill.
-  - **💡 Later**: sets the task aside on **Ideas for later**, a new chip in Operations. It's off the board and out of the
+  - **Later**: sets the task aside on **Ideas for later**, a new chip in Operations. It's off the board and out of the
     project manager's review until someone brings it back.
   - the project manager's **suggestions about it**, inside the row, with Accept, Dismiss and Put it in. A suggestion
     about several tasks shows on each of them.
