@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.110.0 — 2026-11-21 — Several photos for a bookable thing and for a place
+
+Sonia: "you can also add more than 1 image".
+- Migration `20261217000000_more_photos.sql`: `booking_items.photos` and `places.photos` (text[], default empty).
+  `photo_url` stays the cover on cards and pins. Both are read separately, so a database without the columns
+  still loads its pages.
+- New `core/components/PhotoStrip.tsx`: the cover and the rest as a strip you swipe (scroll-snap), with arrows and
+  a "2 / 5" count. In the item's window (its own photos; without any, its place's) and in the place's card on the Map.
+- Not yet: adding or removing the extra photos in the edit forms. For now they are set by a community's migration.
+
 ## v4.108.0 — 2026-11-21 — Subcircles have their own page, and their own meetings
 
 Oscar: "sub circles should have a subpage the same abilities as a circle subpage… like a russian doll effect so it's
