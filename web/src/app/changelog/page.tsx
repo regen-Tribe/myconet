@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.113.0',
+    date: '2026-11-21',
+    title: 'Everything shared is under Spaces',
+    items: ['Amenities & tools now also lists the places from the Map that you don’t book, such as the shared restrooms, the waterfalls and the gardens. Their cards open the place on the Map.'],
+  },
+  {
     version: 'v4.112.1',
     date: '2026-11-21',
     title: 'Room buttons show just the number',
