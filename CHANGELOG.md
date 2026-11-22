@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.116.0 — 2026-11-22 — Photos first in Amenities & tools
+
+Sonia: "move the ones with generated images to the bottom". A community can fill a card with an illustration until
+someone takes a real photo; those cards opened the page because the list was by name.
+- New `photo_drawn` on `booking_items` and `places` (`supabase/migrations/20261222000000_photo_drawn.sql`): the cover
+  is a drawing, not a photo. A community sets it in its own migration.
+- Amenities & tools shows cards with a real photo first (things to book, then places from the Map), then the ones
+  with a drawing or no picture. An item that shows its place's picture follows that place's mark.
+- Uploading a photo in the item form clears the mark.
+- Read on its own, so a database without the column still loads (nothing sorts last).
+
+Second brain: no knowledge changes; it is an order on one screen. Migration: yes, additive.
+
 ## v4.115.0 — 2026-11-22 — Lines you can see again (v4)
 
 Oscar: "there are no lines in between content, just white". Since v4.82.0's calmer page (Sonia), the page is nearly
