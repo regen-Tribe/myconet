@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.112.0 — 2026-11-21 — The bookings calendar scrolls sideways through the dates
+
+Sonia, looking at Protopia's calendar once its stays were in: "you should be able to scroll to the side to reveal
+more dates". The calendar in Admin › Bookings (`m15-bookings/BookingsV4.tsx`, `BookingsCalendar`) was a fixed
+two-week window moved by Earlier / Later. It is now one strip of days, from two weeks back to a week past the last
+booking (at least eight weeks ahead, at most 400 days), in a sideways scroller that opens on today. The item names
+stay put (sticky), a guest's name stays in view inside a long bar, the first of a month shows the month's name, and
+the heading names the dates in view. Earlier, Later and Today scroll it by a week. Also fixes weekend shading in
+rows that have a stay: the day cells were placed by the grid, so they slid past the columns a bar covered. No
+migration. Second brain: nothing new is written (a display change; stays still aren't in the second brain).
+
 ## v4.111.0 — 2026-11-21 — Core and community migrations never take the same number
 
 Oscar: "add instructions in the places they need to be so the numbering issue doesn't happen - it's important we stay
