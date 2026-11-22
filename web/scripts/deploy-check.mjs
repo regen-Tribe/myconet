@@ -14,7 +14,7 @@ if (dirty.length) problems.push(`Uncommitted changes would go live without being
 if (state.behind > 0) problems.push(`origin/${state.branch} has ${state.behind} commit(s) you don't have: \`git pull --rebase origin ${state.branch}\`, then deploy.`)
 if (state.ahead > 0) problems.push(`${state.ahead} commit(s) aren't pushed: \`git push origin ${state.branch}\` first, so GitHub matches what goes live.`)
 
-// Core and community migration numbers must never meet (scripts/migration-check.mjs, v4.109.0)
+// Core and community migration numbers must never meet (scripts/migration-check.mjs, v4.111.0)
 const mig = checkMigrationFiles()
 problems.push(...mig.errors.map(e => `Migration numbers: ${e}`))
 for (const w of mig.warnings) console.log(`  · Migration numbers: ${w}`)
