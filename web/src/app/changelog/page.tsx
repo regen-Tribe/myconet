@@ -3,10 +3,34 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
-    version: 'v4.108.0',
+    version: 'v4.112.0',
     date: '2026-11-21',
     title: 'Bookings calendar: scroll sideways through the dates',
     items: ['In Admin › Bookings, the calendar of who stays where is one long strip of days: scroll sideways to see earlier and later dates, up to the last booking. The room names stay in place and a guest’s name stays in view on a long stay.', 'Earlier, Later and Today still move it a week at a time, and the first of each month shows the month’s name.', 'Weekends are now shaded on the right days in rows that have a stay.'],
+  },
+  {
+    version: 'v4.111.0',
+    date: '2026-11-21',
+    title: 'Community and core database changes stay apart',
+    items: ['Behind the scenes: a community’s own database changes now use their own numbers, so they can never hide a MyCoNet update. Every deploy checks it.'],
+  },
+  {
+    version: 'v4.110.0',
+    date: '2026-11-21',
+    title: 'Several photos for a room, a space or a place',
+    items: ['A room, tool or space, and a place on the Map, can have more photos after the main one. Open it and swipe through them, or use the arrows.'],
+  },
+  {
+    version: 'v4.108.0',
+    date: '2026-11-21',
+    title: 'Subcircles have their own page',
+    items: ['Each subcircle has its own page, like a circle’s, with its people, tasks and meeting notes. A breadcrumb at the top shows the way back: Circles › the circle › the subcircle.', 'Leads can set a meeting’s subcircle on the meeting’s page, and the meeting then shows on that subcircle’s page.'],
+  },
+  {
+    version: 'v4.107.0',
+    date: '2026-11-21',
+    title: 'A meeting’s page has the project manager too',
+    items: ['A meeting’s page shows the project manager’s suggestions about its action items, with the same buttons as on the board.', 'The project manager panel in Operations now also lists every meeting’s drafts waiting to be confirmed, by meeting, with the same rows and controls as the meeting’s page.', 'Under a task’s fields there’s “✦ What should the assistant do?”. Type it, like “give it to Ana, high priority, due Friday”, and the assistant changes it right there. The changed fields are marked, and you keep it or undo it.'],
   },
   {
     version: 'v4.106.0',

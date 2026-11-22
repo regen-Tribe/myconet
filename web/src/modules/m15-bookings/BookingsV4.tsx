@@ -373,7 +373,7 @@ const DAYS_MAX = 400
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
 
 function BookingsCalendar({ vm }: { vm: BookingsV4Model }) {
-  // One long strip of days that scrolls sideways (v4.108.0); it opens on today
+  // One long strip of days that scrolls sideways (v4.112.0); it opens on today
   const scroller = useRef<HTMLDivElement>(null)
   const [view, setView] = useState({ first: DAYS_BACK, count: 14 })
   const measure = () => {
