@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.118.0',
+    date: '2026-11-22',
+    title: 'Approve people before they show in Members',
+    items: ['A profile an admin added for someone, such as a guest with a stay, can wait for approval. Until then the person is left out of Members, matches, search and the people counts. Their bookings stay in the calendar.', 'Admin › Permissions shows who is waiting, with an Approve button. Only admins approve. Nothing changes for people who signed up themselves.'],
+  },
+  {
     version: 'v4.117.0',
     date: '2026-11-22',
     title: 'The bell opens',
