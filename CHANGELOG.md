@@ -5,6 +5,30 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.111.0 — 2026-11-21 — Core and community migrations never take the same number
+
+Oscar: "add instructions in the places they need to be so the numbering issue doesn't happen - it's important we stay
+in sync with working with core and other instances like RTRN". A community's database keeps one list of migrations
+for core's and its own together, and `supabase db push` skips any number already in it. Three Protopia migrations had
+taken core numbers, so three core changes were skipped without a word. Two columns were missing until it was found:
+`circles.icon` and `meeting_transcripts.team_id`.
+- **The rule:** a number is `YYYYMMDDHHMMSS`. **Core uses the hour 00–89, and a community's `instance/migrations/` uses
+  90–99**, e.g. `20261217900100_protopia_x.sql`. They can't meet, whatever order they're written or applied in. It's
+  written where people and agents look:
+  - `supabase/migrations/README.md` (new: the why and how)
+  - `instance.example/migrations/README.md` (new)
+  - `CLAUDE.md` and `AGENTS.md` (Rules for AI coding agents)
+  - `INSTANCES.md`, which used to say "numbered after the core ones" (the cause)
+  - `instance.example/README.md`
+- **`web/scripts/migration-check.mjs`:**
+  - Every `npm run deploy` (`deploy-check.mjs`) now checks the files and **stops on a clash**: a community migration
+    with a core number, or in core's range.
+  - **`npm run migrations:check`** also reads the linked database. It lists a number applied under another file's
+    name, and what isn't applied yet. Run it before `supabase db push`.
+  - Files numbered before 2026-12-17 keep their numbers, and their clashes are listed as notes.
+
+No migration.
+
 ## v4.110.0 — 2026-11-21 — Several photos for a bookable thing and for a place
 
 Sonia: "you can also add more than 1 image".
