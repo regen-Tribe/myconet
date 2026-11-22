@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.112.1',
+    date: '2026-11-21',
+    title: 'Room buttons show just the number',
+    items: ['On a grouped card whose title already names the things, like “Private Rooms 1–9”, the buttons show only the number.'],
+  },
+  {
     version: 'v4.112.0',
     date: '2026-11-21',
     title: 'Bookings calendar: scroll sideways through the dates',

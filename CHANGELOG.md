@@ -5,6 +5,12 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.112.1 — 2026-11-21 — Grouped cards: just the number when the title says what they are
+
+Amenities & tools (M15): a group named from its stem ("Private Room 1…9" → "Private Rooms 1–9") shows buttons
+1, 2, 3 instead of "Private room 1". Groups split at a dash ("Male dorm – bed 3") keep "Bed 3". It was tied to
+the word "room" before.
+
 ## v4.112.0 — 2026-11-21 — The bookings calendar scrolls sideways through the dates
 
 Sonia, looking at Protopia's calendar once its stays were in: "you should be able to scroll to the side to reveal

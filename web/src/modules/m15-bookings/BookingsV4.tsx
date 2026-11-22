@@ -141,7 +141,7 @@ function ItemMedia({ photo, category, badge, busy }: { photo: string | null; cat
  * Numbered things of one kind show as one card (v4.80.0): "Dorm 1 – bed 1…10" is Dorm 1 with 10 beds to pick from,
  * "Room 1…9" is Rooms 1–9. Three or more items of a category whose names differ only in the last number group up.
  */
-type GroupEntry = { kind: 'group'; key: string; title: string; unit: string; items: BookingItem[] }
+type GroupEntry = { kind: 'group'; key: string; title: string; unit: string; plain: boolean; items: BookingItem[] }
 type BrowseEntry = { kind: 'item'; item: BookingItem } | GroupEntry
 
 const GROUP_MIN = 3
@@ -171,7 +171,7 @@ function groupItems(items: BookingItem[]): BrowseEntry[] {
     const nums = sorted.map(x => numbered(x.name)![2])
     const title = split ? split[1] : `${stem}s ${nums[0]}–${nums[nums.length - 1]}`
     const unit = (split ? split[2] : stem).toLowerCase()
-    out.push({ kind: 'group', key, title, unit, items: sorted })
+    out.push({ kind: 'group', key, title, unit, plain: !split, items: sorted })
   }
   return out
 }
@@ -193,7 +193,8 @@ function GroupCard({ vm, group }: { vm: BookingsV4Model; group: GroupEntry }) {
         {group.items.map(i => (
           <button key={i.id} type="button" className={`v4-unit${isFree(i) ? '' : ' v4-unit--busy'}`} onClick={() => vm.open(i.id)}
             title={vm.availability(i)?.text ?? i.name}>
-            {group.unit === 'room' ? numbered(i.name)![2] : `${group.unit[0].toUpperCase()}${group.unit.slice(1)} ${numbered(i.name)![2]}`}
+            {/* "Bed 3" inside Dorm 1; just the number when the card's title already says what they are (Private Rooms 1–9) */}
+            {group.plain ? numbered(i.name)![2] : `${group.unit[0].toUpperCase()}${group.unit.slice(1)} ${numbered(i.name)![2]}`}
           </button>
         ))}
       </div>
