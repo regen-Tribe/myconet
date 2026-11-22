@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.114.0',
+    date: '2026-11-21',
+    title: 'One list of everything to decide',
+    items: ['“To decide” in Operations, and the action items on a meeting’s page, are now one list. Each task shows its fields, the assistant line, the project manager’s suggestions about it, and a Draft pill: slide right to approve, left to decline.', 'Later sets a task aside on the new Ideas for later list, off the board until you bring it back. What you decide stays in the list until you reload the page.'],
+  },
+  {
     version: 'v4.113.0',
     date: '2026-11-21',
     title: 'Everything shared is under Spaces',
