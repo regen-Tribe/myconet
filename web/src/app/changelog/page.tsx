@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.116.0',
+    date: '2026-11-22',
+    title: 'Photos first in Amenities & tools',
+    items: ['Cards with a real photo come first. A card whose picture is a drawing standing in for a photo, or that has no picture, goes to the end. Uploading a photo moves it back up.'],
+  },
+  {
     version: 'v4.115.0',
     date: '2026-11-22',
     title: 'Lines you can see again',
