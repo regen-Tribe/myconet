@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.119.0',
+    date: '2026-11-22',
+    title: '“Part of” offers the right tasks',
+    items: ['When you choose the task something is part of, the list shows only tasks in its circle, or in its subcircle when one is chosen, so subtasks stay with the people who look after them.'],
+  },
+  {
     version: 'v4.118.0',
     date: '2026-11-22',
     title: 'Approve people before they show in Members',
