@@ -830,6 +830,8 @@ button.v4-tag { cursor: pointer; border: 0; font: inherit; font-size: 11px; }
 .v4-item__body > small { font-size: 12.5px; color: var(--ink-3, #6b7180); }
 .v4-item__body .v4-tags, .v4-item__body .v4-unitpick { margin-top: 4px; }
 .v4-item--group { cursor: default; }
+.v4-item__text { font-size: 13px; line-height: 1.45; color: var(--ink-2, #3a3f4a); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+a.v4-item { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .v4-item, .v4-item__media img { transition: none; } .v4-item:hover { transform: none; } .v4-item:hover .v4-item__media img { transform: none; } }
 .v4-unitpick { display: flex; flex-wrap: wrap; gap: 6px; }
 .v4-unit { font: inherit; font-size: 13px; font-weight: 600; min-width: 40px; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--rule, #ddd); background: var(--surface, #fff); color: var(--ink, #222); cursor: pointer; }

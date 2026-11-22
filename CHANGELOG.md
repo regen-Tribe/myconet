@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.113.0 — 2026-11-21 — Places you don't book are listed under Spaces
+
+Sonia: "add the shared restroom… and any other shared area… and waterfalls and such to spaces too".
+- Amenities & tools (M15) Browse lists, under Spaces and All, the Map's places (`places`) that have a photo and no
+  bookable thing of their own (none pinned on them, none with the same name). One source: no copy in `booking_items`.
+  The card shows the photo, the kind and the description, and opens `/map?place=<slug>`. The Spaces count includes them.
+- Signed-out visitors don't see them: `places` is for signed-in people.
+
 ## v4.112.1 — 2026-11-21 — Grouped cards: just the number when the title says what they are
 
 Amenities & tools (M15): a group named from its stem ("Private Room 1…9" → "Private Rooms 1–9") shows buttons

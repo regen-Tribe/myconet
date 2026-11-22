@@ -6,9 +6,10 @@ import {
   Button, Card, Chip, ChipRow, EmptyState, Icon, IconTile, List, ListRow, PageHeader, SectionHead, StatusPill, Tag,
   type IconName, type Status,
 } from '@/core/components/v4'
-import type { Booking, BookingCategory, BookingItem, BookingsTab } from './types'
+import type { Booking, BookingCategory, BookingItem, BookingsTab, AroundPlace } from './types'
 import { CATEGORY_META, STATUS_META, canManageItem, fmtBookingRange, personName } from './lib/inventory'
 import AmenitiesMap from './AmenitiesMap'
+import { KIND_META, isKind } from '@/modules/m19-map/lib/places'
 import { SpaceTabs } from '@/core/components/SpaceTabs'
 
 /**
@@ -61,6 +62,8 @@ export type BookingsV4Model = {
   setStatus: (b: Booking, status: Booking['status'], okMsg: string) => void
   /** The Amenities map (v4.43.0) */
   mapUrl: string | null
+  /** Map places with nothing to book, listed under Spaces (v4.113.0) */
+  around: AroundPlace[]
   setPin: (item: BookingItem, x: number | null, y: number | null) => void
   setMapPicture: (file: File | null) => void
   isAdmin: boolean
@@ -204,6 +207,11 @@ function GroupCard({ vm, group }: { vm: BookingsV4Model; group: GroupEntry }) {
 }
 
 function Browse({ vm }: { vm: BookingsV4Model }) {
+  // Places with nothing to book sit under Spaces, after the bookable things
+  const q = vm.query.trim().toLowerCase()
+  const around = (vm.category === null || vm.category === 'spaces') && !vm.tag
+    ? vm.around.filter(p => !q || p.name.toLowerCase().includes(q) || (p.description ?? '').toLowerCase().includes(q))
+    : []
   return (
     <>
       <div className="v4-toolbar">
@@ -212,7 +220,7 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
             <Chip on={vm.category === null} onClick={() => { vm.setCategory(null); vm.setTag(null) }}>All</Chip>
             {vm.categories.map(c => (
               <Chip key={c} on={vm.category === c} onClick={() => { vm.setCategory(c); vm.setTag(null) }}
-                count={vm.activeItems.filter(i => i.category === c).length}>{CATEGORY_META[c].label}</Chip>
+                count={vm.activeItems.filter(i => i.category === c).length + (c === 'spaces' ? vm.around.length : 0)}>{CATEGORY_META[c].label}</Chip>
             ))}
           </ChipRow>
         )}
@@ -231,7 +239,7 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
         </div>
       )}
 
-      {vm.shown.length === 0 ? (
+      {vm.shown.length === 0 && around.length === 0 ? (
         <EmptyState
           icon="box"
           title={vm.activeItems.length === 0 ? 'The inventory is empty' : 'Nothing matches that filter'}
@@ -259,6 +267,23 @@ function Browse({ vm }: { vm: BookingsV4Model }) {
                   )}
                 </span>
               </button>
+            )
+          })}
+          {around.map(p => {
+            const meta = KIND_META[isKind(p.kind) ? p.kind : 'other']
+            return (
+              <Link key={p.slug} href={`/map?place=${encodeURIComponent(p.slug)}`} className="v4-card v4-card--link v4-item">
+                <span className="v4-item__media">
+                  {p.photo_url
+                    ? <img src={p.photo_url} alt="" loading="lazy" />
+                    : <span className={`v4-item__ph v4-tile--${meta.tone}`}><Icon name={meta.icon} size={34} /></span>}
+                </span>
+                <span className="v4-item__body">
+                  <b>{p.name}</b>
+                  <small>{meta.label} · on the map</small>
+                  {p.description && <span className="v4-item__text">{p.description}</span>}
+                </span>
+              </Link>
             )
           })}
         </div>
