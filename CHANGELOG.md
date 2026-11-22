@@ -5,6 +5,20 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.119.0 — 2026-11-22 — "Part of" offers only the task's own circle or subcircle
+
+Oscar: "tasks with subtasks should usually belong to a circle and sometimes to a sub circle. the drop down options under
+part of should only display options that are in the same circle or sub circle as are selected". Everywhere a task's
+parent is picked, the same rule (`lib/task-edit.ts` `partOfChoices`) applies: To decide and a meeting's action items
+(`TaskQuickEdit`), the Tasks list, and the task card.
+- **With a subcircle:** only that subcircle's open tasks.
+- **With a circle:** only that circle's.
+- **With neither:** every open task, and picking one sets the circle.
+
+The task's current parent always stays listed. Choosing a parent in a subcircle brings the subcircle too, and choosing
+another subcircle takes the task out of a parent that isn't that subcircle's. `loadTaskOptions` now reads projects'
+`team_id`. No migration.
+
 ## v4.118.0 — 2026-11-22 — Approve people before they show in Members
 
 Sonia, after placeholder profiles were added on Protopia for guests with a stay: "leave them in calendar and the
