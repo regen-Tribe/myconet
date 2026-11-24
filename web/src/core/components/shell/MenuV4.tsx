@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { isCircleAdmin, isJoiningOrAbove, ROLE_LABELS } from '@/core/lib/roles'
-import { isMenuActive, menuGroups, type MenuItem } from '@/core/lib/nav'
+import { isMenuActive, menuGroups, tabKeys, type MenuItem } from '@/core/lib/nav'
 import { COMMUNITY_NAME, DESIGN_REVIEW } from '@/core/lib/instance'
 import { VERSION } from '@/core/lib/version'
 import type { MenuState } from '@/core/lib/menu-server'
@@ -98,10 +98,12 @@ function LockedItem({ item, onClose, collapsed, signedIn }: { item: MenuItem; on
   )
 }
 
-function Item({ item, active, locked, count, onClose, collapsed, signedIn = true }: {
+function Item({ item, active, locked, count, onClose, collapsed, signedIn = true, inTabs = false }: {
   item: MenuItem; active: boolean; locked: boolean; count?: number; onClose?: () => void; collapsed: boolean; signedIn?: boolean
+  /** Also a tab in the phone tab bar: the phone's menu sheet leaves it out (design review, decision #84) */
+  inTabs?: boolean
 }) {
-  const cls = `mv4-item${active ? ' on' : ''}${locked ? ' locked' : ''}`
+  const cls = `mv4-item${active ? ' on' : ''}${locked ? ' locked' : ''}${inTabs ? ' mv4-in-tabs' : ''}`
   if (locked && DESIGN_REVIEW) return <LockedItem item={item} onClose={onClose} collapsed={collapsed} signedIn={signedIn} />
   if (locked) {
     // Locked items say why (O5); they aren't links, since the page would turn the person away
@@ -160,7 +162,17 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, c
   const navRef = useRef<HTMLElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   // On a phone, the opened drawer takes the keyboard focus, so Tab and screen readers start in it
-  useEffect(() => { if (mobileOpen) closeRef.current?.focus({ preventScroll: true }) }, [mobileOpen])
+  // (Design review: the phone menu is a sheet with no ×, so the sheet itself takes the focus)
+  useEffect(() => { if (mobileOpen) (DESIGN_REVIEW ? navRef.current : closeRef.current)?.focus({ preventScroll: true }) }, [mobileOpen])
+  // Design review: the phone's menu sheet closes when you pull it down from its top
+  const pull = useRef<number | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => { pull.current = DESIGN_REVIEW && mobileOpen && (navRef.current?.scrollTop ?? 0) <= 0 ? e.touches[0].clientY : null }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (pull.current !== null && e.changedTouches[0].clientY - pull.current > 70) onClose?.()
+    pull.current = null
+  }
+  // Pages that are tabs in the phone tab bar (TabBarV4)
+  const tabs = DESIGN_REVIEW ? new Set(tabKeys(newcomer)) : new Set<string>()
   const showTip = (e: React.SyntheticEvent) => {
     if (!rail) return
     const el = (e.target as HTMLElement).closest<HTMLElement>('[data-tip]')
@@ -185,8 +197,9 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, c
   }
 
   return (
-    <nav ref={navRef} id="app-menu" aria-label="Menu" className={`app-shell-sidenav menu-v4${mobileOpen ? ' mobile-open' : ''}${rail ? ' mv4--rail' : ''}`}
+    <nav ref={navRef} id="app-menu" aria-label="Menu" tabIndex={DESIGN_REVIEW ? -1 : undefined} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className={`app-shell-sidenav menu-v4${mobileOpen ? ' mobile-open' : ''}${rail ? ' mv4--rail' : ''}`}
       onMouseOver={showTip} onFocus={showTip} onMouseLeave={() => setTip(null)} onBlur={() => setTip(null)} onScroll={() => setTip(null)}>
+      {DESIGN_REVIEW && <div className="mv4-handle" aria-hidden="true" />}
       <div className="mv4-top">
         {/* One home per role (design review): About for a visitor, My dashboard once signed in */}
         <Link href={DESIGN_REVIEW ? (isLoggedIn ? '/dashboard' : '/about') : '/home'} className="mv4-brand" title={rail ? undefined : COMMUNITY_NAME} data-tip={rail ? COMMUNITY_NAME : undefined} aria-label={rail ? COMMUNITY_NAME : undefined} onClick={onClose}>
@@ -213,7 +226,7 @@ export default function MenuV4({ mobileOpen, onClose, role, isLoggedIn, state, c
               {newcomer && g.line && !rail && <div className="mv4-line">{g.line}</div>}
               {items.map(i => (
                 <Item key={i.key} item={i} active={isMenuActive(i.href, pathname)} locked={!!i.joiningUp && !joined} signedIn={isLoggedIn}
-                  count={countFor(i.key)} onClose={onClose} collapsed={rail} />
+                  count={countFor(i.key)} onClose={onClose} collapsed={rail} inTabs={tabs.has(i.key)} />
               ))}
             </div>
           )

@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.126.0',
+    date: '2026-11-24',
+    title: 'The phone menu opens where your thumb is (design review)',
+    items: ['On phones, Menu opens a sheet above the tab bar with only what the tabs don’t show; tap Menu again or pull it down to close it.', 'A calmer tab bar: grey icons, and a soft pill behind the page you’re on.', 'On computers the community’s name stays at the top of the menu when it scrolls. "My dashboard" is now "Dashboard".', 'Only for communities with the design review on.'],
+  },
+  {
     version: 'v4.124.0',
     date: '2026-11-24',
     title: 'A calmer, clearer look (design review)',

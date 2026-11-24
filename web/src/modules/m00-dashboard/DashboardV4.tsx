@@ -129,7 +129,7 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
   return (
     <div className="v4-page">
       {DESIGN_REVIEW
-        ? <PageHeader title="My dashboard" subtitle={<>Welcome, {firstName}.{standing ? ` ${standing}` : ''}</>} />
+        ? <PageHeader title={DESIGN_REVIEW ? 'Dashboard' : 'My dashboard'} subtitle={<>Welcome, {firstName}.{standing ? ` ${standing}` : ''}</>} />
         : <h1 className="v4-hello">Hey <em>{firstName},</em><br />welcome home</h1>}
 
       <div className="v4-split">

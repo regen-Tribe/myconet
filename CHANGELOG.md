@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.126.0 — 2026-11-24 — Design review: the phone menu as a sheet, a calmer tab bar, "Dashboard"
+
+Only for communities with `"designReview": true`; nothing changes for the others. Decisions #82–#85.
+- **Phones:** the Menu tab opens a sheet that rises above the tab bar and lists only what isn't a tab (next step,
+  About, Circles, The space, Meetings, Governance, Admin, you). It closes with the Menu tab again, a pull down from
+  its top, a tap above it or Escape. The shade behind it now shows (it never did on phones).
+- **Phones:** a calmer tab bar: no rule line, grey icons and names, the page you're on in ink with a soft pill.
+- **Computers:** the community's mark and name stay at the top of the menu when the menu scrolls.
+- **Words:** "My dashboard" is **Dashboard** (menu, top bar, page, phone tab; `LEXICON.md`).
+
 ## v4.124.0 — 2026-11-24 — The design review (off unless a community turns it on)
 
 Sonia's UI/UX review of 22–23 Nov 2026, as one release behind a new switch: `"designReview": true` in
