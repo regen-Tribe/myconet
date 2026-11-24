@@ -41,7 +41,7 @@ export const JOIN_REVIEWER = 'a steward'
 export function joinSteps(s: { valuesSigned: number; valuesTotal: number; hasPhoto: boolean; hasHeadline: boolean; application: string | null; joined: boolean }): JoinPath {
   const sent = s.joined || (!!s.application && s.application !== 'rejected')
   const steps: JoinStep[] = [
-    // Step 1 (#80): read About; its values chapter ends with "I share these values". With no values written yet
+    // Step 1: the values, shared inside Start joining (Sonia, 24 Nov; About's values chapter can sign them too). With none written yet
     // the step can't hold anyone back
     { key: 'values', label: 'Get to know us', title: 'Get to know us', icon: 'book', minutes: 5, done: s.joined || s.valuesSigned >= s.valuesTotal },
     // Step 2 (#81): a short form inside Start joining. A line about you finishes it; the photo is asked for, not required

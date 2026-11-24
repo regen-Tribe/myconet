@@ -113,7 +113,7 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
     : !isJoining && joinPath ? 'checklist'
     : isJoining && !isMember && myCircleSlugs.length === 0 ? 'welcome-in'
     : null
-  const stepHref = (key: string) => (key === 'values' ? '/about#values' : `/join?step=${key}`)
+  const stepHref = (key: string) => `/join?step=${key}`
   const sentOn = application?.created_at ? new Date(application.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : null
   const startHere = !isJoining && (
     <>
@@ -148,7 +148,7 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
                       <a href={stepHref(st.key)} aria-current={now ? 'step' : undefined}>
                         <span className="nc-n" aria-hidden="true">{st.done ? <Icon name="check" size={16} /> : i + 1}</span>
                         <span className="nc-t"><b>{st.title}</b><small>{[
-                          'Read about the land, the people and our values',
+                          'Who we are and the values we live by',
                           'A photo, a line, what you’d like to offer',
                           `${JOIN_REVIEWER.charAt(0).toUpperCase() + JOIN_REVIEWER.slice(1)} answers within a week`,
                         ][i]}</small></span>
