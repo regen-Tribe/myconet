@@ -6,6 +6,11 @@
 .ops4-latechip { color: var(--red-ink, #b42318); }
 
 .ops4-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(176px, 1fr)); gap: 10px; align-items: start; }
+/* Computers (v4.125.0): every column on one row, Done last on the far right; a narrow window scrolls sideways instead
+   of wrapping Done and Paused onto a second row */
+@media (min-width: 761px) {
+  .ops4-board { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); overflow-x: auto; padding-bottom: 6px; }
+}
 .ops4-colhead { padding: 2px 4px; }
 .ops4-colnote { font-weight: 500; color: var(--ink-4, #9aa0ab); font-size: 11px; }
 .ops4-empty { font-size: 12px; color: var(--ink-4, #9aa0ab); padding: 14px 4px; text-align: center; }

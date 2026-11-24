@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.125.0 — 2026-11-24 — Done is on the far right of the board
+
+Oscar: "we should be able to see the done column on the far right of the ops board". The board has seven columns since
+Later (v4.123.0), and they wrapped onto a second row unless the window was very wide, with Paused after Done.
+- **The order:** Later · Ideas · To do · In progress · Review · Paused · **Done**, so Done is always last.
+- **On a computer** every column sits on one row. A narrow window scrolls the board sideways instead of wrapping.
+- Phones keep one column at a time, swiped sideways.
+
+No migration.
+
 ## v4.124.0 — 2026-11-24 — The design review (off unless a community turns it on)
 
 Sonia's UI/UX review of 22–23 Nov 2026, as one release behind a new switch: `"designReview": true` in

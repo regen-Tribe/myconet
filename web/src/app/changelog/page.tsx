@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.125.0',
+    date: '2026-11-24',
+    title: 'Done is on the far right',
+    items: ['On Operations every column sits on one row, with Done last on the far right. On a narrow window the board scrolls sideways.'],
+  },
+  {
     version: 'v4.124.0',
     date: '2026-11-24',
     title: 'A calmer, clearer look (design review)',

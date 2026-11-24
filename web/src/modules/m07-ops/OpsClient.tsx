@@ -10,9 +10,12 @@ import { PROJECT_KANBAN_COLUMNS } from '@/core/lib/project-status'
 
 // The main board's columns: the Kanban ones, then Paused (v4.33.6), so paused and merged projects can be seen and
 // dragged back. Projects only: a task can't be paused, so tasks can't be dropped there.
+// Done stays the last column, on the far right (v4.125.0: Oscar, "we should be able to see the done column on the far
+// right of the ops board"), so Paused sits just before it.
 const BOARD_COLUMNS: { key: string; label: string; color: string }[] = [
-  ...PROJECT_KANBAN_COLUMNS,
+  ...PROJECT_KANBAN_COLUMNS.filter(c => c.key !== 'done'),
   { key: 'paused', label: 'Paused', color: '#a1a1aa' },
+  ...PROJECT_KANBAN_COLUMNS.filter(c => c.key === 'done'),
 ]
 import { canMoveProject, projectEditBlock, type CircleDirectory, type PermissionNotice } from '@/core/lib/ops-permissions'
 import { DeliverablesTab } from './DeliverablesTab'
