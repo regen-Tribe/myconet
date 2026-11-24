@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.127.0 — 2026-11-24 — Make a subcircle right from a task's fields
+
+Oscar: "I'd like to be able to add a new subcircle from the drop downs in drafts to confirm". A task's **Subcircle**
+picker (`TaskQuickEdit`: Drafts to confirm or To decide, a meeting's action items, the project manager's suggestions)
+ends with **+ New subcircle…**:
+- Type its name and **Add**.
+- The subcircle is made in the task's circle, with the same rule as on the circle's page: admins and that circle's
+  leads; the database checks ("circle leads add teams").
+- The task goes in it straight away.
+- The other rows, and the "Put it in" lists, offer it without a reload.
+
+Without a circle, the picker says "Pick a circle first". No migration.
+
 ## v4.126.0 — 2026-11-24 — Design review: the phone menu as a sheet, a calmer tab bar, "Dashboard"
 
 Only for communities with `"designReview": true`; nothing changes for the others. Decisions #82–#85.
