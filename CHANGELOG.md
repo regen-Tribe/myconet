@@ -5,6 +5,17 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.128.0 — 2026-11-24 — A subcircle filter on the board
+
+Oscar: "to operations page plz add a subcircle filter". Next to Circles on the Operations board (M07, v4 look), a
+**Subcircle** picker:
+- **What it lists:** with circles chosen, only their subcircles. With none, every subcircle, grouped by circle.
+- **What it narrows the board to:** tasks given to that subcircle, and subtasks given to it or inside one of its tasks.
+- **When it clears:** changing the circles clears it if it no longer fits.
+- It counts in "filters on" (design review).
+
+No migration.
+
 ## v4.126.0 — 2026-11-24 — Design review: the phone menu as a sheet, a calmer tab bar, "Dashboard"
 
 Only for communities with `"designReview": true`; nothing changes for the others. Decisions #82–#85.
