@@ -50,8 +50,9 @@ project and Cloudflare account; nothing is shared with other communities.
 - Settings › Actions › General › Workflow permissions: **Read and write**, and tick **Allow GitHub
   Actions to create and approve pull requests**. Then `core-update.yml` opens a pull request whenever core
   releases, and `core-drift.yml` checks that only `instance/` differs from core.
-- While the core repo is private, add a `CORE_REPO_TOKEN` Actions secret: a fine-grained token with
-  read access to `regen-Tribe/myconet`. Not needed once core is public.
+- Add a `CORE_REPO_TOKEN` Actions secret: a fine-grained token with read access to `regen-Tribe/myconet`
+  (while core is private) and, on this community's repo, **Contents and Workflows: read and write**. The Core
+  update pushes with it: a core release that changes `.github/workflows/` can't be pushed with the default token.
 - After merging a core update: `cd web && npm run migrations:check`, then `supabase db push` if it lists migrations to apply, then deploy. This community's own migrations go in `instance/migrations/` numbered with the hour 90–99 (`instance/migrations/README.md`).
 
 **7. Setup in the portal** (`INSTANCES.md` §6), as that admin

@@ -85,7 +85,8 @@ the same lines:
 - **Releases queue.** A maintainer ships a core PR with `cd web && npm run ship -- <core PR>`
   (`web/scripts/ship.mjs`): it waits for the lock, merges the newest core `main` into the PR, gives it its
   version, runs lint and the type check, merges, tags, updates the community, deploys and writes the log
-  entry. Never merge, tag or deploy a release by hand next to it. `--dry-run` shows what it would do.
+  entry. When core added migrations since the community's last update, it stops before deploying: apply them,
+  then `npm run ship -- --community <version> --migrations-applied`. Never merge, tag or deploy a release by hand next to it. `--dry-run` shows what it would do.
 - **Logs are one file per entry**: `instance/log/<date>-<slug>.md`. Don't append to `instance/log.md`.
 - **Styles stay with their module**: a module's CSS is a file in its folder, imported by the module.
   `web/src/app/globals.css` is only for tokens and shared v4 blocks (`DESIGN-SYSTEM.md`).

@@ -10,13 +10,15 @@
 //   4. runs lint and the type check on the result
 //   5. pushes the release commit, waits for the PR's checks, squash-merges and tags core
 //   6. in a community repo: runs the Core update workflow, merges its PR (never one that touches
-//      instance/), pulls the main checkout, deploys, checks the live version, writes the log entry
+//      instance/), pulls the main checkout, stops if core added migrations since the community's
+//      last update (apply them, then resume), deploys, checks the live version, writes the log entry
 //
 //   --dry-run              steps 2 to 4 in a throwaway worktree; pushes, merges and deploys nothing
 //   --skip-checks          with --dry-run: skip lint and the type check
 //   --no-deploy            stop after the community's update PR is merged
 //   --core-only            stop after tagging core
 //   --community <version>  only step 6, for a version already tagged (after a stop in step 6)
+//   --migrations-applied   the migrations step 6 stopped for are applied: deploy
 //
 // The deploy command is `npm run deploy` in the main checkout's web/. To deploy another way (a wrapper
 // that loads the right Cloudflare token), set MYCONET_DEPLOY_CMD to that command.
@@ -35,6 +37,7 @@ const DRY = flag('--dry-run')
 const onlyCommunity = args.includes('--community') ? args[args.indexOf('--community') + 1] : null
 const pr = args.find(a => /^\d+$/.test(a))
 
+const MIGRATIONS_OK = flag('--migrations-applied')
 const sleep = s => new Promise(r => setTimeout(r, s * 1000))
 const say = s => console.log(s)
 const step = s => console.log(`\n▸ ${s}`)
@@ -56,7 +59,7 @@ const git = (a, o) => run('git', a, o)
 const gh = (a, o) => run('gh', a, o)
 
 if (!pr && !onlyCommunity) {
-  console.error('Usage: npm run ship -- <core PR number> [--dry-run] [--no-deploy] [--core-only]\n       npm run ship -- --community <version>')
+  console.error('Usage: npm run ship -- <core PR number> [--dry-run] [--no-deploy] [--core-only]\n       npm run ship -- --community <version> [--migrations-applied]')
   process.exit(1)
 }
 
@@ -151,6 +154,7 @@ async function shipCore() {
       if (community && !flag('--core-only')) {
         say(`  • run the Core update workflow on ${community} and merge its "Update MyCoNet core to ${p.version}" PR (unless it touches instance/)`)
         if (!flag('--no-deploy')) {
+          say(`  • stop before deploying if core added migrations (supabase/migrations/) since ${community}'s current core version`)
           say(`  • pull ${mainCheckout} and deploy with: ${deployCmd}`)
           say(`  • check the live version is ${p.version}, then write and push instance/log/${p.date}-core-${p.version.replace(/\./g, '-')}.md`)
         }
@@ -199,22 +203,49 @@ async function shipCore() {
 // ── Step 6: the community takes the release and deploys it ───────────────────────────────────────
 async function shipCommunity(version, title) {
   step(`Updating ${community} to core ${version}`)
-  const open = () => JSON.parse(gh(['pr', 'list', '-R', community, '--state', 'open', '--head', `core-update/${version}`, '--json', 'number,files']))[0]
-  let update = open()
-  if (!update) {
-    gh(['workflow', 'run', 'core-update.yml', '-R', community])
-    for (let i = 0; i < 40 && !update; i++) { await sleep(15); update = open() }
-  }
+  const main = defaultBranch()
   const resume = `npm run ship -- --community ${version}`
-  if (!update) stop(`core ${version} is released, but no "Update MyCoNet core to ${version}" PR appeared on ${community} after 10 minutes.\n  Look at the Core update workflow's last run (it stops when a core file was changed in this repo), then: ${resume}`)
-  const own = update.files.map(f => f.path).filter(f => f.startsWith('instance/'))
-  if (own.length) stop(`update PR #${update.number} on ${community} touches instance/ (${own.join(', ')}), which a core update never should. Not merged.\n  Check it by hand, then: ${resume}`)
-  gh(['pr', 'merge', String(update.number), '-R', community, '--merge'])
-  say(`  ✓ Update PR #${update.number} merged`)
+  const found = state => JSON.parse(gh(['pr', 'list', '-R', community, '--state', state, '--head', `core-update/${version}`, '--json', 'number,files,mergeCommit']))[0]
+  // The core tags, to tell which core version the community had before this update
+  git(['fetch', '--quiet', '--tags', CORE_URL], { allowFail: true })
+  git(['fetch', '--quiet', 'origin', main])
+  const coreTagOf = rev => git(['describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*', rev], { allowFail: true })
+  // A resumed run: the update PR was merged by an earlier run that stopped before deploying
+  let update = found('merged')
+  let from
+  if (update) {
+    from = coreTagOf(`${update.mergeCommit.oid}^1`)
+    say(`  ✓ Update PR #${update.number} is already merged`)
+  } else {
+    update = found('open')
+    if (!update) {
+      gh(['workflow', 'run', 'core-update.yml', '-R', community])
+      for (let i = 0; i < 40 && !update; i++) { await sleep(15); update = found('open') }
+    }
+    if (!update) stop(`core ${version} is released, but no "Update MyCoNet core to ${version}" PR appeared on ${community} after 10 minutes.\n  Look at the Core update workflow's last run: it prints why it stopped (a core file changed in this repo, or the push was refused). Then: ${resume}`)
+    const own = update.files.map(f => f.path).filter(f => f.startsWith('instance/'))
+    if (own.length) stop(`update PR #${update.number} on ${community} touches instance/ (${own.join(', ')}), which a core update never should. Not merged.\n  Check it by hand, then: ${resume}`)
+    from = coreTagOf(`origin/${main}`)
+    gh(['pr', 'merge', String(update.number), '-R', community, '--merge'])
+    say(`  ✓ Update PR #${update.number} merged (${from ?? 'unknown core version'} → ${version})`)
+  }
   if (flag('--no-deploy')) { say('  --no-deploy: not deploying.'); return }
 
+  // Every core migration between the community's last core version and this one, not only this release's:
+  // a community that skips releases (v4.88.0 → v4.103.0) needs the ones in between too
+  step('Checking for new migrations')
+  const migrations = from
+    ? git(['diff', '--name-only', '--diff-filter=d', from, version, '--', 'supabase/migrations/*.sql']).split('\n').filter(Boolean)
+    : null
+  if (!MIGRATIONS_OK) {
+    if (!migrations) stop(`couldn't tell which core version ${community} had before ${version}, so ship can't list the migrations it needs. Core ${version} is merged but not deployed.\n  Compare supabase/migrations/ with what the database has (npm run migrations:check), apply what's missing, then: ${resume} --migrations-applied`)
+    if (migrations.length) stop(`core ${from} → ${version} adds ${migrations.length} migration${migrations.length === 1 ? '' : 's'}. Core ${version} is merged on ${community} but not deployed:\n` +
+      migrations.map(f => `    ${f}`).join('\n') +
+      `\n  Apply them to ${community}'s database first (cd web && npm run migrations:check, then supabase db push or the Supabase MCP),\n  then: ${resume} --migrations-applied`)
+    say(`  ✓ none since ${from}`)
+  } else say(`  ✓ --migrations-applied: ${migrations?.length ? migrations.map(f => f.replace(/^supabase\/migrations\//, '')).join(', ') : 'none to apply'}`)
+
   step(`Deploying from ${mainCheckout}`)
-  const main = defaultBranch()
   const at = { cwd: mainCheckout }
   if (git(['rev-parse', '--abbrev-ref', 'HEAD'], at) !== main) stop(`${mainCheckout} isn't on ${main}. Core ${version} is merged but not deployed.\n  Switch it to ${main}, then: ${resume}`)
   if (git(['status', '--porcelain'], at)) stop(`${mainCheckout} has uncommitted changes. Core ${version} is merged but not deployed.\n  Commit or remove them, then: ${resume}`)
@@ -234,11 +265,12 @@ async function shipCommunity(version, title) {
   step('Writing the log entry')
   const date = new Date().toISOString().slice(0, 10)
   const rel = `instance/log/${date}-core-${version.replace(/\./g, '-')}.md`
-  const notes = git(['show', `HEAD:CHANGELOG.md`], at).split(/^## /m).find(s => s.startsWith(`${version} `)) ?? ''
-  const migration = /supabase\/migrations\/|\bmigration `/.test(notes) && !/No migration/i.test(notes)
+  const migrationLine = migrations?.length
+    ? `Migrations, applied before the deploy: ${migrations.map(f => `\`${f.replace(/^supabase\/migrations\//, '')}\``).join(', ')}.`
+    : migrations ? 'No migration.' : 'Migrations: checked by hand before the deploy (--migrations-applied).'
   mkdirSync(join(mainCheckout, 'instance/log'), { recursive: true })
   writeFileSync(join(mainCheckout, rel), `# ${date} — Core ${version} via update PR #${update.number} (deployed, ${sha})${title ? `: ${title}` : ''}\n` +
-    `- Shipped with \`npm run ship\` by ${userInfo().username}. ${migration ? '**The release notes mention a migration: apply it (`supabase db push`) and note it here.**' : 'No migration.'}\n`)
+    `- Shipped with \`npm run ship\` by ${userInfo().username}, from core ${from ?? '(unknown)'}. ${migrationLine}\n`)
   git(['add', rel], at)
   git(['commit', '--quiet', '-m', `log: core ${version} deployed`], at)
   if (git(['push', '--quiet', 'origin', main], { ...at, allowFail: true }) === null) say(`  ⚠️  Couldn't push the log entry (${rel}): pull and push ${main} in ${mainCheckout}.`)
