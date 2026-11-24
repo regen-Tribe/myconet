@@ -202,6 +202,17 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
             )}
           </span>
         </div>
+        {/* Where it came from (v4.130.0: Oscar didn't see "the source of inspiration" on a draft's row): the meeting, a link
+            to its notes, its date, and who said the line */}
+        {t.meeting && (
+          <div className="mt4-taskedit dl4-source">
+            From {t.meeting.title
+              ? <Link href={`/meetings/${t.meeting.id}`} className="dl4-basis__link">{t.meeting.title} →</Link>
+              : <em>a meeting you can’t open</em>}
+            {t.meeting.date && <span suppressHydrationWarning> · {day(t.meeting.date)}</span>}
+            {t.said_by && <> · said by <b>{t.said_by}</b></>}
+          </div>
+        )}
         {msg?.id === t.deliverable_id && <div className="mt4-taskedit dl4-err">{msg.text}</div>}
         {canEdit && open && (
           <div className="mt4-taskedit">
