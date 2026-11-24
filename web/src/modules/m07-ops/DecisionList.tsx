@@ -48,6 +48,9 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
   const [busy, setBusy] = useState<string | null>(null)
   const [msg, setMsg] = useState<{ id: string; text: string } | null>(null)
   const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set())
+  // Subcircles made from a row's Subcircle picker (v4.127.0): every row offers them straight away
+  const [madeTeams, setMadeTeams] = useState<DecisionOptions['teams']>([])
+  const opts = options ? { ...options, teams: [...options.teams, ...madeTeams] } : null
 
   const rows = loaded.map(t => ({ ...t, ...patch[t.deliverable_id] }))
   const set = (id: string, p: Partial<DecisionRow>) => setPatch(prev => ({ ...prev, [id]: { ...prev[id], ...p } }))
@@ -117,7 +120,7 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
                   <optgroup label="A new task in…">
                     {circles.slugs.map(c => [
                       <option key={c} value={`c:${c}`}>{circles.meta(c).emoji} {circles.meta(c).label}</option>,
-                      ...options.teams.filter(t => t.circle === c).map(t => <option key={t.id} value={`t:${t.id}`}>{'    '}{circles.meta(c).label} › {t.name}</option>),
+                      ...(opts ?? options).teams.filter(t => t.circle === c).map(t => <option key={t.id} value={`t:${t.id}`}>{'    '}{circles.meta(c).label} › {t.name}</option>),
                     ])}
                   </optgroup>
                 )}
@@ -171,7 +174,8 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
             <TaskQuickEdit
               key={version[t.deliverable_id] ?? 0}
               task={{ id: t.deliverable_id, title: t.title, status: t.status, circle: t.circle, team_id: t.team_id, project_id: t.project_id, assignee_id: t.assignee_id, assignee_name: t.assignee_name, priority: t.priority, due_date: t.due_date, due_time: t.due_time, needs_review: t.needs_review }}
-              {...options!}
+              {...opts!}
+              onTeamAdded={x => setMadeTeams(prev => [...prev, x])}
               onSaved={x => set(t.deliverable_id, {
                 status: x.status, circle: x.circle ?? null, team_id: x.team_id ?? null, project_id: x.project_id,
                 assignee_id: x.assignee_id, assignee_name: x.assignee_name ?? null, priority: x.priority ?? null, due_date: x.due_date, due_time: x.due_time ?? null, needs_review: false,

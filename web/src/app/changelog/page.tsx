@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.127.0',
+    date: '2026-11-24',
+    title: 'Done on the far right, a subcircle filter, new subcircles from a task',
+    items: ['On Operations every column sits on one row, with Done last on the far right.', 'Next to Circles, filter the board by subcircle.', 'A task’s Subcircle menu ends with “+ New subcircle…”: type a name and the task goes in the new subcircle. Circle leads and admins can do this.'],
+  },
+  {
     version: 'v4.126.0',
     date: '2026-11-24',
     title: 'The phone menu opens where your thumb is (design review)',

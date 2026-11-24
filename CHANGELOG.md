@@ -5,6 +5,24 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.127.0 — 2026-11-24 — Done on the far right, a subcircle filter, and new subcircles from a task
+
+Three Operations changes (M07, v4 look), from Oscar:
+- **Done is on the far right of the board** ("we should be able to see the done column on the far right"). The order is
+  Later · Ideas · To do · In progress · Review · Paused · **Done**. On a computer every column sits on one row, and a
+  narrow window scrolls the board sideways instead of wrapping Done and Paused onto a second row. Phones are
+  unchanged.
+- **A subcircle filter** ("to operations page plz add a subcircle filter"). Next to Circles, a **Subcircle** picker lists
+  the chosen circles' subcircles, or all of them grouped by circle. It narrows the board to tasks given to that
+  subcircle, and to subtasks given to it or inside one of its tasks. Changing the circles clears it if it no longer
+  fits.
+- **Make a subcircle from a task's fields** ("add a new subcircle from the drop downs in drafts to confirm"). The
+  **Subcircle** picker in Drafts to confirm, a meeting's action items and the project manager's suggestions ends with
+  **+ New subcircle…**. Type a name and the subcircle is made in the task's circle, with the task in it. Admins and that
+  circle's leads may; the database checks. The other rows offer it at once.
+
+No migration.
+
 ## v4.126.0 — 2026-11-24 — Design review: the phone menu as a sheet, a calmer tab bar, "Dashboard"
 
 Only for communities with `"designReview": true`; nothing changes for the others. Decisions #82–#85.
