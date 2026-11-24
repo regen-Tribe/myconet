@@ -151,7 +151,7 @@ export default async function HomeV4() {
     })
 
   const heroLinks = uid
-    ? [{ href: '/dashboard', label: 'My dashboard' }, { href: '/about', label: `About ${name}` }]
+    ? [{ href: '/dashboard', label: DESIGN_REVIEW ? 'Dashboard' : 'My dashboard' }, { href: '/about', label: `About ${name}` }]
     : [{ href: '/about', label: `Read about ${name}` }, { href: '/members', label: 'Meet the members' }]
 
   return (

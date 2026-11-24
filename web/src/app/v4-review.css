@@ -259,3 +259,8 @@ html[data-review] .v4-next + .rv-cardlabel { margin-top: 4px; }
 /* ─── 12. The top bar's Sign in: a control like the others, no outline (#37); Create account stays the one next step ── */
 html[data-review] .topbar-signin { border: 0 !important; background: var(--ctl); border-radius: 999px !important; padding: 8px 14px !important; }
 html[data-review] .topbar-signin:hover { background: var(--ctl-hover); }
+
+/* ─── The community's mark stays at the top of the menu (decision #82) ─────────────────────────────────
+   The menu scrolls when it is taller than the window (signed in, with Admin, on a laptop). Its top row, the
+   mark, the name and the collapse button (or × on a phone), stays put; the groups scroll under it. */
+html[data-review] .menu-v4 .mv4-top { position: sticky; top: -16px; z-index: 3; margin-top: -16px; padding-top: 16px; background: var(--surface, #fff); }

@@ -41,7 +41,7 @@ Where its names differ from the table above, these win, and each has its own add
 
 | Say | Address | Instead of |
 |---|---|---|
-| **My dashboard** | `/dashboard` | Dashboard (in the menu; "Dashboard" on the phone tab) |
+| **Dashboard** (with the design review; "My dashboard" without it) | `/dashboard` | My dashboard |
 | **About {community}** | `/about` | Blueprint as the page's name. "The Blueprint" is the document it's built from ("Edit Blueprint") |
 | **Amenities & tools** | `/amenities` | Accommodation and Resources (one page now), Our place |
 | **The space** | menu item (`/amenities`, `/map`) | the one menu item for Amenities & tools and the Map (v4.102.0); each page keeps its own name. Under the design review both pages are headed **The space**, with the views **Places · Map · My bookings** (decision #23). There is no Manage view (decision #43): whoever can manage a thing has an **Edit** button on its photo, and the requests and the inventory are in Admin › **Bookings** |

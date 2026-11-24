@@ -57,7 +57,8 @@ export interface MenuGroup {
 export function menuGroups(communityName: string): MenuGroup[] {
   return [
     { label: 'You', items: [
-      { key: 'dashboard', name: 'My dashboard', href: '/dashboard', icon: 'home' },
+      // Design review (decision #83): "Dashboard", without "My"
+      { key: 'dashboard', name: DESIGN_REVIEW ? 'Dashboard' : 'My dashboard', href: '/dashboard', icon: 'home' },
     ] },
     { label: 'Community', line: 'Who we are and what’s here', items: [
       { key: 'about', name: `About ${communityName}`, href: '/about', icon: 'book' },

@@ -25,6 +25,11 @@ export default function TabBarV4({ newcomer, menuOpen, onMenu, signedIn = true }
     background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none', fontFamily: 'inherit',
     color: on ? 'var(--ink)' : 'var(--ink-3)', fontSize: 11, fontWeight: on ? 700 : 500,
   })
+  // Design review (decision #85): the look lives in menu-review.css; the page you're on gets a soft pill behind its icon
+  const look = (on: boolean) => DESIGN_REVIEW ? { className: `v4-tab${on ? ' v4-tab--on' : ''}` } : { style: cell(on) }
+  const icon = (name: React.ComponentProps<typeof Icon>['name']) => DESIGN_REVIEW
+    ? <span className="v4-tab__ic"><Icon name={name} size={22} /></span>
+    : <Icon name={name} size={22} />
   const label: React.CSSProperties = { maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
 
   return (
@@ -32,16 +37,16 @@ export default function TabBarV4({ newcomer, menuOpen, onMenu, signedIn = true }
       {tabs.map(t => {
         const on = !menuOpen && current?.key === t.key
         return (
-          <Link key={t.key} href={t.href} aria-current={on ? 'page' : undefined} style={cell(on)}>
-            <Icon name={t.icon} size={22} />
-            <span style={label}>{short(t.name)}</span>
+          <Link key={t.key} href={t.href} aria-current={on ? 'page' : undefined} {...look(on)}>
+            {icon(t.icon)}
+            <span style={DESIGN_REVIEW ? undefined : label}>{short(t.name)}</span>
           </Link>
         )
       })}
-      <button type="button" onClick={onMenu} aria-expanded={menuOpen} style={cell(menuOpen || !!here)}>
-        <Icon name={DESIGN_REVIEW ? 'menu' : 'grid'} size={22} />
+      <button type="button" onClick={onMenu} aria-expanded={menuOpen} aria-controls="app-menu" {...look(menuOpen || !!here)}>
+        {icon(DESIGN_REVIEW ? 'menu' : 'grid')}
         {/* Design review: Menu keeps its name; the bold label shows you're in one of its pages */}
-        <span style={label}>{here && !menuOpen && !DESIGN_REVIEW ? short(here.name) : 'Menu'}</span>
+        <span style={DESIGN_REVIEW ? undefined : label}>{here && !menuOpen && !DESIGN_REVIEW ? short(here.name) : 'Menu'}</span>
       </button>
     </nav>
   )
