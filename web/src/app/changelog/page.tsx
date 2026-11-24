@@ -3,6 +3,12 @@ import Link from 'next/link'
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
 const ENTRIES = [
   {
+    version: 'v4.130.0',
+    date: '2026-11-24',
+    title: 'Undo a decline until you reload',
+    items: ['When you decline a draft (slide the Draft pill left), it now reads “Declined · Undo” until you reload the page, and Undo brings the task back exactly as it was. Approved drafts show “Approved · Undo” the same way.'],
+  },
+  {
     version: 'v4.129.0',
     date: '2026-11-24',
     title: 'Tasks remember who changed them',
