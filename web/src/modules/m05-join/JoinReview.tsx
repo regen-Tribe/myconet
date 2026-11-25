@@ -34,13 +34,13 @@ export interface JoinBio { skills: string[]; interests: string[]; values_princip
 export interface JoinRequest { id: string; request_text: string }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-// Two steps (#93): About you ends with Send application
+// Two steps (#93): About you ends with Join the community (#103)
 const ORDER: JoinStepKey[] = ['values', 'profile']
 
 // What each stage opens (LEXICON.md roles), folded away under the flow
 const STAGES: { role: string; name: string; how: string; opens: [IconName, string][] }[] = [
   { role: 'explorer', name: 'Explorer', how: 'Create an account', opens: [['book', 'Read about the community'], ['users', 'Meet the members'], ['calendar', 'See what’s on']] },
-  { role: 'joining', name: 'Joining member', how: 'Your application is accepted', opens: [['handshake', 'Offer help on tasks'], ['circles', 'Ask to join a circle'], ['chat', 'Agreements and meeting notes']] },
+  { role: 'joining', name: 'Joining member', how: 'A steward welcomes you in', opens: [['handshake', 'Offer help on tasks'], ['circles', 'Ask to join a circle'], ['chat', 'Agreements and meeting notes']] },
   { role: 'member', name: 'Member', how: 'Your first agreement is accepted', opens: [['vote', 'Vote on proposals'], ['plus', 'Suggest tasks and proposals'], ['star', 'Lead a task']] },
 ]
 
@@ -106,11 +106,11 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   return (
     <div className={`jf${userId && !joined && !sent && open ? ' jf--step' : ''}`}>
       <header className="jf-head">
-        <h1>{joined ? 'Joining' : sent ? 'Your application is in' : 'Start joining'}</h1>
+        <h1>{joined ? 'Joining' : sent ? 'You’ve asked to join' : 'Start joining'}</h1>
         <p>{joined
           ? (isFullMember(role) ? `You’re a member of ${COMMUNITY_NAME}.` : 'You’re a joining member. One accepted agreement makes you a member.')
           : sent
-            ? `${cap(JOIN_REVIEWER)} reads it and answers within a week.`
+            ? `${cap(JOIN_REVIEWER)} welcomes you within a week.`
             : 'Two steps, about ten minutes.'}</p>
       </header>
 
@@ -134,7 +134,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
         {userId && !joined && sent && (
           <div className="jf-step jf-done">
             <span className="jf-done__mark" aria-hidden="true"><Icon name="check" size={24} /></span>
-            <h2>Sent{application?.created_at && !sentNow ? ` on ${fmt(application.created_at)}` : ''}</h2>
+            <h2>Asked to join{application?.created_at && !sentNow ? ` on ${fmt(application.created_at)}` : ''}</h2>
             <p className="jf-text">Meanwhile, look around: meet the members and see what’s on.</p>
             <div className="jf-nav jf-nav--center">
               <Button variant="next" href="/dashboard">Go to Dashboard</Button>
@@ -448,10 +448,10 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
             <span className="jr-field"><textarea id={`jf-q${i}`} rows={3} value={answers[i] ?? ''} onChange={e => setAnswers(a => a.map((x, j) => (j === i ? e.target.value : x)))} /></span>
           </div>
         ))}
-        <p className="jf-text jf-send">{rejected ? 'Your last application wasn’t accepted. You can send a new one. ' : ''}{cap(JOIN_REVIEWER)} reads your profile and answers within a week.</p>
+        <p className="jf-text jf-send">{rejected ? 'Your last request to join wasn’t accepted. You can ask again. ' : ''}You’re joining the extended {COMMUNITY_NAME} community: part of it even when you’re not here in person. {cap(JOIN_REVIEWER)} welcomes you within a week.</p>
         {/* Why Send waits, said next to the button, with the way to fix it */}
         {unsignedValues > 0 && (
-          <p className="jf-warn"><Icon name="info" size={16} /><span>To send, first agree to honor the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
+          <p className="jf-warn"><Icon name="info" size={16} /><span>To join, first agree to honor the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
         )}
       </>}
 
@@ -461,7 +461,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         <span className="jf-nav__end">
           {!last && <Button variant="quiet" onClick={onNext}>Skip for now</Button>}
           {last
-            ? <Button variant="next" onClick={save} disabled={saving || unsignedValues > 0}>{saving ? 'Sending…' : 'Send application'}</Button>
+            ? <Button variant="next" onClick={save} disabled={saving || unsignedValues > 0}>{saving ? 'Joining…' : 'Join the community'}</Button>
             : <Button variant="next" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Continue'}</Button>}
         </span>
       </div>
