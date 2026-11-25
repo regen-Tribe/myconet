@@ -1,7 +1,44 @@
 import Link from 'next/link'
 
 // MyCoNet core release notes. A community's own history before v4.0.0 is in its instance/log.md.
+// ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
+  {
+    version: 'v4.130.2',
+    date: '2026-11-25',
+    title: 'A decided draft stays decided when you fold its meeting',
+    items: ['When you fold a meeting\'s drafts and open them again, the ones you approved or declined still say so, with Undo.'],
+  },
+  {
+    version: 'v4.130.1',
+    date: '2026-11-24',
+    title: 'Working at the same time without clashing',
+    items: ['Behind the scenes: a release now gets its version number when it ships, so several people can work on MyCoNet at once without their changes colliding.'],
+  },
+  {
+    version: 'v4.130.0',
+    date: '2026-11-24',
+    title: 'Undo a decline; see where each draft came from',
+    items: ['When you decline a draft (slide the Draft pill left), it now reads “Declined · Undo” until you reload the page, and Undo brings the task back exactly as it was. Approved drafts show “Approved · Undo” the same way.', 'Each draft shows where it came from: the meeting (a link to its notes), the date, and who said it.'],
+  },
+  {
+    version: 'v4.129.0',
+    date: '2026-11-24',
+    title: 'Tasks remember who changed them',
+    items: ['Behind the scenes, every task and project now records when it last changed and who changed it, so questions like “why is this a draft again?” can be answered.'],
+  },
+  {
+    version: 'v4.128.0',
+    date: '2026-11-24',
+    title: 'See what a suggestion is based on',
+    items: ['Each project manager suggestion now shows “Based on”: the meeting each task came from, with a link to its notes, and the line that was said and by whom.'],
+  },
+  {
+    version: 'v4.127.0',
+    date: '2026-11-24',
+    title: 'Done on the far right, a subcircle filter, new subcircles from a task',
+    items: ['On Operations every column sits on one row, with Done last on the far right.', 'Next to Circles, filter the board by subcircle.', 'A task’s Subcircle menu ends with “+ New subcircle…”: type a name and the task goes in the new subcircle. Circle leads and admins can do this.'],
+  },
   {
     version: 'v4.126.0',
     date: '2026-11-24',

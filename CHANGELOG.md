@@ -5,6 +5,101 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.130.2 — 2026-11-25 — A decided draft stays decided when you fold its meeting
+
+Oscar: "I just declined two suggestions in Vision circle… and when I collapse the row they turn back to draft". The
+decisions were saved: the declined tasks were gone and the confirmed ones confirmed. Only the label came back. Folding a
+meeting's group in Drafts to confirm / To decide unmounts its rows, and the Draft pill (`DraftSwipe`) kept what was
+decided in its own state, so a row drawn again started as "Draft".
+- The list (`DecisionList`, and the List's drafts in `DeliverablesTab`) keeps each pill's decision, Approved or
+  Declined with the log entry Undo needs, and hands it back through a new `decided` prop. A row drawn again reads
+  "Approved · Undo" or "Declined · Undo" until the page is reloaded.
+- `onDeclined` now passes the decline's log id.
+
+No migration.
+
+## v4.130.1 — 2026-11-24 — Working at the same time without clashing
+
+On 2026-11-20/21 about ten sessions and Oscar kept conflicting on the same three release files and twice claimed
+the same version (v4.65.0, v4.80.0). Nothing changes on screen.
+- **A change no longer picks its version.** It adds one note, `changes/<slug>.md` (`bump`, `title`, `public`, and the
+  CHANGELOG text). `web/scripts/release.mjs` (`npm run release`) takes the next free version after both the core tags
+  and `CHANGELOG.md`, writes `version.ts`, `CHANGELOG.md` and the `/changelog` entries, and deletes the notes.
+  `--dry-run` shows the result. `npm run upstream` refuses a change that edits those files or has no note, and the
+  new **Change notes** check does the same on pull requests.
+- **A release queue anyone can run:** `npm run ship -- <core PR>` (`web/scripts/ship.mjs`): one release at a time
+  (the lock `/tmp/myconet-ship.lock`), the newest core `main` merged into the PR, the release written, lint and type
+  check, merge, tag, the community's update PR, deploy, and a log entry. A real code conflict stops it with the
+  files named. `--dry-run` goes as far as the checks and changes nothing. If core added migrations since the
+  community's last core version (all of them, also from skipped releases), it stops before deploying and prints
+  the files and the resume command, `npm run ship -- --community <version> --migrations-applied`.
+- **The community's Core update** pushes its branch with `CORE_REPO_TOKEN` when it's set (it needs the `workflow`
+  scope: a release that changes `.github/workflows/` can't be pushed otherwise), prints the real error when the
+  push fails, and cuts long release notes so the PR body stays under GitHub's 65,536 characters.
+- **One file per log entry:** a community's new entries go in `instance/log/<date>-<slug>.md`; `instance/log.md`
+  stays as the archive. `npm run start-work` shows the newest entries.
+- **Rules written down:** module styles live in the module's folder (`DESIGN-SYSTEM.md`, `web/CONTRIBUTING.md`), and
+  "Working at the same time" in `CLAUDE.md` / `AGENTS.md`: one session per module, a draft PR before touching the
+  shell, `roles.ts`, `LEXICON.md` or migrations.
+
+No migration.
+
+## v4.130.0 — 2026-11-24 — Undo a decline until you reload; each draft shows its source
+
+Oscar: "after something is declined (slide left of draft pill) leave the undo button until the page is refreshed".
+- **Declining** a draft in Drafts to confirm / To decide, on a meeting's page and in the List's drafts goes through a
+  new route, `POST /api/ops/drafts/[id]`. It deletes the task as before, with the person's own session, but first keeps
+  the whole task in `agent_actions` (`draft_declined`), with its meeting links and followers.
+- **The pill reads "Declined · Undo" until the page is reloaded.** Undo puts the task back exactly: the row, its link to
+  the meeting's line, and its followers. Only the person who declined it can undo it.
+- **Approving** a draft there now keeps its pill too, reading "Approved · Undo". Before, the pill disappeared at once.
+- The board's cards keep their few seconds' Undo before a declined draft goes.
+- **Each draft's source** shows under its row: "From <the meeting> · date · said by <who>". The meeting links to its notes,
+  and the speaker is Fireflies' speaker on that action item (Oscar: "I don't see… the source of inspiration… on the row
+  with the draft I'm confirming"). The project manager's suggestions keep their own "Based on".
+
+No migration.
+
+## v4.129.0 — 2026-11-24 — Tasks remember when and by whom they last changed
+
+Oscar: "add tracking". Drafts he had confirmed seemed to come back, and nothing showed which tasks had changed:
+`deliverables.updated_at` was never kept current (projects' was), and no one was recorded.
+- Migration `20261226000000_change_tracking.sql`:
+  - `deliverables` and `projects` get `updated_by`.
+  - One trigger (`private.stamp_change`) stamps `updated_at` with the time and `updated_by` with the signed-in person
+    on every change. Null means the assistant or a background job.
+  - It replaces projects' own `set_projects_updated_at`.
+- Nothing changes on screen yet. It makes a task's history traceable.
+
+## v4.128.0 — 2026-11-24 — Each suggestion says what it's based on
+
+Oscar: "when I'm reading suggestions in the drafts to confirm section… I'd like to be able to see why it's suggesting
+this, and click a link to meeting notes explaining why". Under each project manager suggestion in Drafts to confirm /
+To decide (and on a meeting's page), below its **Why**, there's now **Based on**. For each task it's about:
+- the meeting it came from, as a link to that meeting's notes, with its date;
+- the line that was said, and who said it;
+- or, for a task added by hand, who added it and when.
+
+A meeting the viewer may not open shows without its name. No migration.
+
+## v4.127.0 — 2026-11-24 — Done on the far right, a subcircle filter, and new subcircles from a task
+
+Three Operations changes (M07, v4 look), from Oscar:
+- **Done is on the far right of the board** ("we should be able to see the done column on the far right"). The order is
+  Later · Ideas · To do · In progress · Review · Paused · **Done**. On a computer every column sits on one row, and a
+  narrow window scrolls the board sideways instead of wrapping Done and Paused onto a second row. Phones are
+  unchanged.
+- **A subcircle filter** ("to operations page plz add a subcircle filter"). Next to Circles, a **Subcircle** picker lists
+  the chosen circles' subcircles, or all of them grouped by circle. It narrows the board to tasks given to that
+  subcircle, and to subtasks given to it or inside one of its tasks. Changing the circles clears it if it no longer
+  fits.
+- **Make a subcircle from a task's fields** ("add a new subcircle from the drop downs in drafts to confirm"). The
+  **Subcircle** picker in Drafts to confirm, a meeting's action items and the project manager's suggestions ends with
+  **+ New subcircle…**. Type a name and the subcircle is made in the task's circle, with the task in it. Admins and that
+  circle's leads may; the database checks. The other rows offer it at once.
+
+No migration.
+
 ## v4.126.0 — 2026-11-24 — Design review: the phone menu as a sheet, a calmer tab bar, "Dashboard"
 
 Only for communities with `"designReview": true`; nothing changes for the others. Decisions #82–#85.

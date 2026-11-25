@@ -48,6 +48,15 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
   const [busy, setBusy] = useState<string | null>(null)
   const [msg, setMsg] = useState<{ id: string; text: string } | null>(null)
   const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set())
+  // Swiped here (v4.130.0): the pill stays, reading Approved / Declined with Undo, until the page is reloaded
+  // Swiped here (v4.130.0; kept across collapsing a group since v4.130.2): what each pill decided, so it reads
+  // Approved / Declined with Undo until the page is reloaded
+  const [decidedPills, setDecidedPills] = useState<Record<string, { kind: 'approved' } | { kind: 'declined'; log: string | null }>>({})
+  const rememberPill = (id: string, d: { kind: 'approved' } | { kind: 'declined'; log: string | null } | null) =>
+    setDecidedPills(prev => { const n = { ...prev }; if (d) n[id] = d; else delete n[id]; return n })
+  // Subcircles made from a row's Subcircle picker (v4.127.0): every row offers them straight away
+  const [madeTeams, setMadeTeams] = useState<DecisionOptions['teams']>([])
+  const opts = options ? { ...options, teams: [...options.teams, ...madeTeams] } : null
 
   const rows = loaded.map(t => ({ ...t, ...patch[t.deliverable_id] }))
   const set = (id: string, p: Partial<DecisionRow>) => setPatch(prev => ({ ...prev, [id]: { ...prev[id], ...p } }))
@@ -98,6 +107,36 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
     setVersion(prev => ({ ...prev, [t.deliverable_id]: (prev[t.deliverable_id] ?? 0) + 1 }))
   }
 
+  // What the suggestion is based on (v4.128.0: Oscar, "see why it's suggesting this, and click a link to meeting notes
+  // explaining why"): each of its tasks, the meeting it came from (a link to its notes), the line that was said and who
+  // said it; or who added it by hand
+  const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : null)
+  const basedOn = (s: AgentSuggestion) => {
+    const list = s.sources ?? []
+    if (!list.length) return null
+    return (
+      <div className="dl4-basis">
+        <div className="dl4-basis__title">Based on</div>
+        {list.map(x => (
+          <div key={x.task_id} className="dl4-basis__row">
+            <b>{x.title}</b>
+            {x.meeting ? (
+              <span className="dl4-basis__src">
+                {x.meeting.title
+                  ? <Link href={`/meetings/${x.meeting.id}`} className="dl4-basis__link">{x.meeting.title} →</Link>
+                  : <em>a meeting you can’t open</em>}
+                {x.meeting.date && <span suppressHydrationWarning> · {day(x.meeting.date)}</span>}
+              </span>
+            ) : (
+              <span className="dl4-basis__src">Added by hand{x.added_by ? ` by ${x.added_by}` : ''}{x.added_at ? <span suppressHydrationWarning> on {day(x.added_at)}</span> : null}</span>
+            )}
+            {x.said && <span className="dl4-basis__said">“{x.said}”{x.said_by && <> · {x.said_by}</>}</span>}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   const suggestion = (s: AgentSuggestion) => {
     const state = decided[s.id]
     const plain = explain(s, titleOf, projectTitle)
@@ -108,6 +147,7 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
         <div className="dl4-sug__head"><InlineIcon name="compass" /><b>{KIND[s.kind] ?? 'Suggested'}</b>{state && <span className={`dl4-sug__state dl4-sug__state--${state}`}>{state === 'accepted' ? '✓ Accepted' : 'Dismissed'}</span>}</div>
         <div className="dl4-sug__what">{plain.what}</div>
         {s.reason && <div className="dl4-sug__why"><b>Why:</b> {s.reason}</div>}
+        {basedOn(s)}
         {mayDecide && !state && (
           <div className="dl4-sug__acts">
             {(s.kind === 'new_project' || s.kind === 'move') && options && (
@@ -117,7 +157,7 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
                   <optgroup label="A new task in…">
                     {circles.slugs.map(c => [
                       <option key={c} value={`c:${c}`}>{circles.meta(c).emoji} {circles.meta(c).label}</option>,
-                      ...options.teams.filter(t => t.circle === c).map(t => <option key={t.id} value={`t:${t.id}`}>{'    '}{circles.meta(c).label} › {t.name}</option>),
+                      ...(opts ?? options).teams.filter(t => t.circle === c).map(t => <option key={t.id} value={`t:${t.id}`}>{'    '}{circles.meta(c).label} › {t.name}</option>),
                     ])}
                   </optgroup>
                 )}
@@ -152,7 +192,7 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
           <span className="v4-row__trail">
             {t.status === 'merged' ? <span className="dl4-tag dl4-tag--grey">Merged</span>
               : t.status === 'later' ? <span className="dl4-tag dl4-tag--idea"><Icon name="clock" size={12} />Later{decidable && <> · <button type="button" className="dl4-link" onClick={() => later(t, false)}>Undo</button></>}</span>
-              : t.needs_review ? <DraftSwipe keepLabel taskId={t.deliverable_id} canDecide={!!t.can_decide} onApproved={() => set(t.deliverable_id, { needs_review: false })} onUndone={() => set(t.deliverable_id, { needs_review: true })} />
+              : t.needs_review || decidedPills[t.deliverable_id] ? <DraftSwipe keepLabel taskId={t.deliverable_id} decided={decidedPills[t.deliverable_id]} canDecide={!!t.can_decide || !!decidedPills[t.deliverable_id]} onApproved={() => { rememberPill(t.deliverable_id, { kind: 'approved' }); set(t.deliverable_id, { needs_review: false }) }} onDeclined={log => rememberPill(t.deliverable_id, { kind: 'declined', log })} onUndone={() => { rememberPill(t.deliverable_id, null); set(t.deliverable_id, { needs_review: true }) }} />
               : t.suggestions.length ? null
               : <StatusPill status={t.status === 'done' ? 'done' : 'todo'} label={t.status === 'done' ? 'Done' : 'On the board'} />}
             {decidable && t.status !== 'later' && t.status !== 'merged' && (
@@ -165,13 +205,25 @@ export function DecisionList({ rows: loaded, options, canDecide, grouped = false
             )}
           </span>
         </div>
+        {/* Where it came from (v4.130.0: Oscar didn't see "the source of inspiration" on a draft's row): the meeting, a link
+            to its notes, its date, and who said the line */}
+        {t.meeting && (
+          <div className="mt4-taskedit dl4-source">
+            From {t.meeting.title
+              ? <Link href={`/meetings/${t.meeting.id}`} className="dl4-basis__link">{t.meeting.title} →</Link>
+              : <em>a meeting you can’t open</em>}
+            {t.meeting.date && <span suppressHydrationWarning> · {day(t.meeting.date)}</span>}
+            {t.said_by && <> · said by <b>{t.said_by}</b></>}
+          </div>
+        )}
         {msg?.id === t.deliverable_id && <div className="mt4-taskedit dl4-err">{msg.text}</div>}
         {canEdit && open && (
           <div className="mt4-taskedit">
             <TaskQuickEdit
               key={version[t.deliverable_id] ?? 0}
               task={{ id: t.deliverable_id, title: t.title, status: t.status, circle: t.circle, team_id: t.team_id, project_id: t.project_id, assignee_id: t.assignee_id, assignee_name: t.assignee_name, priority: t.priority, due_date: t.due_date, due_time: t.due_time, needs_review: t.needs_review }}
-              {...options!}
+              {...opts!}
+              onTeamAdded={x => setMadeTeams(prev => [...prev, x])}
               onSaved={x => set(t.deliverable_id, {
                 status: x.status, circle: x.circle ?? null, team_id: x.team_id ?? null, project_id: x.project_id,
                 assignee_id: x.assignee_id, assignee_name: x.assignee_name ?? null, priority: x.priority ?? null, due_date: x.due_date, due_time: x.due_time ?? null, needs_review: false,

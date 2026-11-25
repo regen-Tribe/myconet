@@ -28,7 +28,7 @@ const pick: React.CSSProperties = {
   color: 'var(--ink-2)', maxWidth: 170, fontFamily: 'inherit',
 }
 
-export function DeliverablesTab({ deliverables: all, projects, draftsOnly = false, onDraftsOnly, canDecide, onDecided, onOpen, projectOptions = [], teams = [] }: {
+export function DeliverablesTab({ deliverables: all, projects, draftsOnly = false, onDraftsOnly, canDecide, onOpen, projectOptions = [], teams = [] }: {
   deliverables: Deliverable[]
   projects: ProjectSummary[]
   /** Only drafts (e.g. from meetings) waiting for a lead */
@@ -36,7 +36,6 @@ export function DeliverablesTab({ deliverables: all, projects, draftsOnly = fals
   onDraftsOnly?: (on: boolean) => void
   /** May this person approve or decline a draft from its pill (a lead of its circle or project, or an admin) */
   canDecide?: (d: Deliverable) => boolean
-  onDecided?: () => void
   /** Opens a task with no project in its pop-up, here on the board */
   onOpen?: (d: Deliverable) => void
   /** Where a task can go (v4.84.0): open tasks, and the circles' subcircles */
@@ -54,6 +53,10 @@ export function DeliverablesTab({ deliverables: all, projects, draftsOnly = fals
   const [telling, setTelling] = useState<string | null>(null)
   const [told, setTold] = useState('')
   const keep = (id: string) => setKept(prev => new Set(prev).add(id))
+  // Swiped here (v4.130.0): the pill stays with Approved / Declined and Undo until the page is reloaded
+  const [decidedPills, setDecidedPills] = useState<Record<string, { kind: 'approved' } | { kind: 'declined'; log: string | null }>>({})
+  const decide = (id: string, d: { kind: 'approved' } | { kind: 'declined'; log: string | null } | null) =>
+    setDecidedPills(prev => { const n = { ...prev }; if (d) n[id] = d; else delete n[id]; return n })
   const rows = all.map(d => ({ ...d, ...patch[d.id] }))
   const draftCount = rows.filter(d => d.needs_review).length
   const deliverables = draftsOnly ? rows.filter(d => d.needs_review || kept.has(d.id)) : rows
@@ -138,8 +141,8 @@ export function DeliverablesTab({ deliverables: all, projects, draftsOnly = fals
             return (
               <tr key={d.id} style={{ opacity: busy === d.id ? 0.6 : 1 }}>
                 <td style={{ ...tdStyle, fontWeight: 500, color: 'var(--ink)' }}>
-                  {d.needs_review && <DraftSwipe taskId={d.id} canDecide={edit} onApproved={() => { keep(d.id); setPatch(prev => ({ ...prev, [d.id]: { ...prev[d.id], needs_review: false } })); onDecided?.() }} onDeclined={onDecided} />}
-                  {!d.needs_review && kept.has(d.id) && <span style={{ fontSize: 10, fontWeight: 700, color: '#15803d', marginRight: 6 }}>✓ Confirmed</span>}
+                  {(d.needs_review || decidedPills[d.id]) && <DraftSwipe keepLabel taskId={d.id} decided={decidedPills[d.id]} canDecide={edit} onApproved={() => { keep(d.id); decide(d.id, { kind: 'approved' }); setPatch(prev => ({ ...prev, [d.id]: { ...prev[d.id], needs_review: false } })) }} onDeclined={log => { keep(d.id); decide(d.id, { kind: 'declined', log }) }} onUndone={() => { decide(d.id, null); setPatch(prev => ({ ...prev, [d.id]: { ...prev[d.id], needs_review: true } })) }} />}
+                  {!d.needs_review && kept.has(d.id) && !decidedPills[d.id] && <span style={{ fontSize: 10, fontWeight: 700, color: '#15803d', marginRight: 6 }}>✓ Confirmed</span>}
                   <PriorityBadge priority={d.priority} />{d.priority && d.priority !== 'none' ? ' ' : ''}
                   {d.project_id || !onOpen
                     ? <Link href={taskHref(d)} style={{ color: 'inherit', textDecoration: 'none' }}>{d.title}</Link>
