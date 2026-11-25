@@ -25,6 +25,8 @@ import {
 } from '@/core/components/v4/lucide-compat'
 import { SIGNED_IN_PROFILE_COLUMNS, profileDetailsOf } from '@/core/lib/public-profile'
 import { PillPicker } from '@/core/components/v4/PillPicker'
+import { HomePicker } from '@/core/components/v4/HomePicker'
+import { homesOf, homesToFields } from '@/core/lib/homes'
 import { DESCRIBES, PILL_GROUPS, groupOfPill, pastel, pillStats, valueList, type PillStats } from '@/core/lib/skills-interests'
 import { Globe } from '@/core/components/v4/lucide-compat'
 
@@ -786,9 +788,13 @@ export default function ProfileWizard() {
               </div>
             </>
           )}
-          {on('place') && (
+          {on('place') && RV && (
+            <div id="pe-city">
+              <HomePicker value={homesOf(form.city, form.country)} onChange={h => { const f = homesToFields(h); setForm(prev => ({ ...prev, city: f.city ?? '', country: f.country ?? '' })) }} />
+            </div>
+          )}
+          {on('place') && !RV && (
             <>
-              {RV && <Label>Where do you call home?</Label>}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Country</Label>

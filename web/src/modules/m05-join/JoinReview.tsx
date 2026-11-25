@@ -10,6 +10,8 @@ import { AvatarCropper } from '@/core/components/AvatarCropper'
 import { uploadAvatarBlob } from '@/core/lib/avatar'
 import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME } from '@/core/lib/instance'
 import { PillPicker } from '@/core/components/v4/PillPicker'
+import { HomePicker } from '@/core/components/v4/HomePicker'
+import { homesOf, homesToFields, type Home } from '@/core/lib/homes'
 import { DESCRIBES, PILL_GROUPS, groupOfPill, pastel, valueList, type PillStats } from '@/core/lib/skills-interests'
 import './join-review.css'
 
@@ -236,7 +238,7 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
   )
 }
 
-const PARTS = ['Tell us about you', 'Skills and interests', 'What you’d like, and what you value']
+const PARTS = ['Tell us about you', 'Skills and interests', 'What you’d like and value']
 const norm = (t: string) => t.trim().toLowerCase()
 
 // Step 2 (#81, #89): three short screens inside Start joining, each saved on Continue. 1: photo, a line about you,
@@ -260,8 +262,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   const [line, setLine] = useState(profile?.headline ?? '')
   const [world, setWorld] = useState(profile?.public_bio ?? '')
   const [types, setTypes] = useState<string[]>(profile?.user_types ?? [])
-  const [city, setCity] = useState(profile?.city ?? '')
-  const [country, setCountry] = useState(profile?.country ?? '')
+  const [homes, setHomes] = useState<Home[]>(() => homesOf(profile?.city, profile?.country))
   // Screen 2: what you already offer under a skill's name counts as shared
   const [good, setGood] = useState<string[]>(bio?.skills ?? [])
   const [curious, setCurious] = useState<string[]>(bio?.interests ?? [])
@@ -289,7 +290,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
     let err: { message: string } | null = null
     if (part === 0) {
       if (!line.trim()) { setSaving(false); setError('Add a line about you, or skip this for now.'); return }
-      const patch = { headline: line.trim(), public_bio: world.trim() || null, user_types: types, city: city.trim() || null, country: country.trim() || null }
+      const patch = { headline: line.trim(), public_bio: world.trim() || null, user_types: types, ...homesToFields(homes) }
       ;({ error: err } = await supabase.from('user_profiles').update(patch).eq('id', userId))
       if (!err) onSaved(patch)
     }
@@ -370,13 +371,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
             ))}
           </div>
         </fieldset>
-        <fieldset className="jr-field">
-          <legend>Where do you call home?</legend>
-          <div className="jf-two">
-            <label className="jr-field"><small>Town or city</small><input value={city} onChange={e => setCity(e.target.value)} maxLength={80} autoComplete="address-level2" /></label>
-            <label className="jr-field"><small>Country</small><input value={country} onChange={e => setCountry(e.target.value)} maxLength={60} autoComplete="country-name" /></label>
-          </div>
-        </fieldset>
+        <HomePicker value={homes} onChange={setHomes} />
       </>}
 
       {part === 1 && <>
@@ -393,7 +388,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
             {asks.map((a, i) => (
               <span key={a.id ?? `new${i}`} className="jf-ask">
                 <input value={a.text} onChange={e => setAsks(asks.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} maxLength={200}
-                  placeholder={i === 0 ? 'e.g. A ride from the airport, help with Spanish' : 'Another request'} aria-label={`Request ${i + 1}`} />
+                  placeholder={i === 0 ? 'e.g. A ride from the airport' : 'Another request'} aria-label={`Request ${i + 1}`} />
                 {asks.length > 1 && <button type="button" className="jf-x" aria-label="Remove this request" onClick={() => setAsks(asks.filter((_, j) => j !== i))}><Icon name="x" size={16} /></button>}
               </span>
             ))}
