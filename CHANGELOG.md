@@ -5,6 +5,11 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.141.2 — 2026-11-25 — Small touches in Start joining
+
+Sonia's phone test, 25 Nov. `join-review.css`: folded values align to the top so the number stays beside the name when
+opened. `JoinReview`: the first request's placeholder invites skill sharing ("we want to empower skill sharing"). No migration.
+
 ## v4.141.1 — 2026-11-25 — I agree to honor these values; Each step of Start joining fits your phone screen; Join the community, not an application
 
 **I agree to honor these values.** Sonia (decision #101). `JoinReview` step 1 and `SignValues` (About's values chapter): "I agree to honor these values" /

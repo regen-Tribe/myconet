@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.141.2',
+    date: '2026-11-25',
+    title: 'Small touches in Start joining',
+    items: ['An opened value keeps its number beside its name.', '"What would you like to receive?" suggests skill sharing: "e.g. Marketing advice, a listening ear".'],
+  },
+  {
     version: 'v4.141.1',
     date: '2026-11-25',
     title: 'I agree to honor these values; Each step of Start joining fits your phone screen; Join the community, not an application',
