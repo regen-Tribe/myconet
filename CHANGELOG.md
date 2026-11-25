@@ -5,6 +5,13 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.138.0 — 2026-11-25 — Start joining like a phone app, with clean pills
+
+Sonia's phone test (decision #96). `join-review.css`: under 640px, inside a step the heading is one line, the track compact,
+the card fills the screen and `.jf-nav` is a sticky bottom bar (safe-area aware). `pill-picker.css`: no borders or outlines;
+soft fills; picked = ink. "What best describes you?" uses pastel pills (`.pp-pill`) in Start joining, Edit profile and
+`/design`. Cut hints that repeat the question. No migration.
+
 ## v4.137.0 — 2026-11-25 — Why a draft is suggested, in a small pop-up
 
 Oscar: "on the drafts to confirm section, on the operations page - when im looking at a draft - id like to be able to

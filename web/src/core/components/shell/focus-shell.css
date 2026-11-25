@@ -9,3 +9,4 @@ html[data-review] .fx-exit { font-size: 15px; font-weight: 600; color: var(--ink
 html[data-review] .fx-exit:hover { background: var(--ctl, #e3e8f4); }
 html[data-review] .fx-exit--x { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
 html[data-review] .fx-main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 8px 16px 48px; box-sizing: border-box; }
+@media (max-width: 639px) { html[data-review] .fx-main:has(.jf--step) { padding-bottom: 0; } }

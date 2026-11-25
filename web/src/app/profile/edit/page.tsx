@@ -804,12 +804,11 @@ export default function ProfileWizard() {
           {on('types') && RV && (
             <div className="space-y-3" id="pe-types">
               <Label>What best describes you?</Label>
-              <p className="text-xs text-muted-foreground">Choose all that apply.</p>
               <div className="pp-describes">
                 {[...DESCRIBES, ...form.user_types.filter(t => t !== 'Community Member' && !DESCRIBES.some(d => d.id === t)).map(t => ({ id: t, label: t, hint: 'Picked earlier' }))].map((d, i) => (
-                  <button key={d.id} type="button" style={pastel(i) as React.CSSProperties} className="pp-pick" aria-pressed={form.user_types.includes(d.id)}
+                  <button key={d.id} type="button" style={pastel(i) as React.CSSProperties} className="pp-pill" aria-pressed={form.user_types.includes(d.id)} title={d.hint}
                     onClick={() => update('user_types', form.user_types.includes(d.id) ? form.user_types.filter(x => x !== d.id) : [...form.user_types, d.id])}>
-                    <b>{d.label}</b><small>{d.hint}</small>
+                    {form.user_types.includes(d.id) && <V4Icon name="check" size={16} />}{d.label}
                   </button>
                 ))}
               </div>
