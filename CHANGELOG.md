@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.132.0 — 2026-11-25 — Joining in two steps: Send at the end of About you
+
+Sonia, 25 Nov: "'Anything else?' why would we ask that?" The website form and About you already ask everything, so
+the Apply step goes (decision #93, option B). With the design review: `join-path.ts` gives two steps; About you's last
+screen ends with Send application, shows the Blueprint's own questions if a community has any, and waits for the values
+with a link to step 1. Old `?step=application` links open that screen. The menu, Dashboard, Welcome and About's
+"Step 1 of 2" say two steps. Without the design review, three steps as before. No migration.
+
 ## v4.131.0 — 2026-11-25 — Good at, curious about: one picker, and a profile in seven tabs; A Welcome for visitors, and Start joining as one focused flow
 
 **Good at, curious about: one picker, and a profile in seven tabs.** Sonia, 25 Nov (Protopia join questions): people reach MyCoNet after the community's own website form, so

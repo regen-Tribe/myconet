@@ -154,12 +154,13 @@ async function reviewMenuState(supabase: SupabaseClient, userId: string, role: s
     const progress = path.steps.map(x => ({ label: x.label, done: x.done }))
     const waiting = path.application === 'pending' || path.application === 'reviewing'
     if (waiting) return { next: { title: 'Your application is in', line: `${cap(JOIN_REVIEWER)} answers within a week.`, href: '/join' }, journey: 0, progress, counts }
-    if (!path.next) return { next: { title: 'Start joining', line: 'Three short steps.', href: '/join' }, journey: 0, progress, counts }
+    const short = path.steps.length === 2 ? 'Two short steps.' : 'Three short steps.'
+    if (!path.next) return { next: { title: 'Start joining', line: short, href: '/join' }, journey: 0, progress, counts }
     const at = path.steps.indexOf(path.next)
     return {
       next: path.doneCount === 0 && path.application !== 'rejected'
-        ? { title: 'Start joining', line: 'Three short steps.', href: '/join' }
-        : { title: path.next.title, line: `Start joining · step ${at + 1} of 3`, href: stepHref(path.next.key) },
+        ? { title: 'Start joining', line: short, href: '/join' }
+        : { title: path.next.title, line: `Start joining · step ${at + 1} of ${path.steps.length}`, href: stepHref(path.next.key) },
       journey: 0, progress, counts,
     }
   }
