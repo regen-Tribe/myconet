@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.136.0',
+    date: '2026-11-25',
+    title: 'A task opens over the list you\'re on',
+    items: ['Clicking a task in Drafts to confirm (or in a meeting\'s action items) opens its window over the page you\'re on, instead of taking you to another page. Cmd- or Ctrl-click still opens the task\'s own page.'],
+  },
+  {
     version: 'v4.135.0',
     date: '2026-11-25',
     title: 'Before joining, the Dashboard shows only the way in; A friendlier skills and interests picker, in pastels',
