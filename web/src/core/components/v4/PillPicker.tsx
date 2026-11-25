@@ -17,8 +17,10 @@ const norm = (s: string) => s.trim().toLowerCase()
 /** Listed by this many people here or more: the pill gets a flame */
 const POPULAR = 3
 
-export function PillPicker({ label, hint, value, onChange, stats, share, ownExample = 'Pottery' }: {
+export function PillPicker({ label, hint, hideLabel = false, value, onChange, stats, share, ownExample = 'Pottery' }: {
   label: string
+  /** The screen's title already asks it (Start joining, #100) */
+  hideLabel?: boolean
   hint?: string
   value: string[]
   onChange: (next: string[]) => void
@@ -69,7 +71,7 @@ export function PillPicker({ label, hint, value, onChange, stats, share, ownExam
 
   return (
     <fieldset className="pp">
-      <legend className="pp-legend"><span>{label}</span>{hint && <small>{hint}</small>}</legend>
+      <legend className={hideLabel ? 'sr-only' : 'pp-legend'}><span>{label}</span>{hint && <small>{hint}</small>}</legend>
 
       {/* Your picks · N, with Review */}
       {value.length > 0 && <div className="pp-picks">

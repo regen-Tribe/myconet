@@ -50,7 +50,7 @@ export function HomePicker({ value, onChange, label = 'Where do you call home?' 
     if (!value.some(v => fold(v.city) === fold(h.city) && fold(v.country) === fold(h.country))) onChange([...value, h])
     setQ(''); setActive(0); input.current?.focus()
   }
-  // Typed and not picked: "Ericeira, Portugal" keeps both parts; "Ericeira" keeps the town
+  // Typed and not picked: "Ericeira, Portugal" keeps both parts; "Ericeira" keeps the city
   const typed = (): Home => { const [c, ...k] = q.split(','); return { city: c.trim(), country: k.join(',').trim() } }
 
   return (
@@ -69,7 +69,7 @@ export function HomePicker({ value, onChange, label = 'Where do you call home?' 
       {value.length < MAX && (
         <div className="hp-box">
           <input ref={input} className="v4-input hp-input" value={q} onChange={e => { setQ(e.target.value); setActive(0) }}
-            placeholder={value.length ? 'Add another place' : 'Type a town or city'} aria-labelledby="hp-label" autoComplete="off"
+            placeholder={value.length ? 'Add another city' : 'Type a city'} aria-labelledby="hp-label" autoComplete="off"
             role="combobox" aria-expanded={matches.length > 0} aria-controls="hp-list"
             onKeyDown={e => {
               if (e.key === 'ArrowDown') { e.preventDefault(); setActive(a => Math.min(a + 1, matches.length)) }

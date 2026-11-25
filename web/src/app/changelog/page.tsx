@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.140.0',
+    date: '2026-11-25',
+    title: 'The home picker says "city"; Start joining, one question per screen',
+    items: ['"Where do you call home?" asks you to type a city.', 'About you asks one question per screen, so each fits your phone; Back and Continue sit at the bottom like an app.', 'Step 1 lists the values as names; tap one to read it.', 'Softer, rounder cards and buttons, with a few pastel touches.'],
+  },
+  {
     version: 'v4.139.0',
     date: '2026-11-25',
     title: 'Pick your home town from a list, and add more than one',

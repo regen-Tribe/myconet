@@ -88,7 +88,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   const [myOffers, setMyOffers] = useState(offers)
   const [myBio, setMyBio] = useState<JoinBio | null>(bio)
   const [myRequests, setMyRequests] = useState(requests)
-  const [part, setPart] = useState(initialStep === 'application' ? 2 : initialStep === 'profile' ? Math.min(2, Math.max(0, initialPart)) : 0)
+  const [part, setPart] = useState(initialStep === 'application' ? LAST_PART : initialStep === 'profile' ? Math.min(LAST_PART, Math.max(0, initialPart)) : 0)
 
   // The open step lives in the address, so reloading or sharing the link opens the same step
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   }, [open, part])
 
   const go = (key: JoinStepKey, toPart = 0) => { setOpen(key); setPart(toPart); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const back = (key: JoinStepKey) => { const i = ORDER.indexOf(key); if (i > 0) go(ORDER[i - 1], ORDER[i - 1] === 'profile' ? 2 : 0) }
+  const back = (key: JoinStepKey) => { const i = ORDER.indexOf(key); if (i > 0) go(ORDER[i - 1], ORDER[i - 1] === 'profile' ? LAST_PART : 0) }
   const toPart = (n: number) => { setPart(n); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const here = userId ? (isFullMember(role) ? 'member' : role) : null
   const sent = waiting || sentNow
@@ -156,7 +156,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
             questions={questions} rejected={appStatus === 'rejected'} unsignedValues={values.length - values.filter(v => signed.has(v.id)).length}
             onBackToValues={() => go('values')}
             onSent={() => { setAppStatus('pending'); setSentNow(true); window.scrollTo({ top: 0 }); router.refresh() }}
-            onBack={() => (part > 0 ? toPart(part - 1) : back('profile'))} onNext={() => toPart(Math.min(2, part + 1))} />
+            onBack={() => (part > 0 ? toPart(part - 1) : back('profile'))} onNext={() => toPart(Math.min(LAST_PART, part + 1))} />
         )}
 
         {joined && (
@@ -218,12 +218,16 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
       <h2>Get to know us</h2>
       <p className="jf-text">
         {COMMUNITY_DESCRIPTION ? `${COMMUNITY_NAME} is ${COMMUNITY_DESCRIPTION.charAt(0).toLowerCase()}${COMMUNITY_DESCRIPTION.slice(1).replace(/\.$/, '')}. ` : ''}
-        {values.length > 0 ? 'The values we live by.' : 'No values written yet; an admin adds them to About.'}
+        {values.length > 0 ? 'The values we live by. Tap one to read it.' : 'No values written yet; an admin adds them to About.'}
       </p>
       {values.length > 0 && (
-        <ol className="jf-values">
+        <ol className="jf-values jf-values--fold">
           {values.map((v, i) => (
-            <li key={v.id}><span className="jf-n" aria-hidden="true">{i + 1}</span><div><b>{v.title}</b>{v.description && <p>{v.description}</p>}</div></li>
+            <li key={v.id}><span className="jf-n" aria-hidden="true">{i + 1}</span>
+              {v.description
+                ? <details><summary><b>{v.title}</b><Icon name="down" size={16} /></summary><p>{v.description}</p></details>
+                : <b>{v.title}</b>}
+            </li>
           ))}
         </ol>
       )}
@@ -238,7 +242,10 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
   )
 }
 
-const PARTS = ['Tell us about you', 'Skills and interests', 'What you’d like and value']
+// One question per screen, so each fits a phone screen (Sonia, 25 Nov; decision #100). The title is the question.
+const PARTS = ['Tell us about you', 'What are you up to in this world?', 'A bit more about you', 'What are you good at?',
+  'What are you curious about?', 'What would you like to receive from the community?', 'Your values']
+const LAST_PART = PARTS.length - 1
 const norm = (t: string) => t.trim().toLowerCase()
 
 // Step 2 (#81, #89): three short screens inside Start joining, each saved on Continue. 1: photo, a line about you,
@@ -272,7 +279,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   const [mine, setMine] = useState<string[]>(() => valueList(bio?.values_principles) ?? [])
   const [valueDraft, setValueDraft] = useState('')
   const [answers, setAnswers] = useState<string[]>(() => questions.map(() => ''))
-  const last = part === 2
+  const last = part === LAST_PART
   const oldText = bio?.values_principles && !valueList(bio.values_principles) ? bio.values_principles : null
   const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || 'You'
 
@@ -288,30 +295,32 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   async function save() {
     setSaving(true); setError('')
     let err: { message: string } | null = null
+    // Each screen saves its own answers
+    const profilePatch = async (patch: Partial<Profile>) => { const r = await supabase.from('user_profiles').update(patch).eq('id', userId); if (!r.error) onSaved(patch); return r }
     if (part === 0) {
       if (!line.trim()) { setSaving(false); setError('Add a line about you, or skip this for now.'); return }
-      const patch = { headline: line.trim(), public_bio: world.trim() || null, user_types: types, ...homesToFields(homes) }
-      ;({ error: err } = await supabase.from('user_profiles').update(patch).eq('id', userId))
-      if (!err) onSaved(patch)
+      ;({ error: err } = await profilePatch({ headline: line.trim() }))
     }
-    if (part === 1) {
-      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, skills: good, interests: curious }, { onConflict: 'user_id' }))
+    if (part === 1) ({ error: err } = await profilePatch({ public_bio: world.trim() || null }))
+    if (part === 2) ({ error: err } = await profilePatch({ user_types: types, ...homesToFields(homes) }))
+    if (part === 3) {
+      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, skills: good }, { onConflict: 'user_id' }))
       // Shared skills become offers; a skill no longer shared takes its offer away (offers with other titles stay)
       const add = shared.filter(k => good.some(g => norm(g) === norm(k)) && !offers.some(o => norm(o) === norm(k)))
         .map(title => ({ user_id: userId, title, category: PILL_GROUPS[groupOfPill(title)]?.offerCategory ?? 'Other', compensation_model: 'Other', is_active: true }))
       const drop = offers.filter(o => [...good, ...(bio?.skills ?? [])].some(g => norm(g) === norm(o)) && !shared.some(k => norm(k) === norm(o)))
       if (!err && add.length) ({ error: err } = await supabase.from('user_offers').insert(add))
       if (!err && drop.length) ({ error: err } = await supabase.from('user_offers').delete().eq('user_id', userId).in('title', drop))
-      if (!err) onData({ bio: { skills: good, interests: curious }, offers: [...offers.filter(o => !drop.includes(o)), ...add.map(a => a.title)] })
+      if (!err) onData({ bio: { skills: good }, offers: [...offers.filter(o => !drop.includes(o)), ...add.map(a => a.title)] })
     }
-    if (part === 2) {
-      const values = [...mine.filter(Boolean), ...(valueDraft.trim() ? [valueDraft.trim()] : [])]
-      // Older free text is kept until a value is added here
-      const valuesText = values.length ? values.join('\n') : oldText
-      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, values_principles: valuesText }, { onConflict: 'user_id' }))
+    if (part === 4) {
+      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, interests: curious }, { onConflict: 'user_id' }))
+      if (!err) onData({ bio: { interests: curious } })
+    }
+    if (part === 5) {
       const keep = asks.filter(a => a.text.trim())
       const gone = requests.filter(r => !keep.some(a => a.id === r.id)).map(r => r.id)
-      if (!err && gone.length) ({ error: err } = await supabase.from('user_requests').delete().in('id', gone))
+      if (gone.length) ({ error: err } = await supabase.from('user_requests').delete().in('id', gone))
       const now: JoinRequest[] = []
       for (const a of keep) {
         if (err) break
@@ -323,7 +332,14 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         err = res.error
         if (res.data) now.push({ id: res.data.id as string, request_text: text })
       }
-      if (!err) onData({ bio: { values_principles: valuesText }, requests: now })
+      if (!err) onData({ requests: now })
+    }
+    if (part === 6) {
+      const values = [...mine.filter(Boolean), ...(valueDraft.trim() ? [valueDraft.trim()] : [])]
+      // Older free text is kept until a value is added here
+      const valuesText = values.length ? values.join('\n') : oldText
+      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, values_principles: valuesText }, { onConflict: 'user_id' }))
+      if (!err) onData({ bio: { values_principles: valuesText } })
     }
     // The last screen sends the application (#93). q0, q1… match the Blueprint's questions, if any; _questions keeps
     // their wording in case they're edited later (same as JoinClient)
@@ -343,7 +359,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
       {pending && <AvatarCropper file={pending} busy={uploading} onCancel={() => setPending(null)} onCropped={cropped} />}
       <small className="jf-eyebrow">Step 2 of 2</small>
       <h2>{PARTS[part]}</h2>
-      <ol className="jf-parts" aria-label="About you, three short screens">
+      <ol className="jf-parts" aria-label={`About you, screen ${part + 1} of ${PARTS.length}`}>
         {PARTS.map((t, i) => <li key={t} className={i < part ? 'done' : i === part ? 'now' : undefined} aria-current={i === part ? 'step' : undefined}><span className="sr-only">{t}</span></li>)}
       </ol>
 
@@ -357,10 +373,16 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           <span>One line about you</span>
           <input value={line} onChange={e => setLine(e.target.value)} maxLength={120} placeholder="e.g. Permaculture designer and drummer" />
         </label>
+      </>}
+
+      {part === 1 && (
         <label className="jr-field">
-          <span>What are you up to in this world?</span>
-          <textarea rows={4} value={world} onChange={e => setWorld(e.target.value)} maxLength={1000} />
+          <span className="sr-only">What are you up to in this world?</span>
+          <textarea rows={6} value={world} onChange={e => setWorld(e.target.value)} maxLength={1000} placeholder="What you’re working on, and towards" />
         </label>
+      )}
+
+      {part === 2 && <>
         <fieldset className="jr-field jr-offers">
           <legend>What best describes you?</legend>
           <div className="pp-describes">
@@ -374,16 +396,13 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         <HomePicker value={homes} onChange={setHomes} />
       </>}
 
-      {part === 1 && <>
-        <PillPicker label="What are you good at?"
-          value={good} onChange={setGood} stats={pillStats} share={{ value: shared, onChange: setShared }} ownExample="Pottery" />
-        <PillPicker label="What are you curious about?"
-          value={curious} onChange={setCurious} stats={pillStats} ownExample="Mushrooms" />
-      </>}
+      {part === 3 && <PillPicker label="What are you good at?" hideLabel value={good} onChange={setGood} stats={pillStats} share={{ value: shared, onChange: setShared }} ownExample="Pottery" />}
 
-      {part === 2 && <>
+      {part === 4 && <PillPicker label="What are you curious about?" hideLabel value={curious} onChange={setCurious} stats={pillStats} ownExample="Mushrooms" />}
+
+      {part === 5 && <>
         <fieldset className="jr-field">
-          <legend>What would you like to receive from the community?</legend>
+          <legend className="sr-only">What would you like to receive from the community?</legend>
           <div className="jf-asks">
             {asks.map((a, i) => (
               <span key={a.id ?? `new${i}`} className="jf-ask">
@@ -395,8 +414,11 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
             <button type="button" className="jr-link jf-add" onClick={() => setAsks([...asks, { text: '' }])}>+ Add another</button>
           </div>
         </fieldset>
+      </>}
+
+      {part === 6 && <>
         <fieldset className="jr-field">
-          <legend>Your values<small className="jf-help">A word or two each</small></legend>
+          <legend className="jf-sub">A word or two each</legend>
           {mine.length > 0 && (
             <div className="pp-pills">
               {mine.map(v => <button key={v} type="button" className="pp-pill" aria-pressed="true" aria-label={`Remove ${v}`} onClick={() => setMine(mine.filter(x => x !== v))}>{v}<Icon name="x" size={16} /></button>)}

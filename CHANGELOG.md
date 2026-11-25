@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.140.0 — 2026-11-25 — The home picker says "city"; Start joining, one question per screen
+
+**The home picker says "city".** Sonia: "call it city, not town" (decision #98). `HomePicker` placeholders: "Type a city", "Add another city". LEXICON entry for
+"Where do you call home?". No migration.
+
+**Start joining, one question per screen.** Sonia, 25 Nov (decisions #99, #100). `JoinReview`: About you is seven screens (`PARTS`, `LAST_PART`), each saving its
+own answer; the title is the question (`PillPicker hideLabel`). Step 1's values fold (`<details>`). `focus-shell.css`:
+Sponic's feel (18px cards, soft shadow, 48px buttons and fields) in MyCoNet's colours, pastel value numbers and photo
+placeholder. `join-review.css`: on a phone the step card is a flex column so the button bar sits at the bottom. No migration.
+
 ## v4.139.0 — 2026-11-25 — Pick your home town from a list, and add more than one
 
 Sonia, 25 Nov (decision #97). `HomePicker` (core/components/v4) over GeoNames' cities15000 (CC BY 4.0, credited under the
