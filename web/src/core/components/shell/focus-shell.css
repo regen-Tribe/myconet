@@ -10,3 +10,44 @@ html[data-review] .fx-exit:hover { background: var(--ctl, #e3e8f4); }
 html[data-review] .fx-exit--x { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
 html[data-review] .fx-main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 8px 16px 48px; box-sizing: border-box; }
 @media (max-width: 639px) { html[data-review] .fx-main:has(.jf--step) { padding-bottom: 0; } }
+
+/* Start joining in the Sponic look (Sonia, 25 Nov: "make it nice like sponic aesthetic"; decision #99), only inside
+   this focused page: a warm cream page, off-white cards, warm sand lines, deep forest green for the main action and
+   for what's picked, terracotta accents. Tokens from Sponic's sponica-design-tokens.css (light theme). */
+html[data-review] .fx {
+  --bg: #FAF6EF; --bg-2: #F3ECDF; --surface: #FFFDF9; --ctl: #F0E9DC; --ctl-hover: #E8DFCE; --rule: #E0D6C5; --bg-3: #ECE4D6;
+  --ink: #0E1A18; --ink-2: #3D3A32; --ink-3: #6B6152; --ink-4: #9C9282;
+  --green: #E4EFE4; --green-ink: #0B6B48; --sp-primary: #1B4332; --sp-primary-hover: #16382A; --sp-accent: #C1633F;
+  background: var(--bg); color: var(--ink);
+}
+html[data-review] .fx-top { background: color-mix(in srgb, #FAF6EF 90%, transparent); }
+html[data-review] .fx .v4-card { background: var(--surface); border-radius: 18px; box-shadow: 0 1px 0 var(--rule), 0 12px 32px rgba(14, 26, 24, .05); }
+/* The main action: forest green, tall, a white arrow */
+html[data-review] .fx .v4-btn { height: 48px; font-size: 15px; }
+html[data-review] .fx .v4-btn--next { background: var(--sp-primary); color: #fff; padding: 0 6px 0 22px; }
+html[data-review] .fx .v4-btn--next:hover { background: var(--sp-primary-hover); }
+html[data-review] .fx .v4-btn--next .v4-btn__go { background: rgba(255, 255, 255, .16); color: #fff; width: 36px; height: 36px; }
+html[data-review] .fx .v4-btn--next:disabled { background: var(--ctl); color: var(--ink-4); }
+html[data-review] .fx .v4-btn--next:disabled .v4-btn__go { background: var(--rule); }
+html[data-review] .fx .v4-btn--quiet { color: var(--ink-2); }
+/* The track and the three dashes: forest green when done or current */
+html[data-review] .fx .jr-path li.done .jr-path__n { background: var(--sp-primary); }
+html[data-review] .fx .jr-path li.now .jr-path__n { color: var(--sp-primary); box-shadow: inset 0 0 0 2px var(--sp-primary), 0 0 0 4px var(--bg); }
+html[data-review] .fx .jr-path li.done + li::before { background: var(--sp-primary); }
+html[data-review] .fx .jf-parts li.done, html[data-review] .fx .jf-parts li.now { background: var(--sp-primary); }
+html[data-review] .fx .jf-eyebrow { color: var(--sp-accent); letter-spacing: .1em; }
+/* Fields: warm fill, a forest ring on focus */
+html[data-review] .fx :is(.jr-field input, .jr-field textarea, .pp-search, .pp-own input, .hp-input) { background: var(--ctl) !important; }
+html[data-review] .fx :is(.jr-field input, .jr-field textarea, .pp-search, .pp-own input, .hp-input):focus { background: var(--surface) !important; box-shadow: inset 0 0 0 2px var(--sp-primary) !important; }
+/* Picked pills: forest green, white words; the flame in terracotta */
+html[data-review] .fx .pp-pill[aria-pressed='true'], html[data-review] .fx .pp-group .pp-pill[aria-pressed='true'] { background: var(--sp-primary); color: #fff; }
+html[data-review] .fx .pp-group__n { background: var(--sp-primary); }
+html[data-review] .fx .pp-hot { color: var(--sp-accent); }
+html[data-review] .fx .pp-pill[aria-pressed='true'] .pp-hot { color: #F2B58F; }
+html[data-review] .fx .pp-pill--share[aria-pressed='true'] { background: var(--green); color: var(--green-ink); }
+html[data-review] .fx .jf-values li + li { border-top-color: var(--rule); }
+html[data-review] .fx .jf-n { background: var(--green); color: var(--green-ink); }
+html[data-review] .fx .jf-nav { border-top-color: var(--rule); }
+html[data-review] .fx .jf-warn { background: #F6E3D6; color: #8A3F22; }
+html[data-review] .fx .jf-done__mark { background: var(--green); color: var(--green-ink); }
+html[data-review] .fx .jr-link, html[data-review] .fx .jf-more, html[data-review] .fx .pp-link { color: var(--sp-primary); }
