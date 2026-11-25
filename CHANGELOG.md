@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.132.1 — 2026-11-25 — Declining a draft lowers the count
+
+Oscar: "when I decline something by sliding the pill left, on drafts to confirm, the count on the top row holding
+the suggestions should decrease". The panel head (`ToDecidePanel`, M07 `DecisionList.tsx`) counted drafts from the
+rows it was loaded with, so a pill slid in the list below never reached it. `DecisionList` now takes `onPill` and
+tells the panel when a pill is approved, declined or undone; the head leaves those out of its count. Each meeting
+group's own count also leaves out declined drafts (approved ones already dropped). No migration.
+
 ## v4.132.0 — 2026-11-25 — Joining in two steps: Send at the end of About you
 
 Sonia, 25 Nov: "'Anything else?' why would we ask that?" The website form and About you already ask everything, so
