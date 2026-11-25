@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.132.0',
+    date: '2026-11-25',
+    title: 'Joining in two steps: Send at the end of About you',
+    items: ['Start joining is two steps, Get to know us and About you; the last About you screen sends your application.', 'No more "Anything else?" box.'],
+  },
+  {
     version: 'v4.131.0',
     date: '2026-11-25',
     title: 'Good at, curious about: one picker, and a profile in seven tabs; A Welcome for visitors, and Start joining as one focused flow',
