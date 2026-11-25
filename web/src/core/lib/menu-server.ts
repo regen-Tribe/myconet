@@ -144,10 +144,10 @@ async function reviewMenuState(supabase: SupabaseClient, userId: string, role: s
   ])
   const counts = { tasks: tasksRes.count ?? 0, applications: appsRes.count ?? 0, bookings: bookingsRes.count ?? 0 }
 
-  // Explorer: the three join steps. With the design review, step 1 is read on About and step 2 is a short form
-  // inside Start joining (#80, #81); without it, the values are signed on Join and the profile in Edit profile
+  // Explorer: the three join steps. With the design review every step happens inside Start joining, one focused
+  // flow (Sonia, 24 Nov; About opens in a new tab from there); without it, the profile is in Edit profile
   const stepHref = (key: string) => DESIGN_REVIEW
-    ? (key === 'values' ? '/about#values' : `/join?step=${key}`)
+    ? `/join?step=${key}`
     : (key === 'profile' ? '/profile/edit' : `/join?step=${key}`)
   if (!isJoiningOrAbove(role)) {
     const path = await loadJoinPath(supabase, userId, role)

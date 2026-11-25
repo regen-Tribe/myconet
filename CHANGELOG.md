@@ -5,6 +5,28 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.131.0 — 2026-11-25 — Good at, curious about: one picker, and a profile in seven tabs; A Welcome for visitors, and Start joining as one focused flow
+
+**Good at, curious about: one picker, and a profile in seven tabs.** Sonia, 25 Nov (Protopia join questions): people reach MyCoNet after the community's own website form, so
+joining asks only about you, each thing once. Design review only (`designReview`); communities without it keep
+the old pages. Decisions #89–#92 in `design/decisions.md`; words in `LEXICON.md`.
+
+- `core/lib/skills-interests.ts`: twelve groups of pills, shared by skills and interests; suggestions from what
+  people here pick together; "What best describes you?" words; values as names (`valueList`).
+- `core/components/v4/PillPicker.tsx` (+ `pill-picker.css`): groups first, then pills; your own; share → offers.
+- `m05-join/JoinReview.tsx`: About you as three screens (`?step=profile&part=2`), each saved on Continue.
+- `m01-network/ProfileReview.tsx` and `app/profile/edit/page.tsx`: the same seven tabs.
+- `m01-network/lib/match-score.ts`: a skill meeting a curiosity (up to 10) and the same group (up to 3).
+- Blueprint: the values prompt asks for "Name — two or three sentences" per line; Community values' fields are
+  Name and What it means; About splits a values answer on lines when it has them.
+
+No migration, no new secret. Stored as before: `user_bio.skills`, `interests`, `values_principles` (one name per
+line), `user_profiles.user_types`, `user_offers`, `user_requests`.
+
+**A Welcome for visitors, and Start joining as one focused flow.** Sonia's design review, 24 Nov: decisions #86–#88 (replace #69 and #80's "sign on About"). A Welcome at `/` for visitors;
+Start joining in a focused shell (no menu around it), step 1 shows and signs the values in place, About opens in a
+new tab, Apply says next to Send why it waits; the mark on sign-in. Design review only. No migration.
+
 ## v4.130.2 — 2026-11-25 — A decided draft stays decided when you fold its meeting
 
 Oscar: "I just declined two suggestions in Vision circle… and when I collapse the row they turn back to draft". The
