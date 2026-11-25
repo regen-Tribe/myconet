@@ -5,6 +5,19 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.135.0 — 2026-11-25 — Before joining, the Dashboard shows only the way in; A friendlier skills and interests picker, in pastels
+
+**Before joining, the Dashboard shows only the way in.** Sonia's phone test of the two-step join (decision #94). `DashboardV4`: with the joining checklist or the "With the stewards"
+card, no featured task, next event, proposals or circles column (`.nc-only`). `DESCRIBES` in `core/lib/skills-interests.ts`
+is the earlier "Who are you in this network?" list, flattened, with the same stored values (`label` added). Start joining and
+Edit profile ask "Where do you call home?". No migration.
+
+**A friendlier skills and interests picker, in pastels.** Sonia, 25 Nov: "take it as Spotka has it", "popular here should just have a fire emoji", "more pastel colours" (decision
+#95). `PillPicker` rebuilt after Spotka's full-size picker (sponic repo, `apps/garden/app/app.js`): Your picks · N with
+Review, Search all, one pastel card per group (name, one line, N picked, chevron), one open at a time, a dashed Something
+else? Each group has `desc`, `bg` and `line` in `core/lib/skills-interests.ts`; `pastel(i)` tints the describes-you cards.
+A `flame` icon (no emoji on screens) marks pills 3+ people have. On `/design`. No migration.
+
 ## v4.134.0 — 2026-11-25 — Stewards see what the applicant told us
 
 Found in Sonia's live test of the two-step join (decision #93): with no Blueprint questions, an application showed only a

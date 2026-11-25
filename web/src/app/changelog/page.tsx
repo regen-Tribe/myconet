@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.135.0',
+    date: '2026-11-25',
+    title: 'Before joining, the Dashboard shows only the way in; A friendlier skills and interests picker, in pastels',
+    items: ['Before joining, the Dashboard shows only your next joining step, not the community\'s tasks and proposals.', '"What best describes you?" offers the earlier choices again: Exploring, Living in or Looking for a community, Vision holder, Service provider, Land holder, Funder.', 'The place question is simply "Where do you call home?".', 'Picking what you\'re good at and curious about now works like Spotka: your picks on top, a search, and a pastel card for each group that opens to its pills.', 'A flame marks what\'s popular here.', '"What best describes you?" cards come in soft colours too.'],
+  },
+  {
     version: 'v4.134.0',
     date: '2026-11-25',
     title: 'Stewards see what the applicant told us',
