@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.141.0 — 2026-11-25 — Rename a task right where you edit it
+
+Oscar: "I want to be able to edit the name of the task that is being suggested in the drafts to confirm edits".
+`TaskQuickEdit` (M07) gets a Name box above the fields. It saves `deliverables.title` on blur or Enter, if changed and
+not empty (an empty name goes back to the old one); Escape restores it. Like every field there, saving confirms a
+draft. `TaskChange` and `EDITABLE_SELECT` (`lib/task-edit.ts`) carry `title`, and the row's title follows the save. No
+migration.
+
 ## v4.140.0 — 2026-11-25 — The home picker says "city"; Start joining, one question per screen
 
 **The home picker says "city".** Sonia: "call it city, not town" (decision #98). `HomePicker` placeholders: "Type a city", "Add another city". LEXICON entry for
