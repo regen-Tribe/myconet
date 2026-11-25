@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.138.0',
+    date: '2026-11-25',
+    title: 'Start joining like a phone app, with clean pills',
+    items: ['On a phone, each step of Start joining fills the screen, with Back and Continue always in reach at the bottom.', 'Pills are softer and borderless; a picked one turns dark with a check.', 'Fewer words: only what helps you answer.'],
+  },
+  {
     version: 'v4.137.0',
     date: '2026-11-25',
     title: 'Why a draft is suggested, in a small pop-up',
