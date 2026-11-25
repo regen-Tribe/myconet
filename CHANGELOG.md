@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.136.0 — 2026-11-25 — A task opens over the list you're on
+
+Oscar: "when I click on a task in the drafts to confirm section, id like the pop up to happen with the existing screen in
+the background. Currently its taking me to another page". `DecisionList` (M07) catches a plain click on a row's title,
+loads the task (the board's select) and opens `TaskModal` in a portal over the page. Cmd/Ctrl/Shift-click and middle-click
+still follow the link. Saving updates the row and remounts its Edit fields; saving a draft in the window confirms it, so
+its pill reads Approved and the Drafts to confirm count drops, as with a slide right. Deleting the task removes the row
+and takes it out of the counts. No migration.
+
 ## v4.135.0 — 2026-11-25 — Before joining, the Dashboard shows only the way in; A friendlier skills and interests picker, in pastels
 
 **Before joining, the Dashboard shows only the way in.** Sonia's phone test of the two-step join (decision #94). `DashboardV4`: with the joining checklist or the "With the stewards"
