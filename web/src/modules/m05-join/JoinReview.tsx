@@ -194,7 +194,7 @@ function fmt(iso: string | undefined | null) {
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
-// Step 1: who we are in a line, the values right here, and "I share these values" (one signature per value,
+// Step 1: who we are in a line, the values right here, and "I agree to honor these values" (#101; one signature per value,
 // the same value_signatures rows as About's values chapter). About opens in a new tab for the full story.
 function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
   userId: string; values: Value[]; signed: Set<string>; onSigned: (ids: string[]) => void; onNext: () => void
@@ -235,8 +235,8 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
       {error && <p className="jr-error" role="alert">{error}</p>}
       <div className="jf-nav jf-nav--end">
         {done
-          ? <>{values.length > 0 && <span className="jf-ok"><Icon name="check-circle" size={16} />You share these values</span>}<Button variant="next" onClick={onNext}>Continue</Button></>
-          : <Button variant="next" onClick={sign} disabled={busy}>{busy ? 'Signing…' : 'I share these values'}</Button>}
+          ? <>{values.length > 0 && <span className="jf-ok"><Icon name="check-circle" size={16} />You agreed to honor these values</span>}<Button variant="next" onClick={onNext}>Continue</Button></>
+          : <Button variant="next" onClick={sign} disabled={busy}>{busy ? 'Saving…' : 'I agree to honor these values'}</Button>}
       </div>
     </div>
   )
@@ -451,7 +451,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         <p className="jf-text jf-send">{rejected ? 'Your last application wasn’t accepted. You can send a new one. ' : ''}{cap(JOIN_REVIEWER)} reads your profile and answers within a week.</p>
         {/* Why Send waits, said next to the button, with the way to fix it */}
         {unsignedValues > 0 && (
-          <p className="jf-warn"><Icon name="info" size={16} /><span>To send, first share the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
+          <p className="jf-warn"><Icon name="info" size={16} /><span>To send, first agree to honor the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
         )}
       </>}
 
