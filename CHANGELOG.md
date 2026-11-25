@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.134.0 — 2026-11-25 — Stewards see what the applicant told us
+
+Found in Sonia's live test of the two-step join (decision #93): with no Blueprint questions, an application showed only a
+name. `applications-server.ts` now loads each applicant's line, About, photo, place, what best describes them, skills,
+interests, values, offers and requests (`profile_details()` for place and kinds, as #71 allows stewards); `JoinAdminClient`
+shows them above any written answers, with "Open their profile →". The filter row uses the shared `Chip` (the chosen one
+was white on pale). `FocusShell` says "Back to Dashboard" once every join step is done. No migration.
+
 ## v4.133.0 — 2026-11-25 — A note on a task, right where you edit it
 
 Oscar: "I would also like to be able to add a note in the area where I can update the fields for suggested tasks".
