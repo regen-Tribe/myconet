@@ -102,14 +102,14 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   const sent = waiting || sentNow
 
   return (
-    <div className="jf">
+    <div className={`jf${userId && !joined && !sent && open ? ' jf--step' : ''}`}>
       <header className="jf-head">
         <h1>{joined ? 'Joining' : sent ? 'Your application is in' : 'Start joining'}</h1>
         <p>{joined
           ? (isFullMember(role) ? `You’re a member of ${COMMUNITY_NAME}.` : 'You’re a joining member. One accepted agreement makes you a member.')
           : sent
             ? `${cap(JOIN_REVIEWER)} reads it and answers within a week.`
-            : `Two short steps, about ten minutes. ${cap(JOIN_REVIEWER)} reads your application and answers within a week.`}</p>
+            : 'Two steps, about ten minutes.'}</p>
       </header>
 
       {!joined && (
@@ -121,7 +121,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
         {!userId && (
           <div className="jf-step">
             <h2>Create an account to start</h2>
-            <p className="jf-text">Then get to know us and tell us about you. You can stop at any step and come back.</p>
+            <p className="jf-text">Stop any time and come back later.</p>
             <div className="jf-nav jf-nav--end">
               <Button variant="quiet" href="/auth/login">Sign in</Button>
               <Button variant="next" href="/auth/signup">Create account</Button>
@@ -216,7 +216,7 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
       <h2>Get to know us</h2>
       <p className="jf-text">
         {COMMUNITY_DESCRIPTION ? `${COMMUNITY_NAME} is ${COMMUNITY_DESCRIPTION.charAt(0).toLowerCase()}${COMMUNITY_DESCRIPTION.slice(1).replace(/\.$/, '')}. ` : ''}
-        {values.length > 0 ? 'These are the values we live by. If you share them, say so below.' : 'No values written yet; an admin adds them to About.'}
+        {values.length > 0 ? 'The values we live by.' : 'No values written yet; an admin adds them to About.'}
       </p>
       {values.length > 0 && (
         <ol className="jf-values">
@@ -236,7 +236,7 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
   )
 }
 
-const PARTS = ['Tell us about you', 'What you’re good at and curious about', 'What you’d like, and what you value']
+const PARTS = ['Tell us about you', 'Skills and interests', 'What you’d like, and what you value']
 const norm = (t: string) => t.trim().toLowerCase()
 
 // Step 2 (#81, #89): three short screens inside Start joining, each saved on Continue. 1: photo, a line about you,
@@ -340,14 +340,13 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   return (
     <div className="jf-step">
       {pending && <AvatarCropper file={pending} busy={uploading} onCancel={() => setPending(null)} onCropped={cropped} />}
-      <small className="jf-eyebrow">Step 2 of 2 · {part + 1} of 3</small>
+      <small className="jf-eyebrow">Step 2 of 2</small>
       <h2>{PARTS[part]}</h2>
       <ol className="jf-parts" aria-label="About you, three short screens">
         {PARTS.map((t, i) => <li key={t} className={i < part ? 'done' : i === part ? 'now' : undefined} aria-current={i === part ? 'step' : undefined}><span className="sr-only">{t}</span></li>)}
       </ol>
 
       {part === 0 && <>
-        <p className="jf-text">Everything here goes on your profile. You can change it any time.</p>
         <label className="jr-me jr-photo">
           {photo ? <img src={photo} alt="" className="jr-av" /> : <span className="jr-av">{name.slice(0, 1).toUpperCase()}</span>}
           <span><b>{photo ? 'Change your photo' : 'Add a photo'}</b><small>{uploading ? 'Uploading…' : 'A clear face helps'}</small></span>
@@ -358,15 +357,15 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           <input value={line} onChange={e => setLine(e.target.value)} maxLength={120} placeholder="e.g. Permaculture designer and drummer" />
         </label>
         <label className="jr-field">
-          <span>What are you up to in this world?<small className="jf-help">Tell us what you’re working on and towards.</small></span>
+          <span>What are you up to in this world?</span>
           <textarea rows={4} value={world} onChange={e => setWorld(e.target.value)} maxLength={1000} />
         </label>
         <fieldset className="jr-field jr-offers">
-          <legend>What best describes you?<small className="jf-help">Choose all that apply.</small></legend>
+          <legend>What best describes you?</legend>
           <div className="pp-describes">
             {DESCRIBES.map((d, i) => (
-              <button key={d.id} type="button" style={pastel(i) as React.CSSProperties} className="pp-pick" aria-pressed={types.includes(d.id)} onClick={() => flipType(d.id)}>
-                <b>{d.label}</b><small>{d.hint}</small>
+              <button key={d.id} type="button" style={pastel(i) as React.CSSProperties} className="pp-pill" aria-pressed={types.includes(d.id)} title={d.hint} onClick={() => flipType(d.id)}>
+                {types.includes(d.id) && <Icon name="check" size={16} />}{d.label}
               </button>
             ))}
           </div>
@@ -381,16 +380,15 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
       </>}
 
       {part === 1 && <>
-        <p className="jf-text">Tap a group, then pick what fits. It helps you find people who know what you’d like to learn, and the other way round.</p>
-        <PillPicker label="What are you good at?" hint="Pick from the groups, then tap the ones you’re excited to share: sessions, workshops, your time."
+        <PillPicker label="What are you good at?"
           value={good} onChange={setGood} stats={pillStats} share={{ value: shared, onChange: setShared }} ownExample="Pottery" />
-        <PillPicker label="What are you curious about?" hint="The same groups. Pick what you’d love to learn or explore."
+        <PillPicker label="What are you curious about?"
           value={curious} onChange={setCurious} stats={pillStats} ownExample="Mushrooms" />
       </>}
 
       {part === 2 && <>
         <fieldset className="jr-field">
-          <legend>What would you like to receive from the community?<small className="jf-help">Any needs or requests you have.</small></legend>
+          <legend>What would you like to receive from the community?</legend>
           <div className="jf-asks">
             {asks.map((a, i) => (
               <span key={a.id ?? `new${i}`} className="jf-ask">
@@ -403,7 +401,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           </div>
         </fieldset>
         <fieldset className="jr-field">
-          <legend>Your values<small className="jf-help">A word or two each, the way we name ours. Just values; your days and habits have their own place.</small></legend>
+          <legend>Your values<small className="jf-help">A word or two each</small></legend>
           {mine.length > 0 && (
             <div className="pp-pills">
               {mine.map(v => <button key={v} type="button" className="pp-pill" aria-pressed="true" aria-label={`Remove ${v}`} onClick={() => setMine(mine.filter(x => x !== v))}>{v}<Icon name="x" size={16} /></button>)}
@@ -416,7 +414,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           </div>
           {valueNames.filter(v => !mine.some(m => norm(m) === norm(v))).length > 0 && (
             <div className="pp-row">
-              <span className="pp-row__t">Ours, if they’re yours too</span>
+              <span className="pp-row__t">Ours</span>
               <div className="pp-pills">
                 {valueNames.filter(v => !mine.some(m => norm(m) === norm(v))).map(v => (
                   <button key={v} type="button" className="pp-pill pp-pill--sug" onClick={() => addValue(v)}><Icon name="plus" size={16} />{v}</button>
