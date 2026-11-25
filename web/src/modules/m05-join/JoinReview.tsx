@@ -366,13 +366,13 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           <div className="pp-describes">
             {DESCRIBES.map(d => (
               <button key={d.id} type="button" className="pp-pick" aria-pressed={types.includes(d.id)} onClick={() => flipType(d.id)}>
-                <b>{d.id}</b><small>{d.hint}</small>
+                <b>{d.label}</b><small>{d.hint}</small>
               </button>
             ))}
           </div>
         </fieldset>
         <fieldset className="jr-field">
-          <legend>Where are you based? Where do you call home?<small className="jf-help">Where you live now. If home is somewhere else, add it too: Lisbon, home in Porto.</small></legend>
+          <legend>Where do you call home?</legend>
           <div className="jf-two">
             <label className="jr-field"><small>Town or city</small><input value={city} onChange={e => setCity(e.target.value)} maxLength={80} autoComplete="address-level2" /></label>
             <label className="jr-field"><small>Country</small><input value={country} onChange={e => setCountry(e.target.value)} maxLength={60} autoComplete="country-name" /></label>

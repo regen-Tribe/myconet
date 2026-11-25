@@ -106,20 +106,18 @@ export function suggestPills(picked: string[], stats: PillStats, max = 6): strin
 }
 
 /**
- * "What best describes you? Choose all that apply" (user_profiles.user_types), with the design review on. Role words
- * instead of the network-wide list (Exploring, Vision Holder…), which still shows for anyone who picked it.
+ * "What best describes you? Choose all that apply" (user_profiles.user_types). The list MyCoNet had as "Who are you in
+ * this network?" (Sonia, 25 Nov: "should be archetypes that we had before"; decision #94), flattened to one tap each.
+ * `id` is what's stored, the same as before, so earlier choices still show as chosen.
  */
-export const DESCRIBES: { id: string; hint: string }[] = [
-  { id: 'Builder', hint: 'You make things real' },
-  { id: 'Grower', hint: 'Land, food, gardens' },
-  { id: 'Healer', hint: 'Bodies, minds, hearts' },
-  { id: 'Artist', hint: 'Music, art, stories' },
-  { id: 'Teacher', hint: 'You share what you know' },
-  { id: 'Connector', hint: 'You bring people together' },
-  { id: 'Visionary', hint: 'You see where we could go' },
-  { id: 'Organiser', hint: 'Plans, money, getting it done' },
-  { id: 'Caretaker', hint: 'You look after people and places' },
-  { id: 'Explorer', hint: 'Still finding your way here' },
+export const DESCRIBES: { id: string; label: string; hint: string }[] = [
+  { id: 'Exploring', label: 'Exploring', hint: 'Curious about regenerative neighbourhoods and community life' },
+  { id: 'Community Member - Living In', label: 'Living in a community', hint: 'Already part of a regenerative community' },
+  { id: 'Community Member - Looking For', label: 'Looking for a community', hint: 'Searching for one to join' },
+  { id: 'Vision Holder', label: 'Vision holder', hint: 'Holding a vision or building a regenerative project' },
+  { id: 'Service Provider', label: 'Service provider', hint: 'Offering skills, services or expertise to communities' },
+  { id: 'Resource Holder - Land', label: 'Land holder', hint: 'Land that could support a regenerative project' },
+  { id: 'Resource Holder - Money', label: 'Funder', hint: 'Money to invest in regenerative projects' },
 ]
 
 /** Personal values as a list: one per line ("Honesty", "Slow living"). Older free text stays one paragraph. */
