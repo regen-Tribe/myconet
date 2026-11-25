@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.131.0',
+    date: '2026-11-25',
+    title: 'Good at, curious about: one picker, and a profile in seven tabs; A Welcome for visitors, and Start joining as one focused flow',
+    items: ['Pick what you\'re good at and what you\'re curious about from groups of pills, with suggestions as you go.', 'Skills you\'re happy to share become your offers, so joining asks each thing once.', 'About you in Start joining is three short screens, with "What best describes you?" and your values as names.', 'Profiles and Edit profile have the same seven tabs; personality and signs are one tab, links another.', 'Matches now say when someone is good at what you\'re curious about.', 'Visitors land on a Welcome that says what the portal is for, with Create account and Sign in.', 'Start joining is one focused flow, one step per screen with Back and Continue.', 'The sign-in pages show the community\'s mark.'],
+  },
+  {
     version: 'v4.130.2',
     date: '2026-11-25',
     title: 'A decided draft stays decided when you fold its meeting',
