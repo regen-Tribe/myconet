@@ -407,7 +407,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
             {asks.map((a, i) => (
               <span key={a.id ?? `new${i}`} className="jf-ask">
                 <input value={a.text} onChange={e => setAsks(asks.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} maxLength={200}
-                  placeholder={i === 0 ? 'e.g. A ride from the airport' : 'Another request'} aria-label={`Request ${i + 1}`} />
+                  placeholder={i === 0 ? 'e.g. Marketing advice, a listening ear' : 'Another request'} aria-label={`Request ${i + 1}`} />
                 {asks.length > 1 && <button type="button" className="jf-x" aria-label="Remove this request" onClick={() => setAsks(asks.filter((_, j) => j !== i))}><Icon name="x" size={16} /></button>}
               </span>
             ))}
