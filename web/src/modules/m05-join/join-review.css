@@ -157,3 +157,23 @@ html[data-review] .jf-opens li small { font-size: 13px; color: var(--ink-3, #6b7
 html[data-review] .jf-opens li span { font-size: 13px; color: var(--ink-2, #3a3f4a); }
 html[data-review] .jf-you { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 html[data-review] .jf-opens p { margin: 8px 0 0; font-size: 13px; color: var(--ink-4, #9aa0ad); }
+
+/* About you as three short screens (decisions #89, #90): a three-dash progress, then one screen at a time */
+html[data-review] .jf-parts { list-style: none; margin: -6px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 240px; }
+html[data-review] .jf-parts li { height: 4px; border-radius: 999px; background: var(--ctl-hover, #d8deee); }
+html[data-review] .jf-parts li.done, html[data-review] .jf-parts li.now { background: var(--ink, #111317); }
+html[data-review] .jf-step fieldset.jr-field { border: 0; padding: 0; margin: 0; min-width: 0; }
+html[data-review] .jf-step fieldset.jr-field > legend { padding: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600; color: var(--ink, #111317); }
+html[data-review] .jf-help { display: block; font-size: 13px !important; font-weight: 400; color: var(--ink-3, #6b7180) !important; margin-top: 2px; }
+html[data-review] .jf-two { display: grid; gap: 10px; }
+@media (min-width: 640px) { html[data-review] .jf-two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+html[data-review] .jf-two small { font-size: 13px; color: var(--ink-3, #6b7180); }
+html[data-review] .jf-asks { display: grid; gap: 8px; justify-items: start; }
+html[data-review] .jf-ask { display: flex; gap: 6px; align-items: center; width: 100%; }
+html[data-review] .jf-ask input { flex: 1 1 auto; min-width: 0; }
+html[data-review] .jf-x { width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-3, #6b7180); display: grid; place-items: center; cursor: pointer; }
+html[data-review] .jf-x:hover { background: var(--ctl, #e3e8f4); }
+html[data-review] .jf-add { font-size: 15px; }
+html[data-review] .jf-step .pp-own input { height: 40px !important; border-radius: 999px !important; }
+/* The nav stays in reach on a phone: Back left, Skip and Continue right, wrapping under each other only if needed */
+@media (max-width: 639px) { html[data-review] .jf-nav__end { width: 100%; justify-content: flex-end; } }

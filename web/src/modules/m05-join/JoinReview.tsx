@@ -9,6 +9,8 @@ import { JoinPathView } from './JoinPathView'
 import { AvatarCropper } from '@/core/components/AvatarCropper'
 import { uploadAvatarBlob } from '@/core/lib/avatar'
 import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME } from '@/core/lib/instance'
+import { PillPicker } from '@/core/components/v4/PillPicker'
+import { DESCRIBES, PILL_GROUPS, groupOfPill, valueList, type PillStats } from '@/core/lib/skills-interests'
 import './join-review.css'
 
 /**
@@ -21,7 +23,13 @@ import './join-review.css'
  */
 
 interface Value { id: string; title: string; description: string }
-interface Profile { first_name: string | null; last_name: string | null; headline: string | null; avatar_url?: string | null; public_bio?: string | null }
+interface Profile {
+  first_name: string | null; last_name: string | null; headline: string | null; avatar_url?: string | null; public_bio?: string | null
+  city?: string | null; country?: string | null; user_types?: string[] | null
+}
+/** What About you fills in user_bio and user_requests (#89, #90) */
+export interface JoinBio { skills: string[]; interests: string[]; values_principles: string | null }
+export interface JoinRequest { id: string; request_text: string }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const ORDER: JoinStepKey[] = ['values', 'profile', 'application']
@@ -38,7 +46,7 @@ function ReadMore({ label = `Read more about ${COMMUNITY_NAME}` }: { label?: str
   return <a href="/about" target="_blank" rel="noopener" className="jf-more">{label}<Icon name="external" size={14} /></a>
 }
 
-export default function JoinReview({ userId, role, values, initialSigned, questions, profile, offers = [], application, initialStep }: {
+export default function JoinReview({ userId, role, values, initialSigned, questions, profile, offers = [], bio = null, requests = [], pillStats, application, initialStep, initialPart = 0 }: {
   userId: string | null
   role: string
   values: Value[]
@@ -47,8 +55,14 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   profile: Profile | null
   /** What the person already offers (user_offers titles), so step 2 shows them chosen */
   offers?: string[]
+  bio?: JoinBio | null
+  requests?: JoinRequest[]
+  /** How many people here list each skill and interest, and which go together (for "You might also pick") */
+  pillStats: PillStats
   application: { status: string; created_at: string } | null
   initialStep: JoinStepKey | null
+  /** About you's screen (0–2), from ?part= */
+  initialPart?: number
 }) {
   const router = useRouter()
   const [signed, setSigned] = useState(() => new Set(initialSigned))
@@ -66,16 +80,22 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   })
   const waiting = appStatus === 'pending' || appStatus === 'reviewing'
   const [open, setOpen] = useState<JoinStepKey | null>(userId && !joined ? (initialStep ?? path.next?.key ?? 'values') : null)
+  // What About you has saved so far, so going back and forth shows it (each screen starts from these)
+  const [myOffers, setMyOffers] = useState(offers)
+  const [myBio, setMyBio] = useState<JoinBio | null>(bio)
+  const [myRequests, setMyRequests] = useState(requests)
+  const [part, setPart] = useState(initialStep === 'profile' ? Math.min(2, Math.max(0, initialPart)) : 0)
 
   // The open step lives in the address, so reloading or sharing the link opens the same step
   useEffect(() => {
     if (!open || typeof window === 'undefined') return
-    const url = `/join?step=${open}`
+    const url = `/join?step=${open}${open === 'profile' && part > 0 ? `&part=${part + 1}` : ''}`
     if (window.location.pathname + window.location.search !== url) window.history.replaceState(null, '', url)
-  }, [open])
+  }, [open, part])
 
-  const go = (key: JoinStepKey) => { setOpen(key); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const back = (key: JoinStepKey) => { const i = ORDER.indexOf(key); if (i > 0) go(ORDER[i - 1]) }
+  const go = (key: JoinStepKey, toPart = 0) => { setOpen(key); setPart(toPart); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const back = (key: JoinStepKey) => { const i = ORDER.indexOf(key); if (i > 0) go(ORDER[i - 1], ORDER[i - 1] === 'profile' ? 2 : 0) }
+  const toPart = (n: number) => { setPart(n); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const here = userId ? (isFullMember(role) ? 'member' : role) : null
   const sent = waiting || sentNow
 
@@ -122,8 +142,14 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
           <KnowUsStep userId={userId} values={values} signed={signed} onSigned={ids => setSigned(prev => new Set([...prev, ...ids]))} onNext={() => go('profile')} />
         )}
         {userId && !joined && !sent && open === 'profile' && (
-          <AboutYouStep userId={userId} profile={me} offers={offers} onSaved={p => setMe(prev => ({ ...(prev ?? { first_name: null, last_name: null, headline: null }), ...p }))}
-            onBack={() => back('profile')} onNext={() => go('application')} />
+          <AboutYouStep key={part} part={part} userId={userId} profile={me} offers={myOffers} bio={myBio} requests={myRequests} pillStats={pillStats} valueNames={values.map(v => v.title)}
+            onSaved={p => setMe(prev => ({ ...(prev ?? { first_name: null, last_name: null, headline: null }), ...p }))}
+            onData={d => {
+              if (d.offers) setMyOffers(d.offers)
+              if (d.bio) setMyBio(prev => ({ skills: [], interests: [], values_principles: null, ...prev, ...d.bio }))
+              if (d.requests) setMyRequests(d.requests)
+            }}
+            onBack={() => (part > 0 ? toPart(part - 1) : back('profile'))} onNext={() => (part < 2 ? toPart(part + 1) : go('application'))} />
         )}
         {userId && !joined && !sent && open === 'application' && (
           <ApplicationStep userId={userId} questions={questions} rejected={appStatus === 'rejected'} unsignedValues={values.length - values.filter(v => signed.has(v.id)).length}
@@ -210,26 +236,39 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
   )
 }
 
-// What people offer most here, as one-tap chips; each becomes an offer on their profile (category as in Edit profile)
-const OFFER_CHIPS: [string, string][] = [
-  ['Cooking', 'Food'], ['Building', 'Construction'], ['Gardening', 'Permaculture'], ['Art', 'Art'], ['Music', 'Music'],
-  ['Teaching', 'Education'], ['Healing', 'Healing'], ['Technology', 'Technology'], ['Childcare', 'Childcare'],
-]
+const PARTS = ['Tell us about you', 'What you’re good at and curious about', 'What you’d like, and what you value']
+const norm = (t: string) => t.trim().toLowerCase()
 
-// Step 2 (#81): a short form here, not the eight-tab editor. A line about you finishes the step; it can be skipped,
-// since the application can be sent without it
-function AboutYouStep({ userId, profile, offers, onSaved, onBack, onNext }: {
-  userId: string; profile: Profile | null; offers: string[]; onSaved: (p: Partial<Profile>) => void; onBack: () => void; onNext: () => void
+// Step 2 (#81, #89): three short screens inside Start joining, each saved on Continue. 1: photo, a line about you,
+// what you're up to, what best describes you, where you're based. 2: good at (the ones you share become offers,
+// #90) and curious about, from one list of groups. 3: what you'd like to receive, and your values as names.
+// A line about you finishes the step; everything can be skipped, since the application can be sent without it.
+function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats, valueNames, onSaved, onData, onBack, onNext }: {
+  part: number; userId: string; profile: Profile | null; offers: string[]; bio: JoinBio | null; requests: JoinRequest[]; pillStats: PillStats
+  valueNames: string[]; onSaved: (p: Partial<Profile>) => void
+  onData: (d: { offers?: string[]; bio?: Partial<JoinBio>; requests?: JoinRequest[] }) => void; onBack: () => void; onNext: () => void
 }) {
   const supabase = createClient()
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  // Screen 1
   const [photo, setPhoto] = useState<string | null>(profile?.avatar_url ?? null)
   const [pending, setPending] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [line, setLine] = useState(profile?.headline ?? '')
-  const [why, setWhy] = useState(profile?.public_bio ?? '')
-  const [chosen, setChosen] = useState<Set<string>>(() => new Set(offers))
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
+  const [world, setWorld] = useState(profile?.public_bio ?? '')
+  const [types, setTypes] = useState<string[]>(profile?.user_types ?? [])
+  const [city, setCity] = useState(profile?.city ?? '')
+  const [country, setCountry] = useState(profile?.country ?? '')
+  // Screen 2: what you already offer under a skill's name counts as shared
+  const [good, setGood] = useState<string[]>(bio?.skills ?? [])
+  const [curious, setCurious] = useState<string[]>(bio?.interests ?? [])
+  const [shared, setShared] = useState<string[]>(() => (bio?.skills ?? []).filter(k => offers.some(o => norm(o) === norm(k))))
+  // Screen 3
+  const [asks, setAsks] = useState<{ id?: string; text: string }[]>(() => requests.length ? requests.map(r => ({ id: r.id, text: r.request_text })) : [{ text: '' }])
+  const [mine, setMine] = useState<string[]>(() => valueList(bio?.values_principles) ?? [])
+  const [valueDraft, setValueDraft] = useState('')
+  const oldText = bio?.values_principles && !valueList(bio.values_principles) ? bio.values_principles : null
   const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || 'You'
 
   async function cropped(blob: Blob) {
@@ -238,48 +277,145 @@ function AboutYouStep({ userId, profile, offers, onSaved, onBack, onNext }: {
     catch (err) { setError(`The photo didn’t upload: ${err instanceof Error ? err.message : String(err)}`) }
     finally { setUploading(false) }
   }
-
-  const flip = (t: string) => setChosen(prev => { const n = new Set(prev); if (n.has(t)) n.delete(t); else n.add(t); return n })
+  const flipType = (t: string) => setTypes(prev => (prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]))
+  const addValue = (v: string) => { const t = v.trim(); if (t && !mine.some(m => norm(m) === norm(t))) setMine([...mine, t]); setValueDraft('') }
 
   async function save() {
-    if (!line.trim()) { setError('Add a line about you, or skip this step for now.'); return }
     setSaving(true); setError('')
-    const { error: e1 } = await supabase.from('user_profiles').update({ headline: line.trim(), public_bio: why.trim() || null }).eq('id', userId)
-    const added = OFFER_CHIPS.filter(([t]) => chosen.has(t) && !offers.includes(t)).map(([title, category]) => ({ user_id: userId, title, category }))
-    const { error: e2 } = added.length ? await supabase.from('user_offers').insert(added) : { error: null }
+    let err: { message: string } | null = null
+    if (part === 0) {
+      if (!line.trim()) { setSaving(false); setError('Add a line about you, or skip this for now.'); return }
+      const patch = { headline: line.trim(), public_bio: world.trim() || null, user_types: types, city: city.trim() || null, country: country.trim() || null }
+      ;({ error: err } = await supabase.from('user_profiles').update(patch).eq('id', userId))
+      if (!err) onSaved(patch)
+    }
+    if (part === 1) {
+      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, skills: good, interests: curious }, { onConflict: 'user_id' }))
+      // Shared skills become offers; a skill no longer shared takes its offer away (offers with other titles stay)
+      const add = shared.filter(k => good.some(g => norm(g) === norm(k)) && !offers.some(o => norm(o) === norm(k)))
+        .map(title => ({ user_id: userId, title, category: PILL_GROUPS[groupOfPill(title)]?.offerCategory ?? 'Other', compensation_model: 'Other', is_active: true }))
+      const drop = offers.filter(o => [...good, ...(bio?.skills ?? [])].some(g => norm(g) === norm(o)) && !shared.some(k => norm(k) === norm(o)))
+      if (!err && add.length) ({ error: err } = await supabase.from('user_offers').insert(add))
+      if (!err && drop.length) ({ error: err } = await supabase.from('user_offers').delete().eq('user_id', userId).in('title', drop))
+      if (!err) onData({ bio: { skills: good, interests: curious }, offers: [...offers.filter(o => !drop.includes(o)), ...add.map(a => a.title)] })
+    }
+    if (part === 2) {
+      const values = [...mine.filter(Boolean), ...(valueDraft.trim() ? [valueDraft.trim()] : [])]
+      // Older free text is kept until a value is added here
+      const valuesText = values.length ? values.join('\n') : oldText
+      ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, values_principles: valuesText }, { onConflict: 'user_id' }))
+      const keep = asks.filter(a => a.text.trim())
+      const gone = requests.filter(r => !keep.some(a => a.id === r.id)).map(r => r.id)
+      if (!err && gone.length) ({ error: err } = await supabase.from('user_requests').delete().in('id', gone))
+      const now: JoinRequest[] = []
+      for (const a of keep) {
+        if (err) break
+        const text = a.text.trim()
+        const old = requests.find(r => r.id === a.id)
+        if (old && old.request_text !== text) ({ error: err } = await supabase.from('user_requests').update({ request_text: text }).eq('id', old.id))
+        if (old) { now.push({ id: old.id, request_text: text }); continue }
+        const res = await supabase.from('user_requests').insert({ user_id: userId, request_text: text, urgency: 'normal', is_active: true }).select('id').single()
+        err = res.error
+        if (res.data) now.push({ id: res.data.id as string, request_text: text })
+      }
+      if (!err) onData({ bio: { values_principles: valuesText }, requests: now })
+    }
     setSaving(false)
-    if (e1 || e2) { setError(`Couldn’t save: ${(e1 ?? e2)!.message}. Try again.`); return }
-    onSaved({ headline: line.trim(), public_bio: why.trim() || null })
+    if (err) { setError(`Couldn’t save: ${err.message}. Try again.`); return }
     onNext()
   }
 
   return (
     <div className="jf-step">
       {pending && <AvatarCropper file={pending} busy={uploading} onCancel={() => setPending(null)} onCropped={cropped} />}
-      <small className="jf-eyebrow">Step 2 of 3</small>
-      <h2>Tell us about you</h2>
-      <p className="jf-text">A few words so people know who they’ll meet. You can add more to your profile any time.</p>
-      <label className="jr-me jr-photo">
-        {photo ? <img src={photo} alt="" className="jr-av" /> : <span className="jr-av">{name.slice(0, 1).toUpperCase()}</span>}
-        <span><b>{photo ? 'Change your photo' : 'Add a photo'}</b><small>{uploading ? 'Uploading…' : 'A clear face helps'}</small></span>
-        <input type="file" accept="image/*" className="sr-only" onChange={e => { const f = e.target.files?.[0]; if (f) setPending(f); e.target.value = '' }} />
-      </label>
-      <label className="jr-field">
-        <span>A line about you</span>
-        <input value={line} onChange={e => setLine(e.target.value)} maxLength={120} placeholder="e.g. Permaculture designer and drummer" />
-      </label>
-      <fieldset className="jr-field jr-offers">
-        <legend>What you’d like to offer</legend>
-        <div className="jr-chips">
-          {OFFER_CHIPS.map(([t]) => (
-            <button key={t} type="button" className={`v4-chip${chosen.has(t) ? ' v4-chip--on' : ''}`} aria-pressed={chosen.has(t)} onClick={() => flip(t)}>{t}</button>
-          ))}
-        </div>
-      </fieldset>
-      <label className="jr-field">
-        <span>What brings you to {COMMUNITY_NAME} <small>Optional</small></span>
-        <textarea rows={3} value={why} onChange={e => setWhy(e.target.value)} placeholder="A few words" />
-      </label>
+      <small className="jf-eyebrow">Step 2 of 3 · {part + 1} of 3</small>
+      <h2>{PARTS[part]}</h2>
+      <ol className="jf-parts" aria-label="About you, three short screens">
+        {PARTS.map((t, i) => <li key={t} className={i < part ? 'done' : i === part ? 'now' : undefined} aria-current={i === part ? 'step' : undefined}><span className="sr-only">{t}</span></li>)}
+      </ol>
+
+      {part === 0 && <>
+        <p className="jf-text">Everything here goes on your profile. You can change it any time.</p>
+        <label className="jr-me jr-photo">
+          {photo ? <img src={photo} alt="" className="jr-av" /> : <span className="jr-av">{name.slice(0, 1).toUpperCase()}</span>}
+          <span><b>{photo ? 'Change your photo' : 'Add a photo'}</b><small>{uploading ? 'Uploading…' : 'A clear face helps'}</small></span>
+          <input type="file" accept="image/*" className="sr-only" onChange={e => { const f = e.target.files?.[0]; if (f) setPending(f); e.target.value = '' }} />
+        </label>
+        <label className="jr-field">
+          <span>One line about you</span>
+          <input value={line} onChange={e => setLine(e.target.value)} maxLength={120} placeholder="e.g. Permaculture designer and drummer" />
+        </label>
+        <label className="jr-field">
+          <span>What are you up to in this world?<small className="jf-help">Tell us what you’re working on and towards.</small></span>
+          <textarea rows={4} value={world} onChange={e => setWorld(e.target.value)} maxLength={1000} />
+        </label>
+        <fieldset className="jr-field jr-offers">
+          <legend>What best describes you?<small className="jf-help">Choose all that apply.</small></legend>
+          <div className="pp-describes">
+            {DESCRIBES.map(d => (
+              <button key={d.id} type="button" className="pp-pick" aria-pressed={types.includes(d.id)} onClick={() => flipType(d.id)}>
+                <b>{d.id}</b><small>{d.hint}</small>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="jr-field">
+          <legend>Where are you based? Where do you call home?<small className="jf-help">Where you live now. If home is somewhere else, add it too: Lisbon, home in Porto.</small></legend>
+          <div className="jf-two">
+            <label className="jr-field"><small>Town or city</small><input value={city} onChange={e => setCity(e.target.value)} maxLength={80} autoComplete="address-level2" /></label>
+            <label className="jr-field"><small>Country</small><input value={country} onChange={e => setCountry(e.target.value)} maxLength={60} autoComplete="country-name" /></label>
+          </div>
+        </fieldset>
+      </>}
+
+      {part === 1 && <>
+        <p className="jf-text">Tap a group, then pick what fits. It helps you find people who know what you’d like to learn, and the other way round.</p>
+        <PillPicker label="What are you good at?" hint="Pick from the groups, then tap the ones you’re excited to share: sessions, workshops, your time."
+          value={good} onChange={setGood} stats={pillStats} share={{ value: shared, onChange: setShared }} ownExample="Pottery" />
+        <PillPicker label="What are you curious about?" hint="The same groups. Pick what you’d love to learn or explore."
+          value={curious} onChange={setCurious} stats={pillStats} ownExample="Mushrooms" />
+      </>}
+
+      {part === 2 && <>
+        <fieldset className="jr-field">
+          <legend>What would you like to receive from the community?<small className="jf-help">Any needs or requests you have.</small></legend>
+          <div className="jf-asks">
+            {asks.map((a, i) => (
+              <span key={a.id ?? `new${i}`} className="jf-ask">
+                <input value={a.text} onChange={e => setAsks(asks.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} maxLength={200}
+                  placeholder={i === 0 ? 'e.g. A ride from the airport, help with Spanish' : 'Another request'} aria-label={`Request ${i + 1}`} />
+                {asks.length > 1 && <button type="button" className="jf-x" aria-label="Remove this request" onClick={() => setAsks(asks.filter((_, j) => j !== i))}><Icon name="x" size={16} /></button>}
+              </span>
+            ))}
+            <button type="button" className="jr-link jf-add" onClick={() => setAsks([...asks, { text: '' }])}>+ Add another</button>
+          </div>
+        </fieldset>
+        <fieldset className="jr-field">
+          <legend>Your values<small className="jf-help">A word or two each, the way we name ours. Just values; your days and habits have their own place.</small></legend>
+          {mine.length > 0 && (
+            <div className="pp-pills">
+              {mine.map(v => <button key={v} type="button" className="pp-pill" aria-pressed="true" aria-label={`Remove ${v}`} onClick={() => setMine(mine.filter(x => x !== v))}>{v}<Icon name="x" size={16} /></button>)}
+            </div>
+          )}
+          <div className="pp-own">
+            <input value={valueDraft} onChange={e => setValueDraft(e.target.value)} maxLength={40} placeholder="e.g. Honesty" aria-label="Add a value"
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addValue(valueDraft) } }} />
+            <button type="button" className="v4-btn v4-btn--secondary v4-btn--sm" onClick={() => addValue(valueDraft)} disabled={!valueDraft.trim()}>Add</button>
+          </div>
+          {valueNames.filter(v => !mine.some(m => norm(m) === norm(v))).length > 0 && (
+            <div className="pp-row">
+              <span className="pp-row__t">Ours, if they’re yours too</span>
+              <div className="pp-pills">
+                {valueNames.filter(v => !mine.some(m => norm(m) === norm(v))).map(v => (
+                  <button key={v} type="button" className="pp-pill pp-pill--sug" onClick={() => addValue(v)}><Icon name="plus" size={16} />{v}</button>
+                ))}
+              </div>
+            </div>
+          )}
+          {oldText && <small className="pp-note">What you wrote before stays on your profile until you add values here.</small>}
+        </fieldset>
+      </>}
+
       {error && <p className="jr-error" role="alert">{error}</p>}
       <div className="jf-nav">
         <Button variant="quiet" icon="left" onClick={onBack}>Back</Button>
