@@ -10,7 +10,7 @@ import { AvatarCropper } from '@/core/components/AvatarCropper'
 import { uploadAvatarBlob } from '@/core/lib/avatar'
 import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME } from '@/core/lib/instance'
 import { PillPicker } from '@/core/components/v4/PillPicker'
-import { DESCRIBES, PILL_GROUPS, groupOfPill, valueList, type PillStats } from '@/core/lib/skills-interests'
+import { DESCRIBES, PILL_GROUPS, groupOfPill, pastel, valueList, type PillStats } from '@/core/lib/skills-interests'
 import './join-review.css'
 
 /**
@@ -364,8 +364,8 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         <fieldset className="jr-field jr-offers">
           <legend>What best describes you?<small className="jf-help">Choose all that apply.</small></legend>
           <div className="pp-describes">
-            {DESCRIBES.map(d => (
-              <button key={d.id} type="button" className="pp-pick" aria-pressed={types.includes(d.id)} onClick={() => flipType(d.id)}>
+            {DESCRIBES.map((d, i) => (
+              <button key={d.id} type="button" style={pastel(i) as React.CSSProperties} className="pp-pick" aria-pressed={types.includes(d.id)} onClick={() => flipType(d.id)}>
                 <b>{d.label}</b><small>{d.hint}</small>
               </button>
             ))}
