@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.134.0',
+    date: '2026-11-25',
+    title: 'Stewards see what the applicant told us',
+    items: ['In Admin › Applications, an application shows the person\'s answers from About you, with a link to their profile.', 'The filter at the top of Applications shows which one is chosen.', 'After sending your application, the top of Start joining says "Back to Dashboard".'],
+  },
+  {
     version: 'v4.133.0',
     date: '2026-11-25',
     title: 'A note on a task, right where you edit it',
