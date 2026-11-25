@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.139.0 — 2026-11-25 — Pick your home town from a list, and add more than one
+
+Sonia, 25 Nov (decision #97). `HomePicker` (core/components/v4) over GeoNames' cities15000 (CC BY 4.0, credited under the
+field), served from our own `/places/towns.json` (built by `scripts/build-towns.mjs`), loaded when the field is first used.
+Up to five places, kept in `user_profiles.city` / `country` paired with " · " (`core/lib/homes.ts`): no migration. Used in
+Start joining and Edit profile; profiles and Admin › Applications show "Lisbon, Portugal · Barcelona, Spain"; matching
+compares each place. Also from the screen-by-screen run: suggestions scroll above the phone's bottom bar, shorter
+placeholder and screen title.
+
 ## v4.138.0 — 2026-11-25 — Start joining like a phone app, with clean pills
 
 Sonia's phone test (decision #96). `join-review.css`: under 640px, inside a step the heading is one line, the track compact,
