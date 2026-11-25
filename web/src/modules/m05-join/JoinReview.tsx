@@ -32,7 +32,8 @@ export interface JoinBio { skills: string[]; interests: string[]; values_princip
 export interface JoinRequest { id: string; request_text: string }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-const ORDER: JoinStepKey[] = ['values', 'profile', 'application']
+// Two steps (#93): About you ends with Send application
+const ORDER: JoinStepKey[] = ['values', 'profile']
 
 // What each stage opens (LEXICON.md roles), folded away under the flow
 const STAGES: { role: string; name: string; how: string; opens: [IconName, string][] }[] = [
@@ -79,12 +80,13 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
     joined,
   })
   const waiting = appStatus === 'pending' || appStatus === 'reviewing'
-  const [open, setOpen] = useState<JoinStepKey | null>(userId && !joined ? (initialStep ?? path.next?.key ?? 'values') : null)
+  // ?step=application (old links) opens About you's last screen, where Send is now
+  const [open, setOpen] = useState<JoinStepKey | null>(userId && !joined ? (initialStep === 'application' ? 'profile' : initialStep ?? path.next?.key ?? 'values') : null)
   // What About you has saved so far, so going back and forth shows it (each screen starts from these)
   const [myOffers, setMyOffers] = useState(offers)
   const [myBio, setMyBio] = useState<JoinBio | null>(bio)
   const [myRequests, setMyRequests] = useState(requests)
-  const [part, setPart] = useState(initialStep === 'profile' ? Math.min(2, Math.max(0, initialPart)) : 0)
+  const [part, setPart] = useState(initialStep === 'application' ? 2 : initialStep === 'profile' ? Math.min(2, Math.max(0, initialPart)) : 0)
 
   // The open step lives in the address, so reloading or sharing the link opens the same step
   useEffect(() => {
@@ -107,7 +109,7 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
           ? (isFullMember(role) ? `You’re a member of ${COMMUNITY_NAME}.` : 'You’re a joining member. One accepted agreement makes you a member.')
           : sent
             ? `${cap(JOIN_REVIEWER)} reads it and answers within a week.`
-            : `Three short steps, about ten minutes. ${cap(JOIN_REVIEWER)} reads your application and answers within a week.`}</p>
+            : `Two short steps, about ten minutes. ${cap(JOIN_REVIEWER)} reads your application and answers within a week.`}</p>
       </header>
 
       {!joined && (
@@ -115,11 +117,11 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
       )}
 
       <section className="v4-card jf-card" aria-live="polite">
-        {/* Signed out: what the three steps are, and the one way to start */}
+        {/* Signed out: what the two steps are, and the one way to start */}
         {!userId && (
           <div className="jf-step">
             <h2>Create an account to start</h2>
-            <p className="jf-text">Then get to know us, tell us about you, and apply. You can stop at any step and come back.</p>
+            <p className="jf-text">Then get to know us and tell us about you. You can stop at any step and come back.</p>
             <div className="jf-nav jf-nav--end">
               <Button variant="quiet" href="/auth/login">Sign in</Button>
               <Button variant="next" href="/auth/signup">Create account</Button>
@@ -149,12 +151,10 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
               if (d.bio) setMyBio(prev => ({ skills: [], interests: [], values_principles: null, ...prev, ...d.bio }))
               if (d.requests) setMyRequests(d.requests)
             }}
-            onBack={() => (part > 0 ? toPart(part - 1) : back('profile'))} onNext={() => (part < 2 ? toPart(part + 1) : go('application'))} />
-        )}
-        {userId && !joined && !sent && open === 'application' && (
-          <ApplicationStep userId={userId} questions={questions} rejected={appStatus === 'rejected'} unsignedValues={values.length - values.filter(v => signed.has(v.id)).length}
-            onBack={() => back('application')} onBackToValues={() => go('values')}
-            onSent={() => { setAppStatus('pending'); setSentNow(true); window.scrollTo({ top: 0 }); router.refresh() }} />
+            questions={questions} rejected={appStatus === 'rejected'} unsignedValues={values.length - values.filter(v => signed.has(v.id)).length}
+            onBackToValues={() => go('values')}
+            onSent={() => { setAppStatus('pending'); setSentNow(true); window.scrollTo({ top: 0 }); router.refresh() }}
+            onBack={() => (part > 0 ? toPart(part - 1) : back('profile'))} onNext={() => toPart(Math.min(2, part + 1))} />
         )}
 
         {joined && (
@@ -212,7 +212,7 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
 
   return (
     <div className="jf-step">
-      <small className="jf-eyebrow">Step 1 of 3</small>
+      <small className="jf-eyebrow">Step 1 of 2</small>
       <h2>Get to know us</h2>
       <p className="jf-text">
         {COMMUNITY_DESCRIPTION ? `${COMMUNITY_NAME} is ${COMMUNITY_DESCRIPTION.charAt(0).toLowerCase()}${COMMUNITY_DESCRIPTION.slice(1).replace(/\.$/, '')}. ` : ''}
@@ -243,10 +243,12 @@ const norm = (t: string) => t.trim().toLowerCase()
 // what you're up to, what best describes you, where you're based. 2: good at (the ones you share become offers,
 // #90) and curious about, from one list of groups. 3: what you'd like to receive, and your values as names.
 // A line about you finishes the step; everything can be skipped, since the application can be sent without it.
-function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats, valueNames, onSaved, onData, onBack, onNext }: {
+function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats, valueNames, questions, rejected, unsignedValues, onBackToValues, onSent, onSaved, onData, onBack, onNext }: {
   part: number; userId: string; profile: Profile | null; offers: string[]; bio: JoinBio | null; requests: JoinRequest[]; pillStats: PillStats
   valueNames: string[]; onSaved: (p: Partial<Profile>) => void
-  onData: (d: { offers?: string[]; bio?: Partial<JoinBio>; requests?: JoinRequest[] }) => void; onBack: () => void; onNext: () => void
+  onData: (d: { offers?: string[]; bio?: Partial<JoinBio>; requests?: JoinRequest[] }) => void
+  /** The community's own questions, if its Blueprint has any; they show on the last screen, above Send */
+  questions: string[]; rejected: boolean; unsignedValues: number; onBackToValues: () => void; onSent: () => void; onBack: () => void; onNext: () => void
 }) {
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
@@ -268,6 +270,8 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   const [asks, setAsks] = useState<{ id?: string; text: string }[]>(() => requests.length ? requests.map(r => ({ id: r.id, text: r.request_text })) : [{ text: '' }])
   const [mine, setMine] = useState<string[]>(() => valueList(bio?.values_principles) ?? [])
   const [valueDraft, setValueDraft] = useState('')
+  const [answers, setAnswers] = useState<string[]>(() => questions.map(() => ''))
+  const last = part === 2
   const oldText = bio?.values_principles && !valueList(bio.values_principles) ? bio.values_principles : null
   const name = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || 'You'
 
@@ -320,15 +324,23 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
       }
       if (!err) onData({ bio: { values_principles: valuesText }, requests: now })
     }
+    // The last screen sends the application (#93). q0, q1… match the Blueprint's questions, if any; _questions keeps
+    // their wording in case they're edited later (same as JoinClient)
+    if (last && !err) {
+      const payload: Record<string, unknown> = { _questions: questions }
+      questions.forEach((_, i) => { payload[`q${i}`] = answers[i]?.trim() ?? '' })
+      ;({ error: err } = await supabase.from('applications').upsert({ user_id: userId, answers: payload, status: 'pending' }, { onConflict: 'user_id' }))
+    }
     setSaving(false)
-    if (err) { setError(`Couldn’t save: ${err.message}. Try again.`); return }
-    onNext()
+    if (err) { setError(`Couldn’t ${last ? 'send' : 'save'}: ${err.message}. Try again.`); return }
+    if (last) onSent()
+    else onNext()
   }
 
   return (
     <div className="jf-step">
       {pending && <AvatarCropper file={pending} busy={uploading} onCancel={() => setPending(null)} onCropped={cropped} />}
-      <small className="jf-eyebrow">Step 2 of 3 · {part + 1} of 3</small>
+      <small className="jf-eyebrow">Step 2 of 2 · {part + 1} of 3</small>
       <h2>{PARTS[part]}</h2>
       <ol className="jf-parts" aria-label="About you, three short screens">
         {PARTS.map((t, i) => <li key={t} className={i < part ? 'done' : i === part ? 'now' : undefined} aria-current={i === part ? 'step' : undefined}><span className="sr-only">{t}</span></li>)}
@@ -414,64 +426,29 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
           )}
           {oldText && <small className="pp-note">What you wrote before stays on your profile until you add values here.</small>}
         </fieldset>
+        {/* A community's own questions, when its Blueprint has them; questions are plain text, not bold labels */}
+        {questions.map((q, i) => (
+          <div key={i} className="jf-q">
+            <label htmlFor={`jf-q${i}`}><span>{q}</span></label>
+            <span className="jr-field"><textarea id={`jf-q${i}`} rows={3} value={answers[i] ?? ''} onChange={e => setAnswers(a => a.map((x, j) => (j === i ? e.target.value : x)))} /></span>
+          </div>
+        ))}
+        <p className="jf-text jf-send">{rejected ? 'Your last application wasn’t accepted. You can send a new one. ' : ''}{cap(JOIN_REVIEWER)} reads your profile and answers within a week.</p>
+        {/* Why Send waits, said next to the button, with the way to fix it */}
+        {unsignedValues > 0 && (
+          <p className="jf-warn"><Icon name="info" size={16} /><span>To send, first share the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
+        )}
       </>}
 
       {error && <p className="jr-error" role="alert">{error}</p>}
       <div className="jf-nav">
         <Button variant="quiet" icon="left" onClick={onBack}>Back</Button>
         <span className="jf-nav__end">
-          <Button variant="quiet" onClick={onNext}>Skip for now</Button>
-          <Button variant="next" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Continue'}</Button>
+          {!last && <Button variant="quiet" onClick={onNext}>Skip for now</Button>}
+          {last
+            ? <Button variant="next" onClick={save} disabled={saving || unsignedValues > 0}>{saving ? 'Sending…' : 'Send application'}</Button>
+            : <Button variant="next" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Continue'}</Button>}
         </span>
-      </div>
-    </div>
-  )
-}
-
-function ApplicationStep({ userId, questions, rejected, unsignedValues, onBack, onBackToValues, onSent }: {
-  userId: string; questions: string[]; rejected: boolean; unsignedValues: number; onBack: () => void; onBackToValues: () => void; onSent: () => void
-}) {
-  const supabase = createClient()
-  const [answers, setAnswers] = useState<string[]>(() => questions.map(() => ''))
-  const [extra, setExtra] = useState('')
-  const [sending, setSending] = useState(false)
-  const [error, setError] = useState('')
-
-  async function send() {
-    setSending(true); setError('')
-    // q0, q1… match the Blueprint's questions; _questions keeps their wording in case they're edited later (same as JoinClient)
-    const payload: Record<string, unknown> = { extra, _questions: questions }
-    questions.forEach((_, i) => { payload[`q${i}`] = answers[i]?.trim() ?? '' })
-    const { error: err } = await supabase.from('applications').upsert({ user_id: userId, answers: payload, status: 'pending' }, { onConflict: 'user_id' })
-    if (err) { setError(err.message); setSending(false); return }
-    onSent()
-  }
-
-  return (
-    <div className="jf-step">
-      <small className="jf-eyebrow">Step 3 of 3</small>
-      <h2>{rejected ? 'A new application' : 'Apply'}</h2>
-      {rejected && <p className="jf-text">Your last application wasn’t accepted. You can send a new one.</p>}
-      {questions.length === 0 && <p className="jf-text">Tell the community about yourself: who you are, what draws you here, and what you’d like to bring.</p>}
-      {/* A question is ordinary text, not a bold label: some are a whole paragraph (the Blueprint's own words) */}
-      {questions.map((q, i) => (
-        <div key={i} className="jf-q">
-          <label htmlFor={`jf-q${i}`}>{questions.length > 1 && <span className="jf-n" aria-hidden="true">{i + 1}</span>}<span>{q}</span></label>
-          <span className="jr-field"><textarea id={`jf-q${i}`} rows={4} value={answers[i] ?? ''} onChange={e => setAnswers(a => a.map((x, j) => (j === i ? e.target.value : x)))} /></span>
-        </div>
-      ))}
-      <div className="jf-q">
-        <label htmlFor="jf-extra"><span>Anything else? <small>Optional</small></span></label>
-        <span className="jr-field"><textarea id="jf-extra" rows={3} value={extra} onChange={e => setExtra(e.target.value)} /></span>
-      </div>
-      {error && <p className="jr-error" role="alert">{error}</p>}
-      {/* Why Send waits, said next to the button, with the way to fix it */}
-      {unsignedValues > 0 && (
-        <p className="jf-warn"><Icon name="info" size={16} /><span>To send, first share the values in step 1. <button type="button" className="jr-link" onClick={onBackToValues}>Go to step 1</button></span></p>
-      )}
-      <div className="jf-nav">
-        <Button variant="quiet" icon="left" onClick={onBack}>Back</Button>
-        <Button variant="next" onClick={send} disabled={sending || unsignedValues > 0}>{sending ? 'Sending…' : 'Send application'}</Button>
       </div>
     </div>
   )

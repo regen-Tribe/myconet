@@ -46,7 +46,7 @@ export default async function WelcomeV4() {
         <h2 id="wl-join">Joining {name}</h2>
         <ol className="wl-steps">
           <li><span className="wl-n">1</span><span><b>Create an account</b><small>An email and a password</small></span></li>
-          <li><span className="wl-n">2</span><span><b>Three short steps</b><small>Get to know us, tell us about you, apply. About ten minutes</small></span></li>
+          <li><span className="wl-n">2</span><span><b>Two short steps</b><small>Get to know us, then tell us about you. About ten minutes</small></span></li>
           <li><span className="wl-n">3</span><span><b>{steward} answers</b><small>Within a week</small></span></li>
         </ol>
         <div className="wl-acts wl-acts--card">
