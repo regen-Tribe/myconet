@@ -1439,3 +1439,13 @@ img.v4-avatar { object-fit: cover; padding: 0; }
 .v4-cf__find input.v4-input, .v4-cf__find input.v4-input:focus { min-height: 0; width: auto; font-size: 15px; height: 100%; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: none; outline: none; }
 .v4-cf__find:focus-within { box-shadow: inset 0 0 0 2px var(--blue-ink, #2350b0); }
 @media (max-width: 640px) { .v4-cf__pill { height: 34px; } .v4-cf__pill button { width: 28px; height: 28px; } .v4-cf__btn { height: 38px; } }
+
+/* Pages never pan sideways on a phone (Sonia, 27 Nov: "it scrolls to the sides", on every screen). Every page scrolls
+   inside main.v4-main, which was a scroller both ways (overflow-y: auto makes overflow-x auto too), so on iPhone Safari
+   a slightly diagonal swipe, or anything a pixel too wide, dragged the whole page sideways. It scrolls up and down only;
+   the root clips sideways too, and the sideways rows (chips, strips) keep their swipe to themselves */
+@media (max-width: 639px) {
+  html[data-review] { overflow-x: hidden; overscroll-behavior-x: none; }
+  html[data-review] .v4-main { overflow-x: hidden; overscroll-behavior-x: none; }
+  html[data-review] .v4-chiprow, html[data-review] .v4-strip__track { overscroll-behavior-x: contain; }
+}

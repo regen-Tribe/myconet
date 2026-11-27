@@ -131,17 +131,27 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
   return (
     <div className="v4-page">
       {DESIGN_REVIEW
-        ? <PageHeader title={DESIGN_REVIEW ? 'Dashboard' : 'My dashboard'} subtitle={<>Welcome, {firstName}.{standing ? ` ${standing}` : ''}</>} />
+        // While the joining card shows, it says where you stand, so the greeting stays one line (it fits one phone screen)
+        ? <PageHeader title={DESIGN_REVIEW ? 'Dashboard' : 'My dashboard'} subtitle={<>Welcome, {firstName}.{standing && newcomerView !== 'checklist' ? ` ${standing}` : ''}</>} />
         : <h1 className="v4-hello">Hey <em>{firstName},</em><br />welcome home</h1>}
 
       <div className={onlyWayIn ? 'nc-only' : 'v4-split'}>
         <div>
           {newcomerView === 'checklist' && joinPath ? (
             <section className="v4-card nc-check" aria-labelledby="nc-check-h">
-              <h2 id="nc-check-h" className="nc-h">{joinPath.doneCount === 0 ? `Welcome to ${communityName}` : 'Start joining'}</h2>
-              <p className="nc-sub">{joinPath.doneCount === 0
-                ? `Joining takes ${joinPath.steps.length === 2 ? 'two' : 'three'} short steps. ${JOIN_REVIEWER.charAt(0).toUpperCase() + JOIN_REVIEWER.slice(1)} answers within a week.`
-                : `${joinPath.doneCount} of ${joinPath.steps.length} done. ${JOIN_REVIEWER.charAt(0).toUpperCase() + JOIN_REVIEWER.slice(1)} welcomes you within a week of joining.`}</p>
+              {/* What the portal is and what's in it, before the way in (Sonia, 27 Nov: "this gives little background to
+                  what the portal is; say what people can find here"). Same words as the visitor's Welcome (WelcomeV4) */}
+              <h2 id="nc-check-h" className="nc-h">{communityName}’s portal</h2>
+              <p className="nc-sub">One place where the people of {communityName} meet, plan and decide together.</p>
+              <ul className="nc-here" aria-label="What you’ll find here">
+                <li><a href="/members"><IconTile name="users" tone="grey" /><b>Members</b><small>Who’s here and what they offer</small></a></li>
+                <li><a href="/calendar"><IconTile name="calendar" tone="grey" /><b>Calendar</b><small>Events, and who’s staying</small></a></li>
+                <li><a href="/amenities"><IconTile name="home" tone="grey" /><b>The space</b><small>Where people live and work</small></a></li>
+                <li className="off"><span><IconTile name="handshake" tone="grey" off /><b>Work together</b><small>Tasks and decisions, once you’ve joined</small></span></li>
+              </ul>
+              <h3 className="nc-join">{joinPath.doneCount === 0
+                ? `Join in ${joinPath.steps.length === 2 ? 'two' : 'three'} short steps`
+                : `Joining: ${joinPath.doneCount} of ${joinPath.steps.length} done`}</h3>
               <ol className="nc-steps">
                 {joinPath.steps.map((st, i) => {
                   const now = joinPath.next?.key === st.key
@@ -165,7 +175,6 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
                   {joinPath.doneCount === 0 ? 'Start with step 1' : `Go to step ${joinPath.steps.indexOf(joinPath.next) + 1}`}
                 </a>
               )}
-              <p className="nc-foot">Or look around first: <a href="/members">Members</a>, <a href="/calendar">Calendar</a> and <a href="/amenities">The space</a> are open to you.</p>
             </section>
           ) : newcomerView === 'waiting' ? (
             <>
