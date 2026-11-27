@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.142.0',
+    date: '2026-11-27',
+    title: 'Any edit to a draft confirms it',
+    items: ['Changing a draft anywhere (moving it on the board, changing its status on a project\'s page, or marking your own task done) now confirms it, so the Draft pill goes away. Before, some of these left it showing.'],
+  },
+  {
     version: 'v4.141.2',
     date: '2026-11-25',
     title: 'Small touches in Start joining',
