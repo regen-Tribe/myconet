@@ -5,6 +5,14 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.144.0 — 2026-11-27 — See your own tasks, or someone else's, on the board
+
+Oscar: "add a drop down on the operation board in filters so the user can only see tasks they are tagged with. They can
+also select another user to see the tasks that user is responsible for". `OpsClient` (M07): a select after Due, for
+signed-in people only (visitors don't see assignees, decision #73): Everyone's tasks · My tasks · then everyone else by
+name (the same people list as the task pickers). All subtasks: tasks assigned to that person. Tasks: cards they lead, or
+with a subtask assigned to them. It counts on the phone's Filter button. No migration.
+
 ## v4.143.0 — 2026-11-27 — Filter the board by when things are due
 
 Oscar: "add a button on the operations filters that says due within (drop down) days - so user can set a range of when

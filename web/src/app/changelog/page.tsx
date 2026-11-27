@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.144.0',
+    date: '2026-11-27',
+    title: 'See your own tasks, or someone else\'s, on the board',
+    items: ['The Operations board\'s filters have a person menu, next to Due. Pick My tasks to see only what\'s assigned to you, or pick someone to see what they\'re responsible for. A task card shows when that person leads it or has one of its subtasks.'],
+  },
+  {
     version: 'v4.143.0',
     date: '2026-11-27',
     title: 'Filter the board by when things are due',
