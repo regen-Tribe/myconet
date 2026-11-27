@@ -5,6 +5,16 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.146.0 — 2026-11-27 — One New task button, opening the task window over the board
+
+Oscar: "when we click add a new task button or task of its own, it should just be one button of new task and it should
+open a pop up over the current screen with that task and all fields that can be edited for it". `OpsClient` (M07): the
+v4 header's "Task of its own" and "New task" (→ /operations/new) become one **New task** that opens `TaskModal` in a new
+mode (an empty task, `id: ''`): the same fields as editing a task, starting in the board's chosen circle and subcircle;
+it inserts the task (progress 0) instead of updating, has no Delete or Watch, and saves with **Add task**. A line under
+the fields explains Part of and links "Start a bigger task →" (/operations/new) for a task with a description and its own
+page. The old look (design not v4) keeps its two buttons and `NewTaskModal`. No migration.
+
 ## v4.145.0 — 2026-11-27 — Circle leads can change who leads their circle
 
 Oscar: "add the ability for admin and circle leads to edit the circle lead list". Until now only an admin could, in

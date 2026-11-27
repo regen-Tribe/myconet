@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.146.0',
+    date: '2026-11-27',
+    title: 'One New task button, opening the task window over the board',
+    items: ['Operations has one New task button instead of two. It opens the task window over the board with every field — name, status, person, priority, due date, circle, subcircle, part of, notes — and Add task saves it. Leave "Part of" empty for a task on its own, or pick a task to make it a subtask. A link in the window still starts a bigger task with its own page.'],
+  },
+  {
     version: 'v4.145.0',
     date: '2026-11-27',
     title: 'Circle leads can change who leads their circle',
