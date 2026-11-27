@@ -615,8 +615,8 @@ export default function OpsClient({
         <PageHeader eyebrow={sprintName ? `Working together · ${sprintName}` : 'Working together'} title={DESIGN_REVIEW ? 'Operations' : 'Task board'}
           subtitle={<><b>{activeCount} task{activeCount !== 1 ? 's' : ''} on the go</b> · {deliverableCount - doneCount} open subtask{deliverableCount - doneCount !== 1 ? 's' : ''} · {doneCount} done</>}
           actions={<>
-            {isAdmin && <Button variant="secondary" icon="plus" onClick={() => setNewTask(true)}>Task of its own</Button>}
-            {isAdmin && <Button variant={DESIGN_REVIEW ? 'primary' : 'next'} href="/operations/new">New task</Button>}
+            {/* One button (Oscar: "it should just be one button of new task"): the task window, empty, over the board */}
+            {isAdmin && <Button variant={DESIGN_REVIEW ? 'primary' : 'next'} icon="plus" onClick={() => setNewTask(true)}>New task</Button>}
             {canPropose && !isAdmin && <Button variant={DESIGN_REVIEW ? 'primary' : 'next'} href="/operations/new">Suggest a task</Button>}
             {/* Read-only before joining, and saying how that changes (decisions #73, #79) */}
             {DESIGN_REVIEW && !canPropose && !isAdmin && <Button variant="quiet" href={userId ? '/join' : '/auth/signup'}>{userId ? 'Suggest tasks once you’ve joined · Start joining' : 'Create account to help'}</Button>}
@@ -1025,13 +1025,29 @@ export default function OpsClient({
       )}
 
       <PermissionNoticeModal notice={notice} directory={circleDirectory} onClose={() => setNotice(null)} />
-      {newTask && (
+      {newTask && (DESIGN === 'v4' ? (
+        <TaskModal
+          task={{
+            id: '', title: '', status: 'backlog', project_id: null, assignee_id: null, due_date: null, progress: 0,
+            circle: (selectedCircle && circles.has(selectedCircle) ? selectedCircle : leadCircles[0]) ?? null,
+            team_id: selectedTeam || null, priority: 'none', notes: null,
+          }}
+          canManage
+          userId={userId}
+          people={people}
+          projects={projectOptions}
+          teams={teams}
+          onClose={() => setNewTask(false)}
+          onSaved={t => { setBoardTasks(prev => [...prev, t]); setNewTask(false); router.refresh() }}
+          onDeleted={() => setNewTask(false)}
+        />
+      ) : (
         <NewTaskModal
           defaultCircle={selectedCircle ?? leadCircles[0] ?? null}
           onClose={() => setNewTask(false)}
           onAdded={() => { setNewTask(false); router.refresh() }}
         />
-      )}
+      ))}
       {openTask && (
         <TaskModal
           task={openTask}
