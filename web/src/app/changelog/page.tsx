@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.145.0',
+    date: '2026-11-27',
+    title: 'Circle leads can change who leads their circle',
+    items: ['On a circle\'s page, admins and that circle\'s leads can now add a lead (+ Add lead) or remove one (Remove on the lead\'s card). A member made a lead becomes a circle lead; a circle always keeps at least one lead unless an admin removes it.'],
+  },
+  {
     version: 'v4.144.0',
     date: '2026-11-27',
     title: 'See your own tasks, or someone else\'s, on the board',
