@@ -8,6 +8,7 @@ import { DESIGN_REVIEW } from '@/core/lib/instance'
 import MembersGridV4, { type MemberCard } from './MembersGridV4'
 import MembersEveryone from './MembersEveryone'
 import './members-v4.css'
+import { LISTED } from '@/core/lib/listed'
 
 type Match = { profile: { id: string; username: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null }; score: number; reasons: string[] }
 type Activity = { id: string; who: string; act: string; href: string; ts: number }
@@ -32,7 +33,7 @@ export default async function MembersV4({ supabase, userId, joined = !!userId, m
 }) {
   // Read separately and forgivingly: visitors may not see circles, offers or requests
   const [peopleRes, unitsRes, offersRes, requestsRes, circles, biosRes] = await Promise.all([
-    supabase.from('user_profiles').select(profileColumns(!!userId, 'id, username, first_name, last_name, avatar_url, headline')).eq('approved', true).order('first_name'),
+    supabase.from('user_profiles').select(profileColumns(!!userId, 'id, username, first_name, last_name, avatar_url, headline')).match(LISTED).order('first_name'),
     supabase.from('org_unit_members').select('user_id, org_units(kind, circle)'),
     supabase.from('user_offers').select('user_id, title, category').order('created_at', { ascending: false }),
     supabase.from('user_requests').select('user_id, title:request_text').order('created_at', { ascending: false }),

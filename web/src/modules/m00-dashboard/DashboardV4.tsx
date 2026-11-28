@@ -6,7 +6,7 @@ import { roleAtLeast } from '@/core/lib/roles'
 import { evalLayers, type Vote } from '@/core/lib/proposal-checks'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { loadCircleRows } from '@/core/lib/circles-server'
-import { DESIGN_REVIEW } from '@/core/lib/instance'
+import { DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
 import { CircleSeal } from '@/core/components/v4/CircleSeal'
 import YourTasks, { type DashTask } from './YourTasks'
 import { loadMenuState } from '@/core/lib/menu-server'
@@ -149,6 +149,14 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
                 <li><a href="/amenities"><IconTile name="home" tone="grey" /><b>The space</b><small>Where people live and work</small></a></li>
                 <li className="off"><span><IconTile name="handshake" tone="grey" off /><b>Work together</b><small>Tasks and decisions, once you’ve joined</small></span></li>
               </ul>
+              {JOIN_AT_ONCE ? (
+                // Joining at once (decision #107): no steps to track, one button
+                <>
+                  <h3 className="nc-join">Join in a few minutes</h3>
+                  <p className="nc-sub">A photo, a line about you and where you’re based. You’re in straight away.</p>
+                  <a className="v4-btn v4-btn--primary nc-go" href="/join">Start joining</a>
+                </>
+              ) : <>
               <h3 className="nc-join">{joinPath.doneCount === 0
                 ? `Join in ${joinPath.steps.length === 2 ? 'two' : 'three'} short steps`
                 : `Joining: ${joinPath.doneCount} of ${joinPath.steps.length} done`}</h3>
@@ -175,6 +183,7 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
                   {joinPath.doneCount === 0 ? 'Start with step 1' : `Go to step ${joinPath.steps.indexOf(joinPath.next) + 1}`}
                 </a>
               )}
+              </>}
             </section>
           ) : newcomerView === 'waiting' ? (
             <>
@@ -194,7 +203,7 @@ export default async function DashboardV4({ supabase, userId, role, firstName, c
             <>
               <section className="nc-in" aria-labelledby="nc-in-h">
                 <h2 id="nc-in-h">Welcome in, {firstName}</h2>
-                <p>The stewards said yes. You’re a joining member of {communityName}.</p>
+                <p>{JOIN_AT_ONCE ? '' : 'The stewards said yes. '}You’re a joining member of {communityName}.</p>
               </section>
               <NextStep title="Join a circle" text="Pick the part of community life you’d like to help with." href="/circles" />
               <div className="v4-eyebrow rv-cardlabel">Now open to you</div>

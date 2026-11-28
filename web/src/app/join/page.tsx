@@ -3,13 +3,17 @@ import JoinClient from '@/modules/m05-join/JoinClient'
 import JoinAdminClient from '@/modules/m05-join/JoinAdminClient'
 import { profileDetailsOf, withProfileDetails } from '@/core/lib/public-profile'
 import { isAdmin, isCircleAdmin } from '@/core/lib/roles'
-import { DESIGN, DESIGN_REVIEW } from '@/core/lib/instance'
+import { DESIGN, DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
+import JoinNowPage from '@/modules/m05-join/JoinNowPage'
 import JoinReview from '@/modules/m05-join/JoinReview'
 import type { JoinStepKey } from '@/core/lib/join-path'
 import { loadApplications, loadJoinQuestions } from '@/modules/m05-join/applications-server'
 import { pillStats } from '@/core/lib/skills-interests'
 
-export default async function JoinPage(props: { searchParams?: Promise<{ step?: string; part?: string }> }) {
+export default async function JoinPage(props: { searchParams?: Promise<{ step?: string; part?: string; invite?: string; preview?: string }> }) {
+  // Joining at once (decision #107): the first onboarding, six short screens after Welcome, no steward
+  if (JOIN_AT_ONCE) return <JoinNowPage searchParams={props.searchParams} />
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

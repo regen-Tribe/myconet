@@ -6,7 +6,7 @@ import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { ACTIVE_PROJECT_STATUSES } from '@/core/lib/project-status'
 import { buildGlanceTiles } from '@/modules/home/lib/at-a-glance'
 import { loadModulePreviews } from '@/modules/home/lib/preview-data'
-import { communityName as getCommunityName, DESIGN_REVIEW } from '@/core/lib/instance'
+import { communityName as getCommunityName, DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -16,6 +16,8 @@ export default async function LandingPage() {
   // Sonia, 24 Nov), a signed-in person the Dashboard
   if (DESIGN_REVIEW) {
     if (user) redirect('/dashboard')
+    // Joining at once: the Welcome is the onboarding's first screen (decision #107)
+    if (JOIN_AT_ONCE) redirect('/join')
     return <WelcomeV4 />
   }
   if (user) redirect('/home')

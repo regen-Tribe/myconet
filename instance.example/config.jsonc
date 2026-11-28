@@ -35,6 +35,9 @@
   "design": "",
   // With "design": "v4": the design review's look (one title per screen, six text sizes, pill families). Off by default.
   "designReview": false,
+  // Joining is instant: six short screens, no application or steward; people choose to be shown to members
+  // (decision #107). Needs designReview and `community_settings.join_at_once = true` in the database.
+  "joinAtOnce": false,
 
   // What a stay costs on top of each place's own prices (Admin › Bookings › Edit): the currency, tax added on
   // top, percent off the whole stay from so many whole months, and plain lines shown under the prices.
