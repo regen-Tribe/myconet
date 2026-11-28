@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.151.0',
+    date: '2026-11-28',
+    title: 'Edit profile asks what brings you, daily work, experience, ideas, diet and allergies (communities that host people)',
+    items: ['A community that hosts people can turn on a "You and <community>" tab in Edit profile: what brings you, your daily work, your experience with work exchange, farms or communities, ideas you\'d like to start (each one can become a task idea on the board), and your diet and allergies.', '"Keep me posted" (news and events by email) is a box on Edit profile\'s Links tab.', 'Diet and allergies are private: only you, admins, the people who host guests and the kitchen read them.'],
+  },
+  {
     version: 'v4.150.0',
     date: '2026-11-28',
     title: 'Pick your stay on a calendar that shows what\'s free, with prices and an estimated total',
