@@ -28,3 +28,9 @@ export const DEFAULT_PURPOSE = 'A regenerative neighborhood in the making: a pla
 
 /** Framework credit shown on every MyCoNet community (footers, Blueprint exports). */
 export const FRAMEWORK_CREDIT = 'MyCoNet · Regenerative Neighborhood Framework · Open sourced by The Regen Tribe Collective'
+
+/** The community hosts people on site ("hostingQuestions": true; needs the design review). Edit profile then asks
+ *  what brings you, daily work, experience with work exchange, ideas to start, diet and allergies, and "Keep me
+ *  posted", and the completion checks point to them (core/lib/hosting-questions.ts). A stay request reads and fills
+ *  the same answers. Protopia tries it first (Sonia, 28 Nov 2026). */
+export const HOSTING_QUESTIONS = DESIGN_REVIEW && process.env.NEXT_PUBLIC_HOSTING_QUESTIONS === '1'

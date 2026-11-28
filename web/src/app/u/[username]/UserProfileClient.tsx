@@ -42,6 +42,8 @@ interface Props {
   match?: { score: number; reasons: string[] } | null
   /** The v4 look: this person's circles (lead or member) */
   circles?: { slug: string; lead: boolean }[]
+  /** Your own profile, with "hostingQuestions": which hosting questions are answered */
+  hosting?: import('@/core/lib/hosting-questions').HostingFacts | null
 }
 
 const OCEAN_TRAITS = [
@@ -145,14 +147,14 @@ function UrgencyColor(urgency: string) {
 
 const LINK_ICONS: Record<string, any> = { website: Globe, instagram: AtSign, linkedin: AtSign, twitter: AtSign }
 
-export default function UserProfileClient({ profile: p, bio, offers, requests, isOwn, signedIn, fullProfile, growth, match, circles: theirCircles = [] }: Props) {
+export default function UserProfileClient({ profile: p, bio, offers, requests, isOwn, signedIn, fullProfile, growth, match, circles: theirCircles = [], hosting }: Props) {
   const full = fullProfile ?? signedIn
   const [tab, setTab] = useState('about')
   const circleSet = useCircles()
   const V4 = (DESIGN as string) === 'v4'
   // Design review (decisions #60–#64): one page you scroll, what matters first at the top
   if (V4 && DESIGN_REVIEW) {
-    return <ProfileReview profile={p} bio={bio} offers={offers} requests={requests} isOwn={isOwn} signedIn={signedIn} full={full} growth={growth} match={match} circles={theirCircles} />
+    return <ProfileReview profile={p} bio={bio} offers={offers} requests={requests} isOwn={isOwn} signedIn={signedIn} full={full} growth={growth} match={match} circles={theirCircles} hosting={hosting} />
   }
 
   const displayName = [p.first_name, p.last_name].filter(Boolean).join(' ') || p.username

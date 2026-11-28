@@ -14,7 +14,10 @@ import { Slider } from '@/core/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/core/components/ui/select'
 import { AvatarCropper } from '@/core/components/AvatarCropper'
 import { uploadAvatarBlob } from '@/core/lib/avatar'
-import { DESIGN, DESIGN_REVIEW } from '@/core/lib/instance'
+import { COMMUNITY_NAME, DESIGN, DESIGN_REVIEW, HOSTING_QUESTIONS } from '@/core/lib/instance'
+import { isJoiningOrAbove } from '@/core/lib/roles'
+import { NO_ANSWERS, hostingFacts, loadHostingAnswers, saveHostingAnswers, type HostingAnswers, type Idea } from '@/core/lib/hosting-questions'
+import { HOSTING_FIELD_GROUP, HostingQuestions, KeepPosted, type HostingGroup } from '@/modules/m01-network/HostingQuestions'
 import { PROFILE_CHECKS, profileMissing, type ProfileCheck, type ProfileFacts } from '@/modules/m01-network/lib/profile-missing'
 import '@/modules/m01-network/profile-review.css'
 import { Button as V4Button, Icon as V4Icon, PageHeader } from '@/core/components/v4'
@@ -44,28 +47,34 @@ const STEPS = [
   { id: 8, title: 'Travel Plans',      icon: MapPin,     description: 'Where you\'re going' },
 ]
 
-/** With the design review: seven tabs, the same as the profile and Start joining (Sonia, 25 Nov; decision #91) */
-const TABS = [
-  { id: 1, title: 'About',                 icon: User,   description: 'Who you are, where you are, what you value' },
-  { id: 2, title: 'Skills and interests',  icon: Heart,  description: 'Your experience and what you’re curious about' },
-  { id: 3, title: 'Offers and requests',   icon: Gift,   description: 'What you share and what you’d like' },
-  { id: 4, title: 'Personality and signs', icon: Brain,  description: 'All optional, for those who enjoy it' },
-  { id: 5, title: 'Growth',                icon: Target, description: 'Where you’re heading' },
-  { id: 6, title: 'Travel',                icon: MapPin, description: 'Where you’re going' },
-  { id: 7, title: 'Links',                 icon: Globe,  description: 'Your website and social links' },
+/** With the design review: seven tabs, the same as the profile and Start joining (Sonia, 25 Nov; decision #91).
+ *  A community that hosts people ("hostingQuestions") adds "You and <community>" after Offers and requests (#108). */
+type TabKey = 'about' | 'skills' | 'offers' | 'you' | 'personality' | 'growth' | 'travel' | 'links'
+const ALL_TABS: { key: TabKey; title: string; icon: typeof User; description: string }[] = [
+  { key: 'about',       title: 'About',                 icon: User,   description: 'Who you are, where you are, what you value' },
+  { key: 'skills',      title: 'Skills and interests',  icon: Heart,  description: 'Your experience and what you’re curious about' },
+  { key: 'offers',      title: 'Offers and requests',   icon: Gift,   description: 'What you share and what you’d like' },
+  { key: 'you',         title: `You and ${COMMUNITY_NAME}`, icon: Star, description: 'For when you come to stay' },
+  { key: 'personality', title: 'Personality and signs', icon: Brain,  description: 'All optional, for those who enjoy it' },
+  { key: 'growth',      title: 'Growth',                icon: Target, description: 'Where you’re heading' },
+  { key: 'travel',      title: 'Travel',                icon: MapPin, description: 'Where you’re going' },
+  { key: 'links',       title: 'Links',                 icon: Globe,  description: 'Your website and social links' },
 ]
-type Block = 'basic' | 'links' | 'place' | 'types' | 'tags' | 'values' | 'personality' | 'archetypes' | 'growth' | 'offers' | 'requests' | 'travel'
-/** Which step each part sits on: [classic eight steps, design review's seven tabs] */
-const BLOCK_STEP: Record<Block, [number, number]> = {
-  basic: [1, 1], links: [1, 7], place: [1, 1], types: [1, 1], tags: [1, 2], values: [2, 1],
-  personality: [3, 4], archetypes: [4, 4], growth: [5, 5], offers: [6, 3], requests: [7, 3], travel: [8, 6],
+const TABS = ALL_TABS.filter(t => t.key !== 'you' || HOSTING_QUESTIONS).map((t, i) => ({ ...t, id: i + 1 }))
+type Block = 'basic' | 'links' | 'place' | 'types' | 'tags' | 'values' | 'personality' | 'archetypes' | 'growth' | 'offers' | 'requests' | 'travel' | 'hosting' | 'posted'
+/** Which step each part sits on: [classic eight steps, design review's tab]. The hosting questions are review only */
+const BLOCK_STEP: Record<Block, [number, TabKey]> = {
+  basic: [1, 'about'], links: [1, 'links'], place: [1, 'about'], types: [1, 'about'], tags: [1, 'skills'], values: [2, 'about'],
+  personality: [3, 'personality'], archetypes: [4, 'personality'], growth: [5, 'growth'], offers: [6, 'offers'], requests: [7, 'offers'], travel: [8, 'travel'],
+  hosting: [0, 'you'], posted: [0, 'links'],
 }
 const FIELD_BLOCK: Record<string, Block> = {
   'pe-photo': 'basic', 'pe-name': 'basic', 'pe-headline': 'basic', 'pe-city': 'place', 'pe-types': 'types', 'pe-skills': 'tags',
   'pe-values': 'values', 'pe-goals': 'growth', 'pe-growth': 'growth', 'pe-offer': 'offers', 'pe-request': 'requests', 'pe-travel': 'travel',
+  'pe-brings': 'hosting', 'pe-work': 'hosting', 'pe-food': 'hosting', 'pe-experience': 'hosting', 'pe-ideas': 'hosting', 'pe-posted': 'posted',
 }
 const PILL_CATEGORY = (k: string) => { const gi = groupOfPill(k); return gi >= 0 ? PILL_GROUPS[gi].offerCategory : 'Other' }
-const TAB_PARAM: Record<string, number> = { about: 1, skills: 2, offers: 3, personality: 4, growth: 5, travel: 6, links: 7 }
+const TAB_PARAM: Record<string, number> = Object.fromEntries(TABS.map(t => [t.key, t.id]))
 
 const MBTI_TYPES = [
   { code: 'INTJ', name: 'Architect' }, { code: 'INTP', name: 'Logician' },
@@ -266,8 +275,9 @@ function OceanSlider({ label, value, onChange, low, high }: {
 }
 
 /** The same eleven checks as the profile page and the old top bar (modules/m01-network/lib/profile-missing.ts) */
-function wizardFacts(form: FormData, avatarUrl: string | null): ProfileFacts {
+function wizardFacts(form: FormData, avatarUrl: string | null, hosting?: HostingAnswers | null): ProfileFacts {
   return {
+    hosting: hosting ? hostingFacts(hosting) : null,
     avatar: !!avatarUrl,
     firstName: !!form.first_name.trim(),
     headline: !!form.headline.trim(),
@@ -282,15 +292,15 @@ function wizardFacts(form: FormData, avatarUrl: string | null): ProfileFacts {
   }
 }
 
-function computeWizardPct(form: FormData, avatarUrl: string | null): number {
-  return profileMissing(wizardFacts(form, avatarUrl)).pct
+function computeWizardPct(form: FormData, avatarUrl: string | null, hosting?: HostingAnswers | null): number {
+  return profileMissing(wizardFacts(form, avatarUrl, hosting)).pct
 }
 
 /** Design review: where "Still to add" and ?add= send you (the eleven checks, plus who sees your growth) */
 const JUMPS: Pick<ProfileCheck, 'key' | 'step' | 'field'>[] = [...PROFILE_CHECKS, { key: 'growth' as ProfileCheck['key'], step: 5, field: 'pe-growth' }]
 
 const STEP_LIST = RV ? TABS : STEPS
-const stepOf = (b: Block) => BLOCK_STEP[b][RV ? 1 : 0]
+const stepOf = (b: Block) => RV ? (TABS.find(t => t.key === BLOCK_STEP[b][1])?.id ?? 0) : BLOCK_STEP[b][0]
 
 /** Values as names, one chip each (#89); stored one per line in values_principles */
 function ValueChips({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
@@ -328,17 +338,27 @@ export default function ProfileWizard() {
   const [stats, setStats] = useState<PillStats>({ count: {}, together: {} })
   const [shared, setShared] = useState<string[]>([])
   const on = (b: Block) => step === stepOf(b)
+  // The hosting questions ("hostingQuestions"): kept apart from the profile, read only by the person, admins,
+  // the hosts and (diet and allergies) the kitchen
+  const [hq, setHq] = useState<HostingAnswers>(NO_ANSWERS)
+  const [hqReady, setHqReady] = useState(false)
+  const [hqSaved, setHqSaved] = useState({ keep_posted: false })
+  const [hqOpen, setHqOpen] = useState<HostingGroup | null>('coming')
+  const [hqError, setHqError] = useState<string | null>(null)
+  const [role, setRole] = useState('explorer')
+  const [suggesting, setSuggesting] = useState<string | null>(null)
+  const [allMissing, setAllMissing] = useState(false)
 
   useEffect(() => {
     if (loading || !userId) return
-    const pct = computeWizardPct(form, avatarUrl)
+    const pct = computeWizardPct(form, avatarUrl, HOSTING_QUESTIONS && hqReady ? hq : null)
     setPct(pct)
     if (pct === 100) {
       supabase.from('user_achievements')
         .upsert({ user_id: userId, achievement_key: 'profile_complete' }, { onConflict: 'user_id,achievement_key', ignoreDuplicates: true })
         .then(() => setAchievementEarned(true))
     }
-  }, [form, avatarUrl, loading, userId])
+  }, [form, avatarUrl, loading, userId, hq, hqReady])
 
   useEffect(() => {
     async function load() {
@@ -362,6 +382,14 @@ export default function ProfileWizard() {
       // City, country and kinds of people come from profile_details() (decision #71)
       const p = profileRes.data ? { ...(profileRes.data as Record<string, any>), ...(await profileDetailsOf(supabase, user.id)) } as any : null
       if (p?.avatar_url) setAvatarUrl(p.avatar_url)
+      if (p?.role) setRole(p.role)
+      if (HOSTING_QUESTIONS) {
+        const { answers, ready } = await loadHostingAnswers(supabase, user.id)
+        setHq(answers); setHqReady(ready); setHqSaved({ keep_posted: answers.keep_posted })
+        // Open the first group that still has something to answer
+        const f = hostingFacts(answers)
+        setHqOpen(!f.brings || !f.work ? 'coming' : !f.food ? 'food' : !f.experience ? 'ideas' : null)
+      }
       const b = bioRes.data
       const pd = b?.personality_details as any
       const arc = b?.archetypes as any
@@ -436,6 +464,7 @@ export default function ProfileWizard() {
     const j = JUMPS.find(x => x.key === key)
     if (!j) return
     setStep(RV && FIELD_BLOCK[j.field] ? stepOf(FIELD_BLOCK[j.field]) : j.step)
+    if (HOSTING_FIELD_GROUP[j.field]) setHqOpen(HOSTING_FIELD_GROUP[j.field])
     setForm(prev => {
       if (key === 'offer' && !prev.offers.length) return { ...prev, offers: [{ title: '', description: '', category: '', compensation_model: 'Other', price: '' }] }
       if (key === 'request' && !prev.requests.length) return { ...prev, requests: [{ request_text: '', category: '', urgency: 'normal' }] }
@@ -580,9 +609,38 @@ export default function ProfileWizard() {
           }))
         )
       }
+
+      // The hosting questions, in their own tables (core/lib/hosting-questions.ts)
+      if (HOSTING_QUESTIONS && hqReady) {
+        const err = await saveHostingAnswers(supabase, userId, hq, hqSaved)
+        setHqError(err ? 'Your answers on this tab couldn’t be saved. Try again in a moment.' : null)
+        if (!err) setHqSaved({ keep_posted: hq.keep_posted })
+      }
     } finally {
       setSaving(false)
     }
+  }
+
+  /** An idea becomes a task idea on the board (Operations › Ideas), linked from the idea */
+  async function suggestIdea(idea: Idea) {
+    if (!userId || !idea.title.trim()) return
+    setSuggesting(idea.id)
+    const { data, error } = await supabase.from('projects').insert({
+      title: idea.title.trim().slice(0, 120),
+      description: `An idea ${form.first_name.trim() || 'a member'} would like to start here (from their profile).`,
+      open_for_collaborators: true,
+      created_by: userId,
+      status: 'pending',
+    }).select('id').single()
+    if (error || !data) {
+      setHqError('That idea couldn’t be added to the board. Try again in a moment.')
+    } else {
+      const next = { ...hq, ideas: hq.ideas.map(i => (i.id === idea.id ? { ...i, project_id: data.id as string } : i)) }
+      setHq(next)
+      const err = hqReady ? await saveHostingAnswers(supabase, userId, next, hqSaved) : null
+      setHqError(err ? 'The idea is on the board, but this tab couldn’t be saved. Save again.' : null)
+    }
+    setSuggesting(null)
   }
 
   async function handleNext() {
@@ -602,7 +660,7 @@ export default function ProfileWizard() {
   const progress = (step / STEP_LIST.length) * 100
 
   const V4 = DESIGN === 'v4'
-  const done = profileMissing(wizardFacts(form, avatarUrl))
+  const done = profileMissing(wizardFacts(form, avatarUrl, HOSTING_QUESTIONS && hqReady ? hq : null))
   return (
     <div className={V4 ? 'v4-page pe4' : 'p-3 sm:p-6 max-w-4xl mx-auto'}>
 
@@ -657,9 +715,14 @@ export default function ProfileWizard() {
             <div className="pe4-meter__bar" role="progressbar" aria-valuenow={done.pct} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${done.pct}%` }} /></div>
             <p className="pe4-meter__todo">
               {done.missing.length
-                ? <>Still to add: {done.missing.map((c, i) => (
-                    <span key={c.key}>{i > 0 && (i === done.missing.length - 1 ? ' and ' : ', ')}<button type="button" onClick={() => jump(c.key)}>{c.label}</button></span>
-                  ))}</>
+                ? (() => {
+                    // On a phone a long list is a wall of links: the first four, then "and N more" (#108)
+                    const shown = allMissing || done.missing.length <= 5 ? done.missing : done.missing.slice(0, 4)
+                    const more = done.missing.length - shown.length
+                    return <>Still to add: {shown.map((c, i) => (
+                      <span key={c.key}>{i > 0 && (!more && i === shown.length - 1 ? ' and ' : ', ')}<button type="button" onClick={() => jump(c.key)}>{c.label}</button></span>
+                    ))}{more > 0 && <> and <button type="button" className="pe4-meter__more" onClick={() => setAllMissing(true)}>{more} more</button></>}</>
+                  })()
                 : 'Your profile is complete'}
             </p>
           </section>
@@ -786,7 +849,17 @@ export default function ProfileWizard() {
                   <Input value={form.twitter} onChange={e => update('twitter', e.target.value)} placeholder="@yourname" />
                 </div>
               </div>
+              {HOSTING_QUESTIONS && <KeepPosted value={hq.keep_posted} onChange={v => setHq(prev => ({ ...prev, keep_posted: v }))} />}
             </>
+          )}
+          {on('hosting') && HOSTING_QUESTIONS && (
+            <HostingQuestions value={hq} onChange={setHq} open={hqOpen} onOpen={setHqOpen}
+              onSuggest={isJoiningOrAbove(role) ? suggestIdea : undefined} suggesting={suggesting} />
+          )}
+          {HOSTING_QUESTIONS && (on('hosting') || on('posted')) && (
+            !hqReady
+              ? <p className="hq-wait">Saving these answers opens once the database is updated.</p>
+              : hqError && <p className="hq-error" role="alert">{hqError}</p>
           )}
           {on('place') && RV && (
             <div id="pe-city">
