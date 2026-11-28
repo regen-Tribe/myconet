@@ -7,22 +7,23 @@ import { modLabel } from '@/core/lib/module-label'
 import { DESIGN } from '@/core/lib/instance'
 import { isJoiningOrAbove } from '@/core/lib/roles'
 import MembersV4 from '@/modules/m01-network/MembersV4'
+import { LISTED } from '@/core/lib/listed'
 
 export default async function NetworkDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [memberCountRes, recentRes, recentJoinsRes, recentOffersRes, recentSeeksRes] = await Promise.all([
-    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('approved', true),
+    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).match(LISTED),
     supabase.from('user_profiles')
       // Visitors get the public columns; the hidden ones (location, user types) are just missing
       .select(profileColumns(!!user, 'id, username, first_name, last_name, avatar_url') as 'id, username, first_name, last_name, avatar_url')
-      .eq('approved', true)
+      .match(LISTED)
       .order('created_at', { ascending: false })
       .limit(8),
     supabase.from('user_profiles')
       .select('id, first_name, last_name, username, created_at')
-      .eq('approved', true)
+      .match(LISTED)
       .order('created_at', { ascending: false })
       .limit(6),
     supabase.from('user_offers')
@@ -58,7 +59,7 @@ export default async function NetworkDashboard() {
       supabase.from('user_profiles').select('first_name, last_name, headline, role').eq('id', user.id).maybeSingle(),
       supabase.from('user_profiles')
         .select('id, username, first_name, last_name, avatar_url')
-        .eq('approved', true)
+        .match(LISTED)
         .neq('id', user.id),
       supabase.from('user_bio').select('*'),
       supabase.from('user_bio').select('*').eq('user_id', user.id).maybeSingle(),

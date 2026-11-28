@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { isAdmin, isCircleAdmin, isFullMember, isJoiningOrAbove } from './roles'
 import { fmtTaskWhen } from './tasks'
-import { DESIGN_REVIEW } from './instance'
+import { DESIGN_REVIEW, JOIN_AT_ONCE } from './instance'
 import { JOIN_REVIEWER, loadJoinPath } from './join-path'
 import { loadProfileCompletion, missingLine } from './profile-completion'
 
@@ -149,6 +149,9 @@ async function reviewMenuState(supabase: SupabaseClient, userId: string, role: s
   const stepHref = (key: string) => DESIGN_REVIEW
     ? `/join?step=${key}`
     : (key === 'profile' ? '/profile/edit' : `/join?step=${key}`)
+  if (!isJoiningOrAbove(role) && JOIN_AT_ONCE) {
+    return { next: { title: 'Start joining', line: 'A few short questions, and you’re in.', href: '/join' }, journey: 0, progress: [{ label: 'About you', done: false }], counts }
+  }
   if (!isJoiningOrAbove(role)) {
     const path = await loadJoinPath(supabase, userId, role)
     const progress = path.steps.map(x => ({ label: x.label, done: x.done }))

@@ -12,7 +12,7 @@ import { loadCircleRows } from '@/core/lib/circles-server'
 import { CirclesProvider } from '@/core/components/CirclesProvider'
 import { loadBranding } from '@/core/lib/branding-server'
 import { BrandingProvider } from '@/core/components/BrandingProvider'
-import { COMMUNITY_NAME, DESIGN, DESIGN_REVIEW } from '@/core/lib/instance'
+import { COMMUNITY_NAME, DESIGN, DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
 import { loadMenuState } from '@/core/lib/menu-server'
 
 // Geist is only used by the Blueprint wizard (wizard.css), so it isn't preloaded on every page
@@ -22,8 +22,12 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const interTight = Inter_Tight({ subsets: ['latin'], variable: '--font-inter-tight' })
 
-const TITLE = `${COMMUNITY_NAME} · MyCoNet`
-const DESCRIPTION = `The member portal for ${COMMUNITY_NAME}, a regenerative neighborhood. Connect, plan, and build together.`
+// With joining at once, people read "<community> Portal", never MyCoNet (LEXICON.md › Joining; Sonia, 28 Nov): the tab,
+// and the link preview an invite link shows on WhatsApp
+const TITLE = JOIN_AT_ONCE ? `${COMMUNITY_NAME} Portal` : `${COMMUNITY_NAME} · MyCoNet`
+const DESCRIPTION = JOIN_AT_ONCE
+  ? `The ${COMMUNITY_NAME} Portal: where the people of ${COMMUNITY_NAME} meet, plan and decide together.`
+  : `The member portal for ${COMMUNITY_NAME}, a regenerative neighborhood. Connect, plan, and build together.`
 
 // The link preview (WhatsApp, Slack, social media) uses the community's share image, else its banner
 export async function generateMetadata(): Promise<Metadata> {

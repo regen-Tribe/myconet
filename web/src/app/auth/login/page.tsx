@@ -3,7 +3,7 @@ import { Icon, InlineIcon, type IconName } from '@/core/components/v4'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/core/lib/supabase/client'
 import { usePathname, useRouter } from 'next/navigation'
-import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME, DESIGN, DESIGN_REVIEW } from '@/core/lib/instance'
+import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME, DESIGN, DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
 import { useBranding } from '@/core/components/BrandingProvider'
 import { AuthField, AuthFrame, AuthHead, AuthNotice } from '../AuthReview'
 
@@ -21,6 +21,7 @@ export default function AuthPage() {
   // ?mode=forgot (from the reset page) or ?mode=register (from a public profile)
   useEffect(() => {
     const m = new URLSearchParams(window.location.search).get('mode')
+    if (m === 'register' && JOIN_AT_ONCE) { window.location.replace('/join?step=signup'); return }
     if (m === 'forgot' || m === 'register') setMode(m)
   }, [])
   const supabase = createClient()
@@ -69,7 +70,7 @@ export default function AuthPage() {
       window.history.replaceState(null, '', window.location.pathname)
       if (error) setLoginError(expired)
       // Design review: a new account lands on My dashboard, whose next step is Start joining (#25, #68)
-      else { router.push(onboarding ? (DESIGN_REVIEW ? '/dashboard' : '/profile/edit') : '/home'); router.refresh() }
+      else { router.push(onboarding ? (JOIN_AT_ONCE ? '/join?step=photo' : DESIGN_REVIEW ? '/dashboard' : '/profile/edit') : '/home'); router.refresh() }
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps -- once, on arrival
 
@@ -195,7 +196,9 @@ export default function AuthPage() {
               )}
               <button type="submit" className="arv__btn" disabled={loginLoading}>{loginLoading ? 'Signing in…' : 'Sign in'}</button>
             </form>
-            <p className="arv__switch">New here? <button type="button" className="arv__link" onClick={() => setMode('register')}>Create account</button></p>
+            <p className="arv__switch">New here? {JOIN_AT_ONCE
+              ? <a className="arv__link" href="/join?step=signup">Sign up</a>
+              : <button type="button" className="arv__link" onClick={() => setMode('register')}>Create account</button>}</p>
           </>
         )}
 

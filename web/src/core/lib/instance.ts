@@ -17,6 +17,13 @@ export const DESIGN = process.env.NEXT_PUBLIC_DESIGN === 'v4' ? 'v4' : ''
  *  "designReview": true; Protopia tries it first. Sets data-review on <html> for app/v4-review.css. */
 export const DESIGN_REVIEW = DESIGN === 'v4' && process.env.NEXT_PUBLIC_DESIGN_REVIEW === '1'
 
+/** Joining the portal is instant: `/join` is the first onboarding (Welcome, sign up, check your email, four short
+ *  screens, "You're in") and finishing it makes the person a joining member, with no application and no steward
+ *  (Sonia, 28 Nov 2026; design/decisions.md #107). People choose themselves whether other members see them.
+ *  A community turns it on with "joinAtOnce": true, and `community_settings.join_at_once` in its database
+ *  (supabase/migrations/20270101000000_join_at_once.sql). Built on the design review's look. */
+export const JOIN_AT_ONCE = DESIGN_REVIEW && process.env.NEXT_PUBLIC_JOIN_AT_ONCE === '1'
+
 /** The Blueprint's working name for the neighborhood, falling back to the short name. */
 export function communityName(answers: Record<string, unknown> | null | undefined): string {
   const name = answers?.project_name

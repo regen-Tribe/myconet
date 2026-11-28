@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { IconName } from '@/core/components/v4'
 import { isJoiningOrAbove } from './roles'
-import { DESIGN_REVIEW } from './instance'
+import { DESIGN_REVIEW, JOIN_AT_ONCE } from './instance'
 
 /**
  * With the design review, the way in is two steps: Get to know us · About you, and About you ends with Send application
@@ -53,7 +53,10 @@ export function joinSteps(s: { valuesSigned: number; valuesTotal: number; hasPho
   // Once someone is in, the way in reads as done (a joining member's profile is the menu's next step instead).
   // The application is the last step even when the profile isn't finished: it can be sent without it
   // Design review (#93): About you ends with Send application, so it's done once the application is sent
-  if (DESIGN_REVIEW) {
+  // Joining at once (decision #107): one step, four short screens, and you're in. No values, no application
+  if (JOIN_AT_ONCE) {
+    steps.splice(0, 3, { key: 'profile', label: 'About you', title: 'Start joining', icon: 'user', minutes: 3, done: s.joined })
+  } else if (DESIGN_REVIEW) {
     steps.splice(1, 2, { key: 'profile', label: 'About you', title: s.application === 'rejected' ? 'Ask to join again' : 'Tell us about you', icon: 'user', minutes: 5, done: sent })
   }
   const next = steps.find(x => !x.done) ?? null

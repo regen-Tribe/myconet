@@ -11,6 +11,7 @@ import { Button, Card, IconTile, NextStep, PageHeader } from '@/core/components/
 import { MATCH_DIMENSIONS } from '@/modules/m01-network/lib/match-dimensions'
 import MatchesV4 from '@/modules/m01-network/MatchesV4'
 import { HowMatchingWorks } from '@/modules/m01-network/PersonCardV4'
+import { LISTED } from '@/core/lib/listed'
 
 const SCORING_DIMENSIONS = MATCH_DIMENSIONS
 
@@ -75,7 +76,7 @@ export default async function MatchesPage() {
     supabase
       .from('user_profiles')
       .select('id, username, first_name, last_name, avatar_url')
-      .eq('approved', true)
+      .match(LISTED)
       .neq('id', user.id),
     supabase.from('user_bio').select('*'),
     profileDetailsOf(supabase, user.id),

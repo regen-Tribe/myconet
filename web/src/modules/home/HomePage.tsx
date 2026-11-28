@@ -11,6 +11,7 @@ import { EVENT_SELECT, toEvent } from '@/modules/m14-events/lib/queries'
 import { isFullMember as checkFullMember, isJoiningOrAbove } from '@/core/lib/roles'
 import { profileColumns, profileDetailsOf, withProfileDetails } from '@/core/lib/public-profile'
 import HomeV4 from './HomeV4'
+import { LISTED } from '@/core/lib/listed'
 
 export default async function HomePage(props: { searchParams?: Promise<{ tour?: string }> }) {
   // The v4 look has a calm Home (HomeV4) for everyone (Sonia, 21 Nov); the long module-by-module tour stays at /home?tour=1
@@ -37,10 +38,10 @@ export default async function HomePage(props: { searchParams?: Promise<{ tour?: 
     previews,
   ] = await Promise.all([
     supabase.from('blueprints').select('answers, updated_at').eq('is_community', true).maybeSingle(),
-    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('approved', true),
+    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).match(LISTED),
     supabase.from('user_profiles')
       .select(profileColumns(!!user, 'id, first_name, last_name, username, headline, avatar_url'))
-      .eq('approved', true)
+      .match(LISTED)
       .order('created_at', { ascending: false })
       .limit(4),
     supabase.from('community_values').select('id, title, description, sort_order').order('sort_order'),

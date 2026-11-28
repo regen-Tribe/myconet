@@ -94,6 +94,8 @@ function publicEnv(cfg) {
     NEXT_PUBLIC_DESIGN: cfg.design ?? '',
     // The design review on top of v4 (core/lib/instance.ts › DESIGN_REVIEW): "1" = on
     NEXT_PUBLIC_DESIGN_REVIEW: cfg.designReview ? '1' : '',
+    // Joining is instant, in six short screens, with no steward (core/lib/instance.ts › JOIN_AT_ONCE): "1" = on
+    NEXT_PUBLIC_JOIN_AT_ONCE: cfg.joinAtOnce ? '1' : '',
     // Who edits the Blueprint: "admins" = admins only; empty = admins and circle leads (core/lib/roles › canEditBlueprint)
     NEXT_PUBLIC_BLUEPRINT_EDITORS: cfg.blueprintEditors ?? '',
     NEXT_PUBLIC_BRAND_MARK: cfg.brandMark ?? '',

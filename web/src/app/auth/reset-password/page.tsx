@@ -9,6 +9,7 @@ import { Input } from '@/core/components/ui/input'
 import { Label } from '@/core/components/ui/label'
 import { Loader2, Sprout, CheckCircle } from '@/core/components/v4/lucide-compat'
 import { AuthField, AuthFrame, AuthHead, AuthNotice } from '../AuthReview'
+import { CLAIM_KEY } from '@/modules/m05-join/join-now-screens'
 
 function ResetPasswordForm() {
   const supabase = createClient()
@@ -58,7 +59,11 @@ function ResetPasswordForm() {
       setError(error.message)
     } else {
       setDone(true)
-      setTimeout(() => router.push('/members'), 2000)
+      // Signing up with an address that was already known (a guest who booked) sends this link: it makes the
+      // profile theirs, and the onboarding carries on (JoinNow, CLAIM_KEY)
+      let claim = false
+      try { claim = window.localStorage.getItem(CLAIM_KEY) === '1'; window.localStorage.removeItem(CLAIM_KEY) } catch { /* private mode */ }
+      setTimeout(() => router.push(claim ? '/join' : '/members'), 2000)
     }
     setLoading(false)
   }
@@ -67,7 +72,7 @@ function ResetPasswordForm() {
   if (DESIGN_REVIEW) {
     if (done) return (
       <AuthNotice icon="check-circle" title="Password updated">
-        <p>Taking you to Members…</p>
+        <p>Taking you on…</p>
       </AuthNotice>
     )
     return (

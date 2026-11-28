@@ -10,7 +10,7 @@ import AppFooter from '@/core/components/shell/AppFooter'
 import { ProfileCompletionProvider } from '@/core/contexts/ProfileCompletion'
 import AssistantChat from '@/modules/assistant/AssistantChat'
 import FocusShell from '@/core/components/shell/FocusShell'
-import { DESIGN_REVIEW } from '@/core/lib/instance'
+import { DESIGN_REVIEW, JOIN_AT_ONCE } from '@/core/lib/instance'
 import { isJoiningOrAbove } from '@/core/lib/roles'
 
 /** `menu` is set only for the v4 look (layout.tsx): the v4 menu and phone tab bar replace AppSideNav. */
@@ -54,6 +54,9 @@ export default function AppShell({ children, role, isLoggedIn = false, menu = nu
   if (pathname.startsWith('/auth/')) {
     return <>{children}</>
   }
+
+  // Joining at once (decision #107): each screen is the whole phone screen, with its own top bar
+  if (JOIN_AT_ONCE && pathname === '/join') return <>{children}</>
 
   // Start joining is one focused flow (Sonia, 24 Nov: "isolate more while providing links to read more"): no menu,
   // tab bar or assistant around it, only the community's mark and a way out
