@@ -39,7 +39,7 @@ Query params: `tab=browse|mine|manage`, `category=accommodation|tools|spaces`, `
 | `BookingsV4.tsx` | The v4 look's view of the same page (BookingsClient passes its state and actions as `vm`); Admin › Bookings adds the Calendar (who stays where: one strip of days that scrolls sideways, opening on today, v4.112.0) |
 | `ItemModal.tsx` | Item details, schedule, booking form, manager actions (with v4, its own view in the shared building blocks) |
 | `ItemFormModal.tsx` | Add/edit item: category, tags, circle, capacity, approval toggle (with v4, its own view) |
-| `StayCalendar.tsx`, `stay-calendar.css` | The availability calendar and the price box in an accommodation's pop-up (decision #105) |
+| `StayCalendar.tsx`, `stay-calendar.css` | The availability calendar and the price box in an accommodation's pop-up (decision #106) |
 | `lib/pricing.ts` | `stay_prices` → rates, the community's `STAY_RULES` (config `"stays"`), and `estimateStay`: the one place the arithmetic lives |
 | `lib/inventory.ts` | Categories, status labels, permission helpers, formatting, error messages |
 | `lib/queries.ts` | `ITEM_SELECT`, `BOOKING_SELECT`, row normalizers |
@@ -54,6 +54,7 @@ Migration: `supabase/migrations/20261101_m15_bookings.sql` (repo root).
 | `bookings` | Read: own bookings, or everything for joining+. Insert: joining+ for themselves. Update: booker (cancel only) or item manager |
 
 - `bookings_no_overlap` — exclusion constraint (btree_gist): pending/confirmed bookings of one item can't overlap. Error code `23P01`.
+- **Only admins approve** — `booking_items.admins_approve` (set by admins in the Edit form). When on, only an admin approves, declines or changes other people's bookings of that item, and only an admin changes the switch or "needs approval" (`booking_items_guard` trigger). A circle lead who manages it still edits the item. `canDecideItem()` in `lib/inventory.ts` mirrors it.
 - `bookings_guard` trigger — sets status on insert from `requires_approval` (pending vs confirmed; the client's value is ignored), blocks bookings of archived items, lets non-managers only cancel, stamps `decided_by` on approve/decline.
 
 ## Prices

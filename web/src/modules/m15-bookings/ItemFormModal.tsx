@@ -6,6 +6,7 @@ import { useCircles } from '@/core/components/CirclesProvider'
 import type { CircleSlug } from '@/core/lib/circles'
 import type { BookingCategory, BookingItem } from './types'
 import { CATEGORY_META } from './lib/inventory'
+import { isAdmin } from '@/core/lib/roles'
 import { STAY_RULES, toStayPrices, type StayPrices } from './lib/pricing'
 import { DESIGN } from '@/core/lib/instance'
 import { Button, Chip, ChipRow, InlineIcon } from '@/core/components/v4'
@@ -21,6 +22,8 @@ export interface ItemPayload {
   requires_approval: boolean
   /** What a stay costs (accommodation); null clears it */
   stay_prices: StayPrices | null
+  /** Only sent by an admin: the database refuses it from anyone else */
+  admins_approve?: boolean
 }
 
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--ink-2)', marginBottom: 6 }
@@ -63,6 +66,10 @@ export function ItemFormModal({
   const [capacity, setCapacity] = useState(existing?.capacity ? String(existing.capacity) : '')
   const [circle, setCircle] = useState<CircleSlug | ''>((existing?.circle as CircleSlug) ?? '')
   const [requiresApproval, setRequiresApproval] = useState(existing?.requires_approval ?? category === 'accommodation')
+  const [adminsApprove, setAdminsApprove] = useState(existing?.admins_approve ?? false)
+  const admin = isAdmin(role)
+  // A lead can't change "needs approval" on an item only admins approve
+  const approvalLocked = !admin && !!existing?.admins_approve
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [photo, setPhoto] = useState<File | 'remove' | null>(null)
@@ -103,6 +110,7 @@ export function ItemFormModal({
       capacity: cap,
       requires_approval: requiresApproval,
       stay_prices: stayPrices,
+      ...(admin ? { admins_approve: requiresApproval && adminsApprove } : {}),
     }, photo)
     setSaving(false)
     if (err) setError(err)
@@ -226,9 +234,15 @@ export function ItemFormModal({
           )}
 
           <label className="v4-check">
-            <input type="checkbox" checked={requiresApproval} onChange={e => setRequiresApproval(e.target.checked)} />
-            <span><b>Bookings need approval.</b> Requests wait for an admin or circle lead. Otherwise bookings confirm instantly.</span>
+            <input type="checkbox" checked={requiresApproval} disabled={approvalLocked} onChange={e => setRequiresApproval(e.target.checked)} />
+            <span><b>Bookings need approval.</b> {approvalLocked ? 'Requests wait for an admin. Only an admin can change this.' : 'Requests wait for an admin or circle lead. Otherwise bookings confirm instantly.'}</span>
           </label>
+          {admin && requiresApproval && (
+            <label className="v4-check">
+              <input type="checkbox" checked={adminsApprove} onChange={e => setAdminsApprove(e.target.checked)} />
+              <span><b>Only admins approve.</b> Circle leads can still edit the item, but not approve or decline its requests.</span>
+            </label>
+          )}
 
           {error && <p className="v4-error-box">{error}</p>}
 
@@ -332,7 +346,7 @@ export function ItemFormModal({
         </div>
 
         <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: 'var(--ink-2)', cursor: 'pointer', lineHeight: 1.45 }}>
-          <input type="checkbox" checked={requiresApproval} onChange={e => setRequiresApproval(e.target.checked)} style={{ marginTop: 3 }} />
+          <input type="checkbox" checked={requiresApproval} disabled={approvalLocked} onChange={e => setRequiresApproval(e.target.checked)} style={{ marginTop: 3 }} />
           <span><strong>Bookings need approval</strong> — requests wait for an admin or circle lead. Otherwise bookings confirm instantly.</span>
         </label>
 

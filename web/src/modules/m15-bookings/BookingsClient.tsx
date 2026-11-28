@@ -6,7 +6,7 @@ import { createClient } from '@/core/lib/supabase/client'
 import type { Booking, BookingCategory, BookingItem, BookingsTab, PersonLite, AroundPlace } from './types'
 import { scopeForCategory, type BookingScope } from './lib/inventory'
 import {
-  CATEGORY_META, SCOPE_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canManageItem,
+  CATEGORY_META, SCOPE_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canDecideItem, canManageItem,
   fmtBookingRange, isHolding, personName,
 } from './lib/inventory'
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
@@ -93,7 +93,7 @@ export default function BookingsClient({
   const myUpcoming = now ? myBookings.filter(b => isHolding(b) && new Date(b.ends_at) > now).sort((a, b) => a.starts_at.localeCompare(b.starts_at)) : []
   const myPast = now ? myBookings.filter(b => !myUpcoming.includes(b)).sort((a, b) => b.starts_at.localeCompare(a.starts_at)).slice(0, 20) : []
   const pending = bookings
-    .filter(b => b.status === 'pending' && inScope(b) && (() => { const it = itemById.get(b.item_id); return it && canManageItem(it, userId, role, leadCircles) })())
+    .filter(b => b.status === 'pending' && inScope(b) && (() => { const it = itemById.get(b.item_id); return it && canDecideItem(it, userId, role, leadCircles) })())
     .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
 
   const openItem = openId ? itemById.get(openId) ?? null : null
@@ -157,7 +157,7 @@ export default function BookingsClient({
       const { data, error } = await supabase.from('booking_items').update(payload).eq('id', existing.id).select(ITEM_SELECT)
       if (error) return bookingErrorMessage(error)
       if (!data?.length) return 'You can’t edit this item. Admins, and circle leads of its circle, can.'
-      let saved: BookingItem = { ...existing, ...toItem(data[0]), stay_prices: payload.stay_prices }
+      let saved: BookingItem = { ...existing, ...toItem(data[0]), stay_prices: payload.stay_prices, admins_approve: payload.admins_approve ?? existing.admins_approve }
       if (photo) {
         const res = await saveItemPhoto(saved, photo)
         if (res instanceof Error) return res.message
@@ -175,7 +175,7 @@ export default function BookingsClient({
         ? 'Circle leads can only add items to circles they lead, or with no circle.'
         : bookingErrorMessage(error)
     }
-    let saved: BookingItem = { ...toItem(data), stay_prices: payload.stay_prices }
+    let saved: BookingItem = { ...toItem(data), stay_prices: payload.stay_prices, admins_approve: payload.admins_approve ?? false }
     if (photo && photo !== 'remove') {
       const res = await saveItemPhoto(saved, photo)
       if (res instanceof Error) setToast(res.message)

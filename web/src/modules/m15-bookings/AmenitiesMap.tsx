@@ -4,7 +4,7 @@ import { Button } from '@/core/components/v4'
 import SiteMap, { type SitePin } from '@/core/components/v4/SiteMap'
 import type { BookingItem } from './types'
 import { CATEGORY_ICON } from './BookingsV4'
-import { CATEGORY_META } from './lib/inventory'
+import { CATEGORY_META, approverLabel } from './lib/inventory'
 
 /**
  * The Amenities map (v4.43.0, interactive since v4.44.0): the community's picture of the land with a pin
@@ -41,7 +41,7 @@ export default function AmenitiesMap({ url, items, onOpen, placing, onPlace, sel
         <b>{card.name}</b>
         <small>{[CATEGORY_META[card.category].label, card.location, card.capacity ? `up to ${card.capacity}` : null].filter(Boolean).join(' · ')}</small>
         {avail && <span className={`v4-avail${avail.text.startsWith('In use') ? ' v4-avail--busy' : ''}`}>{avail.text}</span>}
-        {card.requires_approval && <small>Needs a lead’s approval</small>}
+        {card.requires_approval && <small>Needs {approverLabel(card)} approval</small>}
         {onOpen && <Button size="sm" onClick={() => onOpen(card.id)}>See and book</Button>}
       </>
     )

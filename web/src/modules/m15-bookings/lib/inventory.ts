@@ -4,7 +4,7 @@
  * `bookings_guard` trigger — the database has the final say.
  */
 
-import { isJoiningOrAbove } from '@/core/lib/roles'
+import { isAdmin, isJoiningOrAbove } from '@/core/lib/roles'
 import type { IconName } from '@/core/components/v4/icons'
 import type { Booking, BookingCategory, BookingItem, BookingStatus, PersonLite } from '../types'
 
@@ -59,6 +59,14 @@ export function canManageItem(item: Pick<BookingItem, 'circle' | 'created_by'>, 
   if (role === 'admin') return true
   return role === 'circle_lead' && (!item.circle || leadCircles.includes(item.circle) || item.created_by === userId)
 }
+
+/** Who approves or declines its requests: whoever manages it, or only admins when the item says so. */
+export function canDecideItem(item: Pick<BookingItem, 'circle' | 'created_by' | 'admins_approve'>, userId: string | null, role: string, leadCircles: string[]): boolean {
+  return canManageItem(item, userId, role, leadCircles) && (!item.admins_approve || isAdmin(role))
+}
+
+/** "Bookings need an admin’s approval" / "a lead’s": who the request waits for. */
+export const approverLabel = (item: Pick<BookingItem, 'admins_approve'>) => (item.admins_approve ? 'an admin’s' : 'a lead’s')
 
 export const canBook = (role: string) => isJoiningOrAbove(role)
 

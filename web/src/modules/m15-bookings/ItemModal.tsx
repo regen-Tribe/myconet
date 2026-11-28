@@ -7,7 +7,7 @@ import { useCircles } from '@/core/components/CirclesProvider'
 import { ROLE_LABELS } from '@/core/lib/roles'
 import type { Booking, BookingItem } from './types'
 import {
-  CATEGORY_META, canBook, fmtBookingRange, isHolding,
+  CATEGORY_META, approverLabel, canBook, fmtBookingRange, isHolding,
   localDateInput, localDateTimeInput, overlaps, personName,
 } from './lib/inventory'
 import { DESIGN, DESIGN_REVIEW } from '@/core/lib/instance'
@@ -123,7 +123,7 @@ export function ItemModal({
               ? <li><Icon name="pin" size={16} /><Link href={`/map?place=${encodeURIComponent(item.place.slug)}`}>{item.location ?? item.place.name} · see it on the map</Link></li>
               : item.location && <li><Icon name="pin" size={16} />{item.location}</li>}
             {item.capacity && <li><Icon name="users" size={16} />Up to {item.capacity} {item.capacity === 1 ? 'person' : 'people'}</li>}
-            <li><Icon name={item.requires_approval ? 'hand' : 'check'} size={16} />{item.requires_approval ? 'Bookings need a lead’s approval' : 'Bookings confirm instantly'}</li>
+            <li><Icon name={item.requires_approval ? 'hand' : 'check'} size={16} />{item.requires_approval ? `Bookings need ${approverLabel(item)} approval` : 'Bookings confirm instantly'}</li>
           </ul>
 
           {item.description && <p className="v4-prose">{item.description}</p>}
@@ -283,7 +283,7 @@ export function ItemModal({
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 13.5, color: 'var(--ink-2)' }}>
           {item.location && <div><InlineIcon name="pin" />{item.location}</div>}
           {item.capacity && <div><InlineIcon name="users" />Up to {item.capacity} {item.capacity === 1 ? 'person' : 'people'}</div>}
-          <div><InlineIcon name={item.requires_approval ? 'hand' : 'check-circle'} />{item.requires_approval ? 'Bookings need a lead’s approval' : 'Bookings confirm instantly'}</div>
+          <div><InlineIcon name={item.requires_approval ? 'hand' : 'check-circle'} />{item.requires_approval ? `Bookings need ${approverLabel(item)} approval` : 'Bookings confirm instantly'}</div>
         </div>
 
         {item.description && (
