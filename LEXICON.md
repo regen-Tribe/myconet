@@ -126,6 +126,8 @@ Not "Seeks", not "Needs". A skill you tap **share** becomes an offer (#90).
 | **Your values** | A person's values as names, a word or two each (#92) | Core Values & Principles |
 | **Where do you call home?** · **city** | The places a person calls home, picked from a list of cities or typed; several allowed (#97, #98) | town, location, based in |
 | **About · Skills and interests · Offers and requests · Personality and signs · Growth · Travel · Links** | The profile's seven tabs, the same in Edit profile (#91) | Basic Info, Values & Purpose, Goals & Growth | A booking that needs approval is a **booking request**.
+| **You and {community}** | Edit profile's tab for a community that hosts people (`hostingQuestions`, #108), after Offers and requests. Three groups: **Coming here** (What brings you to {community}? · Do you have daily work commitments? No · Yes, part-time · Yes, full-time), **Food** (Diet: No restrictions · Vegetarian · Vegan · Gluten-free · Other; Allergies, or None), **Experience and ideas** (Experience with work exchange, farms or communities; Ideas or projects you'd like to start here, each one **Suggest as a task**). A stay request asks the same questions, filled in | Intake, onboarding form, dietary requirements |
+| **Keep me posted** | "News and events by email": a box on Edit profile's Links tab (and later on a stay's last screen) | Newsletter, subscribe, mailing list |
 
 ## Recognition
 

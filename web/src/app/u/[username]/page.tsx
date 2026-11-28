@@ -5,7 +5,8 @@ import UserProfileClient from './UserProfileClient'
 import NetworkSidebar from '@/modules/m01-network/NetworkSidebar'
 import { PUBLIC_PROFILE_COLUMNS, SIGNED_IN_PROFILE_COLUMNS, profileDetailsOf } from '@/core/lib/public-profile'
 import { isJoiningOrAbove } from '@/core/lib/roles'
-import { DESIGN } from '@/core/lib/instance'
+import { DESIGN, HOSTING_QUESTIONS } from '@/core/lib/instance'
+import { loadHostingFacts } from '@/core/lib/hosting-questions'
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
@@ -75,6 +76,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     circles = [...out].map(([slug, lead]) => ({ slug, lead }))
   }
 
+  // Your own profile's "Still to add" counts the hosting questions too (only you read your answers here)
+  const hosting = isOwn && HOSTING_QUESTIONS ? await loadHostingFacts(supabase, profile.id) : null
+
   const vp = viewerProfileRes.data
   const sidebarUser = vp ? { username: vp.username, first_name: vp.first_name, avatar_url: vp.avatar_url } : null
 
@@ -82,7 +86,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     return (
       <UserProfileClient
         profile={profile as any} bio={bioRes.data ?? null} offers={offersRes.data ?? []} requests={requestsRes.data ?? []}
-        isOwn={isOwn} signedIn={!!user} fullProfile={isOwn || (!!user && isJoiningOrAbove(viewerRole))} growth={growthRes.data ?? null} match={match} circles={circles}
+        isOwn={isOwn} signedIn={!!user} fullProfile={isOwn || (!!user && isJoiningOrAbove(viewerRole))} growth={growthRes.data ?? null} match={match} circles={circles} hosting={hosting}
       />
     )
   }

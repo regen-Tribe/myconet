@@ -49,6 +49,8 @@ export interface ReviewProfileProps {
   growth: { fears: string | null; traumas: string | null; visibility: string } | null
   match?: { score: number; reasons: string[] } | null
   circles: { slug: string; lead: boolean }[]
+  /** Your own profile, with "hostingQuestions": which hosting questions are answered */
+  hosting?: import('@/core/lib/hosting-questions').HostingFacts | null
 }
 
 const OCEAN: { key: keyof Ocean; label: string }[] = [
@@ -78,7 +80,7 @@ function monthYear(d?: string) {
   return d ? new Date(d).toLocaleDateString('en', { month: 'short', year: 'numeric' }) : ''
 }
 
-export default function ProfileReview({ profile: p, bio, offers, requests, isOwn, signedIn, full = true, growth, match, circles }: ReviewProfileProps) {
+export default function ProfileReview({ profile: p, bio, offers, requests, isOwn, signedIn, full = true, growth, match, circles, hosting }: ReviewProfileProps) {
   // Before joining (#71): the public card and what they offer; city, matches, circles and the rest open at joining
   const limited = signedIn && !isOwn && !full
   const circleSet = useCircles()
@@ -96,7 +98,7 @@ export default function ProfileReview({ profile: p, bio, offers, requests, isOwn
   const otherArc = [['Human Design', arc?.humanDesign], ['Gene Key', arc?.geneKey], ['Mayan sign', arc?.mayan]].filter(([, v]) => !!v) as [string, string][]
   const travels = (bio?.places_traveling ?? []).filter(t => t.location?.trim())
   const values = valueList(bio?.values_principles)
-  const done = isOwn ? profileMissing(factsFromRows(p, bio, offers.length, requests.length)) : null
+  const done = isOwn ? profileMissing(factsFromRows(p, bio, offers.length, requests.length, hosting)) : null
 
   const head = (
     <header className="pfr-head">

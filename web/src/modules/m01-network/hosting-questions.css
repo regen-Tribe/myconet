@@ -1,0 +1,66 @@
+/* The hosting questions on Edit profile ("You and <community>"; decision #108). Design review only.
+   Phone first: three pastel group cards, one open at a time, as the skills picker has them (#95, #96):
+   soft fills, no borders, white fields inside a group. Text 13/15 (fields 16 so a phone doesn't zoom);
+   radii: pill, card 18px, field 14px. Nothing here scrolls sideways. */
+
+html[data-review] .hq { display: grid; gap: 8px; min-width: 0; }
+html[data-review] .hq-note { margin: 0 0 4px; display: flex; align-items: flex-start; gap: 6px; font-size: 13px; line-height: 1.45; color: var(--ink-3, #6b7180); }
+html[data-review] .hq-note .v4-icon { flex-shrink: 0; margin-top: 2px; }
+
+html[data-review] .hq-group { background: var(--pp-bg, #e1e5ed); border-radius: 18px; min-width: 0; }
+html[data-review] .hq-head { width: 100%; min-height: 56px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 14px 10px 16px; border: 0; background: none; color: var(--ink, #111317); font: inherit; text-align: left; cursor: pointer; border-radius: 18px; }
+html[data-review] .hq-head:focus-visible { outline: 2px solid var(--blue-ink, #2350b0); outline-offset: -2px; }
+html[data-review] .hq-head__text { display: grid; gap: 1px; min-width: 0; }
+html[data-review] .hq-head__text b { font-size: 15px; font-weight: 600; }
+html[data-review] .hq-head__text small { font-size: 13px; color: var(--ink-2, #3a3f4a); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html[data-review] .hq-head__text small[data-empty='true'] { color: var(--ink-3, #6b7180); }
+html[data-review] .hq-chev { color: var(--ink-2, #3a3f4a); transition: transform .15s; }
+html[data-review] .hq-group[data-open='true'] .hq-chev { transform: rotate(180deg); }
+html[data-review] .hq-body { display: grid; gap: 18px; padding: 4px 14px 16px; min-width: 0; }
+html[data-review] .hq-stack { display: grid; gap: 18px; min-width: 0; border-radius: 14px; }
+
+html[data-review] .hq-q { display: grid; gap: 8px; min-width: 0; border-radius: 14px; }
+html[data-review] .hq .hq-q > label, html[data-review] .hq-label { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--ink, #111317); }
+html[data-review] .hq-q > small { margin-top: -6px; font-size: 13px; color: var(--ink-2, #3a3f4a); }
+
+html[data-review] .hq-field { width: 100%; min-width: 0; box-sizing: border-box; border: 0; border-radius: 14px; background: rgba(255, 255, 255, .9); color: var(--ink, #111317); font: inherit; font-size: 16px; line-height: 1.4; padding: 11px 14px; outline: none; }
+html[data-review] textarea.hq-field { resize: vertical; min-height: 84px; }
+html[data-review] input.hq-field { height: 44px; padding-block: 0; }
+html[data-review] .hq-field::placeholder { color: var(--ink-4, #9aa0ad); }
+html[data-review] .hq-field:focus { background: var(--surface, #fff); box-shadow: inset 0 0 0 2px var(--ink, #111317); }
+
+html[data-review] .hq-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+html[data-review] .hq-pill { min-height: 40px; padding: 8px 14px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--ink, #111317); font: inherit; font-size: 15px; font-weight: 500; line-height: 1.2; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; transition: background .12s, color .12s; }
+html[data-review] .hq-pill[aria-pressed='true'] { background: var(--ink, #111317); color: #fff; }
+html[data-review] .hq-pill:focus-visible, html[data-review] .hq-x:focus-visible, html[data-review] .hq-add:focus-visible { outline: 2px solid var(--blue-ink, #2350b0); outline-offset: 2px; }
+
+html[data-review] .hq-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+html[data-review] .hq-row .hq-field { flex: 1 1 auto; }
+html[data-review] .hq-idea { display: grid; gap: 4px; justify-items: start; min-width: 0; }
+html[data-review] .hq-idea .hq-row { width: 100%; }
+html[data-review] .hq-x { flex-shrink: 0; width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--ink-2, #3a3f4a); display: grid; place-items: center; cursor: pointer; }
+html[data-review] .hq-x:hover { background: rgba(255, 255, 255, .6); }
+html[data-review] .hq-add { justify-self: start; min-height: 40px; padding: 8px 16px 8px 12px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--ink, #111317); font: inherit; font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+html[data-review] .hq-link { border: 0; background: none; padding: 4px 14px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink, #111317); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html[data-review] .hq-link:disabled { color: var(--ink-3, #6b7180); cursor: default; }
+html[data-review] .hq-onboard { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; font-size: 13px; font-weight: 600; color: var(--ink, #111317); text-decoration: none; }
+html[data-review] .hq-onboard:hover { text-decoration: underline; text-underline-offset: 3px; }
+html[data-review] .hq-lock { margin: 0; font-size: 13px; color: var(--ink-2, #3a3f4a); }
+html[data-review] .hq-lock a { color: var(--ink, #111317); font-weight: 600; text-underline-offset: 3px; }
+
+/* Links tab: Keep me posted */
+html[data-review] .pe4 .hq-posted { padding: 14px 16px; border-radius: 16px; background: var(--ctl, #e3e8f4); font-size: 13px; font-weight: 400; }
+html[data-review] .pe4 .hq-posted b { font-size: 15px; }
+html[data-review] .pe4 .hq-posted input { width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; }
+
+/* What couldn't be saved, in red words only (#67) */
+html[data-review] .pe4 .hq-error { margin: 12px 0 0; font-size: 13px; color: var(--red-ink, #a3321f); }
+html[data-review] .pe4 .hq-wait { margin: 12px 0 0; font-size: 13px; color: var(--ink-3, #6b7180); }
+
+/* Inside a pastel group the fields are white: Edit profile's own rule (profile-review.css) gives every field the
+   grey control fill with !important, so this one has to be as specific */
+html[data-review] main .pe4.v4-page .hq .hq-group .hq-body :is(input.hq-field, textarea.hq-field) { background: rgba(255, 255, 255, .9) !important; border-radius: 14px !important; font-size: 16px !important; }
+html[data-review] main .pe4.v4-page .hq .hq-group .hq-body :is(input.hq-field, textarea.hq-field):focus-visible { background: var(--surface, #fff) !important; }
+
+/* "and 9 more" after the first four in "Still to add" (#108): quieter than the field links */
+html[data-review] .pe4-meter__todo button.pe4-meter__more { font-weight: 500; color: var(--ink-2, #3a3f4a); }

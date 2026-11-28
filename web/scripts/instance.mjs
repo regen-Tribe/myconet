@@ -49,6 +49,7 @@ export function loadInstance() {
   }
   if (cfg.knowledge?.repo && !/^[\w.-]+\/[\w.-]+$/.test(cfg.knowledge.repo)) problems.push('knowledge.repo: "owner/repo"')
   if (cfg.assistant?.secondBrain && !cfg.knowledge?.repo) problems.push('assistant.secondBrain needs knowledge.repo (the second brain)')
+  if (cfg.hostingQuestions && !(cfg.design === 'v4' && cfg.designReview)) problems.push('hostingQuestions needs "design": "v4" and "designReview": true (the questions sit in the design review\'s Edit profile)')
   const mail = cfg.meetings?.notesEmail
   if (mail) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.from ?? '')) problems.push('meetings.notesEmail.from: an email address')
@@ -116,6 +117,9 @@ function publicEnv(cfg) {
     } : {}),
     // The commit this build came from: /api/version reports it, and the deploy check compares it
     NEXT_PUBLIC_GIT_SHA: gitSha(),
+    // The community hosts people on site: Edit profile asks what brings you, daily work, experience, ideas, diet
+    // and allergies, and "Keep me posted" (core/lib/instance.ts › HOSTING_QUESTIONS): "1" = on
+    NEXT_PUBLIC_HOSTING_QUESTIONS: cfg.hostingQuestions ? '1' : '',
   }
 }
 

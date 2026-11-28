@@ -39,7 +39,7 @@ Query params: `tab=browse|mine|manage`, `category=accommodation|tools|spaces`, `
 | `BookingsV4.tsx` | The v4 look's view of the same page (BookingsClient passes its state and actions as `vm`); Admin › Bookings adds the Calendar (who stays where: one strip of days that scrolls sideways, opening on today, v4.112.0) |
 | `ItemModal.tsx` | Item details, schedule, booking form, manager actions (with v4, its own view in the shared building blocks) |
 | `ItemFormModal.tsx` | Add/edit item: category, tags, circle, capacity, approval toggle (with v4, its own view) |
-| `StayCalendar.tsx`, `stay-calendar.css` | The availability calendar and the price box in an accommodation's pop-up (decision #106) |
+| `StayCalendar.tsx`, `stay-calendar.css` | The availability calendar and the price box in an accommodation's pop-up (decision #108) |
 | `lib/pricing.ts` | `stay_prices` → rates, the community's `STAY_RULES` (config `"stays"`), and `estimateStay`: the one place the arithmetic lives |
 | `lib/inventory.ts` | Categories, status labels, permission helpers, formatting, error messages |
 | `lib/queries.ts` | `ITEM_SELECT`, `BOOKING_SELECT`, row normalizers |

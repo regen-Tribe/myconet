@@ -1,10 +1,15 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { COMMUNITY_NAME, HOSTING_QUESTIONS } from './instance'
+import { loadHostingFacts, type HostingFacts } from './hosting-questions'
 
 /**
  * How complete someone's profile is, and what's missing first. The same eleven checks as the top bar's
  * old completion bar (AppTopBar › computeCompletion), so the number doesn't change when the bar moves.
  * With the design review the bar leaves the top bar: the menu's next step says "Finish your profile"
  * when it's the most useful thing (core/lib/menu-server.ts).
+ *
+ * A community that hosts people ("hostingQuestions") adds the same four checks as Edit profile
+ * (modules/m01-network/lib/profile-missing.ts), in the same place, so the number is the same everywhere.
  */
 
 export interface ProfileCompletion {
@@ -13,37 +18,46 @@ export interface ProfileCompletion {
   missing: string[]
 }
 
-const CHECKS: [string, (p: Row, b: Bio, offers: number, requests: number) => boolean][] = [
+type Check = [string, (p: Row, b: Bio, offers: number, requests: number, h?: HostingFacts | null) => boolean]
+const BASE_CHECKS: Check[] = [
   ['a photo', p => !!p?.avatar_url],
   ['your name', p => !!p?.first_name],
   ['a line about you', p => !!p?.headline],
   ['what you offer', (_p, _b, offers) => offers > 0],
   ['your skills', (_p, b) => (b?.skills?.length ?? 0) > 0],
   ['where you live', p => !!p?.city],
-  ['what brings you here', p => (p?.user_types?.length ?? 0) > 0],
+  [HOSTING_QUESTIONS ? 'who you are here' : 'what brings you here', p => (p?.user_types?.length ?? 0) > 0],
   ['your values', (_p, b) => !!b?.values_principles],
   ['your goals', (_p, b) => !!b?.goals],
   ['what you’re looking for', (_p, _b, _o, requests) => requests > 0],
   ['places you’re travelling', (_p, b) => (b?.places_traveling?.length ?? 0) > 0],
 ]
+const HOSTING_CHECKS: Check[] = [
+  [`what brings you to ${COMMUNITY_NAME}`, (_p, _b, _o, _r, h) => !h || h.brings],
+  ['your daily work', (_p, _b, _o, _r, h) => !h || h.work],
+  ['your diet and allergies', (_p, _b, _o, _r, h) => !h || h.food],
+  ['your experience with communities', (_p, _b, _o, _r, h) => !h || h.experience],
+]
+const CHECKS: Check[] = HOSTING_QUESTIONS ? [...BASE_CHECKS.slice(0, 8), ...HOSTING_CHECKS, ...BASE_CHECKS.slice(8)] : BASE_CHECKS
 
 type Row = { first_name?: string | null; avatar_url?: string | null; headline?: string | null; city?: string | null; user_types?: string[] | null } | null
 type Bio = { values_principles?: string | null; skills?: string[] | null; goals?: string | null; places_traveling?: unknown[] | null } | null
 
-export function computeProfileCompletion(p: Row, b: Bio, offers: number, requests: number): ProfileCompletion {
-  const results = CHECKS.map(([label, ok]) => [label, ok(p, b, offers, requests)] as const)
+export function computeProfileCompletion(p: Row, b: Bio, offers: number, requests: number, hosting?: HostingFacts | null): ProfileCompletion {
+  const results = CHECKS.map(([label, ok]) => [label, ok(p, b, offers, requests, hosting)] as const)
   const done = results.filter(([, ok]) => ok).length
   return { pct: Math.round(done / CHECKS.length * 100), missing: results.filter(([, ok]) => !ok).map(([label]) => label) }
 }
 
 export async function loadProfileCompletion(supabase: SupabaseClient, userId: string): Promise<ProfileCompletion> {
-  const [p, b, offers, requests] = await Promise.all([
+  const [p, b, offers, requests, hosting] = await Promise.all([
     supabase.from('user_profiles').select('first_name, avatar_url, headline, city, user_types').eq('id', userId).maybeSingle(),
     supabase.from('user_bio').select('values_principles, skills, goals, places_traveling').eq('user_id', userId).maybeSingle(),
     supabase.from('user_offers').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('is_active', true),
     supabase.from('user_requests').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('is_active', true),
+    HOSTING_QUESTIONS ? loadHostingFacts(supabase, userId) : null,
   ])
-  return computeProfileCompletion(p.data as Row, b.data as Bio, offers.count ?? 0, requests.count ?? 0)
+  return computeProfileCompletion(p.data as Row, b.data as Bio, offers.count ?? 0, requests.count ?? 0, hosting)
 }
 
 /** "Add a photo and what you offer": the first two missing things, as one short line */
