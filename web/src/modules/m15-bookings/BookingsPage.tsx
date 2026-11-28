@@ -4,6 +4,7 @@ import BookingsClient from './BookingsClient'
 import { canAddItems, isCategory, SCOPE_META, type BookingScope } from './lib/inventory'
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
 import type { AroundPlace, BookingsTab } from './types'
+import { toStayPrices } from './lib/pricing'
 import { NEAR } from '@/modules/m19-map/lib/places'
 
 const TABS: BookingsTab[] = ['browse', 'mine', 'manage']
@@ -66,6 +67,17 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
   ])
   const drawn = new Set(((drawnRes.error ? [] : drawnRes.data) ?? []).map(p => p.id as string))
   const placeDrawn = new Set(((placeDrawnRes.error ? [] : placeDrawnRes.data) ?? []).map(p => p.slug as string))
+  // What a stay costs, also read on its own for communities without the column yet
+  const pricesRes = await supabase.from('booking_items').select('id, stay_prices').not('stay_prices', 'is', null)
+  const prices = new Map(((pricesRes.error ? [] : pricesRes.data) ?? []).map(p => [p.id as string, toStayPrices(p.stay_prices)]))
+  // Items only admins approve, read on its own for the same reason
+  const adminsRes = await supabase.from('booking_items').select('id').eq('admins_approve', true)
+  const adminsApprove = new Set(((adminsRes.error ? [] : adminsRes.data) ?? []).map(p => p.id as string))
+  // How many people each stay is for, read on its own for the same reason
+  const guestsRes = user
+    ? await supabase.from('bookings').select('id, guests').gte('ends_at', since).gt('guests', 1)
+    : { data: [], error: null }
+  const guests = new Map(((guestsRes.error ? [] : guestsRes.data) ?? []).map(g => [g.id as string, g.guests as number]))
   const pins = new Map(((pinsRes.error ? [] : pinsRes.data) ?? []).map(p => [p.id as string, p as { map_x: number; map_y: number }]))
   const siteMapUrl = mapRes.error ? null : ((mapRes.data as { site_map_url: string | null } | null)?.site_map_url ?? null)
   // Each item belongs to the place its pin sits in (the Map page, v4.70.0): the card shows that place's photo
@@ -87,7 +99,7 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
     const own = photos.get(i.id) ?? null
     // The card shows the item's own picture, else its place's: the drawing mark follows the one shown
     const photo_drawn = own ? drawn.has(i.id) : !!place && placeDrawn.has(place.slug)
-    return { ...i, map_x, map_y, photo_url: own, photos: more.get(i.id) ?? [], photo_drawn, place }
+    return { ...i, map_x, map_y, photo_url: own, photos: more.get(i.id) ?? [], photo_drawn, place, stay_prices: prices.get(i.id) ?? null, admins_approve: adminsApprove.has(i.id) }
   })
   // Places from the Map with no bookable thing of their own (v4.113.0): shown under Spaces, so the page lists
   // everything shared, not only what you book. One source: the `places` table, never a copy in booking_items.
@@ -107,7 +119,7 @@ export async function renderBookings(scope: BookingScope, sp: BookingsSearchPara
     <BookingsClient
       scope={scope}
       initialItems={items}
-      initialBookings={((bookingsRes as { data: unknown[] | null }).data ?? []).map(toBooking)}
+      initialBookings={((bookingsRes as { data: unknown[] | null }).data ?? []).map(toBooking).map(b => ({ ...b, guests: guests.get(b.id) ?? 1 }))}
       userId={user?.id ?? null}
       me={me}
       role={role}

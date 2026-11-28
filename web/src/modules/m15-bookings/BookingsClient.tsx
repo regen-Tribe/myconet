@@ -6,7 +6,7 @@ import { createClient } from '@/core/lib/supabase/client'
 import type { Booking, BookingCategory, BookingItem, BookingsTab, PersonLite, AroundPlace } from './types'
 import { scopeForCategory, type BookingScope } from './lib/inventory'
 import {
-  CATEGORY_META, SCOPE_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canManageItem,
+  CATEGORY_META, SCOPE_META, STATUS_META, bookingErrorMessage, canAddItems, canBook, canDecideItem, canManageItem,
   fmtBookingRange, isHolding, personName,
 } from './lib/inventory'
 import { BOOKING_SELECT, ITEM_SELECT, toBooking, toItem } from './lib/queries'
@@ -93,7 +93,7 @@ export default function BookingsClient({
   const myUpcoming = now ? myBookings.filter(b => isHolding(b) && new Date(b.ends_at) > now).sort((a, b) => a.starts_at.localeCompare(b.starts_at)) : []
   const myPast = now ? myBookings.filter(b => !myUpcoming.includes(b)).sort((a, b) => b.starts_at.localeCompare(a.starts_at)).slice(0, 20) : []
   const pending = bookings
-    .filter(b => b.status === 'pending' && inScope(b) && (() => { const it = itemById.get(b.item_id); return it && canManageItem(it, userId, role, leadCircles) })())
+    .filter(b => b.status === 'pending' && inScope(b) && (() => { const it = itemById.get(b.item_id); return it && canDecideItem(it, userId, role, leadCircles) })())
     .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
 
   const openItem = openId ? itemById.get(openId) ?? null : null
@@ -111,13 +111,13 @@ export default function BookingsClient({
     return { text: 'Free now', color: '#16a34a' }
   }
 
-  async function book(item: BookingItem, startsAt: Date, endsAt: Date, note: string): Promise<string | null> {
+  async function book(item: BookingItem, startsAt: Date, endsAt: Date, note: string, guests = 1): Promise<string | null> {
     if (!userId) return 'Sign in to book.'
     const { data, error } = await supabase.from('bookings')
-      .insert({ item_id: item.id, user_id: userId, starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(), note: note || null })
+      .insert({ item_id: item.id, user_id: userId, starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(), note: note || null, ...(guests > 1 ? { guests } : {}) })
       .select(BOOKING_SELECT).single()
     if (error) return bookingErrorMessage(error)
-    setBookings(list => [...list, { ...toBooking(data), person: me }])
+    setBookings(list => [...list, { ...toBooking(data), person: me, guests }])
     return null
   }
 
@@ -127,7 +127,7 @@ export default function BookingsClient({
       setToast(error ? bookingErrorMessage(error) : 'That change didn’t save.')
       return
     }
-    const saved = toBooking(data[0])
+    const saved: Booking = { ...toBooking(data[0]), guests: b.guests }
     setBookings(list => list.map(x => (x.id === saved.id ? saved : x)))
     setToast(okMsg)
   }
@@ -157,7 +157,7 @@ export default function BookingsClient({
       const { data, error } = await supabase.from('booking_items').update(payload).eq('id', existing.id).select(ITEM_SELECT)
       if (error) return bookingErrorMessage(error)
       if (!data?.length) return 'You can’t edit this item. Admins, and circle leads of its circle, can.'
-      let saved: BookingItem = { ...existing, ...toItem(data[0]) }
+      let saved: BookingItem = { ...existing, ...toItem(data[0]), stay_prices: payload.stay_prices, admins_approve: payload.admins_approve ?? existing.admins_approve }
       if (photo) {
         const res = await saveItemPhoto(saved, photo)
         if (res instanceof Error) return res.message
@@ -175,7 +175,7 @@ export default function BookingsClient({
         ? 'Circle leads can only add items to circles they lead, or with no circle.'
         : bookingErrorMessage(error)
     }
-    let saved: BookingItem = toItem(data)
+    let saved: BookingItem = { ...toItem(data), stay_prices: payload.stay_prices, admins_approve: payload.admins_approve ?? false }
     if (photo && photo !== 'remove') {
       const res = await saveItemPhoto(saved, photo)
       if (res instanceof Error) setToast(res.message)
@@ -231,7 +231,8 @@ export default function BookingsClient({
       setToast('That change didn’t save.')
       return
     }
-    const saved = toItem(data[0])
+    // Keep what ITEM_SELECT doesn't read back (photos, pin, prices)
+    const saved: BookingItem = { ...item, ...toItem(data[0]) }
     setItems(list => list.map(i => (i.id === saved.id ? saved : i)))
     setToast(saved.is_active ? 'Item restored' : 'Item archived — it’s hidden from members')
   }
@@ -250,7 +251,7 @@ export default function BookingsClient({
             role={role}
             canManage={canManageItem(openItem, userId, role, leadCircles)}
             onClose={() => setOpenId(null)}
-            onBook={(s, e, note) => book(openItem, s, e, note)}
+            onBook={(s, e, note, guests) => book(openItem, s, e, note, guests)}
             onEdit={() => setForm({ existing: openItem })}
             onToggleActive={() => toggleActive(openItem)}
           />
@@ -522,7 +523,7 @@ export default function BookingsClient({
           role={role}
           canManage={canManageItem(openItem, userId, role, leadCircles)}
           onClose={() => setOpenId(null)}
-          onBook={(s, e, note) => book(openItem, s, e, note)}
+          onBook={(s, e, note, guests) => book(openItem, s, e, note, guests)}
           onEdit={() => setForm({ existing: openItem })}
           onToggleActive={() => toggleActive(openItem)}
         />

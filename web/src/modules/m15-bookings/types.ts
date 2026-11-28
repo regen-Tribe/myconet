@@ -1,3 +1,5 @@
+import type { StayPrices } from './lib/pricing'
+
 export type BookingCategory = 'accommodation' | 'tools' | 'spaces'
 export type BookingStatus = 'pending' | 'confirmed' | 'declined' | 'cancelled'
 
@@ -27,6 +29,10 @@ export interface BookingItem {
   photos?: string[]
   /** The cover is a drawing standing in for a photo (v4.116.0): the card sorts last */
   photo_drawn?: boolean
+  /** Only admins approve its requests; a circle lead who manages it can still edit it */
+  admins_approve?: boolean
+  /** What a stay costs, before tax (accommodation): null or missing = no price shown */
+  stay_prices?: StayPrices | null
   /** The place on the Map this item sits in (v4.74.0): its photo and slug, for the card and a link to /map */
   place?: { slug: string; name: string; photo_url: string | null; photos?: string[] } | null
 }
@@ -39,6 +45,8 @@ export interface Booking {
   ends_at: string
   status: BookingStatus
   note: string | null
+  /** How many people the stay is for */
+  guests?: number
   created_at: string
   person: PersonLite | null
 }

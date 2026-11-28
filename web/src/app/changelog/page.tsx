@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.150.0',
+    date: '2026-11-28',
+    title: 'Pick your stay on a calendar that shows what\'s free, with prices and an estimated total',
+    items: ['A place to stay shows its prices (a night, a week, a month) and a calendar of free and taken nights. Tap your check-in day, then your check-out day.', 'Once you pick dates you see an estimated total. It\'s an estimate; whoever approves your stay confirms the price.', 'The calendar shows free and taken nights only. Names are for the people who manage the place.', 'An admin can say that only admins approve a place\'s requests ("Only admins approve" in its Edit form).', 'Admins and circle leads set a place\'s prices in its Edit form, and see how many people and about how much on each request.'],
+  },
+  {
     version: 'v4.149.1',
     date: '2026-11-28',
     title: 'Joining asks "What are the areas you have experience with?"',

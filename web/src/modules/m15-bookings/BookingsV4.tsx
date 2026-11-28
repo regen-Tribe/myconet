@@ -14,6 +14,7 @@ import AmenitiesMap from './AmenitiesMap'
 import { KIND_META, isKind } from '@/modules/m19-map/lib/places'
 import { SpaceTabs } from '@/core/components/SpaceTabs'
 import { tagLabel } from './lib/tag-labels'
+import { estimateStay, fmtMoney, fromPrice, ratesFor } from './lib/pricing'
 import { PhotoEdit, SPACE_PURPOSE, SPACE_TITLE, SpaceBar, SpaceNote, type FilterGroup, type SpaceView } from './SpaceReview'
 
 /**
@@ -279,7 +280,7 @@ function GroupCard({ vm, group }: { vm: BookingsV4Model; group: GroupEntry }) {
       <ItemMedia photo={photo} category={first.category} badge={vm.now ? (free === 0 ? 'All in use now' : `${free} of ${group.items.length} free now`) : null} busy={free === 0} />
       <div className="v4-item__body">
         <b>{group.title}</b>
-        <small>{[`${group.items.length} ${group.unit}s`, cap ? `${cap} ${cap === 1 ? 'person' : 'people'} each` : null, where].filter(Boolean).join(' · ')}</small>
+        <small>{[`${group.items.length} ${group.unit}s`, cap ? `${cap} ${cap === 1 ? 'person' : 'people'} each` : null, where, fromPrice(first.stay_prices)].filter(Boolean).join(' · ')}</small>
         <div className="v4-unitpick" role="group" aria-label={`Pick a ${group.unit}`}>
         {group.items.map(i => (
           <button key={i.id} type="button" className={`v4-unit${isFree(i) ? '' : ' v4-unit--busy'}`} onClick={() => vm.open(i.id)}
@@ -319,7 +320,7 @@ function Browse({ vm, review = false }: { vm: BookingsV4Model; review?: boolean 
         <ItemMedia photo={shownPhoto(item)} category={item.category} badge={avail?.text} busy={avail?.text.startsWith('In use')} />
         <span className="v4-item__body">
           <b>{item.name}</b>
-          <small>{[CATEGORY_META[item.category].label, item.location ?? (item.place?.name !== item.name ? item.place?.name : null), item.capacity ? `${item.capacity} ${item.capacity === 1 ? 'person' : 'people'}` : null].filter(Boolean).join(' · ')}</small>
+          <small>{[CATEGORY_META[item.category].label, item.location ?? (item.place?.name !== item.name ? item.place?.name : null), item.capacity ? `${item.capacity} ${item.capacity === 1 ? 'person' : 'people'}` : null, fromPrice(item.stay_prices)].filter(Boolean).join(' · ')}</small>
           {(item.tags.length > 0 || item.requires_approval) && (
             <span className="v4-tags">
               {item.requires_approval && <Tag icon="hand">Needs approval</Tag>}
@@ -399,7 +400,10 @@ function Browse({ vm, review = false }: { vm: BookingsV4Model; review?: boolean 
 function BookingRow({ vm, b, actions }: { vm: BookingsV4Model; b: Booking; actions?: React.ReactNode }) {
   const item = vm.itemById.get(b.item_id)
   const ci = item ? CATEGORY_ICON[item.category] : { icon: 'box' as IconName, tone: 'blue' as const }
-  const meta = [item && vm.now ? fmtBookingRange(b, item.category) : null, b.user_id !== vm.userId ? personName(b.person) : null, b.note ? `“${b.note}”` : null]
+  // A stay also says how many people and what it should cost, so whoever approves it can quote the price
+  const guests = b.guests ?? 1
+  const est = item?.category === 'accommodation' ? estimateStay(ratesFor(item.stay_prices, guests), new Date(b.starts_at), new Date(b.ends_at)) : null
+  const meta = [item && vm.now ? fmtBookingRange(b, item.category) : null, b.user_id !== vm.userId ? personName(b.person) : null, guests > 1 ? `${guests} people` : null, est ? `about ${fmtMoney(est.total)}` : null, b.note ? `“${b.note}”` : null]
     .filter(Boolean).join(' · ')
   return (
     <ListRow

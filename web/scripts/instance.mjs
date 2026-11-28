@@ -97,6 +97,9 @@ function publicEnv(cfg) {
     // Who edits the Blueprint: "admins" = admins only; empty = admins and circle leads (core/lib/roles › canEditBlueprint)
     NEXT_PUBLIC_BLUEPRINT_EDITORS: cfg.blueprintEditors ?? '',
     NEXT_PUBLIC_BRAND_MARK: cfg.brandMark ?? '',
+    // What a stay costs on top of each place's own rates: "stays": { currency, vatPercent, longStay, notes }
+    // (modules/m15-bookings/lib/pricing.ts › STAY_RULES)
+    NEXT_PUBLIC_STAY_RULES: cfg.stays ? JSON.stringify(cfg.stays) : '',
     // The community's time zone, for dates said in meetings ("by Friday") and task times
     COMMUNITY_TIME_ZONE: cfg.timeZone ?? 'UTC',
     // The community's second brain on GitHub (meeting notes are saved there); the token is the
