@@ -6,6 +6,7 @@ import { useCircles } from '@/core/components/CirclesProvider'
 import type { CircleSlug } from '@/core/lib/circles'
 import type { BookingCategory, BookingItem } from './types'
 import { CATEGORY_META } from './lib/inventory'
+import { STAY_RULES, toStayPrices, type StayPrices } from './lib/pricing'
 import { DESIGN } from '@/core/lib/instance'
 import { Button, Chip, ChipRow, InlineIcon } from '@/core/components/v4'
 
@@ -18,6 +19,8 @@ export interface ItemPayload {
   location: string | null
   capacity: number | null
   requires_approval: boolean
+  /** What a stay costs (accommodation); null clears it */
+  stay_prices: StayPrices | null
 }
 
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--ink-2)', marginBottom: 6 }
@@ -50,6 +53,13 @@ export function ItemFormModal({
   const [tagInput, setTagInput] = useState('')
   const [description, setDescription] = useState(existing?.description ?? '')
   const [location, setLocation] = useState(existing?.location ?? '')
+  // Prices as typed: one person, then two sharing (accommodation only)
+  const p0 = existing?.stay_prices
+  const priceText = (n: number | undefined) => (n === undefined ? '' : String(n))
+  const [price, setPrice] = useState({
+    night: priceText(p0?.night), week: priceText(p0?.week), month: priceText(p0?.month),
+    night2: priceText(p0?.two?.night), week2: priceText(p0?.two?.week), month2: priceText(p0?.two?.month),
+  })
   const [capacity, setCapacity] = useState(existing?.capacity ? String(existing.capacity) : '')
   const [circle, setCircle] = useState<CircleSlug | ''>((existing?.circle as CircleSlug) ?? '')
   const [requiresApproval, setRequiresApproval] = useState(existing?.requires_approval ?? category === 'accommodation')
@@ -74,6 +84,13 @@ export function ItemFormModal({
     if (!name.trim()) return setError('Give the item a name.')
     const cap = capacity.trim() ? Number(capacity) : null
     if (cap !== null && (!Number.isInteger(cap) || cap < 1)) return setError('Capacity should be a whole number of people.')
+    let stayPrices: StayPrices | null = null
+    if (category === 'accommodation') {
+      const bad = Object.values(price).some(v => v.trim() && !(Number(v) >= 0))
+      if (bad) return setError('Prices should be numbers, like 70 or 1700.')
+      const n = (v: string) => (v.trim() ? Number(v) : undefined)
+      stayPrices = toStayPrices({ night: n(price.night), week: n(price.week), month: n(price.month), two: { night: n(price.night2), week: n(price.week2), month: n(price.month2) } })
+    }
     const allTags = tagInput.trim() ? [...new Set([...tags, ...tagInput.split(',').map(normalizeTag).filter(Boolean)])] : tags
     setSaving(true)
     const err = await onSave({
@@ -85,6 +102,7 @@ export function ItemFormModal({
       location: location.trim() || null,
       capacity: cap,
       requires_approval: requiresApproval,
+      stay_prices: stayPrices,
     }, photo)
     setSaving(false)
     if (err) setError(err)
@@ -187,6 +205,25 @@ export function ItemFormModal({
             </div>
             {role === 'circle_lead' && <small className="v4-hint">You can add items to circles you lead. Items with no circle can be managed by any circle lead.</small>}
           </div>
+
+          {category === 'accommodation' && (
+            <div className="v4-field">
+              <span>Prices <small>in {STAY_RULES.currency}{STAY_RULES.vatPercent ? `, before ${STAY_RULES.vatPercent}% tax` : ''}; leave empty what you don’t offer</small></span>
+              {([['One person', ''], ['Two people sharing', '2']] as const).map(([who, k]) => (
+                <div key={who} className="v4-form__row" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+                  {(['night', 'week', 'month'] as const).map(unit => {
+                    const key = `${unit}${k}` as keyof typeof price
+                    return (
+                      <label key={key} className="v4-field">
+                        <small className="v4-hint">{who}, a {unit}</small>
+                        <input className="v4-input" inputMode="decimal" value={price[key]} onChange={e => setPrice(p => ({ ...p, [key]: e.target.value }))} />
+                      </label>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
 
           <label className="v4-check">
             <input type="checkbox" checked={requiresApproval} onChange={e => setRequiresApproval(e.target.checked)} />

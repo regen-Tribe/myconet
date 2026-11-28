@@ -1,0 +1,56 @@
+/* The availability calendar in a place's pop-up (StayCalendar.tsx) and the price box under it. */
+
+.stay-cal { display: grid; gap: 10px; }
+.stay-cal__nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.stay-cal__prompt { font-size: 13px; font-weight: 600; color: var(--ink, #111317); text-align: center; }
+.stay-cal__arrow { width: 44px; height: 44px; border-radius: 999px; border: 0; background: var(--bg-2, #f6f7fa); color: var(--ink, #111317); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.stay-cal__arrow:disabled { opacity: .35; cursor: default; }
+
+.stay-cal__months { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.stay-cal__title { font-size: 13px; font-weight: 600; color: var(--ink, #111317); text-align: center; margin-bottom: 6px; }
+.stay-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; }
+.stay-cal__wd { font-size: 10.5px; color: var(--ink-4, #9aa0ad); text-align: center; padding: 4px 0; }
+
+.stay-cal__day { aspect-ratio: 1; min-height: 34px; border: 0; background: none; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink, #111317); cursor: pointer; padding: 0; }
+.stay-cal__day:hover:not(:disabled) { background: var(--action, #d4f0dd); }
+.stay-cal__day:focus-visible { outline: 2px solid var(--action-ink, #235c3b); outline-offset: 1px; }
+.stay-cal__day:disabled { cursor: default; }
+.stay-cal__day.is-today { box-shadow: inset 0 0 0 1px var(--rule, rgba(17,19,23,.18)); }
+.stay-cal__day.is-past, .stay-cal__day.is-out { color: var(--ink-4, #9aa0ad); font-weight: 400; opacity: .55; }
+.stay-cal__day.is-taken { color: var(--ink-4, #9aa0ad); font-weight: 400; text-decoration: line-through; background: var(--bg-2, #f6f7fa); border-radius: 0; }
+/* Your own stay: taken, but yours. Not the green of the dates being picked */
+.stay-cal__day.is-mine { color: var(--action-ink, #235c3b); background: var(--bg-2, #f6f7fa); border-radius: 0; box-shadow: inset 0 -3px 0 var(--action-ink, #235c3b); }
+.stay-cal__day.is-between { background: var(--action, #d4f0dd); color: var(--action-ink, #235c3b); border-radius: 0; }
+.stay-cal__day.is-end, .stay-cal__day.is-end:hover { background: var(--ink, #111317); color: #fff; text-decoration: none; opacity: 1; border-radius: 999px; }
+
+.stay-cal__legend { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font-size: 12px; color: var(--ink-3, #6b7180); }
+.stay-cal__legend span { display: inline-flex; align-items: center; gap: 6px; }
+.stay-cal__key { width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px var(--rule, rgba(17,19,23,.18)); background: var(--surface, #fff); }
+.stay-cal__key--taken { background: var(--bg-2, #f6f7fa); background-image: linear-gradient(to top right, transparent 46%, var(--ink-4, #9aa0ad) 46%, var(--ink-4, #9aa0ad) 54%, transparent 54%); }
+.stay-cal__key--mine { background: var(--bg-2, #f6f7fa); box-shadow: inset 0 -3px 0 var(--action-ink, #235c3b); }
+.stay-cal__clear { margin-left: auto; border: 0; background: none; font: inherit; font-size: 12px; font-weight: 600; color: var(--ink, #111317); text-decoration: underline; cursor: pointer; padding: 6px 0; }
+
+@media (max-width: 560px) {
+  .stay-cal__months { grid-template-columns: 1fr; }
+  .stay-cal__month--second { display: none; }
+  .stay-cal__day { min-height: 40px; font-size: 14px; }
+}
+
+/* Prices: the rates a place has, and the estimate for the chosen dates */
+.stay-rates { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.stay-rates div { background: var(--bg-2, #f6f7fa); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; }
+.stay-rates b { font-size: 16px; font-weight: 600; color: var(--ink, #111317); }
+.stay-rates small { font-size: 11.5px; color: var(--ink-3, #6b7180); }
+.stay-notes { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.5; color: var(--ink-3, #6b7180); }
+
+.stay-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stay-dates div { background: var(--bg-2, #f6f7fa); border-radius: 12px; padding: 8px 12px; display: grid; gap: 1px; }
+.stay-dates small { font-size: 11px; color: var(--ink-3, #6b7180); }
+.stay-dates b { font-size: 13.5px; font-weight: 600; color: var(--ink, #111317); }
+.stay-dates b.is-empty { color: var(--ink-4, #9aa0ad); font-weight: 400; }
+
+.stay-total { background: var(--bg-2, #f6f7fa); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2, #3a3f4a); }
+.stay-total__row { display: flex; justify-content: space-between; gap: 12px; }
+.stay-total__row--off { color: var(--action-ink, #235c3b); }
+.stay-total__row--sum { border-top: 1px solid var(--rule, rgba(17,19,23,.1)); padding-top: 8px; margin-top: 2px; font-size: 15px; font-weight: 600; color: var(--ink, #111317); }
+.stay-total small { font-size: 12px; color: var(--ink-3, #6b7180); line-height: 1.45; }
