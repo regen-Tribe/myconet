@@ -12,7 +12,7 @@ import { COMMUNITY_DESCRIPTION, COMMUNITY_NAME } from '@/core/lib/instance'
 import { PillPicker } from '@/core/components/v4/PillPicker'
 import { HomePicker } from '@/core/components/v4/HomePicker'
 import { homesOf, homesToFields, type Home } from '@/core/lib/homes'
-import { DESCRIBES, PILL_GROUPS, groupOfPill, pastel, valueList, type PillStats } from '@/core/lib/skills-interests'
+import { DESCRIBES, pastel, valueList, type PillStats } from '@/core/lib/skills-interests'
 import './join-review.css'
 
 /**
@@ -49,15 +49,13 @@ function ReadMore({ label = `Read more about ${COMMUNITY_NAME}` }: { label?: str
   return <a href="/about" target="_blank" rel="noopener" className="jf-more">{label}<Icon name="external" size={14} /></a>
 }
 
-export default function JoinReview({ userId, role, values, initialSigned, questions, profile, offers = [], bio = null, requests = [], pillStats, application, initialStep, initialPart = 0 }: {
+export default function JoinReview({ userId, role, values, initialSigned, questions, profile, bio = null, requests = [], pillStats, application, initialStep, initialPart = 0 }: {
   userId: string | null
   role: string
   values: Value[]
   initialSigned: string[]
   questions: string[]
   profile: Profile | null
-  /** What the person already offers (user_offers titles), so step 2 shows them chosen */
-  offers?: string[]
   bio?: JoinBio | null
   requests?: JoinRequest[]
   /** How many people here list each skill and interest, and which go together (for "You might also pick") */
@@ -85,7 +83,6 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
   // ?step=application (old links) opens About you's last screen, where Send is now
   const [open, setOpen] = useState<JoinStepKey | null>(userId && !joined ? (initialStep === 'application' ? 'profile' : initialStep ?? path.next?.key ?? 'values') : null)
   // What About you has saved so far, so going back and forth shows it (each screen starts from these)
-  const [myOffers, setMyOffers] = useState(offers)
   const [myBio, setMyBio] = useState<JoinBio | null>(bio)
   const [myRequests, setMyRequests] = useState(requests)
   const [part, setPart] = useState(initialStep === 'application' ? LAST_PART : initialStep === 'profile' ? Math.min(LAST_PART, Math.max(0, initialPart)) : 0)
@@ -146,10 +143,9 @@ export default function JoinReview({ userId, role, values, initialSigned, questi
           <KnowUsStep userId={userId} values={values} signed={signed} onSigned={ids => setSigned(prev => new Set([...prev, ...ids]))} onNext={() => go('profile')} />
         )}
         {userId && !joined && !sent && open === 'profile' && (
-          <AboutYouStep key={part} part={part} userId={userId} profile={me} offers={myOffers} bio={myBio} requests={myRequests} pillStats={pillStats} valueNames={values.map(v => v.title)}
+          <AboutYouStep key={part} part={part} userId={userId} profile={me} bio={myBio} requests={myRequests} pillStats={pillStats} valueNames={values.map(v => v.title)}
             onSaved={p => setMe(prev => ({ ...(prev ?? { first_name: null, last_name: null, headline: null }), ...p }))}
             onData={d => {
-              if (d.offers) setMyOffers(d.offers)
               if (d.bio) setMyBio(prev => ({ skills: [], interests: [], values_principles: null, ...prev, ...d.bio }))
               if (d.requests) setMyRequests(d.requests)
             }}
@@ -243,19 +239,19 @@ function KnowUsStep({ userId, values, signed, onSigned, onNext }: {
 }
 
 // One question per screen, so each fits a phone screen (Sonia, 25 Nov; decision #100). The title is the question.
-const PARTS = ['Tell us about you', 'What are you up to in this world?', 'A bit more about you', 'What are you good at?',
+const PARTS = ['Tell us about you', 'What are you up to in this world?', 'A bit more about you', 'What are the areas you have experience with?',
   'What are you curious about?', 'What would you like to receive from the community?', 'Your values']
 const LAST_PART = PARTS.length - 1
 const norm = (t: string) => t.trim().toLowerCase()
 
 // Step 2 (#81, #89): three short screens inside Start joining, each saved on Continue. 1: photo, a line about you,
-// what you're up to, what best describes you, where you're based. 2: good at (the ones you share become offers,
-// #90) and curious about, from one list of groups. 3: what you'd like to receive, and your values as names.
+// what you're up to, what best describes you, where you're based. 2: areas you have experience with (skills only;
+// offers are added in Edit profile, Sonia 27 Nov) and curious about, from one list of groups. 3: what you'd like to receive, and your values as names.
 // A line about you finishes the step; everything can be skipped, since the application can be sent without it.
-function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats, valueNames, questions, rejected, unsignedValues, onBackToValues, onSent, onSaved, onData, onBack, onNext }: {
-  part: number; userId: string; profile: Profile | null; offers: string[]; bio: JoinBio | null; requests: JoinRequest[]; pillStats: PillStats
+function AboutYouStep({ part, userId, profile, bio, requests, pillStats, valueNames, questions, rejected, unsignedValues, onBackToValues, onSent, onSaved, onData, onBack, onNext }: {
+  part: number; userId: string; profile: Profile | null; bio: JoinBio | null; requests: JoinRequest[]; pillStats: PillStats
   valueNames: string[]; onSaved: (p: Partial<Profile>) => void
-  onData: (d: { offers?: string[]; bio?: Partial<JoinBio>; requests?: JoinRequest[] }) => void
+  onData: (d: { bio?: Partial<JoinBio>; requests?: JoinRequest[] }) => void
   /** The community's own questions, if its Blueprint has any; they show on the last screen, above Send */
   questions: string[]; rejected: boolean; unsignedValues: number; onBackToValues: () => void; onSent: () => void; onBack: () => void; onNext: () => void
 }) {
@@ -270,10 +266,8 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
   const [world, setWorld] = useState(profile?.public_bio ?? '')
   const [types, setTypes] = useState<string[]>(profile?.user_types ?? [])
   const [homes, setHomes] = useState<Home[]>(() => homesOf(profile?.city, profile?.country))
-  // Screen 2: what you already offer under a skill's name counts as shared
   const [good, setGood] = useState<string[]>(bio?.skills ?? [])
   const [curious, setCurious] = useState<string[]>(bio?.interests ?? [])
-  const [shared, setShared] = useState<string[]>(() => (bio?.skills ?? []).filter(k => offers.some(o => norm(o) === norm(k))))
   // Screen 3
   const [asks, setAsks] = useState<{ id?: string; text: string }[]>(() => requests.length ? requests.map(r => ({ id: r.id, text: r.request_text })) : [{ text: '' }])
   const [mine, setMine] = useState<string[]>(() => valueList(bio?.values_principles) ?? [])
@@ -305,13 +299,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
     if (part === 2) ({ error: err } = await profilePatch({ user_types: types, ...homesToFields(homes) }))
     if (part === 3) {
       ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, skills: good }, { onConflict: 'user_id' }))
-      // Shared skills become offers; a skill no longer shared takes its offer away (offers with other titles stay)
-      const add = shared.filter(k => good.some(g => norm(g) === norm(k)) && !offers.some(o => norm(o) === norm(k)))
-        .map(title => ({ user_id: userId, title, category: PILL_GROUPS[groupOfPill(title)]?.offerCategory ?? 'Other', compensation_model: 'Other', is_active: true }))
-      const drop = offers.filter(o => [...good, ...(bio?.skills ?? [])].some(g => norm(g) === norm(o)) && !shared.some(k => norm(k) === norm(o)))
-      if (!err && add.length) ({ error: err } = await supabase.from('user_offers').insert(add))
-      if (!err && drop.length) ({ error: err } = await supabase.from('user_offers').delete().eq('user_id', userId).in('title', drop))
-      if (!err) onData({ bio: { skills: good }, offers: [...offers.filter(o => !drop.includes(o)), ...add.map(a => a.title)] })
+      if (!err) onData({ bio: { skills: good } })
     }
     if (part === 4) {
       ;({ error: err } = await supabase.from('user_bio').upsert({ user_id: userId, interests: curious }, { onConflict: 'user_id' }))
@@ -396,7 +384,7 @@ function AboutYouStep({ part, userId, profile, offers, bio, requests, pillStats,
         <HomePicker value={homes} onChange={setHomes} />
       </>}
 
-      {part === 3 && <PillPicker label="What are you good at?" hideLabel value={good} onChange={setGood} stats={pillStats} share={{ value: shared, onChange: setShared }} ownExample="Pottery" />}
+      {part === 3 && <PillPicker label="What are the areas you have experience with?" hideLabel value={good} onChange={setGood} stats={pillStats} ownExample="Pottery" />}
 
       {part === 4 && <PillPicker label="What are you curious about?" hideLabel value={curious} onChange={setCurious} stats={pillStats} ownExample="Mushrooms" />}
 

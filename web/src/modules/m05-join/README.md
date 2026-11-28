@@ -10,7 +10,7 @@ or assistant). Heading "Start joining", the track of two steps **Get to know us 
 (`JoinPathView.tsx`), then one step per card with Back and Continue. Step 1 lists the values and signs them with
 "I share these values" (About's values chapter can still sign them, `m04-blueprint/SignValues.tsx`); step 2 is
 About you in three short screens (#90, `?step=profile&part=2`): about you and what best describes you; what you're
-good at and curious about (`PillPicker`, #89; shared skills become offers); what you'd like to receive and your values
+areas you have experience with and curious about (`PillPicker`, #89, #105; skills only, offers are added in Edit profile); what you'd like to receive and your values
 as names. Each screen saves on Continue and can be skipped; the last ends with Send application (and the Blueprint's own questions, if any) and says next to Send why it waits. About opens in a new tab. "What joining
 opens" (explorer, joining member, member) is folded under the flow. The steps come from `core/lib/join-path.ts`, which the menu's
 next step (`core/lib/menu-server.ts`) and My dashboard read too, so all three say the same thing. `?step=values |

@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.149.1',
+    date: '2026-11-28',
+    title: 'Joining asks "What are the areas you have experience with?"',
+    items: ['Joining and Edit profile ask "What are the areas you have experience with?" instead of "What are you good at?".', 'Joining asks it once: the extra "Happy to share any?" row is gone. Offers are added in Edit profile.'],
+  },
+  {
     version: 'v4.149.0',
     date: '2026-11-28',
     title: 'An explorer\'s Dashboard says what the portal holds, and pages stop sliding sideways on phones',

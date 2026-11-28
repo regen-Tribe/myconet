@@ -5,6 +5,15 @@ change behaviour); major = something communities must act on, with upgrade notes
 A community's history before v4.0.0 is in its own `instance/log.md`. The same notes
 are shown in the app at `/changelog` (`web/src/app/changelog/page.tsx`).
 
+## v4.149.1 — 2026-11-28 — Joining asks "What are the areas you have experience with?"
+
+Sonia (27 Nov): "\"happy to share any?\" not clear what this means, seems like too much", and "\"what are the areas
+you have experience with?\" replaces what you're good at" (decision #105). Start joining's fourth About you screen
+has the new title and no share row; its picks are saved to `user_bio.skills` only, and joining no longer creates or
+removes `user_offers` rows (`modules/m05-join/JoinReview.tsx`, `app/join/page.tsx` no longer loads offers). Edit
+profile uses the same question and keeps its share row, so offers still come from skills there. Words in
+`LEXICON.md`, `design/decisions.md` #105. No migration.
+
 ## v4.149.0 — 2026-11-28 — An explorer's Dashboard says what the portal holds, and pages stop sliding sideways on phones
 
 Sonia, testing on her phone (27 Nov): "this gives little background to what the protopia portal is - we should say what
