@@ -4,6 +4,12 @@ import Link from 'next/link'
 // ENTRIES is written by the release (web/scripts/release.mjs) from the notes in changes/: don't add to it in a change.
 const ENTRIES = [
   {
+    version: 'v4.149.0',
+    date: '2026-11-28',
+    title: 'An explorer\'s Dashboard says what the portal holds, and pages stop sliding sideways on phones',
+    items: ['Before you join, your Dashboard first says what this portal is and what you\'ll find in it (Members, Calendar, The space, and working together once you\'ve joined), then the two steps to join. It fits one phone screen.', 'On a phone, pages no longer slide sideways when you scroll.'],
+  },
+  {
     version: 'v4.148.1',
     date: '2026-11-27',
     title: '"I lead" shows the same in both board views',
