@@ -1,6 +1,6 @@
 /**
- * One list of groups and pills for two questions: "What are you good at?" (user_bio.skills) and "What are you
- * curious about?" (user_bio.interests). The same words in both, so a skill meets a curiosity exactly when matching
+ * One list of groups and pills for two questions: "What are the areas you have experience with?" (user_bio.skills;
+ * was "What are you good at?" until 27 Nov, #104) and "What are you curious about?" (user_bio.interests). The same words in both, so a skill meets a curiosity exactly when matching
  * (modules/m01-network/lib/match-score.ts). Sonia, 25 Nov 2026; design/decisions.md #89, #90.
  *
  * Pills are stored as plain text, as before: anything typed by hand still works and still matches by similar
