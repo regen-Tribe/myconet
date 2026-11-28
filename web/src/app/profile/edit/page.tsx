@@ -47,7 +47,7 @@ const STEPS = [
 /** With the design review: seven tabs, the same as the profile and Start joining (Sonia, 25 Nov; decision #91) */
 const TABS = [
   { id: 1, title: 'About',                 icon: User,   description: 'Who you are, where you are, what you value' },
-  { id: 2, title: 'Skills and interests',  icon: Heart,  description: 'What you’re good at and curious about' },
+  { id: 2, title: 'Skills and interests',  icon: Heart,  description: 'Your experience and what you’re curious about' },
   { id: 3, title: 'Offers and requests',   icon: Gift,   description: 'What you share and what you’d like' },
   { id: 4, title: 'Personality and signs', icon: Brain,  description: 'All optional, for those who enjoy it' },
   { id: 5, title: 'Growth',                icon: Target, description: 'Where you’re heading' },
@@ -870,7 +870,7 @@ export default function ProfileWizard() {
           )}
           {on('tags') && RV && (
             <div className="grid gap-8" id="pe-skills">
-              <PillPicker label="What are you good at?" hint="Pick from the groups, then tap the ones you’re excited to share: they show under Offers."
+              <PillPicker label="What are the areas you have experience with?" hint="Pick from the groups, then tap the ones you’re excited to share: they show under Offers."
                 value={form.skills} onChange={v => update('skills', v)} stats={stats} share={{ value: shared, onChange: setShared }} />
               <PillPicker label="What are you curious about?" hint="The same groups. Pick what you’d love to learn or explore."
                 value={form.interests} onChange={v => update('interests', v)} stats={stats} ownExample="Mushrooms" />

@@ -88,21 +88,20 @@ export default async function JoinPage(props: { searchParams?: Promise<{ step?: 
   if (DESIGN_REVIEW) {
     const params = await props.searchParams
     const step = params?.step
-    // Step 2 starts from what the person already has: offers, skills, interests, values, requests (#81, #89, #90), and
+    // Step 2 starts from what the person already has: skills, interests, values, requests (#81, #89, #90), and
     // how many people here list each pill, for "Popular here" and "You might also pick" (counts only, no names)
-    const [offerRes, bioRes, requestRes, everyoneRes] = user
+    const [bioRes, requestRes, everyoneRes] = user
       ? await Promise.all([
-          supabase.from('user_offers').select('title').eq('user_id', user.id),
           supabase.from('user_bio').select('skills, interests, values_principles').eq('user_id', user.id).maybeSingle(),
           supabase.from('user_requests').select('id, request_text').eq('user_id', user.id).order('created_at'),
           supabase.from('user_bio').select('skills, interests'),
         ])
-      : [{ data: null }, { data: null }, { data: null }, { data: null }]
+      : [{ data: null }, { data: null }, { data: null }]
     const everyone = (everyoneRes.data ?? []) as { skills: string[] | null; interests: string[] | null }[]
     const b = bioRes.data as { skills: string[] | null; interests: string[] | null; values_principles: string | null } | null
     return (
       <JoinReview userId={user?.id ?? null} role={role} values={communityValues} initialSigned={signedValueIds} questions={questions}
-        profile={userProfile} offers={((offerRes.data ?? []) as { title: string }[]).map(o => o.title)}
+        profile={userProfile}
         bio={b ? { skills: b.skills ?? [], interests: b.interests ?? [], values_principles: b.values_principles } : null}
         requests={(requestRes.data ?? []) as { id: string; request_text: string }[]}
         pillStats={pillStats(everyone.flatMap(x => [x.skills, x.interests]))}

@@ -12,7 +12,7 @@ export function PillPickerDemo() {
   const stats = { count: { Nature: 7, Community: 6, Music: 5, Spirituality: 5, Permaculture: 3, Teaching: 3 }, together: {} }
   return (
     <div style={{ display: 'grid', gap: 24 }}>
-      <PillPicker label="What are you good at?"
+      <PillPicker label="What are the areas you have experience with?"
         value={good} onChange={setGood} stats={stats} share={{ value: shared, onChange: setShared }} />
       <fieldset style={{ border: 0, padding: 0, margin: 0, display: 'grid', gap: 8 }}>
         <legend style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>What best describes you?</legend>

@@ -97,6 +97,24 @@ html[data-review] .nc-t small { font-size: 13px; color: var(--ink-3, #6b7180); }
 html[data-review] .nc-steps li.done .nc-t b { color: var(--ink-3, #6b7180); }
 html[data-review] .nc-min { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--ctl, #e3e8f4); color: var(--ink-2, #3a3f4a); white-space: nowrap; }
 html[data-review] .nc-go { width: fit-content; }
+/* What's in the portal, as four small tiles (Sonia, 27 Nov), then the way in; the card fits one phone screen */
+html[data-review] .nc-here { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+html[data-review] .nc-here a, html[data-review] .nc-here li > span { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 8px; row-gap: 4px; align-items: center; height: 100%; padding: 10px; border-radius: 14px; background: var(--bg-2, #f4f6fb); color: inherit; text-decoration: none; }
+html[data-review] .nc-here a:hover { background: var(--ctl, #e3e8f4); }
+html[data-review] .nc-here .v4-tile { width: 28px; height: 28px; border-radius: 9px; background: var(--surface, #fff); }
+html[data-review] .nc-here .v4-tile .v4-icon { width: 15px; height: 15px; }
+html[data-review] .nc-here b { font-size: 14px; font-weight: 600; min-width: 0; }
+html[data-review] .nc-here small { grid-column: 1 / -1; font-size: 12px; line-height: 1.3; color: var(--ink-3, #6b7180); }
+html[data-review] .nc-here li.off b { color: var(--ink-3, #6b7180); }
+html[data-review] .nc-join { margin: 6px 0 -6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3, #6b7180); }
+@media (max-width: 639px) {
+  html[data-review] .nc-check { gap: 10px; padding: 18px 16px; }
+  html[data-review] .nc-h { font-size: 22px; }
+  html[data-review] .nc-sub { font-size: 14px; }
+  html[data-review] .nc-steps a { padding: 8px 2px; }
+  /* The step titles say enough on a phone */
+  html[data-review] .nc-t small { display: none; }
+}
 html[data-review] .nc-foot { margin: 0; font-size: 13px; color: var(--ink-3, #6b7180); }
 html[data-review] .nc-foot a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 html[data-review] .nc-wait { display: grid; gap: 4px; padding: 20px 22px; border-radius: 20px; background: var(--yellow, #fff0b3); color: var(--yellow-ink, #7a5b00); }
@@ -220,7 +238,10 @@ html[data-review] .jf-values--fold .jf-n { width: 24px; height: 24px; font-size:
   html[data-review] .jf--step .jf-head { display: none; }
   html[data-review] .jf--step .jr-path { flex: none; padding-top: 2px; }
   html[data-review] .jf--step .jf-card { flex: 1; min-height: 0; overflow: hidden; }
-  html[data-review] .jf--step .jf-card > .jf-step { min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  html[data-review] .jf--step .jf-card > .jf-step { min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  /* Inside that scrolling area the bar can't reach past the card's padding: its old -16px sides let a swipe drag the
+     whole step sideways (Sonia, 27 Nov: "when I scroll the margin goes to the right") */
+  html[data-review] .jf--step .jf-card > .jf-step > .jf-nav { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
   html[data-review] .jf--step .jf-eyebrow { display: none; }
   html[data-review] .jf--step .jf-card > .jf-step > h2 { margin-top: 0; }
   html[data-review] .jf--step .jf-text { font-size: 15px; }
